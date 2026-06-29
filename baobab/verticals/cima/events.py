@@ -1,0 +1,10 @@
+from enum import Enum
+
+
+class CimaEventType(str, Enum):
+    SINISTRE_INCENDIE = "SINISTRE_INCENDIE"
+    SINISTRE_AUTO     = "SINISTRE_AUTO"
+    SINISTRE_CORPS    = "SINISTRE_CORPS"
+    SINISTRE_RC       = "SINISTRE_RC"
+    RESILIATION       = "RESILIATION"
+    RENOUVELLEMENT    = "RENOUVELLEMENT"
