@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from enum import Enum
 
 from baobab.core.models.legal_process import LegalProcess, ProcessStep, StepStatus
@@ -26,7 +26,7 @@ class Alert:
 
 def generate_alerts(process: LegalProcess, warning_threshold_days: int = 5) -> list[Alert]:
     alerts: list[Alert] = []
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     for step in process.steps:
         if step.status in (StepStatus.COMPLETED, StepStatus.SKIPPED):
