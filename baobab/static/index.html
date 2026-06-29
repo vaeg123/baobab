@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BAOBAB — Dashboard Sinistre CIMA</title>
+  <title>BAOBAB — Dashboard Juridique</title>
   <style>
     :root {
       --anthracite: #1A1A2E;
@@ -88,6 +88,36 @@
       padding: 4px 10px;
       border-radius: 20px;
       letter-spacing: 0.5px;
+    }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      background: var(--anthracite-light);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      padding: 0 2rem;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gris);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      letter-spacing: 0.4px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab-btn:hover { color: var(--or-light); }
+
+    .tab-btn.active {
+      color: var(--or);
+      border-bottom-color: var(--or);
+      font-weight: 700;
     }
 
     /* ── Layout ── */
@@ -448,6 +478,10 @@
     }
 
     .hidden { display: none; }
+
+    /* ── Tab panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
   </style>
 </head>
 <body>
@@ -460,65 +494,140 @@
       <div class="logo-sub">Legal Operating System</div>
     </div>
   </div>
-  <span class="header-badge">CIMA · MVP</span>
+  <span class="header-badge">MVP · Africa</span>
 </header>
 
-<div class="container">
-  <div class="page-title">Dashboard Sinistre CIMA</div>
-  <div class="page-sub">Déclarez un sinistre — la cascade réglementaire est calculée automatiquement.</div>
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('cima', this)">CIMA &mdash; Sinistre</button>
+  <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
+</div>
 
-  <div class="grid-2">
+<!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
+<div id="tab-cima" class="tab-panel active">
+  <div class="container">
+    <div class="page-title">Dashboard Sinistre CIMA</div>
+    <div class="page-sub">Déclarez un sinistre — la cascade réglementaire est calculée automatiquement.</div>
 
-    <!-- ── Formulaire ── -->
-    <div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon" style="background:#f0ead6">📋</div>
-          <span class="card-title">Déclaration de sinistre</span>
+    <div class="grid-2">
+      <!-- Formulaire -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#f0ead6">📋</div>
+            <span class="card-title">Déclaration de sinistre</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Identifiant compagnie</label>
+              <input type="text" id="cima_entity_id" value="compagnie-saham-ci" placeholder="compagnie-xyz" />
+            </div>
+            <div class="form-group">
+              <label>Type de sinistre</label>
+              <select id="sinistre_type">
+                <option value="SINISTRE_INCENDIE">Incendie</option>
+                <option value="SINISTRE_AUTO">Automobile</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date du sinistre</label>
+              <input type="date" id="cima_occurred_at" />
+            </div>
+            <div class="form-group">
+              <label>Adresse du sinistre</label>
+              <input type="text" id="adresse" value="Abidjan, Plateau" />
+            </div>
+            <button class="btn btn-primary" id="cima-submit-btn" onclick="declareSinistre()">
+              Calculer la cascade CIMA
+            </button>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="form-group">
-            <label>Identifiant compagnie</label>
-            <input type="text" id="entity_id" value="compagnie-saham-ci" placeholder="compagnie-xyz" />
-          </div>
-          <div class="form-group">
-            <label>Type de sinistre</label>
-            <select id="sinistre_type">
-              <option value="SINISTRE_INCENDIE">Incendie</option>
-              <option value="SINISTRE_AUTO">Automobile</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Date du sinistre</label>
-            <input type="date" id="occurred_at" />
-          </div>
-          <div class="form-group">
-            <label>Adresse du sinistre</label>
-            <input type="text" id="adresse" value="Abidjan, Plateau" />
-          </div>
-          <button class="btn btn-primary" id="submit-btn" onclick="declareSinistre()">
-            Calculer la cascade CIMA
-          </button>
+      </div>
+
+      <!-- Résultats -->
+      <div id="cima-results-col">
+        <div class="empty-state">
+          <div class="empty-icon">⚖️</div>
+          <div class="empty-text">Déclarez un sinistre pour voir<br>la cascade réglementaire CIMA.</div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- ── Résultats ── -->
-    <div id="results-col">
-      <div class="empty-state">
-        <div class="empty-icon">⚖️</div>
-        <div class="empty-text">Déclarez un sinistre pour voir<br>la cascade réglementaire CIMA.</div>
+<!-- ══════════════════════════ OHADA TAB ══════════════════════════ -->
+<div id="tab-ohada" class="tab-panel">
+  <div class="container">
+    <div class="page-title">Dashboard Droit des Affaires OHADA</div>
+    <div class="page-sub">Déclarez un événement juridique — la cascade OHADA est calculée automatiquement.</div>
+
+    <div class="grid-2">
+      <!-- Formulaire -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#f0ead6">📜</div>
+            <span class="card-title">Déclaration d'événement juridique</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Identifiant entité</label>
+              <input type="text" id="ohada_entity_id" value="entreprise-ci-001" placeholder="entreprise-xyz" />
+            </div>
+            <div class="form-group">
+              <label>Type d'événement</label>
+              <select id="ohada_event_type">
+                <option value="CREATION_SARL">Création SARL</option>
+                <option value="CREATION_SA">Création SA</option>
+                <option value="AGO_ANNUELLE">AGO Annuelle</option>
+                <option value="DISSOLUTION">Dissolution</option>
+                <option value="CESSION_PARTS">Cession de parts</option>
+                <option value="FUSION_ABSORPTION">Fusion-absorption</option>
+                <option value="INJONCTION_PAYER">Injonction de payer</option>
+                <option value="IMMATRICULATION_RCCM">Immatriculation RCCM</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date de l'événement</label>
+              <input type="date" id="ohada_occurred_at" />
+            </div>
+            <div class="form-group">
+              <label>Raison sociale</label>
+              <input type="text" id="ohada_raison_sociale" value="SARL TECH ABIDJAN" />
+            </div>
+            <button class="btn btn-primary" id="ohada-submit-btn" onclick="declarerEvenement()">
+              Calculer la cascade OHADA
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Résultats -->
+      <div id="ohada-results-col">
+        <div class="empty-state">
+          <div class="empty-icon">⚖️</div>
+          <div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire OHADA.</div>
+        </div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-  // Pré-remplir la date avec aujourd'hui
-  const today = new Date();
-  document.getElementById('occurred_at').value = today.toISOString().split('T')[0];
+  // Pré-remplir les dates avec aujourd'hui
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cima_occurred_at').value = today;
+  document.getElementById('ohada_occurred_at').value = today;
 
+  // ── Tab switching ──
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── Shared helpers ──
   function fmtDate(iso) {
     if (!iso) return '—';
     const d = new Date(iso);
@@ -527,15 +636,14 @@
 
   function daysFromNow(iso) {
     if (!iso) return null;
-    const diff = Math.round((new Date(iso) - new Date()) / 86400000);
-    return diff;
+    return Math.round((new Date(iso) - new Date()) / 86400000);
   }
 
   function stepState(step, alerts) {
     if (!step.due_date) return 'no-date';
     const alert = alerts.find(a => a.due_date === step.due_date);
     if (!alert) return 'ok';
-    return alert.level; // overdue | critical | warning | info
+    return alert.level;
   }
 
   function badgeHtml(state) {
@@ -549,66 +657,19 @@
     return 'var(--rouge)';
   }
 
-  async function declareSinistre() {
-    const btn = document.getElementById('submit-btn');
-    const entity_id    = document.getElementById('entity_id').value.trim();
-    const sinistre_type = document.getElementById('sinistre_type').value;
-    const occurred_at  = document.getElementById('occurred_at').value;
-    const adresse      = document.getElementById('adresse').value.trim();
-
-    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
-
-    document.getElementById('results-col').innerHTML = `
-      <div class="empty-state">
-        <span class="spinner" style="width:28px;height:28px;border-width:3px"></span>
-      </div>`;
-
-    try {
-      const res = await fetch('/api/v1/cima/sinistre', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entity_id,
-          sinistre_type,
-          occurred_at: occurred_at + 'T00:00:00Z',
-          metadata: { adresse }
-        })
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      renderResults(data, entity_id, sinistre_type, occurred_at);
-
-    } catch (e) {
-      document.getElementById('results-col').innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">❌</div>
-          <div class="empty-text">Erreur : ${e.message}</div>
-        </div>`;
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Calculer la cascade CIMA';
-    }
-  }
-
-  function renderResults(data, entity_id, sinistre_type, occurred_at) {
+  function renderResults(data, entity_id, event_label, occurred_at, resultsColId, corpusLabel) {
     const { steps, compliance, alerts } = data;
+    const overdueCount  = alerts.filter(a => a.level === 'overdue').length;
+    const criticalCount = alerts.filter(a => a.level === 'critical').length;
+    const scorePercent  = Math.round(compliance.score * 100);
+    const statusClass   = `status-${compliance.status}`;
+    const statusLabels  = { pending: 'En cours', compliant: 'Conforme', at_risk: 'À risque', non_compliant: 'Non conforme' };
 
-    const overdueCount   = alerts.filter(a => a.level === 'overdue').length;
-    const criticalCount  = alerts.filter(a => a.level === 'critical').length;
-    const scorePercent   = Math.round(compliance.score * 100);
-    const statusClass    = `status-${compliance.status}`;
-    const statusLabels   = { pending: 'En cours', compliant: 'Conforme', at_risk: 'À risque', non_compliant: 'Non conforme' };
-
-    // ── Stats ──
     const statsHtml = `
       <div class="stats-row">
         <div class="stat-card gold">
           <div class="stat-value">${steps.length}</div>
-          <div class="stat-label">Étapes CIMA</div>
+          <div class="stat-label">Étapes ${corpusLabel}</div>
         </div>
         <div class="stat-card ${overdueCount > 0 ? 'red' : 'green'}">
           <div class="stat-value">${overdueCount}</div>
@@ -620,7 +681,6 @@
         </div>
       </div>`;
 
-    // ── Compliance ──
     const complianceHtml = `
       <div class="card" style="margin-bottom:1.25rem">
         <div class="card-header">
@@ -644,7 +704,6 @@
         </div>
       </div>`;
 
-    // ── Timeline ──
     const timelineItems = steps.map(step => {
       const state = stepState(step, alerts);
       const days  = daysFromNow(step.due_date);
@@ -661,7 +720,7 @@
           <div class="step-meta">
             ${badgeHtml(state)}
             ${step.due_date ? `<span>📅 ${fmtDate(step.due_date)}</span>` : '<span>Sans délai fixe</span>'}
-            ${step.deadline_days !== null ? `<span>⏱ J+${step.deadline_days}</span>` : ''}
+            ${step.deadline_days !== null && step.deadline_days !== undefined ? `<span>⏱ J+${step.deadline_days}</span>` : ''}
             ${daysLabel}
           </div>
         </div>`;
@@ -671,17 +730,16 @@
       <div class="card" style="margin-bottom:1.25rem">
         <div class="card-header">
           <div class="card-icon" style="background:#f0ead6">⚡</div>
-          <span class="card-title">Cascade réglementaire — ${sinistre_type.replace('SINISTRE_', '')}</span>
+          <span class="card-title">Cascade réglementaire — ${event_label}</span>
         </div>
         <div class="card-body">
           <div style="margin-bottom:12px;font-size:12px;color:var(--gris)">
-            Compagnie : <strong>${entity_id}</strong> · Sinistre du <strong>${fmtDate(occurred_at + 'T00:00:00Z')}</strong>
+            Entité : <strong>${entity_id}</strong> · Événement du <strong>${fmtDate(occurred_at + 'T00:00:00Z')}</strong>
           </div>
           <div class="timeline">${timelineItems}</div>
         </div>
       </div>`;
 
-    // ── Alertes ──
     let alertsHtml = '';
     if (alerts.length > 0) {
       const icons = { overdue: '🔴', critical: '🟠', warning: '🟡', info: '🔵' };
@@ -718,10 +776,85 @@
         </div>`;
     }
 
-    // ── Event ID ──
     const metaHtml = `<div class="event-id-box">event_id: ${data.event_id}<br>process_id: ${data.process_id}</div>`;
+    document.getElementById(resultsColId).innerHTML = statsHtml + complianceHtml + timelineHtml + alertsHtml + metaHtml;
+  }
 
-    document.getElementById('results-col').innerHTML = statsHtml + complianceHtml + timelineHtml + alertsHtml + metaHtml;
+  // ── CIMA ──
+  async function declareSinistre() {
+    const btn = document.getElementById('cima-submit-btn');
+    const entity_id     = document.getElementById('cima_entity_id').value.trim();
+    const sinistre_type = document.getElementById('sinistre_type').value;
+    const occurred_at   = document.getElementById('cima_occurred_at').value;
+    const adresse       = document.getElementById('adresse').value.trim();
+
+    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
+    document.getElementById('cima-results-col').innerHTML = `
+      <div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+
+    try {
+      const res = await fetch('/api/v1/cima/sinistre', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entity_id, sinistre_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { adresse } })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderResults(data, entity_id, sinistre_type.replace('SINISTRE_', ''), occurred_at, 'cima-results-col', 'CIMA');
+    } catch (e) {
+      document.getElementById('cima-results-col').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Calculer la cascade CIMA';
+    }
+  }
+
+  // ── OHADA ──
+  const ohadaLabels = {
+    CREATION_SARL: 'Création SARL',
+    CREATION_SA: 'Création SA',
+    AGO_ANNUELLE: 'AGO Annuelle',
+    DISSOLUTION: 'Dissolution',
+    CESSION_PARTS: 'Cession de parts',
+    FUSION_ABSORPTION: 'Fusion-absorption',
+    INJONCTION_PAYER: 'Injonction de payer',
+    IMMATRICULATION_RCCM: 'Immatriculation RCCM',
+  };
+
+  async function declarerEvenement() {
+    const btn = document.getElementById('ohada-submit-btn');
+    const entity_id      = document.getElementById('ohada_entity_id').value.trim();
+    const event_type     = document.getElementById('ohada_event_type').value;
+    const occurred_at    = document.getElementById('ohada_occurred_at').value;
+    const raison_sociale = document.getElementById('ohada_raison_sociale').value.trim();
+
+    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
+    document.getElementById('ohada-results-col').innerHTML = `
+      <div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+
+    try {
+      const res = await fetch('/api/v1/ohada/evenement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { raison_sociale } })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderResults(data, entity_id, ohadaLabels[event_type] || event_type, occurred_at, 'ohada-results-col', 'OHADA');
+    } catch (e) {
+      document.getElementById('ohada-results-col').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Calculer la cascade OHADA';
+    }
   }
 </script>
 </body>
