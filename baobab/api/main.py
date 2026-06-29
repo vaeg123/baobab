@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from baobab.api.routes import health, events, cima, compliance
 
@@ -22,3 +26,10 @@ app.include_router(health.router, prefix="/api")
 app.include_router(events.router, prefix="/api/v1")
 app.include_router(cima.router, prefix="/api/v1/cima")
 app.include_router(compliance.router, prefix="/api/v1/compliance")
+
+STATIC_DIR = Path(__file__).parent.parent / "static"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+@app.get("/", include_in_schema=False)
+async def dashboard():
+    return FileResponse(STATIC_DIR / "index.html")

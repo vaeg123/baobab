@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BAOBAB — Dashboard Sinistre CIMA</title>
+  <style>
+    :root {
+      --anthracite: #1A1A2E;
+      --anthracite-light: #252545;
+      --or: #C9A84C;
+      --or-light: #e0c06a;
+      --vert: #1A6B4A;
+      --vert-light: #22895f;
+      --bleu: #2C3E6B;
+      --bleu-light: #3a5198;
+      --rouge: #c0392b;
+      --orange: #e67e22;
+      --jaune: #f1c40f;
+      --gris: #8892a4;
+      --gris-clair: #f4f5f8;
+      --blanc: #ffffff;
+      --card-bg: #ffffff;
+      --border: #e2e6ea;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gris-clair);
+      color: var(--anthracite);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--anthracite);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--or);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: var(--anthracite);
+      letter-spacing: -1px;
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--blanc);
+      letter-spacing: 2px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--gris);
+      letter-spacing: 1px;
+    }
+
+    .header-badge {
+      background: var(--vert);
+      color: var(--blanc);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--anthracite);
+      margin-bottom: 4px;
+    }
+
+    .page-sub {
+      font-size: 13px;
+      color: var(--gris);
+      margin-bottom: 2rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--anthracite);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    /* ── Form ── */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gris);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--anthracite);
+      background: var(--blanc);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--or);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--or);
+      color: var(--anthracite);
+    }
+
+    .btn-primary:hover { background: var(--or-light); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--anthracite);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gris);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card.gold .stat-value { color: var(--or); }
+    .stat-card.green .stat-value { color: var(--vert); }
+    .stat-card.red .stat-value { color: var(--rouge); }
+    .stat-card.orange .stat-value { color: var(--orange); }
+
+    /* ── Compliance bar ── */
+    .compliance-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .compliance-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .compliance-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gris);
+    }
+
+    .compliance-score {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--anthracite);
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--gris-clair);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.6s ease;
+      background: var(--vert);
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pending      { background: #eef0f7; color: var(--bleu); }
+    .status-compliant    { background: #e6f4ee; color: var(--vert); }
+    .status-at_risk      { background: #fef3e2; color: var(--orange); }
+    .status-non_compliant{ background: #fdecea; color: var(--rouge); }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-step {
+      position: relative;
+      padding: 0 0 1.25rem 1.25rem;
+    }
+
+    .timeline-step:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -22px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--blanc);
+      z-index: 1;
+      transition: all 0.2s;
+    }
+
+    .timeline-step.overdue  .timeline-dot { background: var(--rouge);  border-color: var(--rouge); }
+    .timeline-step.critical .timeline-dot { background: var(--orange); border-color: var(--orange); }
+    .timeline-step.warning  .timeline-dot { background: var(--jaune);  border-color: var(--jaune); }
+    .timeline-step.ok       .timeline-dot { background: var(--vert);   border-color: var(--vert); }
+    .timeline-step.no-date  .timeline-dot { background: var(--gris);   border-color: var(--gris); }
+
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--anthracite);
+      margin-bottom: 3px;
+    }
+
+    .step-meta {
+      font-size: 12px;
+      color: var(--gris);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .step-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-overdue  { background: #fdecea; color: var(--rouge); }
+    .badge-critical { background: #fef3e2; color: var(--orange); }
+    .badge-warning  { background: #fefce8; color: #b45309; }
+    .badge-ok       { background: #e6f4ee; color: var(--vert); }
+    .badge-no-date  { background: #eef0f7; color: var(--gris); }
+
+    .step-deadline {
+      font-size: 11px;
+      color: var(--gris);
+    }
+
+    /* ── Alerts ── */
+    .alert-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .alert-item:last-child { margin-bottom: 0; }
+
+    .alert-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .alert-text { flex: 1; font-weight: 500; }
+    .alert-date { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+    .alert-overdue  { background: #fdecea; color: var(--rouge); }
+    .alert-critical { background: #fef3e2; color: #c05011; }
+    .alert-warning  { background: #fefce8; color: #92400e; }
+    .alert-info     { background: #eef0f7; color: var(--bleu); }
+
+    /* ── Empty / loading states ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--gris);
+    }
+
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+    .empty-text { font-size: 14px; }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0,0,0,0.15);
+      border-top-color: var(--anthracite);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .event-id-box {
+      background: var(--gris-clair);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--gris);
+      word-break: break-all;
+      margin-top: 1rem;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">B</div>
+    <div>
+      <div class="logo-text">BAOBAB</div>
+      <div class="logo-sub">Legal Operating System</div>
+    </div>
+  </div>
+  <span class="header-badge">CIMA · MVP</span>
+</header>
+
+<div class="container">
+  <div class="page-title">Dashboard Sinistre CIMA</div>
+  <div class="page-sub">Déclarez un sinistre — la cascade réglementaire est calculée automatiquement.</div>
+
+  <div class="grid-2">
+
+    <!-- ── Formulaire ── -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#f0ead6">📋</div>
+          <span class="card-title">Déclaration de sinistre</span>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Identifiant compagnie</label>
+            <input type="text" id="entity_id" value="compagnie-saham-ci" placeholder="compagnie-xyz" />
+          </div>
+          <div class="form-group">
+            <label>Type de sinistre</label>
+            <select id="sinistre_type">
+              <option value="SINISTRE_INCENDIE">Incendie</option>
+              <option value="SINISTRE_AUTO">Automobile</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date du sinistre</label>
+            <input type="date" id="occurred_at" />
+          </div>
+          <div class="form-group">
+            <label>Adresse du sinistre</label>
+            <input type="text" id="adresse" value="Abidjan, Plateau" />
+          </div>
+          <button class="btn btn-primary" id="submit-btn" onclick="declareSinistre()">
+            Calculer la cascade CIMA
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Résultats ── -->
+    <div id="results-col">
+      <div class="empty-state">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-text">Déclarez un sinistre pour voir<br>la cascade réglementaire CIMA.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Pré-remplir la date avec aujourd'hui
+  const today = new Date();
+  document.getElementById('occurred_at').value = today.toISOString().split('T')[0];
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function daysFromNow(iso) {
+    if (!iso) return null;
+    const diff = Math.round((new Date(iso) - new Date()) / 86400000);
+    return diff;
+  }
+
+  function stepState(step, alerts) {
+    if (!step.due_date) return 'no-date';
+    const alert = alerts.find(a => a.due_date === step.due_date);
+    if (!alert) return 'ok';
+    return alert.level; // overdue | critical | warning | info
+  }
+
+  function badgeHtml(state) {
+    const labels = { overdue: 'Dépassé', critical: 'Critique', warning: 'Attention', ok: 'OK', 'no-date': 'Sans délai' };
+    return `<span class="step-badge badge-${state}">${labels[state] || state}</span>`;
+  }
+
+  function scoreColor(score) {
+    if (score >= 0.8) return 'var(--vert)';
+    if (score >= 0.5) return 'var(--orange)';
+    return 'var(--rouge)';
+  }
+
+  async function declareSinistre() {
+    const btn = document.getElementById('submit-btn');
+    const entity_id    = document.getElementById('entity_id').value.trim();
+    const sinistre_type = document.getElementById('sinistre_type').value;
+    const occurred_at  = document.getElementById('occurred_at').value;
+    const adresse      = document.getElementById('adresse').value.trim();
+
+    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
+
+    document.getElementById('results-col').innerHTML = `
+      <div class="empty-state">
+        <span class="spinner" style="width:28px;height:28px;border-width:3px"></span>
+      </div>`;
+
+    try {
+      const res = await fetch('/api/v1/cima/sinistre', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entity_id,
+          sinistre_type,
+          occurred_at: occurred_at + 'T00:00:00Z',
+          metadata: { adresse }
+        })
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderResults(data, entity_id, sinistre_type, occurred_at);
+
+    } catch (e) {
+      document.getElementById('results-col').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">❌</div>
+          <div class="empty-text">Erreur : ${e.message}</div>
+        </div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Calculer la cascade CIMA';
+    }
+  }
+
+  function renderResults(data, entity_id, sinistre_type, occurred_at) {
+    const { steps, compliance, alerts } = data;
+
+    const overdueCount   = alerts.filter(a => a.level === 'overdue').length;
+    const criticalCount  = alerts.filter(a => a.level === 'critical').length;
+    const scorePercent   = Math.round(compliance.score * 100);
+    const statusClass    = `status-${compliance.status}`;
+    const statusLabels   = { pending: 'En cours', compliant: 'Conforme', at_risk: 'À risque', non_compliant: 'Non conforme' };
+
+    // ── Stats ──
+    const statsHtml = `
+      <div class="stats-row">
+        <div class="stat-card gold">
+          <div class="stat-value">${steps.length}</div>
+          <div class="stat-label">Étapes CIMA</div>
+        </div>
+        <div class="stat-card ${overdueCount > 0 ? 'red' : 'green'}">
+          <div class="stat-value">${overdueCount}</div>
+          <div class="stat-label">Dépassées</div>
+        </div>
+        <div class="stat-card ${criticalCount > 0 ? 'orange' : 'green'}">
+          <div class="stat-value">${criticalCount}</div>
+          <div class="stat-label">Critiques</div>
+        </div>
+      </div>`;
+
+    // ── Compliance ──
+    const complianceHtml = `
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-header">
+          <div class="card-icon" style="background:#e6f4ee">✅</div>
+          <span class="card-title">Score de conformité</span>
+        </div>
+        <div class="card-body">
+          <div class="compliance-header">
+            <span class="compliance-label">Progression</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="compliance-score">${scorePercent}%</span>
+              <span class="status-pill ${statusClass}">${statusLabels[compliance.status] || compliance.status}</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width:${scorePercent}%;background:${scoreColor(compliance.score)}"></div>
+          </div>
+          <div style="margin-top:8px;font-size:12px;color:var(--gris)">
+            ${compliance.overdue_count} étape(s) en retard · ${steps.filter(s=>s.due_date).length} étape(s) avec délai
+          </div>
+        </div>
+      </div>`;
+
+    // ── Timeline ──
+    const timelineItems = steps.map(step => {
+      const state = stepState(step, alerts);
+      const days  = daysFromNow(step.due_date);
+      let daysLabel = '';
+      if (days !== null) {
+        if (days < 0) daysLabel = `<span style="color:var(--rouge);font-weight:700">${Math.abs(days)} j de retard</span>`;
+        else if (days === 0) daysLabel = `<span style="color:var(--orange);font-weight:700">Aujourd'hui</span>`;
+        else daysLabel = `<span style="color:var(--gris)">${days} j restants</span>`;
+      }
+      return `
+        <div class="timeline-step ${state}">
+          <div class="timeline-dot"></div>
+          <div class="step-name">${step.name}</div>
+          <div class="step-meta">
+            ${badgeHtml(state)}
+            ${step.due_date ? `<span>📅 ${fmtDate(step.due_date)}</span>` : '<span>Sans délai fixe</span>'}
+            ${step.deadline_days !== null ? `<span>⏱ J+${step.deadline_days}</span>` : ''}
+            ${daysLabel}
+          </div>
+        </div>`;
+    }).join('');
+
+    const timelineHtml = `
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-header">
+          <div class="card-icon" style="background:#f0ead6">⚡</div>
+          <span class="card-title">Cascade réglementaire — ${sinistre_type.replace('SINISTRE_', '')}</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:12px;font-size:12px;color:var(--gris)">
+            Compagnie : <strong>${entity_id}</strong> · Sinistre du <strong>${fmtDate(occurred_at + 'T00:00:00Z')}</strong>
+          </div>
+          <div class="timeline">${timelineItems}</div>
+        </div>
+      </div>`;
+
+    // ── Alertes ──
+    let alertsHtml = '';
+    if (alerts.length > 0) {
+      const icons = { overdue: '🔴', critical: '🟠', warning: '🟡', info: '🔵' };
+      const alertItems = alerts.map(a => `
+        <div class="alert-item alert-${a.level}">
+          <div class="alert-icon">${icons[a.level] || '●'}</div>
+          <div>
+            <div class="alert-text">${a.message}</div>
+            ${a.due_date ? `<div class="alert-date">Échéance : ${fmtDate(a.due_date)}</div>` : ''}
+          </div>
+        </div>`).join('');
+
+      alertsHtml = `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#fdecea">🚨</div>
+            <span class="card-title">Alertes actives (${alerts.length})</span>
+          </div>
+          <div class="card-body">${alertItems}</div>
+        </div>`;
+    } else {
+      alertsHtml = `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#e6f4ee">✅</div>
+            <span class="card-title">Alertes</span>
+          </div>
+          <div class="card-body">
+            <div class="empty-state" style="padding:1.5rem">
+              <div class="empty-icon">✅</div>
+              <div class="empty-text">Aucune alerte — tous les délais sont respectés.</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ── Event ID ──
+    const metaHtml = `<div class="event-id-box">event_id: ${data.event_id}<br>process_id: ${data.process_id}</div>`;
+
+    document.getElementById('results-col').innerHTML = statsHtml + complianceHtml + timelineHtml + alertsHtml + metaHtml;
+  }
+</script>
+</body>
+</html>
