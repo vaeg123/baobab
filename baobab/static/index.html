@@ -501,6 +501,7 @@
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('cima', this)">CIMA &mdash; Sinistre</button>
   <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
+  <button class="tab-btn" onclick="switchTab('bceao', this)">BCEAO &mdash; Banque &amp; Finance</button>
 </div>
 
 <!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
@@ -613,11 +614,70 @@
   </div>
 </div>
 
+<!-- ══════════════════════════ BCEAO TAB ══════════════════════════ -->
+<div id="tab-bceao" class="tab-panel">
+  <div class="container">
+    <div class="page-title">Dashboard Banque &amp; Finance BCEAO</div>
+    <div class="page-sub">Déclarez un événement bancaire — la cascade réglementaire BCEAO/UEMOA est calculée automatiquement.</div>
+
+    <div class="grid-2">
+      <!-- Formulaire -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#e8f0fe">🏦</div>
+            <span class="card-title">Déclaration d'événement bancaire</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Identifiant établissement</label>
+              <input type="text" id="bceao_entity_id" value="banque-atlantique-ci" placeholder="banque-xyz" />
+            </div>
+            <div class="form-group">
+              <label>Type d'événement</label>
+              <select id="bceao_event_type">
+                <option value="DECLARATION_SOUPCON">Déclaration de soupçon LCB/FT</option>
+                <option value="CONTROLE_CBF">Contrôle Commission Bancaire</option>
+                <option value="RAPPORT_MENSUEL_BCEAO">Reporting mensuel BCEAO</option>
+                <option value="INCIDENT_PAIEMENT">Incident de paiement</option>
+                <option value="AGREMENT_BANQUE">Demande d'agrément bancaire</option>
+                <option value="AGREMENT_MONNAIE_ELEC">Agrément monnaie électronique</option>
+                <option value="RATIO_PRUDENTIEL_BREACH">Breach ratio prudentiel</option>
+                <option value="OUVERTURE_COMPTE_KYC">Ouverture compte / KYC</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date de l'événement</label>
+              <input type="date" id="bceao_occurred_at" />
+            </div>
+            <div class="form-group">
+              <label>Établissement</label>
+              <input type="text" id="bceao_etablissement" value="Banque Atlantique Côte d'Ivoire" />
+            </div>
+            <button class="btn btn-primary" id="bceao-submit-btn" onclick="declarerEvenementBceao()">
+              Calculer la cascade BCEAO
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Résultats -->
+      <div id="bceao-results-col">
+        <div class="empty-state">
+          <div class="empty-icon">🏦</div>
+          <div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire BCEAO.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // Pré-remplir les dates avec aujourd'hui
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('cima_occurred_at').value = today;
   document.getElementById('ohada_occurred_at').value = today;
+  document.getElementById('bceao_occurred_at').value = today;
 
   // ── Tab switching ──
   function switchTab(name, btn) {
@@ -810,6 +870,50 @@
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Calculer la cascade CIMA';
+    }
+  }
+
+  // ── BCEAO ──
+  const bceaoLabels = {
+    DECLARATION_SOUPCON:     'Déclaration de soupçon LCB/FT',
+    CONTROLE_CBF:            'Contrôle Commission Bancaire',
+    RAPPORT_MENSUEL_BCEAO:   'Reporting mensuel BCEAO',
+    INCIDENT_PAIEMENT:       'Incident de paiement',
+    AGREMENT_BANQUE:         "Demande d'agrément bancaire",
+    AGREMENT_MONNAIE_ELEC:   'Agrément monnaie électronique',
+    RATIO_PRUDENTIEL_BREACH: 'Breach ratio prudentiel',
+    OUVERTURE_COMPTE_KYC:    'Ouverture compte / KYC',
+  };
+
+  async function declarerEvenementBceao() {
+    const btn = document.getElementById('bceao-submit-btn');
+    const entity_id     = document.getElementById('bceao_entity_id').value.trim();
+    const event_type    = document.getElementById('bceao_event_type').value;
+    const occurred_at   = document.getElementById('bceao_occurred_at').value;
+    const etablissement = document.getElementById('bceao_etablissement').value.trim();
+
+    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
+    document.getElementById('bceao-results-col').innerHTML = `
+      <div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+
+    try {
+      const res = await fetch('/api/v1/bceao/evenement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { etablissement } })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderResults(data, entity_id, bceaoLabels[event_type] || event_type, occurred_at, 'bceao-results-col', 'BCEAO');
+    } catch (e) {
+      document.getElementById('bceao-results-col').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Calculer la cascade BCEAO';
     }
   }
 
