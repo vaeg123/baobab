@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 from baobab.core.models.legal_process import LegalProcess, StepStatus
@@ -51,5 +51,5 @@ class ComplianceEngine:
             status=status,
             overdue_count=overdue,
             total_steps=total,
-            generated_at=datetime.utcnow(),
+            generated_at=datetime.now(timezone.utc),
         )

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from baobab.core.models.legal_event import LegalEvent
 from baobab.engines.event_engine.engine import LegalEventEngine
 from baobab.verticals.cima.cascades import SINISTRE_INCENDIE_CASCADE
@@ -13,7 +13,7 @@ def test_sinistre_incendie_cascade():
         event_id="test-001",
         event_type=CimaEventType.SINISTRE_INCENDIE,
         entity_id="entity-abc",
-        occurred_at=datetime(2024, 6, 1),
+        occurred_at=datetime(2024, 6, 1, tzinfo=timezone.utc),
         corpus="CIMA",
         territory="CI",
     )
@@ -34,7 +34,7 @@ def test_cascade_due_dates_are_calculated():
         event_id="test-002",
         event_type=CimaEventType.SINISTRE_INCENDIE,
         entity_id="entity-xyz",
-        occurred_at=datetime(2024, 1, 1),
+        occurred_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
         corpus="CIMA",
         territory="CI",
     )

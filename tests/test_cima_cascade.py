@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from baobab.core.models.legal_event import LegalEvent
 from baobab.engines.event_engine.engine import LegalEventEngine
 from baobab.engines.compliance_engine.engine import ComplianceEngine, ComplianceStatus
@@ -16,7 +16,7 @@ def test_compliance_engine_on_new_process():
         event_id="test-003",
         event_type=CimaEventType.SINISTRE_INCENDIE,
         entity_id="insurer-001",
-        occurred_at=datetime.utcnow(),
+        occurred_at=datetime.now(timezone.utc),
         corpus="CIMA",
         territory="CI",
     )

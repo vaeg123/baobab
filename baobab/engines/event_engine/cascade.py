@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Callable
 
 from baobab.core.models.legal_event import LegalEvent
@@ -43,6 +43,8 @@ class CascadeEngine:
 
         steps: list[ProcessStep] = []
         ref_date = event.occurred_at
+        if ref_date.tzinfo is None:
+            ref_date = ref_date.replace(tzinfo=timezone.utc)
 
         for i, cascade_step in enumerate(definition.steps):
             due_date = None
