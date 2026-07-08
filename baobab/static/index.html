@@ -884,6 +884,118 @@
       .stat-value { font-size: 24px; }
       .container  { padding: 1rem 0.9rem; }
     }
+
+    /* ── VEILLE JURIDIQUE ──────────────────── */
+    .veille-filters {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .veille-filter-btn {
+      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+      background: transparent; color: var(--sub); font-size: 11px; font-weight: 600;
+      cursor: pointer; font-family: inherit; letter-spacing: 0.3px; transition: all 0.15s;
+    }
+    .veille-filter-btn.active, .veille-filter-btn:hover {
+      background: var(--bgold); border-color: rgba(212,165,58,0.35); color: var(--gold);
+    }
+    .veille-feed { display: flex; flex-direction: column; gap: 10px; }
+    .veille-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.1rem 1.25rem; transition: border-color 0.2s;
+    }
+    .veille-item:hover { border-color: rgba(212,165,58,0.3); }
+    .veille-item-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 8px;
+    }
+    .veille-item-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .veille-item-date { font-size: 11px; color: var(--sub); white-space: nowrap; flex-shrink: 0; }
+    .veille-item-meta {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .veille-source { font-size: 11px; color: var(--sub); }
+    .veille-item-summary { font-size: 13px; color: var(--sub); line-height: 1.6; margin-bottom: 10px; }
+    .veille-item-actions { display: flex; gap: 8px; align-items: center; }
+    .veille-impact {
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px;
+      margin-left: auto;
+    }
+    .impact-high   { background: var(--red-bg); color: #F08080; }
+    .impact-medium { background: var(--orange-bg); color: #E09040; }
+    .impact-low    { background: var(--green-bg); color: #50D090; }
+    .veille-subscribe {
+      background: rgba(212,165,58,0.05); border: 1px solid rgba(212,165,58,0.18);
+      border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 2rem;
+      display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+    }
+    .veille-subscribe-text { flex: 1; }
+    .veille-subscribe-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .veille-subscribe-sub { font-size: 12px; color: var(--sub); }
+
+    /* ── FICHE ARTICLE DE LOI ─────────────── */
+    .fiche-article { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem; }
+    .fiche-article .fiche-top { border-bottom: 1px solid var(--border); }
+    .article-badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      color: #6090E0; background: rgba(48,96,176,0.13); padding: 3px 10px; border-radius: 20px;
+    }
+    .article-texte {
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.01);
+    }
+    .article-texte-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--sub); margin-bottom: 10px;
+    }
+    .article-texte-body {
+      font-size: 13px; color: var(--text); line-height: 1.85;
+      border-left: 3px solid rgba(48,96,176,0.4); padding-left: 16px;
+      font-style: italic;
+    }
+    .article-stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--border);
+    }
+    .article-stat-col {
+      padding: 1rem 1.25rem; border-right: 1px solid var(--border); text-align: center;
+    }
+    .article-stat-col:last-child { border-right: none; }
+    .article-stat-val { font-size: 30px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .article-stat-lbl { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+    .interp-item {
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+      font-size: 12px; color: var(--sub); line-height: 1.6;
+    }
+    .interp-item:last-child { border-bottom: none; }
+    .interp-source {
+      font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .interp-date { font-size: 10px; color: var(--sub); font-weight: 400; }
+    .connected-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .connected-pill {
+      font-size: 11px; font-weight: 600; color: #6090E0;
+      background: rgba(48,96,176,0.13); border: 1px solid rgba(48,96,176,0.2);
+      padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.15s;
+    }
+    .connected-pill:hover { background: rgba(48,96,176,0.22); }
+    .modif-timeline { display: flex; flex-direction: column; gap: 8px; }
+    .modif-item { display: flex; gap: 12px; font-size: 12px; color: var(--sub); }
+    .modif-annee { color: var(--gold); font-weight: 700; flex-shrink: 0; min-width: 38px; }
+    .pays-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    @media (max-width: 600px) { .pays-grid { grid-template-columns: 1fr; } }
+    .pays-item {
+      display: flex; gap: 10px; padding: 9px 12px;
+      border: 1px solid var(--border); border-radius: 8px; font-size: 11px;
+    }
+    .pays-flag { font-size: 16px; flex-shrink: 0; }
+    .pays-nom { font-weight: 600; color: var(--text); margin-bottom: 2px; font-size: 12px; }
+    .pays-interp { color: var(--sub); line-height: 1.4; }
+    @media (max-width: 768px) {
+      .article-stats-row { grid-template-columns: 1fr; }
+      .article-stat-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .article-stat-col:last-child { border-bottom: none; }
+    }
   </style>
 </head>
 <body>
@@ -1418,6 +1530,35 @@
       </div>
     </div>
 
+    <!-- ── VEILLE JURIDIQUE ── -->
+    <div id="tab-veille" class="tab-panel">
+      <div class="container">
+        <div class="page-title">Veille juridique</div>
+        <div class="page-sub">Nouvelles lois, circulaires, actes uniformes OHADA, instructions CIMA et BCEAO — suivis et résumés dès leur publication.</div>
+
+        <div class="veille-filters" id="veille-filters">
+          <button class="veille-filter-btn active" onclick="filterVeille('all', this)">Tout</button>
+          <button class="veille-filter-btn" onclick="filterVeille('ohada', this)">OHADA</button>
+          <button class="veille-filter-btn" onclick="filterVeille('cima', this)">CIMA</button>
+          <button class="veille-filter-btn" onclick="filterVeille('bceao', this)">BCEAO</button>
+          <button class="veille-filter-btn" onclick="filterVeille('national', this)">Droit national</button>
+        </div>
+
+        <div class="veille-feed" id="veille-feed">
+          <!-- Populated by renderVeille() -->
+          <div class="empty-state"><span class="spinner" style="width:22px;height:22px;border-width:3px"></span></div>
+        </div>
+
+        <div class="veille-subscribe">
+          <div class="veille-subscribe-text">
+            <div class="veille-subscribe-title">Recevoir les alertes en temps réel</div>
+            <div class="veille-subscribe-sub">Dès qu'un texte vous concerne, BAOBAB vous alerte et calcule l'impact sur votre conformité.</div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="alert('Fonctionnalité disponible avec un abonnement actif.')">Activer la veille →</button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /main-content -->
 </div><!-- /app-shell -->
 
@@ -1591,6 +1732,7 @@ function goHome() {
 const NAV_CONFIGS = {
   client: [
     { id: 'client',  label: '🏠  Mon espace' },
+    { id: 'veille',  label: '📡  Veille juridique' },
     { id: 'cima',    label: '⚖️  CIMA — Sinistre' },
     { id: 'ohada',   label: '📜  OHADA' },
     { id: 'bceao',   label: '🏦  BCEAO' },
@@ -1598,12 +1740,14 @@ const NAV_CONFIGS = {
   ],
   admin: [
     { id: 'admin',   label: '🛡️  Tableau de bord' },
+    { id: 'veille',  label: '📡  Veille juridique' },
     { id: 'cima',    label: '⚖️  CIMA' },
     { id: 'ohada',   label: '📜  OHADA' },
     { id: 'bceao',   label: '🏦  BCEAO' },
   ],
   superadmin: [
     { id: 'superadmin', label: '⚙️  Console' },
+    { id: 'veille',     label: '📡  Veille juridique' },
     { id: 'cima',       label: '⚖️  CIMA' },
     { id: 'ohada',      label: '📜  OHADA' },
     { id: 'bceao',      label: '🏦  BCEAO' },
@@ -2573,6 +2717,328 @@ function copierCitation(texte) {
     alert('Citation copiée : ' + texte);
   }).catch(() => alert('Citation : ' + texte));
 }
+
+// ════════════════════════════════════════════════
+// VEILLE JURIDIQUE
+// ════════════════════════════════════════════════
+
+const DEMO_VEILLE = [
+  {
+    id: 'v1', corpus: 'ohada',
+    type: 'Acte Uniforme', source: 'OHADA — Journal Officiel',
+    date: '15 janvier 2024',
+    titre: 'Révision de l\'Acte Uniforme sur le Droit des Sociétés Commerciales (AUSC)',
+    resume: 'La révision introduit de nouvelles dispositions relatives à la société par actions simplifiée (SAS) et modernise les règles de gouvernance des SA. Entrée en vigueur différée de 6 mois pour les sociétés déjà constituées.',
+    impact: 'high',
+    impact_label: 'Impact élevé',
+    tags: ['AUSC', 'SAS', 'SA', 'Gouvernance'],
+  },
+  {
+    id: 'v2', corpus: 'cima',
+    type: 'Circulaire', source: 'CIMA — Secrétariat Général',
+    date: '3 mars 2024',
+    titre: 'Circulaire n°0016/CIMA/SRBE/2024 relative aux délais de règlement des sinistres automobiles',
+    resume: 'La circulaire rappelle aux compagnies d\'assurance l\'obligation de respecter le délai de 30 jours pour la présentation de l\'offre d\'indemnisation en matière de sinistres automobiles corporels, sous peine de majoration automatique de 1,5% par semaine de retard.',
+    impact: 'high',
+    impact_label: 'Impact élevé',
+    tags: ['Sinistre auto', 'Délai 30 jours', 'Art. 231 CIMA'],
+  },
+  {
+    id: 'v3', corpus: 'bceao',
+    type: 'Instruction', source: 'BCEAO — Direction de la Réglementation',
+    date: '20 février 2024',
+    titre: 'Instruction n°007/RB/2024 relative au renforcement du dispositif LCB/FT pour les établissements de monnaie électronique',
+    resume: 'Les EME doivent désormais soumettre un rapport trimestriel de surveillance des transactions suspectes dépassant 500 000 FCFA. Les seuils de vérification d\'identité (KYC) sont abaissés de 1 000 000 à 500 000 FCFA pour les portefeuilles électroniques.',
+    impact: 'medium',
+    impact_label: 'Impact modéré',
+    tags: ['LCB/FT', 'KYC', 'Monnaie électronique', 'EME'],
+  },
+  {
+    id: 'v4', corpus: 'national',
+    type: 'Décret', source: 'Journal Officiel — Côte d\'Ivoire',
+    date: '8 janvier 2024',
+    titre: 'Décret n°2024-012 portant modalités d\'application de la loi sur les données personnelles',
+    resume: 'Le décret précise les obligations des responsables de traitement en matière de notification des violations de données à l\'ARTCI dans un délai de 72 heures. Les sanctions en cas de manquement sont portées à 5% du chiffre d\'affaires annuel.',
+    impact: 'medium',
+    impact_label: 'Impact modéré',
+    tags: ['Données personnelles', 'RGPD-CI', 'ARTCI', 'Notification'],
+  },
+  {
+    id: 'v5', corpus: 'ohada',
+    type: 'Avis CCJA', source: 'CCJA — Assemblée Plénière',
+    date: '12 novembre 2023',
+    titre: 'Avis n°003/2023 — Interprétation de l\'article 218 AUPC sur la continuation d\'entreprise',
+    resume: 'La CCJA précise que le plan de continuation peut être adopté à la majorité simple des créanciers présents lors de l\'assemblée concordataire, et non à la majorité absolue comme certaines juridictions nationales l\'avaient interprété.',
+    impact: 'low',
+    impact_label: 'Impact limité',
+    tags: ['AUPC', 'Continuation', 'Concordat', 'Art. 218'],
+  },
+  {
+    id: 'v6', corpus: 'bceao',
+    type: 'Rapport', source: 'BCEAO — Commission Bancaire',
+    date: '5 décembre 2023',
+    titre: 'Rapport annuel de la Commission Bancaire UEMOA 2023 — Principaux constats et recommandations',
+    resume: 'Le rapport signale une dégradation du ratio de créances douteuses dans 3 États membres (CI, SN, CM) au-dessus du seuil de 15%. Les banques concernées disposent de 18 mois pour régulariser leur situation prudentielle.',
+    impact: 'medium',
+    impact_label: 'Impact modéré',
+    tags: ['Commission Bancaire', 'Ratio prudentiel', 'Créances douteuses', 'UEMOA'],
+  },
+];
+
+let currentVeilleFilter = 'all';
+
+function renderVeille(filter) {
+  filter = filter || currentVeilleFilter;
+  const items = filter === 'all' ? DEMO_VEILLE : DEMO_VEILLE.filter(v => v.corpus === filter);
+  const feed = document.getElementById('veille-feed');
+
+  const typePills = { 'Acte Uniforme': 'pill-blue', 'Circulaire': 'pill-gold', 'Instruction': 'pill-orange', 'Décret': 'pill-gray', 'Avis CCJA': 'pill-green', 'Rapport': 'pill-gray' };
+  const corpusPills = { ohada: 'pill-blue', cima: 'pill-gold', bceao: 'pill-orange', national: 'pill-gray' };
+  const corpusLabels = { ohada: 'OHADA', cima: 'CIMA', bceao: 'BCEAO', national: 'Droit national' };
+
+  if (!items.length) {
+    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><div class="empty-text">Aucun texte pour ce filtre.</div></div>`;
+    return;
+  }
+
+  feed.innerHTML = items.map(v => `
+    <div class="veille-item" data-corpus="${v.corpus}">
+      <div class="veille-item-top">
+        <div class="veille-item-title">${escHtml(v.titre)}</div>
+        <div class="veille-item-date">${escHtml(v.date)}</div>
+      </div>
+      <div class="veille-item-meta">
+        <span class="pill ${typePills[v.type] || 'pill-gray'}">${escHtml(v.type)}</span>
+        <span class="pill ${corpusPills[v.corpus] || 'pill-gray'}">${corpusLabels[v.corpus] || v.corpus}</span>
+        <span class="veille-source">${escHtml(v.source)}</span>
+      </div>
+      <div class="veille-item-summary">${escHtml(v.resume)}</div>
+      <div class="veille-item-actions">
+        <button class="btn btn-ghost btn-sm" onclick="chargerTexteVeille('${escHtml(v.id)}')">Voir le texte →</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
+          ${v.tags.map(t => `<span style="font-size:10px;color:var(--sub);background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:2px 8px;border-radius:6px">${escHtml(t)}</span>`).join('')}
+        </div>
+        <span class="veille-impact impact-${v.impact}">${escHtml(v.impact_label)}</span>
+      </div>
+    </div>`).join('');
+}
+
+function filterVeille(corpus, btn) {
+  currentVeilleFilter = corpus;
+  document.querySelectorAll('.veille-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderVeille(corpus);
+}
+
+function chargerTexteVeille(id) {
+  const item = DEMO_VEILLE.find(v => v.id === id);
+  if (!item) return;
+  alert(`"${item.titre}"\n\nTexte intégral disponible avec un abonnement actif.\n\nSource : ${item.source}`);
+}
+
+// Init veille quand l'onglet est ouvert
+(function patchSwitchTabForVeille() {
+  const orig = switchTab;
+  window.switchTab = function(name) {
+    orig(name);
+    if (name === 'veille') renderVeille();
+  };
+})();
+
+// ════════════════════════════════════════════════
+// FICHE ARTICLE DE LOI
+// ════════════════════════════════════════════════
+
+const DEMO_ARTICLE = {
+  ref: 'Art. 4 AUDCG',
+  titre: 'Article 4 — Acte Uniforme sur le Droit Commercial Général (AUDCG)',
+  corpus: 'OHADA',
+  version_actuelle: 'Révisé le 15 décembre 2010',
+  texte: 'Tout acte de commerce est soumis à la loi du lieu de sa conclusion, à moins que les parties n\'aient désigné la loi applicable. Cependant, en ce qui concerne les actes conclus entre commerçants et portant sur des opérations commerciales relevant de la même activité, la loi applicable est celle du pays dans lequel l\'une des parties a son établissement principal, si cet établissement était connu de l\'autre partie au moment de la conclusion de l\'acte ou au plus tard au moment de l\'exécution de la prestation caractéristique.',
+  usage_stats: { decisions: 412, pays: 14, dernier_usage: '2024' },
+  modifications: [
+    { annee: '1997', texte: 'Rédaction originale — entrée en vigueur du premier AUDCG lors du Traité OHADA' },
+    { annee: '2010', texte: 'Révision substantielle — extension du champ d\'application aux commerçants personnes physiques, clarification de la notion d\'établissement principal' },
+    { annee: '2015', texte: 'Circulaire d\'interprétation CCJA n°002/2015 — précision sur la notion de "prestation caractéristique" dans les contrats de distribution' },
+  ],
+  interpretations_ccja: [
+    {
+      ref: 'CCJA n°045/2019',
+      date: '28 mars 2019',
+      texte: 'La cause de l\'engagement est déterminable par référence aux documents contractuels visés dans l\'acte — l\'absence de mention expresse n\'entraîne pas la nullité.',
+      impact: 'Principe consacré — 134 citations ultérieures',
+    },
+    {
+      ref: 'CCJA n°112/2021',
+      date: '14 juin 2021',
+      texte: 'L\'article 4 s\'applique aux lettres de garantie bancaire même lorsque le bénéficiaire est établi hors de la zone OHADA, dès lors que l\'obligation principale est régie par un acte uniforme.',
+      impact: 'Extension du champ d\'application — 78 décisions postérieures',
+    },
+    {
+      ref: 'CCJA n°089/2023',
+      date: '10 octobre 2023',
+      texte: 'Pour déterminer l\'établissement principal au sens de l\'article 4, le juge doit se référer au lieu où sont prises les décisions de direction effectives, et non au siège social statutaire.',
+      impact: 'Clarification récente — en cours de diffusion',
+    },
+  ],
+  interpretations_organes: [
+    {
+      organe: 'OHADA — Secrétariat Permanent',
+      date: '2015',
+      texte: 'La notion de "prestation caractéristique" s\'entend de la prestation qui individualise le contrat : la livraison dans la vente, le service dans le mandat, le prêt dans le crédit.',
+    },
+    {
+      organe: 'Doctrine — Pr. Paul Keba MBAYE',
+      date: '2018',
+      texte: 'L\'article 4 AUDCG constitue une règle de conflit de lois autonome par rapport aux dispositions nationales, s\'imposant à toutes les juridictions des États parties sans qu\'il soit nécessaire d\'invoquer une règle nationale de renvoi.',
+    },
+  ],
+  articles_connexes: ['Art. 2 AUDCG', 'Art. 13 AUS', 'Art. 21 AUPC', 'Art. 1131 C. Civ.', 'Art. 3 AUC'],
+  pays_divergences: [
+    { pays: 'Côte d\'Ivoire', flag: '🇨🇮', interp: 'Application stricte — la prestation caractéristique détermine systématiquement la loi applicable' },
+    { pays: 'Sénégal', flag: '🇸🇳', interp: 'Interprétation extensive — le siège social est présumé être l\'établissement principal sauf preuve contraire' },
+    { pays: 'Cameroun', flag: '🇨🇲', interp: 'Approche hybride — combinaison avec les règles nationales de droit international privé lorsque l\'une des parties est étrangère à la zone OHADA' },
+    { pays: 'Mali', flag: '🇲🇱', interp: 'Alignement CCJA — application conforme à la jurisprudence de la Cour Commune sans dérogation nationale' },
+  ],
+};
+
+function renderFicheArticle(d) {
+  const modifHtml = d.modifications.map(m => `
+    <div class="modif-item">
+      <span class="modif-annee">${escHtml(m.annee)}</span>
+      <span>${escHtml(m.texte)}</span>
+    </div>`).join('');
+
+  const interpCcjaHtml = d.interpretations_ccja.map(i => `
+    <div class="interp-item">
+      <div class="interp-source">
+        ${escHtml(i.ref)} <span class="interp-date">${escHtml(i.date)}</span>
+      </div>
+      <div>${escHtml(i.texte)}</div>
+      <div style="margin-top:6px;font-size:11px;color:var(--gold)">${escHtml(i.impact)}</div>
+    </div>`).join('');
+
+  const interpOrganesHtml = d.interpretations_organes.map(i => `
+    <div class="interp-item">
+      <div class="interp-source">${escHtml(i.organe)} <span class="interp-date">${escHtml(i.date)}</span></div>
+      <div>${escHtml(i.texte)}</div>
+    </div>`).join('');
+
+  const connectedHtml = d.articles_connexes.map(a =>
+    `<span class="connected-pill" onclick="chargerArticle('${escHtml(a)}')">${escHtml(a)}</span>`
+  ).join('');
+
+  const paysHtml = d.pays_divergences.map(p => `
+    <div class="pays-item">
+      <span class="pays-flag">${p.flag}</span>
+      <div>
+        <div class="pays-nom">${escHtml(p.pays)}</div>
+        <div class="pays-interp">${escHtml(p.interp)}</div>
+      </div>
+    </div>`).join('');
+
+  const sections = [
+    { titre: 'Historique des modifications', contenu: `<div class="modif-timeline">${modifHtml}</div>` },
+    { titre: 'Interprétations — Jurisprudence CCJA', contenu: `<div>${interpCcjaHtml}</div>` },
+    { titre: 'Interprétations — Organes & Doctrine', contenu: `<div>${interpOrganesHtml}</div>` },
+    { titre: 'Articles connexes', contenu: `<div class="connected-pills">${connectedHtml}</div><div style="margin-top:12px;font-size:12px;color:var(--sub)">Cliquez sur un article pour voir sa fiche.</div>` },
+    { titre: 'Divergences d\'interprétation entre pays OHADA', contenu: `<div class="pays-grid">${paysHtml}</div>` },
+  ];
+
+  const sectionsHtml = sections.map((s, i) => `
+    <div class="fiche-section${i === 0 ? ' open' : ''}">
+      <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+        <span class="fiche-section-title">${s.titre}</span>
+        <span class="fiche-chevron">▼</span>
+      </div>
+      <div class="fiche-section-body">${s.contenu}</div>
+    </div>`).join('');
+
+  return `
+    <div class="fiche-article fiche-arret">
+
+      <!-- En-tête -->
+      <div class="fiche-top">
+        <div>
+          <div class="fiche-badge-row">
+            <span class="article-badge">Article de loi</span>
+            <span class="fiche-badge">${escHtml(d.corpus)}</span>
+            <span class="fiche-type-badge">${escHtml(d.ref)}</span>
+          </div>
+          <div class="fiche-titre">${escHtml(d.titre)}</div>
+          <div class="fiche-sous-titre">${escHtml(d.version_actuelle)}</div>
+        </div>
+        <div class="fiche-solidite">
+          <span class="solidite-stars" style="color:#6090E0">●●●●●</span>
+          <span class="solidite-label">En vigueur</span>
+        </div>
+      </div>
+
+      <!-- Texte de l'article -->
+      <div class="article-texte">
+        <div class="article-texte-label">Texte intégral</div>
+        <div class="article-texte-body">${escHtml(d.texte)}</div>
+      </div>
+
+      <!-- Stats d'usage -->
+      <div class="article-stats-row">
+        <div class="article-stat-col">
+          <div class="article-stat-val" style="color:var(--gold)">${d.usage_stats.decisions}</div>
+          <div class="article-stat-lbl">décisions rendues</div>
+        </div>
+        <div class="article-stat-col">
+          <div class="article-stat-val" style="color:#6090E0">${d.usage_stats.pays}</div>
+          <div class="article-stat-lbl">pays OHADA appliquent</div>
+        </div>
+        <div class="article-stat-col">
+          <div class="article-stat-val" style="color:#50D090">${d.usage_stats.dernier_usage}</div>
+          <div class="article-stat-lbl">dernier usage recensé</div>
+        </div>
+      </div>
+
+      <!-- Sections accordéon -->
+      <div class="fiche-sections">${sectionsHtml}</div>
+
+      <!-- Actions -->
+      <div class="fiche-actions">
+        <button class="fiche-action gold" onclick="alert('Téléchargement PDF disponible en version connectée.')">⬇ Exporter l\'article</button>
+        <button class="fiche-action" onclick="copierCitation('${escHtml(d.ref)} — ${escHtml(d.corpus)}, ${escHtml(d.version_actuelle)}')">📋 Copier la référence</button>
+        <button class="fiche-action" onclick="switchTab('veille')">📡 Voir les actu liées</button>
+        <button class="fiche-action" style="margin-left:auto" onclick="document.getElementById('legal-result').classList.add('hidden')">✕ Fermer</button>
+      </div>
+    </div>`;
+}
+
+function chargerArticle(ref) {
+  const result = document.getElementById('legal-result');
+  document.getElementById('legal_question').value = ref;
+  result.classList.remove('hidden');
+  result.innerHTML = `
+    <div style="font-size:11px;color:var(--sub);background:rgba(48,96,176,0.06);border:1px solid rgba(48,96,176,0.15);border-radius:8px;padding:10px 14px;margin-bottom:1rem">
+      ★ Fiche article — données d'illustration (${escHtml(ref)})
+    </div>
+    ${renderFicheArticle(DEMO_ARTICLE)}`;
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Détection automatique dans analyserQuestion : "art." ou "article" → fiche article
+const _origAnalyserQuestion = analyserQuestion;
+analyserQuestion = function() {
+  const texte = document.getElementById('legal_question').value.trim().toLowerCase();
+  if (/^art\.?\s+\d|^article\s+\d/.test(texte)) {
+    // Affiche directement la fiche article (démo)
+    const result = document.getElementById('legal-result');
+    result.classList.remove('hidden');
+    result.innerHTML = `
+      <div style="font-size:11px;color:var(--sub);background:rgba(48,96,176,0.06);border:1px solid rgba(48,96,176,0.15);border-radius:8px;padding:10px 14px;margin-bottom:1rem">
+        ★ Aperçu du format de réponse — fiche article d'illustration (Art. 4 AUDCG)
+      </div>
+      ${renderFicheArticle(DEMO_ARTICLE)}`;
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  _origAnalyserQuestion();
+};
 </script>
 </body>
 </html>
