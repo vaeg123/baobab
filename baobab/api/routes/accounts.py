@@ -2,6 +2,7 @@ import json
 import os
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from uuid import uuid4
 
 import asyncpg
@@ -148,8 +149,19 @@ def _require_superadmin(x_superadmin_token: str | None) -> None:
         )
 
 
+def _normalize_database_url(database_url: str) -> str:
+    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://", 1)
+    parts = urlsplit(database_url)
+    query = [
+        (key, value)
+        for key, value in parse_qsl(parts.query, keep_blank_values=True)
+        if key not in {"channel_binding"}
+    ]
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
 def _database_url() -> str:
-    return settings.database_url.replace("postgresql+asyncpg://", "postgresql://")
+    return _normalize_database_url(settings.database_url)
 
 
 def _use_database() -> bool:
@@ -160,7 +172,13 @@ def _use_database() -> bool:
 
 
 async def _connect_db():
-    return await asyncpg.connect(_database_url(), statement_cache_size=0)
+    try:
+        return await asyncpg.connect(_database_url(), statement_cache_size=0)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Database connection failed: {exc.__class__.__name__}",
+        ) from exc
 
 
 async def _ensure_db() -> None:
@@ -169,35 +187,52 @@ async def _ensure_db() -> None:
         return
     conn = await _connect_db()
     try:
-        await conn.execute(
+        statements = [
             """
             CREATE TABLE IF NOT EXISTS account_workspaces (
                 workspace_id TEXT PRIMARY KEY,
                 data JSONB NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT NOW(),
                 updated_at TIMESTAMPTZ DEFAULT NOW()
-            );
+            )
+            """,
+            """
             CREATE TABLE IF NOT EXISTS account_internal_requests (
                 request_id TEXT PRIMARY KEY,
                 workspace_id TEXT NOT NULL,
                 data JSONB NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT NOW(),
                 updated_at TIMESTAMPTZ DEFAULT NOW()
-            );
+            )
+            """,
+            """
             CREATE TABLE IF NOT EXISTS account_payments (
                 payment_id TEXT PRIMARY KEY,
                 workspace_id TEXT NOT NULL,
                 data JSONB NOT NULL,
                 created_at TIMESTAMPTZ DEFAULT NOW(),
                 updated_at TIMESTAMPTZ DEFAULT NOW()
-            );
-            CREATE INDEX IF NOT EXISTS idx_account_requests_workspace
-                ON account_internal_requests (workspace_id);
-            CREATE INDEX IF NOT EXISTS idx_account_payments_workspace
-                ON account_payments (workspace_id);
+            )
+            """,
             """
-        )
+            CREATE INDEX IF NOT EXISTS idx_account_requests_workspace
+                ON account_internal_requests (workspace_id)
+            """,
+            """
+            CREATE INDEX IF NOT EXISTS idx_account_payments_workspace
+                ON account_payments (workspace_id)
+            """,
+        ]
+        for statement in statements:
+            await conn.execute(statement)
         DB_INITIALIZED = True
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Database initialization failed: {exc.__class__.__name__}",
+        ) from exc
     finally:
         await conn.close()
 

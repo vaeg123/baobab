@@ -1616,13 +1616,14 @@
       const overviewResponse = await fetch('/api/v1/accounts/superadmin/overview', {
         headers: { 'X-Superadmin-Token': token }
       });
-      const overview = await overviewResponse.json();
-      if (!overviewResponse.ok) throw new Error(overview.detail || `HTTP ${overviewResponse.status}`);
+      const overview = await parseApiResponse(overviewResponse);
+      if (!overviewResponse.ok) throw new Error(formatApiError(overview.detail || overview));
 
       const workspacesResponse = await fetch('/api/v1/accounts/superadmin/workspaces', {
         headers: { 'X-Superadmin-Token': token }
       });
-      const workspaces = await workspacesResponse.json();
+      const workspaces = await parseApiResponse(workspacesResponse);
+      if (!workspacesResponse.ok) throw new Error(formatApiError(workspaces.detail || workspaces));
       const workspaceItems = (workspaces.workspaces || []).slice(-5).reverse().map(workspace => `
         <div class="event-id-box">
           ${workspace.workspace_id} - ${workspace.organization_name}<br>
@@ -1683,7 +1684,7 @@
         headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
         body: JSON.stringify(payload)
       });
-      const workspace = await res.json();
+      const workspace = await parseApiResponse(res);
       if (!res.ok) throw new Error(formatApiError(workspace.detail || workspace || `HTTP ${res.status}`));
       document.getElementById('superadmin-results').innerHTML = `
         <div class="event-id-box">
@@ -1719,6 +1720,16 @@
     }
     if (detail && typeof detail === 'object') return JSON.stringify(detail);
     return String(detail);
+  }
+
+  async function parseApiResponse(response) {
+    const text = await response.text();
+    if (!text) return {};
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      return { detail: text };
+    }
   }
 
   async function loginWithAccessCode() {

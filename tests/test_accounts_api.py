@@ -1,9 +1,19 @@
 from fastapi.testclient import TestClient
 
 from baobab.api.main import app
+from baobab.api.routes.accounts import _normalize_database_url
 
 
 client = TestClient(app)
+
+
+def test_neon_database_url_normalization_removes_unsupported_channel_binding():
+    url = "postgresql://user:pass@example.neon.tech/db?sslmode=require&channel_binding=require"
+
+    normalized = _normalize_database_url(url)
+
+    assert "sslmode=require" in normalized
+    assert "channel_binding" not in normalized
 
 
 def test_free_workspace_can_submit_one_internal_request_then_must_upgrade():
