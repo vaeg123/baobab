@@ -1,10 +1,14 @@
+import json
 import os
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from uuid import uuid4
 
+import asyncpg
 from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
+
+from baobab.config import settings
 
 router = APIRouter(tags=["accounts"])
 
@@ -56,6 +60,17 @@ WORKSPACES: dict[str, dict] = {}
 INTERNAL_REQUESTS: dict[str, dict] = {}
 PAYMENTS: dict[str, dict] = {}
 SUPERADMIN_TOKEN = os.getenv("BAOBAB_SUPERADMIN_TOKEN", "baobab-superadmin-dev")
+DB_INITIALIZED = False
+
+
+def _json_dump(value: dict) -> str:
+    return json.dumps(value, default=str)
+
+
+def _json_load(value) -> dict:
+    if isinstance(value, str):
+        return json.loads(value)
+    return dict(value)
 
 
 class WorkspaceCreate(BaseModel):
@@ -129,8 +144,215 @@ def _require_superadmin(x_superadmin_token: str | None) -> None:
         )
 
 
-def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> dict:
-    workspace = _get_workspace(workspace_id)
+def _database_url() -> str:
+    return settings.database_url.replace("postgresql+asyncpg://", "postgresql://")
+
+
+def _use_database() -> bool:
+    override = os.getenv("BAOBAB_STORAGE_BACKEND")
+    if override:
+        return override.lower() == "postgres"
+    return "localhost" not in settings.database_url
+
+
+async def _connect_db():
+    return await asyncpg.connect(_database_url(), statement_cache_size=0)
+
+
+async def _ensure_db() -> None:
+    global DB_INITIALIZED
+    if DB_INITIALIZED or not _use_database():
+        return
+    conn = await _connect_db()
+    try:
+        await conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS account_workspaces (
+                workspace_id TEXT PRIMARY KEY,
+                data JSONB NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            CREATE TABLE IF NOT EXISTS account_internal_requests (
+                request_id TEXT PRIMARY KEY,
+                workspace_id TEXT NOT NULL,
+                data JSONB NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            CREATE TABLE IF NOT EXISTS account_payments (
+                payment_id TEXT PRIMARY KEY,
+                workspace_id TEXT NOT NULL,
+                data JSONB NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            CREATE INDEX IF NOT EXISTS idx_account_requests_workspace
+                ON account_internal_requests (workspace_id);
+            CREATE INDEX IF NOT EXISTS idx_account_payments_workspace
+                ON account_payments (workspace_id);
+            """
+        )
+        DB_INITIALIZED = True
+    finally:
+        await conn.close()
+
+
+async def _save_workspace(workspace: dict) -> None:
+    if not _use_database():
+        WORKSPACES[workspace["workspace_id"]] = workspace
+        return
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        await conn.execute(
+            """
+            INSERT INTO account_workspaces (workspace_id, data)
+            VALUES ($1, $2::jsonb)
+            ON CONFLICT (workspace_id)
+            DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()
+            """,
+            workspace["workspace_id"],
+            _json_dump(workspace),
+        )
+    finally:
+        await conn.close()
+
+
+async def _save_internal_request(item: dict) -> None:
+    if not _use_database():
+        INTERNAL_REQUESTS[item["request_id"]] = item
+        return
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        await conn.execute(
+            """
+            INSERT INTO account_internal_requests (request_id, workspace_id, data)
+            VALUES ($1, $2, $3::jsonb)
+            ON CONFLICT (request_id)
+            DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()
+            """,
+            item["request_id"],
+            item["workspace_id"],
+            _json_dump(item),
+        )
+    finally:
+        await conn.close()
+
+
+async def _save_payment(payment: dict) -> None:
+    if not _use_database():
+        PAYMENTS[payment["payment_id"]] = payment
+        return
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        await conn.execute(
+            """
+            INSERT INTO account_payments (payment_id, workspace_id, data)
+            VALUES ($1, $2, $3::jsonb)
+            ON CONFLICT (payment_id)
+            DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()
+            """,
+            payment["payment_id"],
+            payment["workspace_id"],
+            _json_dump(payment),
+        )
+    finally:
+        await conn.close()
+
+
+async def _load_workspace(workspace_id: str) -> dict | None:
+    if not _use_database():
+        return WORKSPACES.get(workspace_id)
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        row = await conn.fetchrow(
+            "SELECT data FROM account_workspaces WHERE workspace_id = $1",
+            workspace_id,
+        )
+        return _json_load(row["data"]) if row else None
+    finally:
+        await conn.close()
+
+
+async def _list_workspaces() -> list[dict]:
+    if not _use_database():
+        return list(WORKSPACES.values())
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        rows = await conn.fetch("SELECT data FROM account_workspaces ORDER BY created_at")
+        return [_json_load(row["data"]) for row in rows]
+    finally:
+        await conn.close()
+
+
+async def _load_internal_request(request_id: str) -> dict | None:
+    if not _use_database():
+        return INTERNAL_REQUESTS.get(request_id)
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        row = await conn.fetchrow(
+            "SELECT data FROM account_internal_requests WHERE request_id = $1",
+            request_id,
+        )
+        return _json_load(row["data"]) if row else None
+    finally:
+        await conn.close()
+
+
+async def _list_internal_requests(workspace_id: str | None = None) -> list[dict]:
+    if not _use_database():
+        return [
+            request
+            for request in INTERNAL_REQUESTS.values()
+            if workspace_id is None or request["workspace_id"] == workspace_id
+        ]
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        if workspace_id:
+            rows = await conn.fetch(
+                "SELECT data FROM account_internal_requests WHERE workspace_id = $1 ORDER BY created_at",
+                workspace_id,
+            )
+        else:
+            rows = await conn.fetch("SELECT data FROM account_internal_requests ORDER BY created_at")
+        return [_json_load(row["data"]) for row in rows]
+    finally:
+        await conn.close()
+
+
+async def _load_payment(payment_id: str) -> dict | None:
+    if not _use_database():
+        return PAYMENTS.get(payment_id)
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        row = await conn.fetchrow("SELECT data FROM account_payments WHERE payment_id = $1", payment_id)
+        return _json_load(row["data"]) if row else None
+    finally:
+        await conn.close()
+
+
+async def _list_payments() -> list[dict]:
+    if not _use_database():
+        return list(PAYMENTS.values())
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        rows = await conn.fetch("SELECT data FROM account_payments ORDER BY created_at")
+        return [_json_load(row["data"]) for row in rows]
+    finally:
+        await conn.close()
+
+
+async def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> dict:
+    workspace = await _get_workspace(workspace_id)
     if x_admin_token != workspace["admin_token"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -139,12 +361,8 @@ def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> di
     return workspace
 
 
-def _public_workspace(workspace: dict) -> dict:
-    requests = [
-        request
-        for request in INTERNAL_REQUESTS.values()
-        if request["workspace_id"] == workspace["workspace_id"]
-    ]
+async def _public_workspace(workspace: dict) -> dict:
+    requests = await _list_internal_requests(workspace["workspace_id"])
     return {
         **workspace,
         "admin_token": None,
@@ -153,9 +371,9 @@ def _public_workspace(workspace: dict) -> dict:
     }
 
 
-def _admin_workspace(workspace: dict) -> dict:
+async def _admin_workspace(workspace: dict) -> dict:
     return {
-        **_public_workspace(workspace),
+        **await _public_workspace(workspace),
         "admin_token": workspace["admin_token"],
     }
 
@@ -191,12 +409,11 @@ def _create_workspace_record(
         "provisioned_by": provisioned_by,
         "created_at": now.isoformat(),
     }
-    WORKSPACES[workspace["workspace_id"]] = workspace
     return workspace
 
 
-def _get_workspace(workspace_id: str) -> dict:
-    workspace = WORKSPACES.get(workspace_id)
+async def _get_workspace(workspace_id: str) -> dict:
+    workspace = await _load_workspace(workspace_id)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -224,12 +441,13 @@ async def create_workspace(request: WorkspaceCreate):
         organization_name=request.organization_name,
         territory=request.territory,
     )
-    return _admin_workspace(workspace)
+    await _save_workspace(workspace)
+    return await _admin_workspace(workspace)
 
 
 @router.get("/workspaces/{workspace_id}")
 async def get_workspace(workspace_id: str):
-    return _public_workspace(_get_workspace(workspace_id))
+    return await _public_workspace(await _get_workspace(workspace_id))
 
 
 @router.post(
@@ -237,12 +455,8 @@ async def get_workspace(workspace_id: str):
     status_code=status.HTTP_201_CREATED,
 )
 async def create_internal_request(workspace_id: str, request: InternalRequestCreate):
-    workspace = _get_workspace(workspace_id)
-    workspace_requests = [
-        item
-        for item in INTERNAL_REQUESTS.values()
-        if item["workspace_id"] == workspace_id
-    ]
+    workspace = await _get_workspace(workspace_id)
+    workspace_requests = await _list_internal_requests(workspace_id)
     quota = PLAN_CATALOG[workspace["plan"]]["internal_request_quota"]
     if quota is not None and len(workspace_requests) >= quota:
         raise HTTPException(
@@ -259,27 +473,21 @@ async def create_internal_request(workspace_id: str, request: InternalRequestCre
         "status": "submitted",
         "created_at": datetime.now(UTC).isoformat(),
     }
-    INTERNAL_REQUESTS[request_id] = item
+    await _save_internal_request(item)
     return item
 
 
 @router.get("/workspaces/{workspace_id}/internal-requests")
 async def list_internal_requests(workspace_id: str):
-    _get_workspace(workspace_id)
-    return {
-        "requests": [
-            request
-            for request in INTERNAL_REQUESTS.values()
-            if request["workspace_id"] == workspace_id
-        ]
-    }
+    await _get_workspace(workspace_id)
+    return {"requests": await _list_internal_requests(workspace_id)}
 
 
 @router.post("/admin/login")
 async def admin_login(request: AdminLogin):
-    for workspace in WORKSPACES.values():
+    for workspace in await _list_workspaces():
         if workspace["admin_token"] == request.admin_token:
-            return _admin_workspace(workspace)
+            return await _admin_workspace(workspace)
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
         detail="Invalid admin token",
@@ -295,12 +503,12 @@ async def access_login(request: AccessLogin):
             "message": "Superadmin access granted",
         }
 
-    for workspace in WORKSPACES.values():
+    for workspace in await _list_workspaces():
         if workspace["admin_token"] == request.access_code:
             return {
                 "role": "admin",
                 "token": request.access_code,
-                "workspace": _admin_workspace(workspace),
+                "workspace": await _admin_workspace(workspace),
                 "message": "Workspace admin access granted",
             }
 
@@ -315,8 +523,8 @@ async def get_admin_workspace(
     workspace_id: str,
     x_admin_token: str | None = Header(default=None),
 ):
-    workspace = _require_workspace_admin(workspace_id, x_admin_token)
-    return _admin_workspace(workspace)
+    workspace = await _require_workspace_admin(workspace_id, x_admin_token)
+    return await _admin_workspace(workspace)
 
 
 @router.get("/admin/workspaces/{workspace_id}/internal-requests")
@@ -324,14 +532,8 @@ async def list_admin_internal_requests(
     workspace_id: str,
     x_admin_token: str | None = Header(default=None),
 ):
-    _require_workspace_admin(workspace_id, x_admin_token)
-    return {
-        "requests": [
-            request
-            for request in INTERNAL_REQUESTS.values()
-            if request["workspace_id"] == workspace_id
-        ]
-    }
+    await _require_workspace_admin(workspace_id, x_admin_token)
+    return {"requests": await _list_internal_requests(workspace_id)}
 
 
 @router.patch("/admin/internal-requests/{request_id}")
@@ -340,16 +542,17 @@ async def update_admin_internal_request(
     request: InternalRequestUpdate,
     x_admin_token: str | None = Header(default=None),
 ):
-    item = INTERNAL_REQUESTS.get(request_id)
+    item = await _load_internal_request(request_id)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Internal request not found",
         )
-    _require_workspace_admin(item["workspace_id"], x_admin_token)
+    await _require_workspace_admin(item["workspace_id"], x_admin_token)
     item["status"] = request.status
     item["admin_note"] = request.admin_note
     item["updated_at"] = datetime.now(UTC).isoformat()
+    await _save_internal_request(item)
     return item
 
 
@@ -358,28 +561,31 @@ async def get_superadmin_overview(
     x_superadmin_token: str | None = Header(default=None),
 ):
     _require_superadmin(x_superadmin_token)
+    workspaces = await _list_workspaces()
+    requests = await _list_internal_requests()
+    payments = await _list_payments()
     active_subscriptions = [
         workspace
-        for workspace in WORKSPACES.values()
+        for workspace in workspaces
         if workspace["subscription_status"] == "active"
     ]
     pending_requests = [
         request
-        for request in INTERNAL_REQUESTS.values()
+        for request in requests
         if request["status"] in {"submitted", "in_review"}
     ]
     confirmed_payments = [
         payment
-        for payment in PAYMENTS.values()
+        for payment in payments
         if payment["status"] == "confirmed"
     ]
     return {
-        "workspaces_count": len(WORKSPACES),
+        "workspaces_count": len(workspaces),
         "active_subscriptions_count": len(active_subscriptions),
         "pending_internal_requests_count": len(pending_requests),
         "confirmed_revenue_xof": sum(payment["amount_xof"] for payment in confirmed_payments),
         "plans": {
-            plan.value: sum(1 for workspace in WORKSPACES.values() if workspace["plan"] == plan)
+            plan.value: sum(1 for workspace in workspaces if workspace["plan"] == plan)
             for plan in SubscriptionPlan
         },
     }
@@ -390,7 +596,7 @@ async def list_superadmin_workspaces(
     x_superadmin_token: str | None = Header(default=None),
 ):
     _require_superadmin(x_superadmin_token)
-    return {"workspaces": [_admin_workspace(workspace) for workspace in WORKSPACES.values()]}
+    return {"workspaces": [await _admin_workspace(workspace) for workspace in await _list_workspaces()]}
 
 
 @router.post("/superadmin/workspaces", status_code=status.HTTP_201_CREATED)
@@ -411,7 +617,8 @@ async def create_superadmin_workspace(
         branding=request.branding,
         provisioned_by="superadmin",
     )
-    return _admin_workspace(workspace)
+    await _save_workspace(workspace)
+    return await _admin_workspace(workspace)
 
 
 @router.patch("/superadmin/workspaces/{workspace_id}")
@@ -421,7 +628,7 @@ async def update_superadmin_workspace(
     x_superadmin_token: str | None = Header(default=None),
 ):
     _require_superadmin(x_superadmin_token)
-    workspace = _get_workspace(workspace_id)
+    workspace = await _get_workspace(workspace_id)
     updates = request.model_dump(exclude_unset=True)
 
     for field in ["owner_name", "organization_name", "admin_name"]:
@@ -445,7 +652,8 @@ async def update_superadmin_workspace(
         workspace["billing_override"] = False
 
     workspace["updated_at"] = datetime.now(UTC).isoformat()
-    return _admin_workspace(workspace)
+    await _save_workspace(workspace)
+    return await _admin_workspace(workspace)
 
 
 @router.post("/superadmin/workspaces/{workspace_id}/admin-token")
@@ -454,10 +662,11 @@ async def regenerate_superadmin_workspace_admin_token(
     x_superadmin_token: str | None = Header(default=None),
 ):
     _require_superadmin(x_superadmin_token)
-    workspace = _get_workspace(workspace_id)
+    workspace = await _get_workspace(workspace_id)
     workspace["admin_token"] = f"adm_{uuid4().hex}"
     workspace["updated_at"] = datetime.now(UTC).isoformat()
-    return _admin_workspace(workspace)
+    await _save_workspace(workspace)
+    return await _admin_workspace(workspace)
 
 
 @router.get("/superadmin/internal-requests")
@@ -465,7 +674,7 @@ async def list_superadmin_internal_requests(
     x_superadmin_token: str | None = Header(default=None),
 ):
     _require_superadmin(x_superadmin_token)
-    return {"requests": list(INTERNAL_REQUESTS.values())}
+    return {"requests": await _list_internal_requests()}
 
 
 @router.get("/superadmin/payments")
@@ -473,12 +682,12 @@ async def list_superadmin_payments(
     x_superadmin_token: str | None = Header(default=None),
 ):
     _require_superadmin(x_superadmin_token)
-    return {"payments": list(PAYMENTS.values())}
+    return {"payments": await _list_payments()}
 
 
 @router.post("/workspaces/{workspace_id}/checkout", status_code=status.HTTP_201_CREATED)
 async def create_checkout(workspace_id: str, request: SubscriptionCheckoutCreate):
-    workspace = _get_workspace(workspace_id)
+    workspace = await _get_workspace(workspace_id)
     if request.plan == SubscriptionPlan.FREE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -499,7 +708,7 @@ async def create_checkout(workspace_id: str, request: SubscriptionCheckoutCreate
         "created_at": datetime.now(UTC).isoformat(),
         "provider_reference": f"BAOBAB-{uuid4().hex[:10].upper()}",
     }
-    PAYMENTS[payment_id] = payment
+    await _save_payment(payment)
     return {
         **payment,
         "message": "Payment initialized. Provider confirmation must activate the subscription.",
@@ -508,13 +717,13 @@ async def create_checkout(workspace_id: str, request: SubscriptionCheckoutCreate
 
 @router.post("/payments/{payment_id}/confirm")
 async def confirm_payment(payment_id: str):
-    payment = PAYMENTS.get(payment_id)
+    payment = await _load_payment(payment_id)
     if not payment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Payment not found",
         )
-    workspace = _get_workspace(payment["workspace_id"])
+    workspace = await _get_workspace(payment["workspace_id"])
     payment["status"] = "confirmed"
     payment["confirmed_at"] = datetime.now(UTC).isoformat()
     workspace["plan"] = payment["plan"]
@@ -522,7 +731,9 @@ async def confirm_payment(payment_id: str):
     workspace["subscription_expires_at"] = (
         datetime.now(UTC) + timedelta(days=30)
     ).isoformat()
+    await _save_payment(payment)
+    await _save_workspace(workspace)
     return {
         "payment": payment,
-        "workspace": _public_workspace(workspace),
+        "workspace": await _public_workspace(workspace),
     }
