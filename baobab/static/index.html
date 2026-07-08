@@ -2742,12 +2742,24 @@ function analyserQuestion() {
   fetch('/api/v1/legal/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: texte, domain: domaine })
+    body: JSON.stringify({ question: texte, corpus: domaine === 'cima' ? 'cima' : domaine === 'ohada' ? 'ohada' : domaine === 'ci' ? 'ci' : 'all' })
   })
   .then(async r => {
     if (!r.ok) throw new Error('demo');
     const data = await r.json();
-    result.innerHTML = renderFicheArret(data);
+    const docs = (data.context_docs || []).map(d => `
+      <div style="border-left:2px solid var(--gold-dim);padding:6px 12px;margin-bottom:8px">
+        <div style="font-size:11px;color:var(--sub)">[${d.type}] ${d.corpus.toUpperCase()} · ${d.date_decision||''} · ${d.pays||''}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--fg)">${escHtml(d.ref||d.titre)}</div>
+        ${d.resume ? `<div style="font-size:11px;color:var(--sub-2);margin-top:4px">${escHtml(d.resume)}</div>` : ''}
+        ${d.source_url ? `<a href="${d.source_url}" target="_blank" style="font-size:10px;color:var(--gold)">→ Source</a>` : ''}
+      </div>`).join('');
+    result.innerHTML = `
+      <div class="card-block" style="margin-bottom:1rem">
+        <div class="card-block-title">Analyse juridique BAOBAB</div>
+        <div style="white-space:pre-wrap;font-size:13px;line-height:1.7;color:var(--fg)">${escHtml(data.analysis)}</div>
+      </div>
+      ${docs ? `<div class="card-block"><div class="card-block-title">Sources consultées (${(data.context_docs||[]).length})</div>${docs}</div>` : ''}`;
   })
   .catch(() => {
     // Démo — montre la fiche avec les données d'exemple

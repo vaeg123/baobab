@@ -17,6 +17,9 @@ dependencies = [
     "pgvector>=0.3.0",
     "python-dateutil>=2.9.0",
     "ulid-py>=1.1.0",
+    "beautifulsoup4>=4.12.0",
+    "pdfplumber>=0.11.0",
+    "anthropic>=0.30.0",
 ]
 
 [project.optional-dependencies]
