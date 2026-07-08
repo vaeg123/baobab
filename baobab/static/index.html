@@ -590,17 +590,37 @@
     /* ── RESPONSIVE ────────────────────────── */
     @media (max-width: 768px) {
 
-      /* Login: hide left panel, right = full screen */
-      .login-left  { display: none; }
+      /* Login: empiler les deux panneaux verticalement */
+      #login-screen { flex-direction: column; min-height: 100vh; }
+
+      .login-left {
+        flex: 0 0 auto;
+        padding: 1.75rem 1.5rem 1.25rem;
+        min-height: 220px;
+      }
+      .login-big {
+        font-size: clamp(44px, 13vw, 68px);
+        letter-spacing: -2px;
+        margin-bottom: 0.75rem;
+      }
+      .login-tagline { font-size: 13px; max-width: 100%; }
+      .login-footer  { display: none; }
+      .tree-wrap {
+        width: 160px;
+        right: -10px;
+        bottom: -5px;
+      }
+
       .login-right {
         flex: 1;
         border-left: none;
+        border-top: 1px solid var(--border);
         padding: 2rem 1.5rem;
         align-items: flex-start;
-        padding-top: 3rem;
       }
       .login-form-wrap { max-width: 100%; }
-      .login-form-title { font-size: 28px; }
+      .login-form-title { font-size: 22px; }
+      .login-form-sub   { margin-bottom: 1.5rem; }
 
       /* App shell */
       #app-shell.active { display: block; }
@@ -616,7 +636,7 @@
 
       .main-content {
         margin-left: 0;
-        padding-top: 54px; /* topbar height */
+        padding-top: 54px;
       }
 
       .container { padding: 1.5rem 1rem; }
@@ -630,7 +650,7 @@
 
       .plan-grid { grid-template-columns: 1fr; }
 
-      .service-grid { grid-template-columns: 1fr; }
+      .service-grid { grid-template-columns: repeat(2, 1fr); }
 
       .info-grid { grid-template-columns: 1fr; }
 
@@ -638,15 +658,16 @@
 
       .ws-badges { flex-wrap: wrap; }
 
-      /* Stats inline cascade results: 3 cols → 1 col */
-      .stats-row[style*="repeat(3"] { grid-template-columns: 1fr !important; }
+      .stats-row[style*="repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
     }
 
     @media (max-width: 420px) {
-      .login-right { padding: 1.5rem 1rem; padding-top: 2.5rem; }
-      .login-form-title { font-size: 24px; }
+      .login-left { min-height: 180px; padding: 1.25rem 1.25rem 1rem; }
+      .login-big  { font-size: 40px; }
+      .login-right { padding: 1.5rem 1.25rem; }
+      .service-grid { grid-template-columns: 1fr; }
       .stat-value { font-size: 24px; }
-      .container { padding: 1.25rem 0.9rem; }
+      .container  { padding: 1rem 0.9rem; }
     }
   </style>
 </head>
