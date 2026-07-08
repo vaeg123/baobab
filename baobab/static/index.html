@@ -3,25 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BAOBAB — Dashboard Juridique</title>
+  <title>BAOBAB — Legal Operating System</title>
   <style>
     :root {
       --anthracite: #1A1A2E;
       --anthracite-light: #252545;
       --or: #C9A84C;
       --or-light: #e0c06a;
+      --or-bg: #fdf8ee;
       --vert: #1A6B4A;
       --vert-light: #22895f;
+      --vert-bg: #e8f5ee;
       --bleu: #2C3E6B;
       --bleu-light: #3a5198;
+      --bleu-bg: #eef2fb;
       --rouge: #c0392b;
+      --rouge-bg: #fdecea;
       --orange: #e67e22;
+      --orange-bg: #fef3e2;
       --jaune: #f1c40f;
-      --gris: #8892a4;
+      --gris: #7a8499;
       --gris-clair: #f4f5f8;
       --blanc: #ffffff;
-      --card-bg: #ffffff;
       --border: #e2e6ea;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,571 +42,867 @@
     header {
       background: var(--anthracite);
       padding: 0 2rem;
-      height: 60px;
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      z-index: 200;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.3);
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .logo-mark {
-      width: 32px;
-      height: 32px;
+      width: 34px; height: 34px;
       background: var(--or);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 14px;
-      color: var(--anthracite);
-      letter-spacing: -1px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 15px;
+      color: var(--anthracite); letter-spacing: -1px;
     }
+    .logo-text { font-size: 17px; font-weight: 800; color: var(--blanc); letter-spacing: 3px; }
+    .logo-sub  { font-size: 10px; color: #8892a4; letter-spacing: 1px; margin-top: 1px; }
 
-    .logo-text {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--blanc);
-      letter-spacing: 2px;
-    }
-
-    .logo-sub {
-      font-size: 11px;
-      color: var(--gris);
-      letter-spacing: 1px;
-    }
-
+    .header-right { display: flex; align-items: center; gap: 12px; }
     .header-badge {
-      background: var(--vert);
-      color: var(--blanc);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
+      background: var(--vert); color: var(--blanc);
+      font-size: 10px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+    }
+    .header-user {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.08);
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 12px; color: var(--blanc); cursor: pointer;
+    }
+    .header-user:hover { background: rgba(255,255,255,0.14); }
+    .header-user .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #4ade80; flex-shrink: 0;
     }
 
-    /* ── Tab bar ── */
-    .tab-bar {
+    /* ── Nav tabs (visible après login) ── */
+    .nav-bar {
       background: var(--anthracite-light);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      padding: 0 2rem;
-      gap: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; padding: 0 1.5rem; gap: 2px;
+      overflow-x: auto;
     }
-
-    .tab-btn {
-      padding: 12px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--gris);
-      cursor: pointer;
-      border: none;
-      background: none;
+    .nav-btn {
+      padding: 11px 18px;
+      font-size: 12px; font-weight: 600;
+      color: #8892a4; cursor: pointer;
+      border: none; background: none;
       border-bottom: 3px solid transparent;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px; white-space: nowrap;
       transition: color 0.15s, border-color 0.15s;
     }
-
-    .tab-btn:hover { color: var(--or-light); }
-
-    .tab-btn.active {
-      color: var(--or);
-      border-bottom-color: var(--or);
-      font-weight: 700;
-    }
+    .nav-btn:hover { color: var(--or-light); }
+    .nav-btn.active { color: var(--or); border-bottom-color: var(--or); font-weight: 700; }
 
     /* ── Layout ── */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-    }
+    .container { max-width: 1160px; margin: 0 auto; padding: 2rem 1.5rem; }
 
-    .page-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--anthracite);
-      margin-bottom: 4px;
-    }
-
-    .page-sub {
-      font-size: 13px;
-      color: var(--gris);
-      margin-bottom: 2rem;
-    }
+    .page-title  { font-size: 20px; font-weight: 800; color: var(--anthracite); margin-bottom: 4px; }
+    .page-sub    { font-size: 13px; color: var(--gris); margin-bottom: 1.75rem; }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: 360px 1fr;
       gap: 1.5rem;
       align-items: start;
     }
-
-    @media (max-width: 900px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
 
     /* ── Card ── */
     .card {
-      background: var(--card-bg);
+      background: var(--blanc);
       border-radius: 12px;
       border: 1px solid var(--border);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
       overflow: hidden;
     }
+    .card + .card { margin-top: 1.25rem; }
 
     .card-header {
-      padding: 1rem 1.25rem 0.75rem;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
     }
-
     .card-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
+      width: 30px; height: 30px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
     }
-
     .card-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--anthracite);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
+      font-size: 12px; font-weight: 800;
+      color: var(--anthracite); text-transform: uppercase; letter-spacing: 0.8px;
     }
-
-    .card-body {
-      padding: 1.25rem;
-    }
+    .card-body { padding: 1.25rem; }
 
     /* ── Form ── */
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
+    .form-group { margin-bottom: 1rem; }
+    .form-group:last-child { margin-bottom: 0; }
     label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--gris);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      display: block; font-size: 11px; font-weight: 700;
+      color: var(--gris); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 5px;
     }
-
     input, select, textarea {
-      width: 100%;
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--anthracite);
-      background: var(--blanc);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 90px;
+      width: 100%; padding: 9px 12px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 14px; color: var(--anthracite);
+      background: var(--blanc); outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
       font-family: inherit;
     }
-
+    textarea { resize: vertical; min-height: 80px; }
     input:focus, select:focus, textarea:focus {
       border-color: var(--or);
-      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.13);
     }
 
     .btn {
-      width: 100%;
-      padding: 11px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      transition: all 0.15s;
+      width: 100%; padding: 11px;
+      border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      letter-spacing: 0.3px; transition: all 0.15s;
+      font-family: inherit;
     }
+    .btn-primary   { background: var(--or);        color: var(--anthracite); }
+    .btn-secondary { background: var(--anthracite); color: var(--blanc); }
+    .btn-ghost     { background: var(--gris-clair); color: var(--anthracite); border: 1.5px solid var(--border); }
+    .btn-danger    { background: var(--rouge-bg);   color: var(--rouge); border: 1.5px solid #f5c6c2; }
+    .btn-success   { background: var(--vert-bg);    color: var(--vert);  border: 1.5px solid #b8dfc9; }
 
-    .btn-primary {
-      background: var(--or);
-      color: var(--anthracite);
+    .btn-primary:hover   { background: var(--or-light);   transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,168,76,0.25); }
+    .btn-secondary:hover { background: #2d2d50;            transform: translateY(-1px); }
+    .btn-ghost:hover     { background: #ebedf0; }
+    .btn-sm { padding: 7px 14px; font-size: 12px; width: auto; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    /* ── Stat cards ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 800px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card {
+      background: var(--blanc); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 1.25rem; text-align: center;
+      box-shadow: var(--shadow);
     }
+    .stat-value { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--gris); text-transform: uppercase; letter-spacing: 0.4px; }
+    .stat-card.gold  .stat-value { color: var(--or); }
+    .stat-card.green .stat-value { color: var(--vert); }
+    .stat-card.red   .stat-value { color: var(--rouge); }
+    .stat-card.orange .stat-value { color: var(--orange); }
+    .stat-card.blue  .stat-value { color: var(--bleu); }
 
-    .btn-primary:hover { background: var(--or-light); transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .btn-secondary {
-      background: var(--anthracite);
-      color: var(--blanc);
+    /* ── Status pills ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
     }
+    .pill-green   { background: var(--vert-bg);   color: var(--vert); }
+    .pill-orange  { background: var(--orange-bg); color: var(--orange); }
+    .pill-red     { background: var(--rouge-bg);  color: var(--rouge); }
+    .pill-blue    { background: var(--bleu-bg);   color: var(--bleu); }
+    .pill-gold    { background: var(--or-bg);     color: #8a6d1a; }
+    .pill-gray    { background: var(--gris-clair);color: var(--gris); }
 
-    .plan-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+    /* ── Info items ── */
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1rem; }
+    @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+    .info-item {
+      background: var(--gris-clair); border-radius: 8px;
+      padding: 10px 14px; font-size: 12px; color: var(--gris);
     }
+    .info-item strong { display: block; color: var(--anthracite); font-size: 14px; margin-top: 2px; word-break: break-all; }
 
-    @media (max-width: 900px) {
-      .plan-grid { grid-template-columns: 1fr; }
+    /* ── Code box ── */
+    .code-box {
+      background: #1e1e3a; color: #e2e8f0;
+      border-radius: 10px; padding: 16px 18px;
+      font-family: 'Courier New', monospace; font-size: 13px;
+      line-height: 1.8; word-break: break-all; position: relative;
     }
+    .code-box .code-label { color: var(--or); font-weight: 700; }
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(255,255,255,0.1); border: none; color: #e2e8f0;
+      border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer;
+      font-family: inherit;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); }
 
-    .plan-card {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+    /* ── Request item ── */
+    .request-item {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 10px;
       background: var(--blanc);
     }
+    .request-item:last-child { margin-bottom: 0; }
+    .request-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .request-subject { font-size: 14px; font-weight: 700; color: var(--anthracite); }
+    .request-message { font-size: 13px; color: var(--gris); margin-bottom: 10px; line-height: 1.5; }
+    .request-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .request-meta { font-size: 11px; color: var(--gris); margin-top: 8px; }
 
-    .plan-name {
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--anthracite);
-      letter-spacing: 0.6px;
+    /* ── Workspace list (superadmin) ── */
+    .workspace-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
     }
-
-    .plan-price {
-      font-size: 24px;
-      font-weight: 900;
-      color: var(--or);
-      margin: 8px 0 4px;
+    .workspace-row:last-child { border-bottom: none; }
+    .workspace-row:hover { background: var(--gris-clair); }
+    .ws-avatar {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: var(--anthracite-light); color: var(--or);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; flex-shrink: 0;
     }
+    .ws-info { flex: 1; min-width: 0; }
+    .ws-name { font-size: 13px; font-weight: 700; color: var(--anthracite); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ws-email { font-size: 11px; color: var(--gris); }
+    .ws-badges { display: flex; gap: 6px; flex-shrink: 0; }
 
-    .plan-detail {
-      color: var(--gris);
-      font-size: 12px;
-      line-height: 1.5;
+    /* ── Service cards ── */
+    .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 860px) { .service-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .service-grid { grid-template-columns: 1fr; } }
+    .service-card {
+      background: var(--blanc); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.25rem;
+      box-shadow: var(--shadow); transition: box-shadow 0.15s, transform 0.15s;
     }
+    .service-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .service-icon { font-size: 26px; margin-bottom: 10px; }
+    .service-name { font-size: 13px; font-weight: 800; color: var(--anthracite); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .service-desc { font-size: 12px; color: var(--gris); line-height: 1.5; margin-bottom: 14px; min-height: 36px; }
 
-    .workspace-summary {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 1rem;
-    }
-
-    @media (max-width: 700px) {
-      .workspace-summary { grid-template-columns: 1fr; }
-    }
-
-    .summary-item {
-      background: var(--gris-clair);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: var(--gris);
-    }
-
-    .summary-item strong {
-      display: block;
-      color: var(--anthracite);
-      font-size: 14px;
-      margin-top: 3px;
-      word-break: break-word;
-    }
-
-    /* ── Stats row ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem 1.25rem;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--anthracite);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--gris);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .stat-card.gold .stat-value { color: var(--or); }
-    .stat-card.green .stat-value { color: var(--vert); }
-    .stat-card.red .stat-value { color: var(--rouge); }
-    .stat-card.orange .stat-value { color: var(--orange); }
-
-    /* ── Compliance bar ── */
-    .compliance-section {
-      margin-bottom: 1.5rem;
-    }
-
-    .compliance-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .compliance-label {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--gris);
-    }
-
-    .compliance-score {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--anthracite);
-    }
-
-    .progress-track {
-      height: 8px;
-      background: var(--gris-clair);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 0.6s ease;
-      background: var(--vert);
-    }
-
-    .status-pill {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .status-pending      { background: #eef0f7; color: var(--bleu); }
-    .status-compliant    { background: #e6f4ee; color: var(--vert); }
-    .status-at_risk      { background: #fef3e2; color: var(--orange); }
-    .status-non_compliant{ background: #fdecea; color: var(--rouge); }
+    /* ── Compliance ── */
+    .progress-track { height: 8px; background: var(--gris-clair); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
 
     /* ── Timeline ── */
-    .timeline {
-      position: relative;
-      padding-left: 32px;
-    }
-
+    .timeline { position: relative; padding-left: 28px; }
     .timeline::before {
-      content: '';
-      position: absolute;
-      left: 10px;
-      top: 8px;
-      bottom: 8px;
-      width: 2px;
-      background: var(--border);
+      content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px;
+      width: 2px; background: var(--border);
     }
-
-    .timeline-step {
-      position: relative;
-      padding: 0 0 1.25rem 1.25rem;
-    }
-
-    .timeline-step:last-child {
-      padding-bottom: 0;
-    }
-
+    .timeline-step { position: relative; padding: 0 0 1.25rem 1rem; }
+    .timeline-step:last-child { padding-bottom: 0; }
     .timeline-dot {
-      position: absolute;
-      left: -22px;
-      top: 3px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      background: var(--blanc);
-      z-index: 1;
-      transition: all 0.2s;
+      position: absolute; left: -21px; top: 3px;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2.5px solid var(--border); background: var(--blanc); z-index: 1;
     }
-
     .timeline-step.overdue  .timeline-dot { background: var(--rouge);  border-color: var(--rouge); }
     .timeline-step.critical .timeline-dot { background: var(--orange); border-color: var(--orange); }
     .timeline-step.warning  .timeline-dot { background: var(--jaune);  border-color: var(--jaune); }
     .timeline-step.ok       .timeline-dot { background: var(--vert);   border-color: var(--vert); }
     .timeline-step.no-date  .timeline-dot { background: var(--gris);   border-color: var(--gris); }
-
-    .step-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--anthracite);
-      margin-bottom: 3px;
-    }
-
-    .step-meta {
-      font-size: 12px;
-      color: var(--gris);
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .step-badge {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .badge-overdue  { background: #fdecea; color: var(--rouge); }
-    .badge-critical { background: #fef3e2; color: var(--orange); }
+    .step-name { font-size: 13px; font-weight: 700; color: var(--anthracite); margin-bottom: 3px; }
+    .step-meta { font-size: 12px; color: var(--gris); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .step-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .badge-overdue  { background: var(--rouge-bg); color: var(--rouge); }
+    .badge-critical { background: var(--orange-bg); color: var(--orange); }
     .badge-warning  { background: #fefce8; color: #b45309; }
-    .badge-ok       { background: #e6f4ee; color: var(--vert); }
-    .badge-no-date  { background: #eef0f7; color: var(--gris); }
-
-    .step-deadline {
-      font-size: 11px;
-      color: var(--gris);
-    }
+    .badge-ok       { background: var(--vert-bg); color: var(--vert); }
+    .badge-no-date  { background: var(--bleu-bg); color: var(--gris); }
 
     /* ── Alerts ── */
     .alert-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-size: 13px;
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px;
     }
-
     .alert-item:last-child { margin-bottom: 0; }
-
-    .alert-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .alert-text { flex: 1; font-weight: 500; }
-    .alert-date { font-size: 11px; opacity: 0.7; margin-top: 2px; }
-
-    .alert-overdue  { background: #fdecea; color: var(--rouge); }
-    .alert-critical { background: #fef3e2; color: #c05011; }
+    .alert-overdue  { background: var(--rouge-bg);  color: var(--rouge); }
+    .alert-critical { background: var(--orange-bg); color: #c05011; }
     .alert-warning  { background: #fefce8; color: #92400e; }
-    .alert-info     { background: #eef0f7; color: var(--bleu); }
+    .alert-info     { background: var(--bleu-bg);   color: var(--bleu); }
 
-    /* ── Empty / loading states ── */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--gris);
+    /* ── Plan cards ── */
+    .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 700px) { .plan-grid { grid-template-columns: 1fr; } }
+    .plan-card {
+      background: var(--blanc); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow);
     }
+    .plan-card.featured { border-color: var(--or); }
+    .plan-name  { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--anthracite); }
+    .plan-price { font-size: 26px; font-weight: 900; color: var(--or); margin: 8px 0 4px; }
+    .plan-detail { color: var(--gris); font-size: 12px; line-height: 1.5; }
 
-    .empty-icon { font-size: 36px; margin-bottom: 12px; }
-    .empty-text { font-size: 14px; }
-
+    /* ── Empty / helpers ── */
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--gris); }
+    .empty-icon  { font-size: 36px; margin-bottom: 12px; }
+    .empty-text  { font-size: 14px; }
+    .hidden { display: none !important; }
     .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(0,0,0,0.15);
-      border-top-color: var(--anthracite);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.12); border-top-color: currentColor;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 7px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .event-id-box {
-      background: var(--gris-clair);
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
-      color: var(--gris);
-      word-break: break-all;
-      margin-top: 1rem;
+    /* ── LOGIN SCREEN ── */
+    #login-screen {
+      min-height: calc(100vh - 58px);
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--anthracite) 0%, #252550 100%);
+      padding: 2rem;
     }
+    .login-box {
+      background: var(--blanc); border-radius: 20px;
+      padding: 2.5rem; width: 100%; max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .login-logo { text-align: center; margin-bottom: 2rem; }
+    .login-logo-mark {
+      width: 56px; height: 56px; background: var(--or); border-radius: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 22px; color: var(--anthracite); margin-bottom: 12px;
+    }
+    .login-title  { font-size: 22px; font-weight: 800; color: var(--anthracite); letter-spacing: 2px; }
+    .login-sub    { font-size: 12px; color: var(--gris); margin-top: 4px; }
 
-    .hidden { display: none; }
+    .role-select { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+    .role-btn {
+      flex: 1; padding: 10px 8px; border-radius: 10px;
+      border: 2px solid var(--border); background: var(--blanc);
+      cursor: pointer; text-align: center; transition: all 0.15s;
+      font-family: inherit;
+    }
+    .role-btn:hover { border-color: var(--or); background: var(--or-bg); }
+    .role-btn.active { border-color: var(--or); background: var(--or-bg); }
+    .role-btn-icon { font-size: 20px; margin-bottom: 4px; display: block; }
+    .role-btn-label { font-size: 11px; font-weight: 700; color: var(--anthracite); text-transform: uppercase; letter-spacing: 0.3px; }
+
+    .login-help {
+      font-size: 12px; color: var(--gris); background: var(--gris-clair);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 1rem; line-height: 1.5;
+    }
+    .login-help strong { color: var(--anthracite); }
+
+    .login-error {
+      background: var(--rouge-bg); color: var(--rouge);
+      border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 600;
+      margin-bottom: 1rem; display: none;
+    }
 
     /* ── Tab panels ── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
+    #app-shell { display: none; }
+    #app-shell.active { display: block; }
+
+    /* ── Separator ── */
+    .sep { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 13px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.6px; color: var(--gris); margin-bottom: 1rem;
+    }
+
+    /* ── Success banner ── */
+    .success-banner {
+      background: var(--vert-bg); border: 1px solid #b8dfc9;
+      border-radius: 10px; padding: 1rem 1.25rem;
+      display: flex; gap: 12px; align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+    .success-banner .icon { font-size: 20px; flex-shrink: 0; }
+    .success-banner .title { font-size: 14px; font-weight: 700; color: var(--vert); margin-bottom: 3px; }
+    .success-banner .desc  { font-size: 12px; color: #2a7a52; line-height: 1.5; }
   </style>
 </head>
 <body>
 
+<!-- ══ HEADER ══ -->
 <header>
-  <div class="logo">
+  <div class="logo" onclick="goHome()">
     <div class="logo-mark">B</div>
     <div>
       <div class="logo-text">BAOBAB</div>
-      <div class="logo-sub">Legal Operating System</div>
+      <div class="logo-sub">Legal Operating System · Africa</div>
     </div>
   </div>
-  <span class="header-badge">MVP · Africa</span>
+  <div class="header-right">
+    <span class="header-badge">MVP</span>
+    <div class="header-user hidden" id="header-user" onclick="logout()">
+      <div class="dot"></div>
+      <span id="header-user-label">Connecté</span>
+      <span style="opacity:0.5;font-size:10px">Déconnexion</span>
+    </div>
+  </div>
 </header>
 
-<!-- Tab bar -->
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('access', this)">Acces</button>
-  <button class="tab-btn" onclick="switchTab('client', this)">Espace client</button>
-  <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
-  <button class="tab-btn" onclick="switchTab('bceao', this)">BCEAO &mdash; Banque &amp; Finance</button>
-  <button class="tab-btn" onclick="switchTab('espace', this)">Espace &mdash; Abonnement</button>
-  <button class="tab-btn" onclick="switchTab('cima', this)">CIMA &mdash; Sinistre</button>
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-mark">B</div>
+      <div class="login-title">BAOBAB</div>
+      <div class="login-sub">Sélectionnez votre rôle puis saisissez votre code d'accès</div>
+    </div>
+
+    <!-- Sélection de rôle -->
+    <div class="role-select">
+      <button class="role-btn active" id="role-client" onclick="selectRole('client')">
+        <span class="role-btn-icon">👤</span>
+        <div class="role-btn-label">Utilisateur</div>
+      </button>
+      <button class="role-btn" id="role-admin" onclick="selectRole('admin')">
+        <span class="role-btn-icon">🛡️</span>
+        <div class="role-btn-label">Admin</div>
+      </button>
+      <button class="role-btn" id="role-superadmin" onclick="selectRole('superadmin')">
+        <span class="role-btn-icon">⚙️</span>
+        <div class="role-btn-label">Super Admin</div>
+      </button>
+    </div>
+
+    <!-- Aide contextuelle -->
+    <div class="login-help" id="login-help">
+      <strong>Code utilisateur</strong> — commence par <code>usr_</code><br>
+      Reçu par email lors de la création de votre espace.
+    </div>
+
+    <!-- Erreur -->
+    <div class="login-error" id="login-error"></div>
+
+    <!-- Formulaire -->
+    <div class="form-group">
+      <label id="code-label">Code utilisateur</label>
+      <input type="password" id="access_code"
+        placeholder="usr_..."
+        onkeydown="if(event.key==='Enter') doLogin()"
+        autocomplete="off" />
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()" id="login-btn">Se connecter</button>
+
+    <div style="margin-top:1.5rem;text-align:center;font-size:12px;color:var(--gris)">
+      Pas encore d'espace ? <a href="#" onclick="showRegister()" style="color:var(--or);font-weight:700;text-decoration:none">Créer un espace gratuit</a>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
-<div id="tab-cima" class="tab-panel">
-  <div class="container">
-    <div class="page-title">Dashboard Sinistre CIMA</div>
-    <div class="page-sub">Déclarez un sinistre — la cascade réglementaire est calculée automatiquement.</div>
+<!-- ══ APP SHELL (après login) ══ -->
+<div id="app-shell">
 
-    <div class="grid-2">
-      <!-- Formulaire -->
-      <div>
+  <!-- Nav bar -->
+  <div class="nav-bar" id="nav-bar"></div>
+
+  <!-- ── ESPACE CLIENT ── -->
+  <div id="tab-client" class="tab-panel">
+    <div class="container">
+      <div class="page-title" id="client-title">Espace client</div>
+      <div class="page-sub" id="client-subtitle">Bienvenue sur BAOBAB.</div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-body" style="padding:1rem 1.25rem">
+          <input type="search" id="client_search"
+            placeholder="🔍  Rechercher un service..."
+            oninput="renderClientWorkspace()"
+            style="border:1.5px solid var(--border);border-radius:8px;padding:9px 14px;font-size:14px;width:100%;outline:none" />
+        </div>
+      </div>
+
+      <div id="client-workspace">
+        <div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-text">Chargement…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ESPACE ADMIN ── -->
+  <div id="tab-admin" class="tab-panel">
+    <div class="container">
+      <div class="page-title">Tableau de bord Admin</div>
+      <div class="page-sub" id="admin-subtitle">Gérez votre espace et les demandes de vos clients.</div>
+
+      <!-- Stats -->
+      <div id="admin-stats" class="stats-row" style="display:none">
+        <div class="stat-card blue">
+          <div class="stat-value" id="admin-stat-org">—</div>
+          <div class="stat-label">Organisation</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-value" id="admin-stat-plan">—</div>
+          <div class="stat-label">Offre</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-value" id="admin-stat-requests">0</div>
+          <div class="stat-label">Demandes ouvertes</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-value" id="admin-stat-status">—</div>
+          <div class="stat-label">Statut abonnement</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <!-- Info workspace -->
+          <div class="card" id="admin-workspace-card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--bleu-bg)">🏢</div>
+              <span class="card-title">Informations espace</span>
+            </div>
+            <div class="card-body" id="admin-workspace-info">
+              <div class="empty-state" style="padding:1.5rem">
+                <div class="empty-icon">🛡️</div>
+                <div class="empty-text">Chargement de l'espace admin…</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Créer un client (si superadmin) -->
+          <div class="card hidden" id="admin-create-client-card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--vert-bg)">➕</div>
+              <span class="card-title">Créer un client</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Nom du responsable</label>
+                <input type="text" id="sa_owner_name" placeholder="Kouamé Diallo" />
+              </div>
+              <div class="form-group">
+                <label>Email responsable</label>
+                <input type="email" id="sa_owner_email" placeholder="responsable@organisation.ci" />
+              </div>
+              <div class="form-group">
+                <label>Organisation</label>
+                <input type="text" id="sa_org_name" placeholder="Cabinet Juridique Atlas" />
+              </div>
+              <div class="form-group">
+                <label>Nom administrateur espace</label>
+                <input type="text" id="sa_admin_name" placeholder="Admin Atlas" />
+              </div>
+              <div class="form-group">
+                <label>Email administrateur</label>
+                <input type="email" id="sa_admin_email" placeholder="admin@organisation.ci" />
+              </div>
+              <div class="form-group">
+                <label>Nom utilisateur client</label>
+                <input type="text" id="sa_user_name" placeholder="Utilisateur Atlas" />
+              </div>
+              <div class="form-group">
+                <label>Email utilisateur</label>
+                <input type="email" id="sa_user_email" placeholder="user@organisation.ci" />
+              </div>
+              <button class="btn btn-primary" id="create-client-btn" onclick="createClientWorkspace()">
+                Créer l'espace client
+              </button>
+              <div id="create-client-result" class="hidden" style="margin-top:1rem"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demandes internes -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--or-bg)">📬</div>
+              <span class="card-title">Demandes internes</span>
+              <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="refreshAdminRequests()">↻ Actualiser</button>
+            </div>
+            <div class="card-body" id="admin-requests">
+              <div class="empty-state" style="padding:1.5rem">
+                <div class="empty-icon">📭</div>
+                <div class="empty-text">Aucune demande pour le moment.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUPERADMIN ── -->
+  <div id="tab-superadmin" class="tab-panel">
+    <div class="container">
+      <div class="page-title">Console Superadmin</div>
+      <div class="page-sub">Vue d'ensemble de toute la plateforme BAOBAB.</div>
+
+      <!-- Stats globales -->
+      <div class="stats-row" id="sa-stats">
+        <div class="stat-card gold">
+          <div class="stat-value" id="sa-stat-workspaces">—</div>
+          <div class="stat-label">Espaces clients</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-value" id="sa-stat-active">—</div>
+          <div class="stat-label">Abonnés actifs</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-value" id="sa-stat-requests">—</div>
+          <div class="stat-label">Demandes ouvertes</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-value" id="sa-stat-revenue">—</div>
+          <div class="stat-label">Revenu (FCFA)</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Formulaire création client -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--vert-bg)">➕</div>
+              <span class="card-title">Nouveau client</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Nom du responsable</label>
+                <input type="text" id="new_owner_name" placeholder="Awa Touré" />
+              </div>
+              <div class="form-group">
+                <label>Email responsable</label>
+                <input type="email" id="new_owner_email" placeholder="awa@organisation.ci" />
+              </div>
+              <div class="form-group">
+                <label>Organisation</label>
+                <input type="text" id="new_org_name" placeholder="Cabinet Touré & Associés" />
+              </div>
+              <div class="sep"></div>
+              <div class="form-group">
+                <label>Nom administrateur</label>
+                <input type="text" id="new_admin_name" placeholder="Admin Cabinet" />
+              </div>
+              <div class="form-group">
+                <label>Email administrateur</label>
+                <input type="email" id="new_admin_email" placeholder="admin@organisation.ci" />
+              </div>
+              <div class="form-group">
+                <label>Nom utilisateur</label>
+                <input type="text" id="new_user_name" placeholder="Utilisateur Cabinet" />
+              </div>
+              <div class="form-group">
+                <label>Email utilisateur</label>
+                <input type="email" id="new_user_email" placeholder="user@organisation.ci" />
+              </div>
+              <div class="sep"></div>
+              <div class="form-group">
+                <label>Nom affiché dans l'espace</label>
+                <input type="text" id="new_display_name" placeholder="Portail Cabinet Touré" />
+              </div>
+              <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()">
+                Créer avec accès illimité
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste workspaces + résultat création -->
+        <div>
+          <div class="card" id="sa-creation-result-card" style="display:none;margin-bottom:1.25rem">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--vert-bg)">✅</div>
+              <span class="card-title">Espace créé avec succès</span>
+            </div>
+            <div class="card-body" id="sa-creation-result"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--bleu-bg)">🗂️</div>
+              <span class="card-title">Espaces clients</span>
+              <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadSuperadminData()">↻</button>
+            </div>
+            <div id="sa-workspaces-list">
+              <div class="empty-state" style="padding:2rem">
+                <div class="empty-icon">🌍</div>
+                <div class="empty-text">Chargement…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ABONNEMENT ── -->
+  <div id="tab-espace" class="tab-panel">
+    <div class="container">
+      <div class="page-title">Espace & Abonnement</div>
+      <div class="page-sub">Gérez votre espace BAOBAB et activez un abonnement payant.</div>
+
+      <div class="plan-grid">
+        <div class="plan-card">
+          <div class="plan-name">Gratuit</div>
+          <div class="plan-price">0 <span style="font-size:14px;font-weight:600">FCFA</span></div>
+          <div class="plan-detail">Espace personnel · 1 demande interne incluse</div>
+        </div>
+        <div class="plan-card featured">
+          <div class="plan-name" style="color:var(--or)">Basic ★</div>
+          <div class="plan-price">5 000 <span style="font-size:14px;font-weight:600">FCFA/mois</span></div>
+          <div class="plan-detail">Demandes illimitées · Dashboards juridiques · Alertes</div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">10 000 <span style="font-size:14px;font-weight:600">FCFA/mois</span></div>
+          <div class="plan-detail">Accès complet + tous les verticaux + support prioritaire</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--or-bg)">B</div>
+              <span class="card-title">Créer un espace gratuit</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Nom du responsable</label>
+                <input type="text" id="workspace_owner" placeholder="Awa Kouassi" />
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="workspace_email" placeholder="awa@cabinet.ci" />
+              </div>
+              <div class="form-group">
+                <label>Organisation</label>
+                <input type="text" id="workspace_org" placeholder="Cabinet Awa" />
+              </div>
+              <div class="form-group">
+                <label>Pays / territoire</label>
+                <input type="text" id="workspace_territory" value="CI" />
+              </div>
+              <button class="btn btn-primary" id="workspace-create-btn" onclick="createWorkspace()">
+                Créer mon espace gratuit
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--bleu-bg)">💬</div>
+              <span class="card-title">Demande interne</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Sujet</label>
+                <input type="text" id="internal_subject" placeholder="Analyse de dossier" />
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea id="internal_message" placeholder="Décrivez votre demande…"></textarea>
+              </div>
+              <button class="btn btn-secondary" id="internal-request-btn" onclick="submitInternalRequest()">
+                Envoyer la demande
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--vert-bg)">🏠</div>
+              <span class="card-title">Mon espace</span>
+            </div>
+            <div class="card-body" id="workspace-results">
+              <div class="empty-state" style="padding:1.5rem">
+                <div class="empty-icon">B</div>
+                <div class="empty-text">Aucun espace créé.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon" style="background:var(--or-bg)">💳</div>
+              <span class="card-title">Paiement mobile money</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Offre</label>
+                <select id="checkout_plan">
+                  <option value="basic">Basic — 5 000 FCFA / mois</option>
+                  <option value="premium">Premium — 10 000 FCFA / mois</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Moyen de paiement</label>
+                <select id="checkout_provider">
+                  <option value="orange_money">Orange Money</option>
+                  <option value="mtn_money">MTN Money</option>
+                  <option value="wave">Wave</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Numéro mobile money</label>
+                <input type="tel" id="checkout_phone" placeholder="+2250700000000" />
+              </div>
+              <button class="btn btn-primary" id="checkout-btn" onclick="startCheckout()">
+                Initialiser le paiement
+              </button>
+              <div id="checkout-result" class="hidden" style="margin-top:1rem;background:var(--gris-clair);border-radius:8px;padding:12px;font-size:13px;font-family:monospace"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REGISTER ── -->
+  <div id="tab-register" class="tab-panel">
+    <div class="container" style="max-width:500px">
+      <div class="page-title">Créer un espace gratuit</div>
+      <div class="page-sub">Votre espace BAOBAB inclut 1 demande interne et l'accès au dashboard CIMA.</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group">
+            <label>Nom du responsable</label>
+            <input type="text" id="reg_owner" placeholder="Kouamé Diallo" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="reg_email" placeholder="kouame@cabinet.ci" />
+          </div>
+          <div class="form-group">
+            <label>Organisation</label>
+            <input type="text" id="reg_org" placeholder="Cabinet Diallo" />
+          </div>
+          <div class="form-group">
+            <label>Pays</label>
+            <select id="reg_territory">
+              <option value="CI">Côte d'Ivoire</option>
+              <option value="SN">Sénégal</option>
+              <option value="CM">Cameroun</option>
+              <option value="BF">Burkina Faso</option>
+              <option value="ML">Mali</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="reg-btn" onclick="registerWorkspace()">Créer mon espace</button>
+          <div id="reg-result" class="hidden" style="margin-top:1rem"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CIMA ── -->
+  <div id="tab-cima" class="tab-panel">
+    <div class="container">
+      <div class="page-title">Dashboard Sinistre CIMA</div>
+      <div class="page-sub">Déclarez un sinistre — la cascade réglementaire est calculée automatiquement.</div>
+      <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <div class="card-icon" style="background:#f0ead6">📋</div>
+            <div class="card-icon" style="background:var(--or-bg)">📋</div>
             <span class="card-title">Déclaration de sinistre</span>
           </div>
           <div class="card-body">
             <div class="form-group">
               <label>Identifiant compagnie</label>
-              <input type="text" id="cima_entity_id" value="compagnie-saham-ci" placeholder="compagnie-xyz" />
+              <input type="text" id="cima_entity_id" value="compagnie-saham-ci" />
             </div>
             <div class="form-group">
               <label>Type de sinistre</label>
@@ -623,37 +924,28 @@
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- Résultats -->
-      <div id="cima-results-col">
-        <div class="empty-state">
-          <div class="empty-icon">⚖️</div>
-          <div class="empty-text">Déclarez un sinistre pour voir<br>la cascade réglementaire CIMA.</div>
+        <div id="cima-results-col">
+          <div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-text">Déclarez un sinistre pour voir<br>la cascade réglementaire CIMA.</div></div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════ OHADA TAB ══════════════════════════ -->
-<div id="tab-ohada" class="tab-panel">
-  <div class="container">
-    <div class="page-title">Dashboard Droit des Affaires OHADA</div>
-    <div class="page-sub">Déclarez un événement juridique — la cascade OHADA est calculée automatiquement.</div>
-
-    <div class="grid-2">
-      <!-- Formulaire -->
-      <div>
+  <!-- ── OHADA ── -->
+  <div id="tab-ohada" class="tab-panel">
+    <div class="container">
+      <div class="page-title">Dashboard Droit des Affaires OHADA</div>
+      <div class="page-sub">Déclarez un événement juridique — la cascade OHADA est calculée automatiquement.</div>
+      <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <div class="card-icon" style="background:#f0ead6">📜</div>
+            <div class="card-icon" style="background:var(--or-bg)">📜</div>
             <span class="card-title">Déclaration d'événement juridique</span>
           </div>
           <div class="card-body">
             <div class="form-group">
               <label>Identifiant entité</label>
-              <input type="text" id="ohada_entity_id" value="entreprise-ci-001" placeholder="entreprise-xyz" />
+              <input type="text" id="ohada_entity_id" value="entreprise-ci-001" />
             </div>
             <div class="form-group">
               <label>Type d'événement</label>
@@ -681,37 +973,28 @@
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- Résultats -->
-      <div id="ohada-results-col">
-        <div class="empty-state">
-          <div class="empty-icon">⚖️</div>
-          <div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire OHADA.</div>
+        <div id="ohada-results-col">
+          <div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire OHADA.</div></div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════ BCEAO TAB ══════════════════════════ -->
-<div id="tab-bceao" class="tab-panel">
-  <div class="container">
-    <div class="page-title">Dashboard Banque &amp; Finance BCEAO</div>
-    <div class="page-sub">Déclarez un événement bancaire — la cascade réglementaire BCEAO/UEMOA est calculée automatiquement.</div>
-
-    <div class="grid-2">
-      <!-- Formulaire -->
-      <div>
+  <!-- ── BCEAO ── -->
+  <div id="tab-bceao" class="tab-panel">
+    <div class="container">
+      <div class="page-title">Dashboard Banque &amp; Finance BCEAO</div>
+      <div class="page-sub">Déclarez un événement bancaire — la cascade réglementaire BCEAO/UEMOA est calculée automatiquement.</div>
+      <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <div class="card-icon" style="background:#e8f0fe">🏦</div>
+            <div class="card-icon" style="background:var(--bleu-bg)">🏦</div>
             <span class="card-title">Déclaration d'événement bancaire</span>
           </div>
           <div class="card-body">
             <div class="form-group">
               <label>Identifiant établissement</label>
-              <input type="text" id="bceao_entity_id" value="banque-atlantique-ci" placeholder="banque-xyz" />
+              <input type="text" id="bceao_entity_id" value="banque-atlantique-ci" />
             </div>
             <div class="form-group">
               <label>Type d'événement</label>
@@ -739,1044 +1022,904 @@
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- Résultats -->
-      <div id="bceao-results-col">
-        <div class="empty-state">
-          <div class="empty-icon">🏦</div>
-          <div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire BCEAO.</div>
+        <div id="bceao-results-col">
+          <div class="empty-state"><div class="empty-icon">🏦</div><div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire BCEAO.</div></div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div id="tab-espace" class="tab-panel">
-  <div class="container">
-    <div class="page-title">Espace utilisateur BAOBAB</div>
-    <div class="page-sub">Creez un espace gratuit, envoyez une demande interne, puis activez Basic ou Premium par paiement mobile mensuel.</div>
-
-    <div class="plan-grid" id="plan-catalog">
-      <div class="plan-card">
-        <div class="plan-name">Gratuit</div>
-        <div class="plan-price">0 FCFA</div>
-        <div class="plan-detail">Espace personnel et 1 demande interne incluse.</div>
-      </div>
-      <div class="plan-card">
-        <div class="plan-name">Basic</div>
-        <div class="plan-price">5 000 FCFA</div>
-        <div class="plan-detail">Paiement mensuel via Orange Money, MTN Money ou Wave.</div>
-      </div>
-      <div class="plan-card">
-        <div class="plan-name">Premium</div>
-        <div class="plan-price">10 000 FCFA</div>
-        <div class="plan-detail">Acces complet aux services BAOBAB et support prioritaire.</div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <div class="card" style="margin-bottom:1.25rem">
-          <div class="card-header">
-            <div class="card-icon" style="background:#f0ead6">B</div>
-            <span class="card-title">Creation de l'espace</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Nom du responsable</label>
-              <input type="text" id="workspace_owner" value="Awa Kouassi" />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" id="workspace_email" value="awa@example.com" />
-            </div>
-            <div class="form-group">
-              <label>Organisation</label>
-              <input type="text" id="workspace_org" value="Cabinet Awa" />
-            </div>
-            <div class="form-group">
-              <label>Pays / territoire</label>
-              <input type="text" id="workspace_territory" value="CI" />
-            </div>
-            <button class="btn btn-primary" id="workspace-create-btn" onclick="createWorkspace()">
-              Creer mon espace gratuit
-            </button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#eef0f7">?</div>
-            <span class="card-title">Demande interne</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Sujet</label>
-              <input type="text" id="internal_subject" value="Analyse de dossier" />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea id="internal_message">Je souhaite faire une demande interne depuis mon espace BAOBAB.</textarea>
-            </div>
-            <button class="btn btn-secondary" id="internal-request-btn" onclick="submitInternalRequest()">
-              Envoyer la demande
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card" style="margin-bottom:1.25rem">
-          <div class="card-header">
-            <div class="card-icon" style="background:#e6f4ee">+</div>
-            <span class="card-title">Mon espace</span>
-          </div>
-          <div class="card-body" id="workspace-results">
-            <div class="empty-state" style="padding:1.5rem">
-              <div class="empty-icon">B</div>
-              <div class="empty-text">Aucun espace cree pour le moment.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#f0ead6">FCFA</div>
-            <span class="card-title">Activation payante mensuelle</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Offre</label>
-              <select id="checkout_plan">
-                <option value="basic">Basic - 5 000 FCFA / mois</option>
-                <option value="premium">Premium - 10 000 FCFA / mois</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Moyen de paiement</label>
-              <select id="checkout_provider">
-                <option value="orange_money">Orange Money</option>
-                <option value="mtn_money">MTN Money</option>
-                <option value="wave">Wave</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Numero mobile money</label>
-              <input type="tel" id="checkout_phone" value="+2250700000000" />
-            </div>
-            <button class="btn btn-primary" id="checkout-btn" onclick="startCheckout()">
-              Initialiser le paiement
-            </button>
-            <div id="checkout-result" class="event-id-box hidden"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="tab-access" class="tab-panel active">
-  <div class="container">
-    <div class="page-title">Acces a votre espace BAOBAB</div>
-    <div class="page-sub">Saisissez le code recu. Un code utilisateur ouvre l'espace client, un code admin ouvre la gestion, et le code superadmin ouvre la plateforme.</div>
-
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#f0ead6">KEY</div>
-            <span class="card-title">Code d'acces</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Code d'acces</label>
-              <input type="password" id="access_code" placeholder="usr_..., adm_... ou code superadmin" />
-            </div>
-            <button class="btn btn-primary" onclick="loginWithAccessCode()">Entrer</button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#eef0f7">AUTH</div>
-            <span class="card-title">Resultat</span>
-          </div>
-          <div class="card-body" id="access-results">
-            <div class="empty-state" style="padding:1.5rem">
-              <div class="empty-icon">KEY</div>
-              <div class="empty-text">Votre espace s'ouvrira automatiquement selon votre code.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="tab-client" class="tab-panel">
-  <div class="container">
-    <div class="page-title" id="client-title">Espace client</div>
-    <div class="page-sub" id="client-subtitle">Connectez-vous avec votre code utilisateur pour voir vos services.</div>
-
-    <div class="card" style="margin-bottom:1.25rem">
-      <div class="card-body">
-        <div class="form-group" style="margin-bottom:0">
-          <label>Recherche</label>
-          <input type="search" id="client_search" placeholder="Rechercher un service, une obligation, un dossier..." oninput="renderClientWorkspace()" />
-        </div>
-      </div>
-    </div>
-
-    <div id="client-workspace">
-      <div class="empty-state">
-        <div class="empty-icon">B</div>
-        <div class="empty-text">Aucun espace client ouvert.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="tab-admin" class="tab-panel">
-  <div class="container">
-    <div class="page-title">Espace admin</div>
-    <div class="page-sub">Gerez les demandes internes et le statut d'un espace BAOBAB.</div>
-
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#eef0f7">ADM</div>
-            <span class="card-title">Connexion admin</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Admin token</label>
-              <input type="text" id="admin_token" placeholder="adm_..." />
-            </div>
-            <button class="btn btn-primary" onclick="adminLogin()">Ouvrir l'espace admin</button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#e6f4ee">REQ</div>
-            <span class="card-title">Demandes internes</span>
-          </div>
-          <div class="card-body" id="admin-results">
-            <div class="empty-state" style="padding:1.5rem">
-              <div class="empty-icon">ADM</div>
-              <div class="empty-text">Connectez un administrateur d'espace.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="tab-superadmin" class="tab-panel">
-  <div class="container">
-    <div class="page-title">Superadmin BAOBAB</div>
-    <div class="page-sub">Pilotez les espaces, abonnements, paiements et demandes de toute la plateforme.</div>
-
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#f0ead6">ROOT</div>
-            <span class="card-title">Acces superadmin</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Superadmin token</label>
-              <input type="password" id="superadmin_token" placeholder="Code superadmin" />
-            </div>
-            <button class="btn btn-primary" onclick="loadSuperadmin()">Charger la plateforme</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:1.25rem">
-          <div class="card-header">
-            <div class="card-icon" style="background:#e6f4ee">NEW</div>
-            <span class="card-title">Creer un espace client</span>
-          </div>
-          <div class="card-body">
-            <div class="form-group">
-              <label>Nom client</label>
-              <input type="text" id="sa_owner_name" value="Client Institutionnel" />
-            </div>
-            <div class="form-group">
-              <label>Email client</label>
-              <input type="email" id="sa_owner_email" value="client@example.com" />
-            </div>
-            <div class="form-group">
-              <label>Organisation</label>
-              <input type="text" id="sa_org_name" value="Client Institutionnel SA" />
-            </div>
-            <div class="form-group">
-              <label>Utilisateur client</label>
-              <input type="text" id="sa_user_name" value="Utilisateur Client" />
-            </div>
-            <div class="form-group">
-              <label>Email utilisateur</label>
-              <input type="email" id="sa_user_email" value="utilisateur-client@example.com" />
-            </div>
-            <div class="form-group">
-              <label>Admin de l'espace</label>
-              <input type="text" id="sa_admin_name" value="Administrateur Client" />
-            </div>
-            <div class="form-group">
-              <label>Email admin</label>
-              <input type="email" id="sa_admin_email" value="admin-client@example.com" />
-            </div>
-            <div class="form-group">
-              <label>Nom affiche</label>
-              <input type="text" id="sa_display_name" value="Portail Client BAOBAB" />
-            </div>
-            <div class="form-group">
-              <label>Couleur principale</label>
-              <input type="text" id="sa_primary_color" value="#1A6B4A" />
-            </div>
-            <div class="form-group">
-              <label>Message d'accueil</label>
-              <textarea id="sa_welcome_message">Bienvenue dans votre espace BAOBAB personnalise.</textarea>
-            </div>
-            <button class="btn btn-primary" onclick="createSuperadminWorkspace(this)">Creer avec acces illimite</button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#e8f0fe">ALL</div>
-            <span class="card-title">Vue globale</span>
-          </div>
-          <div class="card-body" id="superadmin-results">
-            <div class="empty-state" style="padding:1.5rem">
-              <div class="empty-icon">ROOT</div>
-              <div class="empty-text">Chargez la vue superadmin.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+</div><!-- /app-shell -->
 
 <script>
-  // Pré-remplir les dates avec aujourd'hui
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('cima_occurred_at').value = today;
-  document.getElementById('ohada_occurred_at').value = today;
-  document.getElementById('bceao_occurred_at').value = today;
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let state = {
+  role: null,           // 'client' | 'admin' | 'superadmin'
+  token: null,
+  workspace: null,
+  adminWorkspace: null,
+  superadminToken: null,
+};
 
-  // ── Tab switching ──
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    if (btn) btn.classList.add('active');
-  }
+// Pré-remplir dates
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('cima_occurred_at').value = today;
+document.getElementById('ohada_occurred_at').value = today;
+document.getElementById('bceao_occurred_at').value = today;
 
-  // ── Shared helpers ──
-  function fmtDate(iso) {
-    if (!iso) return '—';
-    const d = new Date(iso);
-    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
+// ════════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════════
+let selectedRole = 'client';
 
-  function daysFromNow(iso) {
-    if (!iso) return null;
-    return Math.round((new Date(iso) - new Date()) / 86400000);
-  }
+function selectRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('role-' + role).classList.add('active');
 
-  function stepState(step, alerts) {
-    if (!step.due_date) return 'no-date';
-    const alert = alerts.find(a => a.due_date === step.due_date);
-    if (!alert) return 'ok';
-    return alert.level;
-  }
-
-  function badgeHtml(state) {
-    const labels = { overdue: 'Dépassé', critical: 'Critique', warning: 'Attention', ok: 'OK', 'no-date': 'Sans délai' };
-    return `<span class="step-badge badge-${state}">${labels[state] || state}</span>`;
-  }
-
-  function scoreColor(score) {
-    if (score >= 0.8) return 'var(--vert)';
-    if (score >= 0.5) return 'var(--orange)';
-    return 'var(--rouge)';
-  }
-
-  function renderResults(data, entity_id, event_label, occurred_at, resultsColId, corpusLabel) {
-    const { steps, compliance, alerts } = data;
-    const overdueCount  = alerts.filter(a => a.level === 'overdue').length;
-    const criticalCount = alerts.filter(a => a.level === 'critical').length;
-    const scorePercent  = Math.round(compliance.score * 100);
-    const statusClass   = `status-${compliance.status}`;
-    const statusLabels  = { pending: 'En cours', compliant: 'Conforme', at_risk: 'À risque', non_compliant: 'Non conforme' };
-
-    const statsHtml = `
-      <div class="stats-row">
-        <div class="stat-card gold">
-          <div class="stat-value">${steps.length}</div>
-          <div class="stat-label">Étapes ${corpusLabel}</div>
-        </div>
-        <div class="stat-card ${overdueCount > 0 ? 'red' : 'green'}">
-          <div class="stat-value">${overdueCount}</div>
-          <div class="stat-label">Dépassées</div>
-        </div>
-        <div class="stat-card ${criticalCount > 0 ? 'orange' : 'green'}">
-          <div class="stat-value">${criticalCount}</div>
-          <div class="stat-label">Critiques</div>
-        </div>
-      </div>`;
-
-    const complianceHtml = `
-      <div class="card" style="margin-bottom:1.25rem">
-        <div class="card-header">
-          <div class="card-icon" style="background:#e6f4ee">✅</div>
-          <span class="card-title">Score de conformité</span>
-        </div>
-        <div class="card-body">
-          <div class="compliance-header">
-            <span class="compliance-label">Progression</span>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="compliance-score">${scorePercent}%</span>
-              <span class="status-pill ${statusClass}">${statusLabels[compliance.status] || compliance.status}</span>
-            </div>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width:${scorePercent}%;background:${scoreColor(compliance.score)}"></div>
-          </div>
-          <div style="margin-top:8px;font-size:12px;color:var(--gris)">
-            ${compliance.overdue_count} étape(s) en retard · ${steps.filter(s=>s.due_date).length} étape(s) avec délai
-          </div>
-        </div>
-      </div>`;
-
-    const timelineItems = steps.map(step => {
-      const state = stepState(step, alerts);
-      const days  = daysFromNow(step.due_date);
-      let daysLabel = '';
-      if (days !== null) {
-        if (days < 0) daysLabel = `<span style="color:var(--rouge);font-weight:700">${Math.abs(days)} j de retard</span>`;
-        else if (days === 0) daysLabel = `<span style="color:var(--orange);font-weight:700">Aujourd'hui</span>`;
-        else daysLabel = `<span style="color:var(--gris)">${days} j restants</span>`;
-      }
-      return `
-        <div class="timeline-step ${state}">
-          <div class="timeline-dot"></div>
-          <div class="step-name">${step.name}</div>
-          <div class="step-meta">
-            ${badgeHtml(state)}
-            ${step.due_date ? `<span>📅 ${fmtDate(step.due_date)}</span>` : '<span>Sans délai fixe</span>'}
-            ${step.deadline_days !== null && step.deadline_days !== undefined ? `<span>⏱ J+${step.deadline_days}</span>` : ''}
-            ${daysLabel}
-          </div>
-        </div>`;
-    }).join('');
-
-    const timelineHtml = `
-      <div class="card" style="margin-bottom:1.25rem">
-        <div class="card-header">
-          <div class="card-icon" style="background:#f0ead6">⚡</div>
-          <span class="card-title">Cascade réglementaire — ${event_label}</span>
-        </div>
-        <div class="card-body">
-          <div style="margin-bottom:12px;font-size:12px;color:var(--gris)">
-            Entité : <strong>${entity_id}</strong> · Événement du <strong>${fmtDate(occurred_at + 'T00:00:00Z')}</strong>
-          </div>
-          <div class="timeline">${timelineItems}</div>
-        </div>
-      </div>`;
-
-    let alertsHtml = '';
-    if (alerts.length > 0) {
-      const icons = { overdue: '🔴', critical: '🟠', warning: '🟡', info: '🔵' };
-      const alertItems = alerts.map(a => `
-        <div class="alert-item alert-${a.level}">
-          <div class="alert-icon">${icons[a.level] || '●'}</div>
-          <div>
-            <div class="alert-text">${a.message}</div>
-            ${a.due_date ? `<div class="alert-date">Échéance : ${fmtDate(a.due_date)}</div>` : ''}
-          </div>
-        </div>`).join('');
-
-      alertsHtml = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#fdecea">🚨</div>
-            <span class="card-title">Alertes actives (${alerts.length})</span>
-          </div>
-          <div class="card-body">${alertItems}</div>
-        </div>`;
-    } else {
-      alertsHtml = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon" style="background:#e6f4ee">✅</div>
-            <span class="card-title">Alertes</span>
-          </div>
-          <div class="card-body">
-            <div class="empty-state" style="padding:1.5rem">
-              <div class="empty-icon">✅</div>
-              <div class="empty-text">Aucune alerte — tous les délais sont respectés.</div>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    const metaHtml = `<div class="event-id-box">event_id: ${data.event_id}<br>process_id: ${data.process_id}</div>`;
-    document.getElementById(resultsColId).innerHTML = statsHtml + complianceHtml + timelineHtml + alertsHtml + metaHtml;
-  }
-
-  // ── CIMA ──
-  async function declareSinistre() {
-    const btn = document.getElementById('cima-submit-btn');
-    const entity_id     = document.getElementById('cima_entity_id').value.trim();
-    const sinistre_type = document.getElementById('sinistre_type').value;
-    const occurred_at   = document.getElementById('cima_occurred_at').value;
-    const adresse       = document.getElementById('adresse').value.trim();
-
-    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
-    document.getElementById('cima-results-col').innerHTML = `
-      <div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
-
-    try {
-      const res = await fetch('/api/v1/cima/sinistre', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entity_id, sinistre_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { adresse } })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      renderResults(data, entity_id, sinistre_type.replace('SINISTRE_', ''), occurred_at, 'cima-results-col', 'CIMA');
-    } catch (e) {
-      document.getElementById('cima-results-col').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Calculer la cascade CIMA';
-    }
-  }
-
-  // ── BCEAO ──
-  const bceaoLabels = {
-    DECLARATION_SOUPCON:     'Déclaration de soupçon LCB/FT',
-    CONTROLE_CBF:            'Contrôle Commission Bancaire',
-    RAPPORT_MENSUEL_BCEAO:   'Reporting mensuel BCEAO',
-    INCIDENT_PAIEMENT:       'Incident de paiement',
-    AGREMENT_BANQUE:         "Demande d'agrément bancaire",
-    AGREMENT_MONNAIE_ELEC:   'Agrément monnaie électronique',
-    RATIO_PRUDENTIEL_BREACH: 'Breach ratio prudentiel',
-    OUVERTURE_COMPTE_KYC:    'Ouverture compte / KYC',
+  const helps = {
+    client:     '<strong>Code utilisateur</strong> — commence par <code>usr_</code><br>Reçu par email lors de la création de votre espace.',
+    admin:      '<strong>Code administrateur</strong> — commence par <code>adm_</code><br>Fourni lors de la création de votre espace par BAOBAB.',
+    superadmin: '<strong>Token superadmin</strong> — défini par votre équipe technique.<br>Accès réservé à l\'équipe BAOBAB.',
   };
+  const placeholders = { client: 'usr_...', admin: 'adm_...', superadmin: 'Token superadmin' };
+  const labels = { client: 'Code utilisateur', admin: 'Code administrateur', superadmin: 'Token superadmin' };
 
-  async function declarerEvenementBceao() {
-    const btn = document.getElementById('bceao-submit-btn');
-    const entity_id     = document.getElementById('bceao_entity_id').value.trim();
-    const event_type    = document.getElementById('bceao_event_type').value;
-    const occurred_at   = document.getElementById('bceao_occurred_at').value;
-    const etablissement = document.getElementById('bceao_etablissement').value.trim();
+  document.getElementById('login-help').innerHTML = helps[role];
+  document.getElementById('access_code').placeholder = placeholders[role];
+  document.getElementById('code-label').textContent = labels[role];
+  document.getElementById('login-error').style.display = 'none';
+}
 
-    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+async function doLogin() {
+  const code = document.getElementById('access_code').value.trim();
+  if (!code) { showLoginError('Veuillez saisir votre code d\'accès.'); return; }
 
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
-    document.getElementById('bceao-results-col').innerHTML = `
-      <div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Connexion…';
+  document.getElementById('login-error').style.display = 'none';
 
-    try {
-      const res = await fetch('/api/v1/bceao/evenement', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { etablissement } })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      renderResults(data, entity_id, bceaoLabels[event_type] || event_type, occurred_at, 'bceao-results-col', 'BCEAO');
-    } catch (e) {
-      document.getElementById('bceao-results-col').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Calculer la cascade BCEAO';
-    }
-  }
-
-  // ── OHADA ──
-  const ohadaLabels = {
-    CREATION_SARL: 'Création SARL',
-    CREATION_SA: 'Création SA',
-    AGO_ANNUELLE: 'AGO Annuelle',
-    DISSOLUTION: 'Dissolution',
-    CESSION_PARTS: 'Cession de parts',
-    FUSION_ABSORPTION: 'Fusion-absorption',
-    INJONCTION_PAYER: 'Injonction de payer',
-    IMMATRICULATION_RCCM: 'Immatriculation RCCM',
-  };
-
-  async function declarerEvenement() {
-    const btn = document.getElementById('ohada-submit-btn');
-    const entity_id      = document.getElementById('ohada_entity_id').value.trim();
-    const event_type     = document.getElementById('ohada_event_type').value;
-    const occurred_at    = document.getElementById('ohada_occurred_at').value;
-    const raison_sociale = document.getElementById('ohada_raison_sociale').value.trim();
-
-    if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Calcul en cours…';
-    document.getElementById('ohada-results-col').innerHTML = `
-      <div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
-
-    try {
-      const res = await fetch('/api/v1/ohada/evenement', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { raison_sociale } })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      renderResults(data, entity_id, ohadaLabels[event_type] || event_type, occurred_at, 'ohada-results-col', 'OHADA');
-    } catch (e) {
-      document.getElementById('ohada-results-col').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Calculer la cascade OHADA';
-    }
-  }
-
-  // --- Espace utilisateur ---
-  let currentWorkspace = null;
-  let currentClientWorkspace = null;
-
-  const serviceCatalog = [
-    { key: 'cima', title: 'CIMA - Sinistres', desc: 'Calculer une cascade reglementaire assurance.', action: 'Ouvrir CIMA', tab: 'cima' },
-    { key: 'ohada', title: 'OHADA - Droit des affaires', desc: 'Suivre les obligations societaires et evenements juridiques.', action: 'Ouvrir OHADA', tab: 'ohada' },
-    { key: 'bceao', title: 'BCEAO - Banque & Finance', desc: 'Piloter les obligations bancaires, KYC, LCB/FT et reporting.', action: 'Ouvrir BCEAO', tab: 'bceao' },
-    { key: 'internal_requests', title: 'Demandes internes', desc: 'Envoyer une demande a votre equipe ou a BAOBAB.', action: 'Faire une demande', tab: 'espace' },
-    { key: 'alerts', title: 'Alertes et echeances', desc: 'Voir les echeances critiques et les risques de non-conformite.', action: 'Voir les alertes', tab: 'client' },
-    { key: 'support', title: 'Support prioritaire', desc: 'Canal de support pour les espaces accordes ou Premium.', action: 'Contacter', tab: 'espace' },
-  ];
-
-  function visibleServices(workspace) {
-    const enabled = workspace.enabled_services || [];
-    if (enabled.includes('all_verticals')) return serviceCatalog;
-    if (!enabled.length && workspace.plan === 'free') {
-      return serviceCatalog.filter(s => ['internal_requests', 'cima'].includes(s.key));
-    }
-    return serviceCatalog.filter(s => enabled.includes(s.key) || enabled.includes(s.tab));
-  }
-
-  function renderClientWorkspace(workspace = currentClientWorkspace) {
-    currentClientWorkspace = workspace;
-    if (!workspace) return;
-
-    const branding = workspace.branding || {};
-    const displayName = branding.display_name || workspace.organization_name;
-    const query = (document.getElementById('client_search')?.value || '').toLowerCase();
-    const services = visibleServices(workspace).filter(service =>
-      `${service.title} ${service.desc} ${service.key}`.toLowerCase().includes(query)
-    );
-    const statusLabel = workspace.subscription_status === 'unlimited_grant'
-      ? 'Acces illimite accorde par BAOBAB'
-      : `${workspace.plan_details.name} - ${workspace.subscription_status}`;
-
-    document.getElementById('client-title').textContent = displayName;
-    document.getElementById('client-subtitle').textContent = branding.welcome_message || `Bienvenue ${workspace.user_name || workspace.owner_name}.`;
-    document.getElementById('client-workspace').innerHTML = `
-      <div class="workspace-summary">
-        <div class="summary-item">Organisation<strong>${workspace.organization_name}</strong></div>
-        <div class="summary-item">Utilisateur<strong>${workspace.user_name || workspace.owner_name}</strong></div>
-        <div class="summary-item">Acces<strong>${statusLabel}</strong></div>
-        <div class="summary-item">Demandes internes<strong>${workspace.internal_requests_used}</strong></div>
-      </div>
-      <div class="plan-grid">
-        ${services.map(service => `
-          <div class="plan-card">
-            <div class="plan-name">${service.title}</div>
-            <div class="plan-detail" style="min-height:44px">${service.desc}</div>
-            <button class="btn btn-secondary" style="margin-top:12px" onclick="switchTab('${service.tab}')">${service.action}</button>
-          </div>
-        `).join('') || '<div class="empty-state">Aucun service ne correspond a la recherche.</div>'}
-      </div>`;
-  }
-
-  function renderWorkspace(workspace) {
-    currentWorkspace = workspace;
-    if (workspace.admin_token) {
-      document.getElementById('admin_token').value = workspace.admin_token;
-    }
-    renderClientWorkspace(workspace);
-    const price = workspace.plan_details.monthly_price_xof;
-    const expires = workspace.subscription_expires_at ? fmtDate(workspace.subscription_expires_at) : 'Non applicable';
-    const adminToken = workspace.admin_token || 'Masque';
-    const userToken = workspace.user_token || 'Masque';
-    document.getElementById('workspace-results').innerHTML = `
-      <div class="workspace-summary">
-        <div class="summary-item">Espace<strong>${workspace.workspace_id}</strong></div>
-        <div class="summary-item">Organisation<strong>${workspace.organization_name}</strong></div>
-        <div class="summary-item">Offre<strong>${workspace.plan_details.name} - ${price.toLocaleString('fr-FR')} FCFA/mois</strong></div>
-        <div class="summary-item">Statut<strong>${workspace.subscription_status}</strong></div>
-        <div class="summary-item">Demandes internes<strong>${workspace.internal_requests_used}</strong></div>
-        <div class="summary-item">Expiration<strong>${expires}</strong></div>
-      </div>
-      <div class="event-id-box">Code utilisateur: ${userToken}<br>Code admin: ${adminToken}<br>Pour se connecter: onglet Acces, saisir le code utilisateur.</div>`;
-  }
-
-  async function createWorkspace() {
-    const btn = document.getElementById('workspace-create-btn');
-    const owner_name = document.getElementById('workspace_owner').value.trim();
-    const email = document.getElementById('workspace_email').value.trim();
-    const organization_name = document.getElementById('workspace_org').value.trim();
-    const territory = document.getElementById('workspace_territory').value.trim();
-
-    if (!owner_name || !email || !organization_name) {
-      alert('Veuillez remplir les champs de creation.');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Creation...';
-    try {
-      const res = await fetch('/api/v1/accounts/workspaces', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner_name, email, organization_name, territory })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      renderWorkspace(await res.json());
-      switchTab('client');
-    } catch (e) {
-      document.getElementById('workspace-results').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Creer mon espace gratuit';
-    }
-  }
-
-  async function submitInternalRequest() {
-    if (!currentWorkspace) {
-      alert('Creez d abord votre espace gratuit.');
-      return;
-    }
-    const btn = document.getElementById('internal-request-btn');
-    const subject = document.getElementById('internal_subject').value.trim();
-    const message = document.getElementById('internal_message').value.trim();
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Envoi...';
-    try {
-      const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/internal-requests`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, message })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
-      const refreshed = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}`);
-      renderWorkspace(await refreshed.json());
-      alert('Demande interne envoyee.');
-    } catch (e) {
-      alert(`Demande refusee : ${e.message}`);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Envoyer la demande';
-    }
-  }
-
-  async function startCheckout() {
-    if (!currentWorkspace) {
-      alert('Creez d abord votre espace gratuit.');
-      return;
-    }
-    const btn = document.getElementById('checkout-btn');
-    const result = document.getElementById('checkout-result');
-    const plan = document.getElementById('checkout_plan').value;
-    const provider = document.getElementById('checkout_provider').value;
-    const phone_number = document.getElementById('checkout_phone').value.trim();
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Paiement...';
-    try {
-      const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan, provider, phone_number })
-      });
-      const payment = await res.json();
-      if (!res.ok) throw new Error(payment.detail || `HTTP ${res.status}`);
-      result.classList.remove('hidden');
-      result.innerHTML = `payment_id: ${payment.payment_id}<br>reference: ${payment.provider_reference}<br>montant: ${payment.amount_xof.toLocaleString('fr-FR')} FCFA<br>statut: ${payment.status}`;
-    } catch (e) {
-      result.classList.remove('hidden');
-      result.innerHTML = `Erreur paiement: ${e.message}`;
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'Initialiser le paiement';
-    }
-  }
-
-  let currentAdminWorkspace = null;
-  let currentSuperadminToken = null;
-
-  function renderAdminRequests(requests) {
-    if (!requests.length) {
-      document.getElementById('admin-results').innerHTML = `
-        <div class="empty-state" style="padding:1.5rem">
-          <div class="empty-icon">OK</div>
-          <div class="empty-text">Aucune demande interne pour cet espace.</div>
-        </div>`;
-      return;
-    }
-
-    const rows = requests.map(item => `
-      <div class="alert-item alert-info">
-        <div style="flex:1">
-          <div class="alert-text">${item.subject}</div>
-          <div class="alert-date">${item.message}</div>
-          <div class="event-id-box">request_id: ${item.request_id}<br>status: ${item.status}<br>${item.admin_note ? `note: ${item.admin_note}` : ''}</div>
-        </div>
-        <button class="btn btn-secondary" style="width:auto;padding:8px 12px" onclick="updateAdminRequest('${item.request_id}', 'in_review')">Revoir</button>
-        <button class="btn btn-primary" style="width:auto;padding:8px 12px" onclick="updateAdminRequest('${item.request_id}', 'closed')">Clore</button>
-      </div>`).join('');
-
-    document.getElementById('admin-results').innerHTML = rows;
-  }
-
-  async function adminLogin() {
-    const admin_token = document.getElementById('admin_token').value.trim();
-    if (!admin_token) {
-      alert('Renseignez le token admin.');
-      return;
-    }
-    adminLoginWithToken(admin_token);
-  }
-
-  async function adminLoginWithToken(admin_token) {
-    try {
-      const login = await fetch('/api/v1/accounts/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ admin_token })
-      });
-      const workspace = await login.json();
-      if (!login.ok) throw new Error(workspace.detail || `HTTP ${login.status}`);
-      currentAdminWorkspace = workspace;
-      const requests = await fetch(`/api/v1/accounts/admin/workspaces/${workspace.workspace_id}/internal-requests`, {
-        headers: { 'X-Admin-Token': admin_token }
-      });
-      renderAdminRequests((await requests.json()).requests || []);
-    } catch (e) {
-      document.getElementById('admin-results').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur admin : ${e.message}</div></div>`;
-    }
-  }
-
-  async function updateAdminRequest(requestId, status) {
-    if (!currentAdminWorkspace) {
-      alert('Connectez d abord un administrateur.');
-      return;
-    }
-    const admin_token = document.getElementById('admin_token').value.trim();
-    const res = await fetch(`/api/v1/accounts/admin/internal-requests/${requestId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': admin_token },
-      body: JSON.stringify({ status, admin_note: `Statut mis a jour par admin: ${status}` })
+  try {
+    const res = await fetch('/api/v1/accounts/access/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ access_code: code })
     });
     const data = await res.json();
-    if (!res.ok) {
-      alert(data.detail || `Erreur ${res.status}`);
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+
+    if (data.role === 'client') {
+      enterClient(data.workspace, code);
+    } else if (data.role === 'admin') {
+      await enterAdmin(code);
+    } else if (data.role === 'superadmin') {
+      enterSuperadmin(code);
+    } else {
+      throw new Error('Rôle inconnu.');
+    }
+  } catch(e) {
+    showLoginError(e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Se connecter';
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = '⚠️  ' + msg;
+  el.style.display = 'block';
+}
+
+function showRegister() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('active');
+  buildNav('register');
+  switchTab('register');
+}
+
+// ════════════════════════════════════════════════
+// ENTER SPACES
+// ════════════════════════════════════════════════
+function enterClient(workspace, token) {
+  state.role = 'client';
+  state.token = token;
+  state.workspace = workspace;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('active');
+
+  const branding = workspace.branding || {};
+  const name = branding.display_name || workspace.organization_name;
+  document.getElementById('header-user').classList.remove('hidden');
+  document.getElementById('header-user-label').textContent = workspace.user_name || workspace.owner_name;
+
+  buildNav('client');
+  switchTab('client');
+  renderClientWorkspace(workspace);
+}
+
+async function enterAdmin(adminToken) {
+  state.role = 'admin';
+  state.token = adminToken;
+
+  const loginRes = await fetch('/api/v1/accounts/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ admin_token: adminToken })
+  });
+  const workspace = await loginRes.json();
+  if (!loginRes.ok) throw new Error(workspace.detail || `Erreur ${loginRes.status}`);
+
+  state.adminWorkspace = workspace;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('active');
+
+  document.getElementById('header-user').classList.remove('hidden');
+  document.getElementById('header-user-label').textContent = workspace.admin_name || 'Admin';
+
+  buildNav('admin');
+  switchTab('admin');
+  renderAdminDashboard(workspace, adminToken);
+}
+
+function enterSuperadmin(token) {
+  state.role = 'superadmin';
+  state.superadminToken = token;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('active');
+
+  document.getElementById('header-user').classList.remove('hidden');
+  document.getElementById('header-user-label').textContent = 'Super Admin';
+
+  // Activer la carte création client dans admin
+  document.getElementById('admin-create-client-card').classList.remove('hidden');
+
+  buildNav('superadmin');
+  switchTab('superadmin');
+  loadSuperadminData();
+}
+
+function logout() {
+  state = { role: null, token: null, workspace: null, adminWorkspace: null, superadminToken: null };
+  document.getElementById('login-screen').style.display = '';
+  document.getElementById('app-shell').classList.remove('active');
+  document.getElementById('header-user').classList.add('hidden');
+  document.getElementById('access_code').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').innerHTML = 'Se connecter';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function goHome() {
+  if (state.role) logout();
+}
+
+// ════════════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════════════
+const NAV_CONFIGS = {
+  client: [
+    { id: 'client',  label: '🏠 Mon espace' },
+    { id: 'cima',    label: '⚖️ CIMA — Sinistre' },
+    { id: 'ohada',   label: '📜 OHADA' },
+    { id: 'bceao',   label: '🏦 BCEAO' },
+    { id: 'espace',  label: '💳 Abonnement' },
+  ],
+  admin: [
+    { id: 'admin',   label: '🛡️ Tableau de bord' },
+    { id: 'cima',    label: '⚖️ CIMA' },
+    { id: 'ohada',   label: '📜 OHADA' },
+    { id: 'bceao',   label: '🏦 BCEAO' },
+  ],
+  superadmin: [
+    { id: 'superadmin', label: '⚙️ Console' },
+    { id: 'cima',       label: '⚖️ CIMA' },
+    { id: 'ohada',      label: '📜 OHADA' },
+    { id: 'bceao',      label: '🏦 BCEAO' },
+  ],
+  register: [
+    { id: 'register', label: '📝 Créer un espace' },
+  ],
+};
+
+function buildNav(role) {
+  const nav = document.getElementById('nav-bar');
+  const items = NAV_CONFIGS[role] || [];
+  nav.innerHTML = items.map(item =>
+    `<button class="nav-btn" id="nav-${item.id}" onclick="switchTab('${item.id}')">${item.label}</button>`
+  ).join('');
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('tab-' + name);
+  const navBtn = document.getElementById('nav-' + name);
+  if (panel) panel.classList.add('active');
+  if (navBtn) navBtn.classList.add('active');
+}
+
+// ════════════════════════════════════════════════
+// CLIENT WORKSPACE
+// ════════════════════════════════════════════════
+const serviceCatalog = [
+  { key: 'cima',              icon: '⚖️',  title: 'CIMA — Sinistres',        desc: 'Calculer une cascade réglementaire assurance.',                tab: 'cima'   },
+  { key: 'ohada',             icon: '📜',  title: 'OHADA — Droit des affaires', desc: 'Suivre les obligations sociétaires.',                        tab: 'ohada'  },
+  { key: 'bceao',             icon: '🏦',  title: 'BCEAO — Banque & Finance', desc: 'Obligations bancaires, KYC, LCB/FT et reporting.',            tab: 'bceao'  },
+  { key: 'internal_requests', icon: '💬',  title: 'Demandes internes',        desc: 'Envoyer une demande à votre équipe BAOBAB.',                  tab: 'espace' },
+  { key: 'alerts',            icon: '🚨',  title: 'Alertes & Échéances',      desc: 'Surveiller les risques de non-conformité.',                   tab: 'client' },
+  { key: 'priority_support',  icon: '🎯',  title: 'Support prioritaire',      desc: 'Canal de support dédié pour les espaces Premium.',            tab: 'espace' },
+];
+
+let currentClientWorkspace = null;
+
+function renderClientWorkspace(workspace) {
+  currentClientWorkspace = workspace;
+  if (!workspace) return;
+
+  const branding   = workspace.branding || {};
+  const displayName = branding.display_name || workspace.organization_name;
+  const query      = (document.getElementById('client_search')?.value || '').toLowerCase();
+  const enabled    = workspace.enabled_services || [];
+  const hasAll     = enabled.includes('all_verticals');
+
+  const services = serviceCatalog.filter(s => {
+    const matchQuery = `${s.title} ${s.desc} ${s.key}`.toLowerCase().includes(query);
+    const isEnabled  = hasAll || enabled.includes(s.key) || enabled.includes(s.tab) ||
+                       (workspace.plan === 'free' && ['internal_requests', 'cima'].includes(s.key));
+    return matchQuery && isEnabled;
+  });
+
+  const planLabel = workspace.subscription_status === 'unlimited_grant'
+    ? 'Accès illimité — offert par BAOBAB'
+    : `${(workspace.plan_details || {}).name || workspace.plan} — ${workspace.subscription_status}`;
+
+  document.getElementById('client-title').textContent = displayName;
+  document.getElementById('client-subtitle').textContent =
+    branding.welcome_message || `Bienvenue, ${workspace.user_name || workspace.owner_name}.`;
+
+  document.getElementById('client-workspace').innerHTML = `
+    <div class="info-grid" style="margin-bottom:1.5rem">
+      <div class="info-item">Organisation<strong>${workspace.organization_name}</strong></div>
+      <div class="info-item">Utilisateur<strong>${workspace.user_name || workspace.owner_name}</strong></div>
+      <div class="info-item">Offre<strong>${planLabel}</strong></div>
+      <div class="info-item">Demandes internes<strong>${workspace.internal_requests_used || 0}</strong></div>
+    </div>
+    <div class="section-title">Services disponibles</div>
+    <div class="service-grid">
+      ${services.length ? services.map(s => `
+        <div class="service-card">
+          <div class="service-icon">${s.icon}</div>
+          <div class="service-name">${s.title}</div>
+          <div class="service-desc">${s.desc}</div>
+          <button class="btn btn-secondary btn-sm" style="width:100%" onclick="switchTab('${s.tab}')">Ouvrir</button>
+        </div>`).join('')
+      : '<div class="empty-state" style="padding:1rem">Aucun service ne correspond.</div>'}
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ════════════════════════════════════════════════
+async function renderAdminDashboard(workspace, adminToken) {
+  const plan = (workspace.plan_details || {}).name || workspace.plan || '—';
+  const org  = workspace.organization_name || '—';
+  const status = workspace.subscription_status || '—';
+
+  document.getElementById('admin-subtitle').textContent =
+    `Espace : ${workspace.workspace_id} · ${org}`;
+
+  // Infos workspace
+  document.getElementById('admin-workspace-info').innerHTML = `
+    <div class="info-grid">
+      <div class="info-item">Organisation<strong>${org}</strong></div>
+      <div class="info-item">Admin<strong>${workspace.admin_name || '—'}</strong></div>
+      <div class="info-item">Email admin<strong>${workspace.admin_email || '—'}</strong></div>
+      <div class="info-item">Offre<strong>${plan}</strong></div>
+      <div class="info-item">Statut<strong>${status}</strong></div>
+      <div class="info-item">ID espace<strong style="font-family:monospace;font-size:12px">${workspace.workspace_id}</strong></div>
+    </div>
+    <div class="sep"></div>
+    <div class="section-title">Code admin (à conserver)</div>
+    <div class="code-box" style="font-size:12px">${adminToken}</div>`;
+
+  // Demandes
+  await refreshAdminRequests(workspace.workspace_id, adminToken);
+
+  // Stats
+  document.getElementById('admin-stat-org').textContent = org.split(' ')[0];
+  document.getElementById('admin-stat-plan').textContent = plan;
+  document.getElementById('admin-stat-status').textContent = status;
+  document.getElementById('admin-stats').style.display = '';
+}
+
+async function refreshAdminRequests(workspaceId, adminToken) {
+  workspaceId = workspaceId || (state.adminWorkspace && state.adminWorkspace.workspace_id);
+  adminToken  = adminToken  || state.token;
+  if (!workspaceId || !adminToken) return;
+
+  try {
+    const res = await fetch(`/api/v1/accounts/admin/workspaces/${workspaceId}/internal-requests`, {
+      headers: { 'X-Admin-Token': adminToken }
+    });
+    const data = await res.json();
+    const requests = data.requests || [];
+    const open = requests.filter(r => !['closed','rejected'].includes(r.status)).length;
+    document.getElementById('admin-stat-requests').textContent = open;
+    renderAdminRequests(requests, adminToken);
+  } catch(e) {
+    document.getElementById('admin-requests').innerHTML =
+      `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
+  }
+}
+
+function renderAdminRequests(requests, adminToken) {
+  const container = document.getElementById('admin-requests');
+  adminToken = adminToken || state.token;
+
+  if (!requests.length) {
+    container.innerHTML = `<div class="empty-state" style="padding:1.5rem"><div class="empty-icon">📭</div><div class="empty-text">Aucune demande pour le moment.</div></div>`;
+    return;
+  }
+
+  const statusPills = {
+    submitted: '<span class="pill pill-blue">Nouveau</span>',
+    in_review: '<span class="pill pill-orange">En révision</span>',
+    approved:  '<span class="pill pill-green">Approuvé</span>',
+    rejected:  '<span class="pill pill-red">Rejeté</span>',
+    closed:    '<span class="pill pill-gray">Clôturé</span>',
+  };
+
+  container.innerHTML = requests.map(r => `
+    <div class="request-item">
+      <div class="request-header">
+        <div class="request-subject">${escHtml(r.subject)}</div>
+        ${statusPills[r.status] || `<span class="pill pill-gray">${r.status}</span>`}
+      </div>
+      <div class="request-message">${escHtml(r.message)}</div>
+      ${r.admin_note ? `<div style="font-size:12px;color:var(--vert);margin-bottom:8px">📝 ${escHtml(r.admin_note)}</div>` : ''}
+      <div class="request-actions">
+        ${r.status !== 'in_review' ? `<button class="btn btn-ghost btn-sm" onclick="patchRequest('${r.request_id}','in_review','${adminToken}')">En révision</button>` : ''}
+        ${r.status !== 'approved'  ? `<button class="btn btn-success btn-sm" onclick="patchRequest('${r.request_id}','approved','${adminToken}')">Approuver</button>` : ''}
+        ${r.status !== 'rejected'  ? `<button class="btn btn-danger btn-sm" onclick="patchRequest('${r.request_id}','rejected','${adminToken}')">Rejeter</button>` : ''}
+        ${r.status !== 'closed'    ? `<button class="btn btn-ghost btn-sm" onclick="patchRequest('${r.request_id}','closed','${adminToken}')">Clôturer</button>` : ''}
+      </div>
+      <div class="request-meta">ID: ${r.request_id} · Créée le ${fmtDate(r.created_at)}</div>
+    </div>`).join('');
+}
+
+async function patchRequest(requestId, status, adminToken) {
+  adminToken = adminToken || state.token;
+  const workspaceId = state.adminWorkspace && state.adminWorkspace.workspace_id;
+  const note = status === 'approved' ? 'Demande approuvée par l\'administrateur.'
+             : status === 'rejected' ? 'Demande rejetée par l\'administrateur.'
+             : status === 'in_review'? 'Demande prise en charge.'
+             : 'Demande clôturée.';
+
+  const res = await fetch(`/api/v1/accounts/admin/internal-requests/${requestId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+    body: JSON.stringify({ status, admin_note: note })
+  });
+  if (!res.ok) { const d = await res.json(); alert(d.detail || `Erreur ${res.status}`); return; }
+  await refreshAdminRequests(workspaceId, adminToken);
+}
+
+// Création client depuis espace admin (nécessite superadmin token)
+async function createClientWorkspace() {
+  const token = state.superadminToken;
+  if (!token) { alert('Accès superadmin requis pour créer un client.'); return; }
+
+  const btn = document.getElementById('create-client-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
+
+  const payload = buildWorkspacePayload(
+    document.getElementById('sa_owner_name').value.trim(),
+    document.getElementById('sa_owner_email').value.trim(),
+    document.getElementById('sa_org_name').value.trim(),
+    document.getElementById('sa_admin_name').value.trim(),
+    document.getElementById('sa_admin_email').value.trim(),
+    document.getElementById('sa_user_name').value.trim(),
+    document.getElementById('sa_user_email').value.trim(),
+    document.getElementById('sa_org_name').value.trim() + ' — Portail BAOBAB'
+  );
+
+  try {
+    const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
+      body: JSON.stringify(payload)
+    });
+    const ws = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(ws.detail));
+    document.getElementById('create-client-result').classList.remove('hidden');
+    document.getElementById('create-client-result').innerHTML = renderWorkspaceCreated(ws);
+  } catch(e) {
+    document.getElementById('create-client-result').classList.remove('hidden');
+    document.getElementById('create-client-result').innerHTML =
+      `<div style="color:var(--rouge);font-size:13px">❌ ${escHtml(e.message)}</div>`;
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Créer l\'espace client';
+  }
+}
+
+// ════════════════════════════════════════════════
+// SUPERADMIN
+// ════════════════════════════════════════════════
+async function loadSuperadminData() {
+  const token = state.superadminToken;
+  if (!token) return;
+
+  try {
+    const [ovRes, wsRes] = await Promise.all([
+      fetch('/api/v1/accounts/superadmin/overview', { headers: { 'X-Superadmin-Token': token } }),
+      fetch('/api/v1/accounts/superadmin/workspaces', { headers: { 'X-Superadmin-Token': token } }),
+    ]);
+    const overview   = await parseJson(ovRes);
+    const wsData     = await parseJson(wsRes);
+    if (!ovRes.ok) throw new Error(fmtError(overview.detail));
+
+    document.getElementById('sa-stat-workspaces').textContent = overview.workspaces_count;
+    document.getElementById('sa-stat-active').textContent = overview.active_subscriptions_count;
+    document.getElementById('sa-stat-requests').textContent = overview.pending_internal_requests_count;
+    document.getElementById('sa-stat-revenue').textContent =
+      (overview.confirmed_revenue_xof || 0).toLocaleString('fr-FR');
+
+    const workspaces = (wsData.workspaces || []).slice().reverse();
+    if (!workspaces.length) {
+      document.getElementById('sa-workspaces-list').innerHTML =
+        `<div class="empty-state" style="padding:2rem"><div class="empty-icon">🌱</div><div class="empty-text">Aucun espace client pour le moment.</div></div>`;
       return;
     }
-    adminLogin();
-  }
 
-  async function loadSuperadmin() {
-    const token = document.getElementById('superadmin_token').value.trim();
-    loadSuperadminWithToken(token);
-  }
-
-  async function loadSuperadminWithToken(token) {
-    currentSuperadminToken = token;
-    try {
-      const overviewResponse = await fetch('/api/v1/accounts/superadmin/overview', {
-        headers: { 'X-Superadmin-Token': token }
-      });
-      const overview = await parseApiResponse(overviewResponse);
-      if (!overviewResponse.ok) throw new Error(formatApiError(overview.detail || overview));
-
-      const workspacesResponse = await fetch('/api/v1/accounts/superadmin/workspaces', {
-        headers: { 'X-Superadmin-Token': token }
-      });
-      const workspaces = await parseApiResponse(workspacesResponse);
-      if (!workspacesResponse.ok) throw new Error(formatApiError(workspaces.detail || workspaces));
-      const workspaceItems = (workspaces.workspaces || []).slice(-5).reverse().map(workspace => `
-        <div class="event-id-box">
-          ${workspace.workspace_id} - ${workspace.organization_name}<br>
-          admin: ${workspace.admin_name || workspace.owner_name} (${workspace.admin_email || workspace.email})<br>
-          affichage: ${(workspace.branding && workspace.branding.display_name) || workspace.organization_name}<br>
-          plan: ${workspace.plan}<br>
-          status: ${workspace.subscription_status}<br>
-          billing_override: ${workspace.billing_override ? 'oui' : 'non'}
-        </div>
-      `).join('');
-
-      document.getElementById('superadmin-results').innerHTML = `
-        <div class="stats-row">
-          <div class="stat-card gold"><div class="stat-value">${overview.workspaces_count}</div><div class="stat-label">Espaces</div></div>
-          <div class="stat-card green"><div class="stat-value">${overview.active_subscriptions_count}</div><div class="stat-label">Abonnes actifs</div></div>
-          <div class="stat-card orange"><div class="stat-value">${overview.pending_internal_requests_count}</div><div class="stat-label">Demandes ouvertes</div></div>
-        </div>
-        <div class="event-id-box">revenu confirme: ${overview.confirmed_revenue_xof.toLocaleString('fr-FR')} FCFA<br>free: ${overview.plans.free} - basic: ${overview.plans.basic} - premium: ${overview.plans.premium}</div>
-        ${workspaceItems || '<div class="empty-state" style="padding:1rem">Aucun espace.</div>'}`;
-    } catch (e) {
-      document.getElementById('superadmin-results').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur superadmin : ${e.message}</div></div>`;
-    }
-  }
-
-  async function createSuperadminWorkspace(button) {
-    const token = currentSuperadminToken || document.getElementById('superadmin_token').value.trim();
-    if (!token) {
-      alert('Renseignez le code superadmin.');
-      return;
-    }
-    if (button) {
-      button.disabled = true;
-      button.innerHTML = '<span class="spinner"></span>Creation...';
-    }
-
-    const payload = {
-      owner_name: document.getElementById('sa_owner_name').value.trim(),
-      email: document.getElementById('sa_owner_email').value.trim(),
-      organization_name: document.getElementById('sa_org_name').value.trim(),
-      territory: 'CI',
-      user_name: document.getElementById('sa_user_name').value.trim(),
-      user_email: document.getElementById('sa_user_email').value.trim(),
-      admin_name: document.getElementById('sa_admin_name').value.trim(),
-      admin_email: document.getElementById('sa_admin_email').value.trim(),
-      grant_unlimited_access: true,
-      enabled_services: ['all_verticals', 'alerts', 'internal_requests', 'priority_support'],
-      branding: {
-        display_name: document.getElementById('sa_display_name').value.trim(),
-        primary_color: document.getElementById('sa_primary_color').value.trim(),
-        welcome_message: document.getElementById('sa_welcome_message').value.trim()
-      }
+    const planPills = {
+      free:    '<span class="pill pill-gray">Gratuit</span>',
+      basic:   '<span class="pill pill-blue">Basic</span>',
+      premium: '<span class="pill pill-gold">Premium</span>',
+    };
+    const subPills = {
+      free:             '<span class="pill pill-gray">Gratuit</span>',
+      active:           '<span class="pill pill-green">Actif</span>',
+      unlimited_grant:  '<span class="pill pill-gold">Illimité</span>',
     };
 
-    try {
-      const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
-        body: JSON.stringify(payload)
-      });
-      const workspace = await parseApiResponse(res);
-      if (!res.ok) throw new Error(formatApiError(workspace.detail || workspace || `HTTP ${res.status}`));
-      document.getElementById('superadmin-results').innerHTML = `
-        <div class="event-id-box">
-          ESPACE CREE: ${workspace.workspace_id}<br>
-          Organisation: ${workspace.organization_name}<br>
-          Acces: ${workspace.subscription_status}<br><br>
-          UTILISATEUR CLIENT<br>
-          Nom: ${workspace.user_name}<br>
-          Email: ${workspace.user_email}<br>
-          Code de connexion client: ${workspace.user_token}<br>
-          Instruction: aller dans Acces, saisir ce code, puis l'espace client s'ouvre.<br><br>
-          ADMIN DE L'ESPACE<br>
-          Nom: ${workspace.admin_name}<br>
-          Email: ${workspace.admin_email}<br>
-          Code admin: ${workspace.admin_token}<br>
-          Instruction: aller dans Acces, saisir ce code, puis l'espace admin s'ouvre.
-        </div>`;
-    } catch (e) {
-      document.getElementById('superadmin-results').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Creation refusee : ${e.message}</div></div>`;
-    } finally {
-      if (button) {
-        button.disabled = false;
-        button.innerHTML = 'Creer avec acces illimite';
-      }
-    }
+    document.getElementById('sa-workspaces-list').innerHTML = workspaces.map(ws => `
+      <div class="workspace-row">
+        <div class="ws-avatar">${(ws.organization_name || 'B')[0].toUpperCase()}</div>
+        <div class="ws-info">
+          <div class="ws-name">${escHtml(ws.organization_name)}</div>
+          <div class="ws-email">${escHtml(ws.admin_email || ws.email || '')} · ${ws.workspace_id}</div>
+        </div>
+        <div class="ws-badges">
+          ${planPills[ws.plan] || `<span class="pill pill-gray">${ws.plan}</span>`}
+          ${subPills[ws.subscription_status] || `<span class="pill pill-gray">${ws.subscription_status}</span>`}
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('sa-workspaces-list').innerHTML =
+      `<div class="empty-state" style="padding:2rem"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${escHtml(e.message)}</div></div>`;
   }
+}
 
-  function formatApiError(detail) {
-    if (typeof detail === 'string') return detail;
-    if (Array.isArray(detail)) {
-      return detail.map(item => `${(item.loc || []).join('.')}: ${item.msg}`).join(' | ');
-    }
-    if (detail && typeof detail === 'object') return JSON.stringify(detail);
-    return String(detail);
+async function createNewWorkspace() {
+  const token = state.superadminToken;
+  if (!token) { alert('Non authentifié superadmin.'); return; }
+
+  const btn = document.getElementById('new-client-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
+  document.getElementById('sa-creation-result-card').style.display = 'none';
+
+  const payload = buildWorkspacePayload(
+    document.getElementById('new_owner_name').value.trim(),
+    document.getElementById('new_owner_email').value.trim(),
+    document.getElementById('new_org_name').value.trim(),
+    document.getElementById('new_admin_name').value.trim(),
+    document.getElementById('new_admin_email').value.trim(),
+    document.getElementById('new_user_name').value.trim(),
+    document.getElementById('new_user_email').value.trim(),
+    document.getElementById('new_display_name').value.trim()
+  );
+
+  try {
+    const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
+      body: JSON.stringify(payload)
+    });
+    const ws = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(ws.detail));
+
+    document.getElementById('sa-creation-result-card').style.display = '';
+    document.getElementById('sa-creation-result').innerHTML = renderWorkspaceCreated(ws);
+    await loadSuperadminData();
+  } catch(e) {
+    document.getElementById('sa-creation-result-card').style.display = '';
+    document.getElementById('sa-creation-result').innerHTML =
+      `<div style="color:var(--rouge);font-size:13px;padding:0.5rem">❌ ${escHtml(e.message)}</div>`;
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Créer avec accès illimité';
   }
+}
 
-  async function parseApiResponse(response) {
-    const text = await response.text();
-    if (!text) return {};
-    try {
-      return JSON.parse(text);
-    } catch (_) {
-      return { detail: text };
+function buildWorkspacePayload(ownerName, email, orgName, adminName, adminEmail, userName, userEmail, displayName) {
+  return {
+    owner_name: ownerName, email, organization_name: orgName,
+    territory: 'CI',
+    admin_name: adminName, admin_email: adminEmail,
+    user_name: userName,   user_email: userEmail,
+    grant_unlimited_access: true,
+    enabled_services: ['all_verticals', 'alerts', 'internal_requests', 'priority_support'],
+    branding: {
+      display_name: displayName || orgName,
+      primary_color: '#1A6B4A',
+      welcome_message: `Bienvenue dans votre espace BAOBAB — ${orgName}.`
     }
+  };
+}
+
+function renderWorkspaceCreated(ws) {
+  return `
+    <div class="success-banner">
+      <div class="icon">✅</div>
+      <div>
+        <div class="title">Espace ${escHtml(ws.organization_name)} créé</div>
+        <div class="desc">Transmettez les codes ci-dessous aux personnes concernées.</div>
+      </div>
+    </div>
+    <div class="section-title" style="margin-bottom:8px">Codes d'accès à communiquer</div>
+    <div class="code-box">
+<span class="code-label">UTILISATEUR CLIENT</span>
+Nom    : ${escHtml(ws.user_name || '—')}
+Email  : ${escHtml(ws.user_email || '—')}
+Code   : <strong style="color:#e0c06a">${ws.user_token}</strong>
+→ Aller sur BAOBAB → choisir "Utilisateur" → saisir ce code
+
+<span class="code-label">ADMINISTRATEUR ESPACE</span>
+Nom    : ${escHtml(ws.admin_name || '—')}
+Email  : ${escHtml(ws.admin_email || '—')}
+Code   : <strong style="color:#e0c06a">${ws.admin_token}</strong>
+→ Aller sur BAOBAB → choisir "Admin" → saisir ce code
+
+<span class="code-label">INFORMATIONS ESPACE</span>
+ID     : ${ws.workspace_id}
+Offre  : ${ws.subscription_status}
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// REGISTER
+// ════════════════════════════════════════════════
+let currentWorkspace = null;
+
+async function registerWorkspace() {
+  const btn = document.getElementById('reg-btn');
+  const owner_name = document.getElementById('reg_owner').value.trim();
+  const email      = document.getElementById('reg_email').value.trim();
+  const org        = document.getElementById('reg_org').value.trim();
+  const territory  = document.getElementById('reg_territory').value;
+
+  if (!owner_name || !email || !org) { alert('Veuillez remplir tous les champs.'); return; }
+
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
+  try {
+    const res = await fetch('/api/v1/accounts/workspaces', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ owner_name, email, organization_name: org, territory })
+    });
+    const ws = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(ws.detail));
+    currentWorkspace = ws;
+    document.getElementById('reg-result').classList.remove('hidden');
+    document.getElementById('reg-result').innerHTML = `
+      <div class="success-banner">
+        <div class="icon">🎉</div>
+        <div>
+          <div class="title">Espace créé !</div>
+          <div class="desc">Notez vos codes d'accès ci-dessous, puis connectez-vous.</div>
+        </div>
+      </div>
+      <div class="code-box">
+<span class="code-label">VOTRE CODE UTILISATEUR</span>
+<strong style="color:#e0c06a;font-size:16px">${ws.user_token}</strong>
+→ Retournez à l'accueil → "Utilisateur" → saisir ce code
+
+<span class="code-label">CODE ADMIN DE VOTRE ESPACE</span>
+<strong style="color:#e0c06a">${ws.admin_token}</strong>
+      </div>`;
+  } catch(e) {
+    document.getElementById('reg-result').classList.remove('hidden');
+    document.getElementById('reg-result').innerHTML =
+      `<div style="color:var(--rouge);font-size:13px">❌ ${escHtml(e.message)}</div>`;
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Créer mon espace';
   }
+}
 
-  async function loginWithAccessCode() {
-    const accessCode = document.getElementById('access_code').value.trim();
-    if (!accessCode) {
-      alert('Saisissez votre code.');
-      return;
+// Espace → création depuis tab espace
+async function createWorkspace() {
+  const btn = document.getElementById('workspace-create-btn');
+  const owner_name = document.getElementById('workspace_owner').value.trim();
+  const email      = document.getElementById('workspace_email').value.trim();
+  const org        = document.getElementById('workspace_org').value.trim();
+  const territory  = document.getElementById('workspace_territory').value.trim();
+
+  if (!owner_name || !email || !org) { alert('Veuillez remplir tous les champs.'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
+  try {
+    const res = await fetch('/api/v1/accounts/workspaces', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ owner_name, email, organization_name: org, territory })
+    });
+    const ws = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(ws.detail));
+    currentWorkspace = ws;
+    renderWorkspaceBox(ws);
+  } catch(e) {
+    document.getElementById('workspace-results').innerHTML =
+      `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">${escHtml(e.message)}</div></div>`;
+  } finally { btn.disabled = false; btn.innerHTML = 'Créer mon espace gratuit'; }
+}
+
+function renderWorkspaceBox(ws) {
+  const plan = (ws.plan_details || {});
+  document.getElementById('workspace-results').innerHTML = `
+    <div class="info-grid">
+      <div class="info-item">Organisation<strong>${escHtml(ws.organization_name)}</strong></div>
+      <div class="info-item">Offre<strong>${plan.name || ws.plan}</strong></div>
+      <div class="info-item">Statut<strong>${ws.subscription_status}</strong></div>
+      <div class="info-item">Demandes<strong>${ws.internal_requests_used || 0}</strong></div>
+    </div>
+    <div class="code-box" style="margin-top:10px;font-size:12px">
+<span class="code-label">Code utilisateur</span> ${ws.user_token}
+<span class="code-label">Code admin</span> ${ws.admin_token}
+    </div>`;
+}
+
+async function submitInternalRequest() {
+  if (!currentWorkspace) { alert('Créez d\'abord votre espace.'); return; }
+  const btn     = document.getElementById('internal-request-btn');
+  const subject = document.getElementById('internal_subject').value.trim();
+  const message = document.getElementById('internal_message').value.trim();
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Envoi…';
+  try {
+    const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/internal-requests`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject, message })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(data.detail));
+    const refreshed = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}`);
+    renderWorkspaceBox(await parseJson(refreshed));
+    alert('Demande envoyée avec succès.');
+  } catch(e) { alert(`Erreur : ${e.message}`); }
+  finally { btn.disabled = false; btn.innerHTML = 'Envoyer la demande'; }
+}
+
+async function startCheckout() {
+  if (!currentWorkspace) { alert('Créez d\'abord votre espace.'); return; }
+  const btn    = document.getElementById('checkout-btn');
+  const result = document.getElementById('checkout-result');
+  const plan   = document.getElementById('checkout_plan').value;
+  const prov   = document.getElementById('checkout_provider').value;
+  const phone  = document.getElementById('checkout_phone').value.trim();
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Paiement…';
+  try {
+    const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/checkout`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, provider: prov, phone_number: phone })
+    });
+    const payment = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(payment.detail));
+    result.classList.remove('hidden');
+    result.innerHTML = `payment_id: ${payment.payment_id}\nréférence: ${payment.provider_reference}\nmontant: ${(payment.amount_xof||0).toLocaleString('fr-FR')} FCFA\nstatut: ${payment.status}`;
+  } catch(e) {
+    result.classList.remove('hidden');
+    result.innerHTML = `Erreur : ${e.message}`;
+  } finally { btn.disabled = false; btn.innerHTML = 'Initialiser le paiement'; }
+}
+
+// ════════════════════════════════════════════════
+// CASCADE RESULTS (CIMA / OHADA / BCEAO)
+// ════════════════════════════════════════════════
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function daysFromNow(iso) {
+  if (!iso) return null;
+  return Math.round((new Date(iso) - new Date()) / 86400000);
+}
+
+function stepState(step, alerts) {
+  if (!step.due_date) return 'no-date';
+  const a = alerts.find(a => a.due_date === step.due_date);
+  if (!a) return 'ok';
+  return a.level;
+}
+
+function badgeHtml(state) {
+  const labels = { overdue: 'Dépassé', critical: 'Critique', warning: 'Attention', ok: 'OK', 'no-date': 'Sans délai' };
+  return `<span class="step-badge badge-${state}">${labels[state] || state}</span>`;
+}
+
+function scoreColor(score) {
+  if (score >= 0.8) return 'var(--vert)';
+  if (score >= 0.5) return 'var(--orange)';
+  return 'var(--rouge)';
+}
+
+function renderResults(data, entity_id, event_label, occurred_at, colId, corpusLabel) {
+  const { steps, compliance, alerts } = data;
+  const overdueCount  = alerts.filter(a => a.level === 'overdue').length;
+  const criticalCount = alerts.filter(a => a.level === 'critical').length;
+  const scorePercent  = Math.round(compliance.score * 100);
+  const statusLabels  = { pending: 'En cours', compliant: 'Conforme', at_risk: 'À risque', non_compliant: 'Non conforme' };
+  const statusPillCls = { pending: 'pill-blue', compliant: 'pill-green', at_risk: 'pill-orange', non_compliant: 'pill-red' };
+
+  const stats = `
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card gold"><div class="stat-value">${steps.length}</div><div class="stat-label">Étapes ${corpusLabel}</div></div>
+      <div class="stat-card ${overdueCount  > 0 ? 'red'    : 'green'}"><div class="stat-value">${overdueCount}</div><div class="stat-label">Dépassées</div></div>
+      <div class="stat-card ${criticalCount > 0 ? 'orange' : 'green'}"><div class="stat-value">${criticalCount}</div><div class="stat-label">Critiques</div></div>
+    </div>`;
+
+  const compliance_html = `
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-header"><div class="card-icon" style="background:var(--vert-bg)">✅</div><span class="card-title">Score de conformité</span></div>
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gris)">Progression</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px;font-weight:900">${scorePercent}%</span>
+            <span class="pill ${statusPillCls[compliance.status] || 'pill-gray'}">${statusLabels[compliance.status] || compliance.status}</span>
+          </div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${scorePercent}%;background:${scoreColor(compliance.score)}"></div></div>
+        <div style="margin-top:8px;font-size:12px;color:var(--gris)">${compliance.overdue_count} étape(s) en retard</div>
+      </div>
+    </div>`;
+
+  const timelineItems = steps.map(step => {
+    const state = stepState(step, alerts);
+    const days  = daysFromNow(step.due_date);
+    let daysLabel = '';
+    if (days !== null) {
+      if      (days < 0) daysLabel = `<span style="color:var(--rouge);font-weight:700">${Math.abs(days)} j de retard</span>`;
+      else if (days === 0) daysLabel = `<span style="color:var(--orange);font-weight:700">Aujourd'hui</span>`;
+      else daysLabel = `<span style="color:var(--gris)">${days} j restants</span>`;
     }
+    return `
+      <div class="timeline-step ${state}">
+        <div class="timeline-dot"></div>
+        <div class="step-name">${step.name}</div>
+        <div class="step-meta">
+          ${badgeHtml(state)}
+          ${step.due_date ? `<span>📅 ${fmtDate(step.due_date)}</span>` : '<span>Sans délai fixe</span>'}
+          ${step.deadline_days != null ? `<span>⏱ J+${step.deadline_days}</span>` : ''}
+          ${daysLabel}
+        </div>
+      </div>`;
+  }).join('');
 
-    try {
-      const res = await fetch('/api/v1/accounts/access/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access_code: accessCode })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+  const timeline = `
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-header"><div class="card-icon" style="background:var(--or-bg)">⚡</div><span class="card-title">Cascade — ${event_label}</span></div>
+      <div class="card-body">
+        <div style="margin-bottom:12px;font-size:12px;color:var(--gris)">Entité : <strong>${entity_id}</strong> · Événement du <strong>${fmtDate(occurred_at + 'T00:00:00Z')}</strong></div>
+        <div class="timeline">${timelineItems}</div>
+      </div>
+    </div>`;
 
-      if (data.role === 'client') {
-        document.getElementById('access-results').innerHTML = '<div class="event-id-box">Code utilisateur valide. Ouverture de votre espace client...</div>';
-        switchTab('client');
-        renderClientWorkspace(data.workspace);
-        return;
-      }
+  const icons = { overdue: '🔴', critical: '🟠', warning: '🟡', info: '🔵' };
+  const alertsHtml = alerts.length ? `
+    <div class="card">
+      <div class="card-header"><div class="card-icon" style="background:var(--rouge-bg)">🚨</div><span class="card-title">Alertes (${alerts.length})</span></div>
+      <div class="card-body">
+        ${alerts.map(a => `
+          <div class="alert-item alert-${a.level}">
+            <span>${icons[a.level] || '●'}</span>
+            <div><div>${a.message}</div>${a.due_date ? `<div style="font-size:11px;opacity:0.7;margin-top:2px">Échéance : ${fmtDate(a.due_date)}</div>` : ''}</div>
+          </div>`).join('')}
+      </div>
+    </div>` :
+    `<div class="card"><div class="card-header"><div class="card-icon" style="background:var(--vert-bg)">✅</div><span class="card-title">Alertes</span></div><div class="card-body"><div class="empty-state" style="padding:1rem"><div class="empty-text">Aucune alerte — tous les délais sont respectés.</div></div></div></div>`;
 
-      if (data.role === 'admin') {
-        document.getElementById('admin_token').value = accessCode;
-        document.getElementById('access-results').innerHTML = '<div class="event-id-box">Code admin valide. Ouverture de l espace admin...</div>';
-        switchTab('admin');
-        await adminLoginWithToken(accessCode);
-        return;
-      }
+  document.getElementById(colId).innerHTML = stats + compliance_html + timeline + alertsHtml +
+    `<div style="margin-top:1rem;background:var(--gris-clair);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:11px;color:var(--gris)">event_id: ${data.event_id}<br>process_id: ${data.process_id}</div>`;
+}
 
-      if (data.role === 'superadmin') {
-        document.getElementById('superadmin_token').value = accessCode;
-        document.getElementById('access-results').innerHTML = '<div class="event-id-box">Code superadmin valide. Ouverture de l espace superadmin...</div>';
-        switchTab('superadmin');
-        await loadSuperadminWithToken(accessCode);
-        return;
-      }
+// ── CIMA ──
+async function declareSinistre() {
+  const btn = document.getElementById('cima-submit-btn');
+  const entity_id     = document.getElementById('cima_entity_id').value.trim();
+  const sinistre_type = document.getElementById('sinistre_type').value;
+  const occurred_at   = document.getElementById('cima_occurred_at').value;
+  const adresse       = document.getElementById('adresse').value.trim();
+  if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Calcul…';
+  document.getElementById('cima-results-col').innerHTML = `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+  try {
+    const res = await fetch('/api/v1/cima/sinistre', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entity_id, sinistre_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { adresse } })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    renderResults(await res.json(), entity_id, sinistre_type.replace('SINISTRE_',''), occurred_at, 'cima-results-col', 'CIMA');
+  } catch(e) {
+    document.getElementById('cima-results-col').innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">${e.message}</div></div>`;
+  } finally { btn.disabled = false; btn.innerHTML = 'Calculer la cascade CIMA'; }
+}
 
-      throw new Error('Role inconnu.');
-    } catch (e) {
-      document.getElementById('access-results').innerHTML = `
-        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Acces refuse : ${e.message}</div></div>`;
-    }
-  }
+// ── OHADA ──
+const ohadaLabels = { CREATION_SARL:'Création SARL', CREATION_SA:'Création SA', AGO_ANNUELLE:'AGO Annuelle', DISSOLUTION:'Dissolution', CESSION_PARTS:'Cession de parts', FUSION_ABSORPTION:'Fusion-absorption', INJONCTION_PAYER:'Injonction de payer', IMMATRICULATION_RCCM:'Immatriculation RCCM' };
+async function declarerEvenement() {
+  const btn = document.getElementById('ohada-submit-btn');
+  const entity_id   = document.getElementById('ohada_entity_id').value.trim();
+  const event_type  = document.getElementById('ohada_event_type').value;
+  const occurred_at = document.getElementById('ohada_occurred_at').value;
+  const raison      = document.getElementById('ohada_raison_sociale').value.trim();
+  if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Calcul…';
+  document.getElementById('ohada-results-col').innerHTML = `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+  try {
+    const res = await fetch('/api/v1/ohada/evenement', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { raison_sociale: raison } })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    renderResults(await res.json(), entity_id, ohadaLabels[event_type] || event_type, occurred_at, 'ohada-results-col', 'OHADA');
+  } catch(e) {
+    document.getElementById('ohada-results-col').innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">${e.message}</div></div>`;
+  } finally { btn.disabled = false; btn.innerHTML = 'Calculer la cascade OHADA'; }
+}
+
+// ── BCEAO ──
+const bceaoLabels = { DECLARATION_SOUPCON:'Déclaration de soupçon LCB/FT', CONTROLE_CBF:'Contrôle Commission Bancaire', RAPPORT_MENSUEL_BCEAO:'Reporting mensuel BCEAO', INCIDENT_PAIEMENT:'Incident de paiement', AGREMENT_BANQUE:"Demande d'agrément bancaire", AGREMENT_MONNAIE_ELEC:'Agrément monnaie électronique', RATIO_PRUDENTIEL_BREACH:'Breach ratio prudentiel', OUVERTURE_COMPTE_KYC:'Ouverture compte / KYC' };
+async function declarerEvenementBceao() {
+  const btn = document.getElementById('bceao-submit-btn');
+  const entity_id    = document.getElementById('bceao_entity_id').value.trim();
+  const event_type   = document.getElementById('bceao_event_type').value;
+  const occurred_at  = document.getElementById('bceao_occurred_at').value;
+  const etabl       = document.getElementById('bceao_etablissement').value.trim();
+  if (!entity_id || !occurred_at) { alert('Veuillez remplir tous les champs.'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Calcul…';
+  document.getElementById('bceao-results-col').innerHTML = `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
+  try {
+    const res = await fetch('/api/v1/bceao/evenement', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { etablissement: etabl } })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    renderResults(await res.json(), entity_id, bceaoLabels[event_type] || event_type, occurred_at, 'bceao-results-col', 'BCEAO');
+  } catch(e) {
+    document.getElementById('bceao-results-col').innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">${e.message}</div></div>`;
+  } finally { btn.disabled = false; btn.innerHTML = 'Calculer la cascade BCEAO'; }
+}
+
+// ════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+async function parseJson(res) {
+  const text = await res.text();
+  if (!text) return {};
+  try { return JSON.parse(text); } catch(_) { return { detail: text }; }
+}
+function fmtError(detail) {
+  if (!detail) return 'Erreur inconnue';
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) return detail.map(i => `${(i.loc||[]).join('.')}: ${i.msg}`).join(' | ');
+  return JSON.stringify(detail);
+}
 </script>
 </body>
 </html>
