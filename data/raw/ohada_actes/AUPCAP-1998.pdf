@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>OHADA.com - Connexion</title>
+  <meta http-equiv="content-language" content="fr">
+  <meta name="Description" content="Site de l'Association UNIDA, au service du droit OHADA, des juristes, des praticiens, des entreprises et des investisseurs." />
+  <meta name="Keywords" content="OHADA, Droit des affaires, Afrique, Droit Harmonisé, Droit unifié, CCJA, ERSUMA, Secrétariat permanent, Conseil des ministres de la justice et des finances, Conférence des Chefs d'Etat et de Gouvernement, CIMA, UEMOA, OAPI, CEMAC, CEDEAO, Zone franc, Clubs OHADA, Acte uniforme, Traité, Règlement d'application, Doctrine, Jurisprudence, Code vert, Code Bleu, SYSCOHADA" />
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OHADA.com">
+  <meta property="og:url" content="https://www.ohada.com">
+  <meta property="og:title" content="UNIDA-OHADA.com &bull; Association pour l'Unification du Droit en Afrique.">
+  <meta property="og:description" content="Site de l'Association UNIDA, au service du droit OHADA, des juristes, des praticiens, des entreprises et des investisseurs.">
+  <meta property="og:image" content="https://www.ohada.com/images/ohada.com.og.png">
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:site" content="OHADA.com">
+  <meta property="twitter:url" content="https://www.ohada.com">
+  <meta property="twitter:title" content="UNIDA-OHADA.com &bull; Association pour l'Unification du Droit en Afrique.">
+  <meta property="twitter:description" content="Site de l'Association UNIDA, au service du droit OHADA, des juristes, des praticiens, des entreprises et des investisseurs.">
+  <meta property="twitter:image" content="https://www.ohada.com/images/ohada.com.twc.png">
+  <meta name="Author" lang="fr" content="OHADA.com" />
+  <meta name="Publisher" content="OHADA.com" /> 
+  <meta name="google-site-verification" content="YQUga4AdRYhRnAlZ6HHfDyY7DPtw_MpOz78dOP3iOmY" />
+    <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- ** Plugins Needed for the Project ** -->
+  <!-- Bootstrap -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- slick slider -->
+  <link rel="stylesheet" href="/plugins/slick-1.8.1/slick/slick.css">
+  <!-- fontwesome-icon -->
+  <link href="/plugins/fontwesome/css/all-pro.min.css" rel="stylesheet">
+  <!-- animation css -->
+  <link rel="stylesheet" href="/plugins/animate/animate.css">
+  <!-- aos -->
+  <link rel="stylesheet" href="/plugins/aos/aos.css">
+  <!-- venobox popup -->
+  <link rel="stylesheet" href="/plugins/venobox/venobox.css">
+  <!-- svgmap -->
+  <link rel="stylesheet" href="/css/svgmap.css">
+  <!-- bootstrap-select -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+  <!-- bootstrap-icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <!-- Main Stylesheet -->
+  <link href="/css/style.css?t=1783539894" rel="stylesheet">
+  <link href="/css/ohada.css?t=1783539894" rel="stylesheet">
+  <link href="/css/error.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+  <script>
+  window.__inline_data__ = [{"data":[{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Early Access","percentage-complete":100,"updated-at":"2017-08-02T21:36:24","view-order":1},"id":"1","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Core Font Awesome 4 Icons Redesigned","percentage-complete":100,"updated-at":"2017-08-02T21:36:24","view-order":2},"id":"2","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Icons in SVG Format","percentage-complete":100,"updated-at":"2017-12-06T15:32:04","view-order":3},"id":"3","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2018-03-29T14:07:48","name":"Revamped Icon Font Framework","percentage-complete":100,"updated-at":"2018-07-24T14:40:06","view-order":4},"id":"14","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"SVG Icon Framework","percentage-complete":100,"updated-at":"2017-12-06T15:32:16","view-order":5},"id":"4","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Regular and Light Icon Styles","percentage-complete":100,"updated-at":"2017-08-02T21:36:24","view-order":6},"id":"5","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Icon Font Ligatures","percentage-complete":100,"updated-at":"2018-07-24T14:43:16","view-order":7},"id":"7","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Dedicated CDN","percentage-complete":100,"updated-at":"2018-07-24T14:43:27","view-order":8},"id":"10","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Duotone Colored Icons","percentage-complete":100,"updated-at":"2018-07-24T14:45:51","view-order":9},"id":"6","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Desktop Icon Subsetter","percentage-complete":100,"updated-at":"2018-07-24T14:45:29","view-order":10},"id":"8","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Community Voting","percentage-complete":75,"updated-at":"2018-07-24T14:44:56","view-order":11},"id":"11","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2018-03-29T14:07:48","name":"iOS and Android Support","percentage-complete":0,"updated-at":"2018-07-24T14:46:05","view-order":12},"id":"15","links":{"self":"/api/product-updates"},"type":"product-update"},{"attributes":{"inserted-at":"2017-08-02T21:36:24","name":"Desktop Design Plugins","percentage-complete":0,"updated-at":"2018-07-24T14:46:20","view-order":13},"id":"9","links":{"self":"/api/product-updates"},"type":"product-update"}],"jsonapi":{"version":"1.0"}}]
+  </script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D6JM5ZPEVL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-D6JM5ZPEVL');
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+  <!-- preloader start -->
+  <div class="preloader">
+    <img src="/images/preloader.gif" alt="preloader">
+  </div>
+
+  <!-- preloader end -->
+<!-- header -->
+<header class="sticky header">
+  <!-- top header -->
+  <div class="top-header py-2 bg-white">
+    <div class="container">
+      <div class="row no-gutters">
+        <div class="col-lg-5 text-center text-lg-left">
+          <ul class="list-inline d-inline-block langue">
+            <li class="list-inline-item m2-0"><span class="d-inline-block px-2">Langue</span></li>
+            <li class="list-inline-item mx-0"><a class="d-inline-block p-2 text-color en" href="/connexion.html?redirect=L3RlbGVjaGFyZ2VtZW50L2FjdGVzLXVuaWZvcm1lcy9BVVBDQVAtMTk5OF9mci5wZGY=&langue=en" data-toggle="tooltip" data-placement="bottom" title="English"><span>English</span></a></li>
+            <li class="list-inline-item mx-0"><a class="d-inline-block p-2 text-color es" href="/connexion.html?redirect=L3RlbGVjaGFyZ2VtZW50L2FjdGVzLXVuaWZvcm1lcy9BVVBDQVAtMTk5OF9mci5wZGY=&langue=es" data-toggle="tooltip" data-placement="bottom" title="Español"><span>Español</span></a></li>
+            <li class="list-inline-item mx-0"><a class="d-inline-block p-2 text-color fr" href="/connexion.html?redirect=L3RlbGVjaGFyZ2VtZW50L2FjdGVzLXVuaWZvcm1lcy9BVVBDQVAtMTk5OF9mci5wZGY=&langue=fr" data-toggle="tooltip" data-placement="bottom" title="Français"><span>Français</span></a></li>
+            <li class="list-inline-item mx-0"><a class="d-inline-block p-2 text-color pt" href="/connexion.html?redirect=L3RlbGVjaGFyZ2VtZW50L2FjdGVzLXVuaWZvcm1lcy9BVVBDQVAtMTk5OF9mci5wZGY=&langue=pt" data-toggle="tooltip" data-placement="bottom" title="Português"><span>Português</span></a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 text-center text-lg-right navtop">
+          <ul class="list-inline navtop">
+                        		    <li class="list-inline-item"><a class="small-caps text-color p-sm-2 py-2 px-0 d-inline-block" href="/connexion.html"><i class="fas fa-sign-in-alt mr-1" aria-hidden="true"></i>Connexion</a></li>
+		    <li class="list-inline-item"><a class="small-caps text-color p-sm-2 py-2 px-0 d-inline-block" href="/inscription.html"><i class="fas fa-user-plus mr-1" aria-hidden="true"></i>Inscription</a></li>
+                      </ul>
+        </div>
+        <div class="all-member-states col-lg-3 text-center navtop mx-auto">
+		<select id="selectPays" data-width="220px" data-style="btn-tertiary-outline" class="form-control px-2" onchange="location = this.value;" data-show-content="true" >
+			<option value="/l-ohada/etats-membres-de-l-ohada.html"  class="small-caps" data-content="<i class='zone-ohada mr-1' aria-hidden='true'></i> États-membres"></option>
+			<option value="/etats-membres/benin.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e7;&#x1f1ef;</span> Bénin"></option>
+			<option value="/etats-membres/burkina-faso.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e7;&#x1f1eb;</span> Burkina Faso"></option>
+			<option value="/etats-membres/cameroun.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e8;&#x1f1f2;</span> Cameroun"></option>
+			<option value="/etats-membres/comores.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1f0;&#x1f1f2;</span> Comores"></option>
+			<option value="/etats-membres/congo.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e8;&#x1f1ec;</span> Congo"></option>
+			<option value="/etats-membres/cote-divoire.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e8;&#x1f1ee;</span> Côte d'Ivoire"></option>
+			<option value="/etats-membres/gabon.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1ec;&#x1f1e6;</span> Gabon"></option>
+			<option value="/etats-membres/guinee.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1ec;&#x1f1f3;</span> Guinée"></option>
+			<option value="/etats-membres/guinee-bissau.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1ec;&#x1f1fc;</span> Guinée Bissau"></option>
+			<option value="/etats-membres/guinee-equatoriale.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1ec;&#x1f1f6;</span> Guinée Équatoriale"></option>
+			<option value="/etats-membres/mali.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1f2;&#x1f1f1;</span> Mali"></option>
+			<option value="/etats-membres/niger.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1f3;&#x1f1ea;</span> Niger"></option>
+			<option value="/etats-membres/rca.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e8;&#x1f1eb;</span> RCA"></option>
+			<option value="/etats-membres/rdc.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1e8;&#x1f1e9;</span> RDC"></option>
+			<option value="/etats-membres/senegal.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1f8;&#x1f1f3;</span> Sénégal"></option>
+			<option value="/etats-membres/tchad.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1f9;&#x1f1e9;</span> Tchad"></option>
+			<option value="/etats-membres/togo.html"  class="text-color small-caps" data-content="<span class='mr-1'>&#x1f1f9;&#x1f1ec;</span> Togo"></option>
+		</select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- navbar -->
+  <div class="navigation w-100">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-dark p-0">
+        <a class="navbar-brand" href="https://www.ohada.com"><img src="/images/logo.png" alt="logo"></a>
+        <button class="navbar-toggler rounded-0" type="button" data-toggle="collapse" data-target="#navigation"
+          aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navigation">
+          <ul class="navbar-nav ml-auto text-center">
+            <li class="nav-item ">
+              <a class="nav-link" href="/">Accueil</a>
+            </li>
+            <li class="nav-item  @@about">
+              <a class="nav-link" href="/l-unida.html">L'UNIDA</a>
+            </li>
+            <li class="nav-item dropdown view ">
+              <a class="nav-link dropdown-toggle" href="/#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                L'OHADA              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/l-ohada/presentation-de-l-ohada.html">Présentation</a>
+                <a class="dropdown-item" href="/l-ohada/institutions-de-l-ohada.html">Institutions</a>
+                <a class="dropdown-item" href="/l-ohada/etats-membres-de-l-ohada.html">États-membres</a>
+                              </div>
+            </li>
+            <li class="nav-item dropdown view ">
+              <a class="nav-link dropdown-toggle" href="/#" id="navbarDropdown2" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Textes OHADA              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                <a class="dropdown-item" href="/textes-ohada/traite-ohada.html">Traité OHADA</a>
+                <a class="dropdown-item" href="/textes-ohada/reglements-d-application.html">Règlements</a>
+                <a class="dropdown-item" href="/textes-ohada/actes-uniformes.html">Actes uniformes</a>
+                              </div>
+            </li>
+            <li class="nav-item dropdown view ">
+              <a class="nav-link dropdown-toggle" href="/#" id="navbarDropdown3" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Documentation              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
+                <a class="dropdown-item" href="/documentation/presentation-du-droit-ohada.html">Présentation du droit OHADA</a>
+                <a class="dropdown-item" href="/documentation/jurisprudence.html">Jurisprudence</a>
+                <a class="dropdown-item" href="/documentation/doctrine.html">Doctrine</a>
+                                              </div>
+            </li>
+            <li class="nav-item @@blog">
+              <a class="nav-link" href="/actualite.html">Actualité</a>
+            </li>
+                      </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+<!-- /header -->
+<!-- connexion -->
+<section class="section-sm ">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+
+        <div class="col-md-6 mx-auto card p-2 rounded">
+        <h2 class="section-title text-center">Connexion</h2>
+					<form action="/connexion.html" class="row" method="post" id="FormLogin">
+		    <div class="col-12">
+			<input type="text" class="form-control mb-3" id="loginEmail" name="loginEmail" placeholder="Adresse Email">
+		    </div>
+		    <div class="col-12">
+			<input type="password" class="form-control mb-3" id="loginPassword" name="loginPassword" placeholder="Mot de passe">
+		    </div>
+		    <div class="col-12 text-center">
+			<input type="hidden" name="form_action" value="login">
+							<input type="hidden" name="redirect" value="L3RlbGVjaGFyZ2VtZW50L2FjdGVzLXVuaWZvcm1lcy9BVVBDQVAtMTk5OF9mci5wZGY=">
+						<button type="submit" class="btn btn-primary">Connexion</button>
+		    </div>
+		    <div class="col-12 my-3 text-center">
+			<a href="/reinitialisation.html">Mot de passe oublié ?</a>
+		    </div>
+		    <div class="col-8 mx-auto pt-3 text-center border-top">
+			<a class="btn btn-secondary-outline" href="/inscription.html">S'inscrire</a>
+		    </div>
+		</form>
+		
+	</div>
+	
+
+      </div>
+    
+
+    </div>
+  </div>
+</section>
+<!-- /connexion --><section class="section-sm">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex align-items-center section-title justify-content-between">
+          <h2 class="mb-0 text-nowrap mr-3">Actualité récente</h2>
+          <div class="border-top w-100 border-primary d-none d-sm-block"></div>
+          <div>
+            <a href="/actualite.html" class="btn btn-sm btn-tertiary-outline ml-sm-3 d-none d-sm-block">Toute l'actualité</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row cust-slider">
+		<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+												<div class="col-lg-12 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8341/bangui-accueille-deux-journees-de-formation-sur-lapplication-du-droit-ohada-en-rca-les-29-et-30-septembre-2026.html">Bangui accueille deux journées de formation sur l'application du droit OHADA en RCA, les 29 et 30 septembre 2026</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>08/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=club-ohada-rca" data-toggle="tooltip" data-placement="top" title="Club OHADA RCA">Club OHADA RCA</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8341/bangui-accueille-deux-journees-de-formation-sur-lapplication-du-droit-ohada-en-rca-les-29-et-30-septembre-2026.html#commentaires">2 commentaires</a></li>
+				<!-- /Commentaires -->
+							</ul>
+
+						<p class="card-text">Les 29 et 30 septembre 2026, le Club OHADA République Centrafricaine (Club OHADA RCA) organise, en partenariat avec le Secrétariat Permanent de l'OHADA, deux journées de formation internationale sous le thème : « Le droit OHADA et son application en RCA ».</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=bangui" data-toggle="tooltip" data-placement="top" title="Bangui">Bangui</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="Club OHADA">Club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=formation" data-toggle="tooltip" data-placement="top" title="Formation">Formation</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8341/bangui-accueille-deux-journees-de-formation-sur-lapplication-du-droit-ohada-en-rca-les-29-et-30-septembre-2026.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom " src="https://www.ohada.com/uploads/actualite/8340/affiche.jpg" alt="affiche">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8340/webinaire-sur-les-conventions-extrastatutaires-en-droit-ohada-organise-par-le-cercle-ohada-de-luniversite-general-lansana-conte-de-sonfonia-conakry-le-12-juillet-2026.html">Webinaire sur les conventions extrastatutaires en droit OHADA organisé par le Cercle OHADA de l'Université Général Lansana Conté de Sonfonia-Conakry, le 12 juillet 2026</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>08/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=cog" data-toggle="tooltip" data-placement="top" title="Cercle OHADA de Guinée ">COG</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8340/webinaire-sur-les-conventions-extrastatutaires-en-droit-ohada-organise-par-le-cercle-ohada-de-luniversite-general-lansana-conte-de-sonfonia-conakry-le-12-juillet-2026.html#commentaires">5 commentaires</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=guinee" data-toggle="tooltip" data-placement="top" title="Guinée">&#x1f1ec;&#x1f1f3;</a></li>
+							</ul>
+
+						<p class="card-text">Dans le cadre de ses activités de promotion et de vulgarisation du droit OHADA, le Cercle OHADA de l'Université Général Lansana Conté de Sonfonia-Conakry (UGLC-SC) organise un webinaire gratuit le dimanche 12 juillet 2026, de 15h à 17h GMT, sur Google Meet.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="club OHADA">club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=conakry" data-toggle="tooltip" data-placement="top" title="Conakry">Conakry</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=webinaire" data-toggle="tooltip" data-placement="top" title="Webinaire">Webinaire</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8340/webinaire-sur-les-conventions-extrastatutaires-en-droit-ohada-organise-par-le-cercle-ohada-de-luniversite-general-lansana-conte-de-sonfonia-conakry-le-12-juillet-2026.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom " src="https://www.ohada.com/uploads/actualite/8339/photo1.jpg" alt="photo1">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8339/compte-rendu-de-la-phase-finale-de-la-preselection-des-trois-candidats-du-burkina-faso-au-concours-international-genies-en-herbe-ohada-cigho-lome-2026-tenue-le-samedi-4-juillet-2026-a-ouagadougou.html">Compte rendu de la phase finale de la présélection des trois candidats du Burkina Faso au Concours International Génies en Herbe OHADA (CIGHO) - Lomé 2026, tenue le samedi 4 juillet 2026 à Ouagadougou</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>08/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=cercle-ohada-du-burkina" data-toggle="tooltip" data-placement="top" title="Cercle OHADA du Burkina">Cercle OHADA du Burkina</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8339/compte-rendu-de-la-phase-finale-de-la-preselection-des-trois-candidats-du-burkina-faso-au-concours-international-genies-en-herbe-ohada-cigho-lome-2026-tenue-le-samedi-4-juillet-2026-a-ouagadougou.html#commentaires">Laisser un commentaire</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=burkina-faso" data-toggle="tooltip" data-placement="top" title="Burkina-Faso">&#x1f1e7;&#x1f1eb;</a></li>
+							</ul>
+
+						<p class="card-text">Le Concours International Génies en Herbe OHADA est la rencontre la plus importante des étudiants en droit des affaires de notre espace OHADA. Depuis son lancement en 2008, plusieurs équipes venant des universités les plus prestigieuses de la zone OHADA ont participé à cet évènement incontournable du calendrier de la communauté OHADA.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=cigho" data-toggle="tooltip" data-placement="top" title="CiGHO">CiGHO</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="Club OHADA">Club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=concours" data-toggle="tooltip" data-placement="top" title="Concours">Concours</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=ouagadougou" data-toggle="tooltip" data-placement="top" title="Ouagadougou">Ouagadougou</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8339/compte-rendu-de-la-phase-finale-de-la-preselection-des-trois-candidats-du-burkina-faso-au-concours-international-genies-en-herbe-ohada-cigho-lome-2026-tenue-le-samedi-4-juillet-2026-a-ouagadougou.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom cropped top" src="https://www.ohada.com/uploads/actualite/8338/affiche.jpg" alt="affiche">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8338/concours-national-de-las-ohada-de-la-plaidoirie-du-gabon-le-18-juillet-2026-a-libreville.html">Concours national de l'As OHADA de la plaidoirie du Gabon, le 18 juillet 2026 à Libreville</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>08/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=coemg" data-toggle="tooltip" data-placement="top" title="Club OHADA de l’École de Management du Gabon - Université">COEMG</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8338/concours-national-de-las-ohada-de-la-plaidoirie-du-gabon-le-18-juillet-2026-a-libreville.html#commentaires">2 commentaires</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=gabon" data-toggle="tooltip" data-placement="top" title="Gabon">&#x1f1ec;&#x1f1e6;</a></li>
+							</ul>
+
+						<p class="card-text">Le Club OHADA de l'EM Gabon – Université (COEMG) porte à la connaissance des étudiants en droit du Gabon et du grand public qu'il organisera la 1ère édition du Concours national de l'As OHADA de la plaidoirie du Gabon, le samedi 18 juillet 2026 à l'EM Gabon – Université, de 12h30 à 15h00.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=" data-toggle="tooltip" data-placement="top" title=""></a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="Club OHADA">Club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=concours" data-toggle="tooltip" data-placement="top" title="Concours">Concours</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=libreville" data-toggle="tooltip" data-placement="top" title="Libreville">Libreville</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8338/concours-national-de-las-ohada-de-la-plaidoirie-du-gabon-le-18-juillet-2026-a-libreville.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom " src="https://www.ohada.com/uploads/actualite/8337/photo1.jpg" alt="photo1">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8337/compte-rendu-de-la-finale-nationale-du-mali-de-la-17e-edition-du-concours-international-genies-en-herbe-ohada.html">Compte rendu de la finale nationale du Mali de la 17e édition du Concours international Génies en Herbe OHADA</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>08/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=club-ohada-mali" data-toggle="tooltip" data-placement="top" title="Club OHADA Mali">Club OHADA Mali</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8337/compte-rendu-de-la-finale-nationale-du-mali-de-la-17e-edition-du-concours-international-genies-en-herbe-ohada.html#commentaires">Laisser un commentaire</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=mali" data-toggle="tooltip" data-placement="top" title="Mali">&#x1f1f2;&#x1f1f1;</a></li>
+							</ul>
+
+						<p class="card-text">Le dimanche 5 juillet 2026, la salle Master Droit du Numérique de la Faculté de Droit Privé (FDPRI) de l'Université Kurukanfuga de Bamako a vibré au rythme d'une finale épique marquant la phase nationale de la 17e édition du Concours international Génies en Herbe OHADA, Lomé-2026. Les établissements INTEC-SUP, ISPRIC et FDPRI, les cabinets partenaires DOFINI et DIOP, les membres du Club OHADA ainsi que d'anciens lauréats étaient présents pour accompagner les candidats et magnifier l'excellence.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=bamako" data-toggle="tooltip" data-placement="top" title="Bamako">Bamako</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=cigho" data-toggle="tooltip" data-placement="top" title="CIGHO">CIGHO</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="Club OHADA">Club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=concours" data-toggle="tooltip" data-placement="top" title="Concours">Concours</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8337/compte-rendu-de-la-finale-nationale-du-mali-de-la-17e-edition-du-concours-international-genies-en-herbe-ohada.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom cropped top" src="https://www.ohada.com/uploads/actualite/8336/photo.jpg" alt="photo">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8336/remise-de-codes-verts-ohada-aux-membres-du-club-ohada-de-luniversite-internationale-de-libreville.html">Remise de Codes verts OHADA aux membres du Club OHADA de l'Université Internationale de Libreville</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>07/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=co-uil" data-toggle="tooltip" data-placement="top" title="Club OHADA de l'Université Internationale de Libreville Berthe et Jean">CO-UIL</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8336/remise-de-codes-verts-ohada-aux-membres-du-club-ohada-de-luniversite-internationale-de-libreville.html#commentaires">Laisser un commentaire</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=gabon" data-toggle="tooltip" data-placement="top" title="Gabon">&#x1f1ec;&#x1f1e6;</a></li>
+							</ul>
+
+						<p class="card-text">Le jeudi 2 juillet 2026, le Club OHADA de l'Université Internationale de Libreville (CO-UIL) a connu une journée institutionnelle marquante, ponctuée par deux temps forts : la présentation officielle de son nouveau Bureau Exécutif à Monsieur Wilfried BEKONO NKOA, Doyen de la Faculté de Droit et des Sciences Politiques, suivie de la réception officielle des Codes verts OHADA destinés à renforcer le fonds documentaire du Club.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="Club OHADA">Club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=libreville" data-toggle="tooltip" data-placement="top" title="Libreville">Libreville</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=remise-douvrage" data-toggle="tooltip" data-placement="top" title="Remise d'ouvrage">Remise d'ouvrage</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8336/remise-de-codes-verts-ohada-aux-membres-du-club-ohada-de-luniversite-internationale-de-libreville.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom cropped top" src="https://www.ohada.com/uploads/actualite/8335/affiche.jpg" alt="affiche">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8335/1ere-edition-du-concours-national-de-las-ohada-de-la-plaidoirie-du-gabon.html">1ère édition du Concours National de l'As OHADA de la plaidoirie du Gabon</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>06/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=coemg" data-toggle="tooltip" data-placement="top" title="Club OHADA de l’École de Management du Gabon - Université">COEMG</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8335/1ere-edition-du-concours-national-de-las-ohada-de-la-plaidoirie-du-gabon.html#commentaires">Laisser un commentaire</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=gabon" data-toggle="tooltip" data-placement="top" title="Gabon">&#x1f1ec;&#x1f1e6;</a></li>
+							</ul>
+
+						<p class="card-text">le Club OHADA de l'EM Gabon a le plaisir de porter à la connaissance des étudiants en droit et du grand public, qu'il organisera la 1ère édition du Concours National de l'As OHADA de la plaidoirie en République Gabonaise, au mois de juillet.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=club-ohada" data-toggle="tooltip" data-placement="top" title="Club OHADA">Club OHADA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=concours" data-toggle="tooltip" data-placement="top" title="Concours">Concours</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=libreville" data-toggle="tooltip" data-placement="top" title="Libreville">Libreville</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8335/1ere-edition-du-concours-national-de-las-ohada-de-la-plaidoirie-du-gabon.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+												<div class="col-lg-12 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8334/appel-a-candidatures-1ere-edition-du-concours-international-des-perspectives-juridiques-ohada-europe-cipjoe-universite-de-bordeaux.html">Appel à candidatures : 1ère édition du Concours International des Perspectives Juridiques OHADA - Europe (CIPJOE), Université de Bordeaux</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>03/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8334/appel-a-candidatures-1ere-edition-du-concours-international-des-perspectives-juridiques-ohada-europe-cipjoe-universite-de-bordeaux.html#commentaires">2 commentaires</a></li>
+				<!-- /Commentaires -->
+							</ul>
+
+						<p class="card-text">L'Université de Bordeaux, à travers l'Institut de Recherche en Droit des Affaires et du Patrimoine (IRDAP) et sous la coordination de Monsieur Eustache DA ALLADA, Titulaire de la Chaire de professeur junior, IRDAP, organise la première édition du Concours International des Perspectives Juridiques OHADA - Europe (CIPJOE).</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=bordeaux" data-toggle="tooltip" data-placement="top" title="Bordeaux">Bordeaux</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=cipjoe" data-toggle="tooltip" data-placement="top" title="CIPJOE">CIPJOE</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=concours" data-toggle="tooltip" data-placement="top" title="concours">concours</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=irdap" data-toggle="tooltip" data-placement="top" title="IRDAP">IRDAP</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=universite-de-bordeaux" data-toggle="tooltip" data-placement="top" title="Université de Bordeaux">Université de Bordeaux</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8334/appel-a-candidatures-1ere-edition-du-concours-international-des-perspectives-juridiques-ohada-europe-cipjoe-universite-de-bordeaux.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+      	<article class="col-md-12 cust-slider-item d-lg-flex mb-5 py-3 box-shadow hover-shadow border-bottom border-primary">
+	<!-- blog post -->
+								<div class="col-lg-5 col-md-12">
+				<img class="img-fluid zoom cropped top" src="https://www.ohada.com/uploads/actualite/8333/couverture.jpg" alt="couverture">
+			</div>
+							<div class="col-lg-7 col-md-12 pt-3">
+						<h4><a class="text-dark" href="/actualite/8333/parution-du-numero-85-du-bulletin-ersuma-de-pratique-professionnelle-bepp.html">Parution du numéro 85 du Bulletin ERSUMA de Pratique Professionnelle (BEPP)</a></h4>
+			<ul class="list-inline row-auto my-3">
+				<!-- post date -->
+				<li class="list-inline-item mr-3 ml-0"><i class="fad fa-calendar-day text-primary mr-2"></i>03/07/2026</li>
+				<!-- /post date -->
+				
+				<!-- author -->
+								<li class="list-inline-item mr-3 ml-0"><i class="fad fa-megaphone text-primary mr-2"></i><a href="/actualite.html?annonceur=ersuma-ohada" data-toggle="tooltip" data-placement="top" title="Ecole Régionale Supérieure de la Magistrature">ERSUMA-OHADA</a></li>
+								<!-- /author -->
+
+				<!-- Commentaires -->
+																					<li class="list-inline-item ml-0"><i class="fad fa-comments-alt text-primary mr-2"></i><a href="/actualite/8333/parution-du-numero-85-du-bulletin-ersuma-de-pratique-professionnelle-bepp.html#commentaires">Laisser un commentaire</a></li>
+				<!-- /Commentaires -->
+									<li class="list-inline-item float-right"><a href="/actualite.html?pays=benin" data-toggle="tooltip" data-placement="top" title="Bénin">&#x1f1e7;&#x1f1ef;</a></li>
+							</ul>
+
+						<p class="card-text">Le BEPP est structuré en (06) rubriques que sont : Chroniques, Jurisprudence, Législations communautaires, Législations nationales, Pratique professionnelle et Brèves. Il reçoit toutes contributions relatives à l'actualité du droit des affaires, qu'il s'agisse du droit national des États Parties, du droit de l'OHADA, des autres droits communautaires africains ou du droit comparé.</p>
+						   	
+
+						<!-- Tags -->
+			<ul class="list-inline mb-3">
+				<li class="list-inline-item mr-3 ml-0 small-caps"><i class="fad fa-tags text-primary mr-2"></i><a href="/actualite.html?tag=bepp" data-toggle="tooltip" data-placement="top" title="BEPP">BEPP</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=ersuma" data-toggle="tooltip" data-placement="top" title="ERSUMA">ERSUMA</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=librairie" data-toggle="tooltip" data-placement="top" title="Librairie">Librairie</a><i class="fad fa-angle-right mx-2 text-primary"></i><a href="/actualite.html?tag=revue" data-toggle="tooltip" data-placement="top" title="Revue">Revue</a></li>
+			</ul>
+			<!-- /Tags -->
+			
+			<div class="text-right"><a href="/actualite/8333/parution-du-numero-85-du-bulletin-ersuma-de-pratique-professionnelle-bepp.html" class="btn btn-primary btn-sm">Lire la suite</a></div>
+
+		</div>
+	<!-- /blog post -->
+	</article>
+          </div>
+    
+      </div>
+  <!-- mobile see all button -->
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <a href="/actualite.html" class="btn btn-sm btn-tertiary-outline d-sm-none d-inline-block">Toute l'actualité</a>
+    </div>
+  </div>
+</section><!-- footer -->
+<footer>
+<!-- story -->
+<!-- newsletter -->
+  <div class="newsletter">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9 ml-auto bg-primary py-5 newsletter-block">
+          <h3 class="text-white">Abonnez-vous à la Newsletter</h3>
+          <form method="post" action="/inscription.html">
+            <div class="input-wrapper">
+              <input type="email" class="form-control border-0" id="newsletter_email" name="newsletter_email" placeholder="Adresse Email">
+              <button type="submit" value="send" class="btn btn-sm btn-primary px-2">S'abonner</button>
+              <input type="hidden" name="form_action" value="signup">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /newsletter --><!-- /story -->
+  <!-- footer content -->
+  <div class="footer bg-footer section border-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-5 mb-md-0">
+          <h6 class="text-white mb-5 small-caps"><i class="fad fa-globe-africa mr-2"></i>L'OHADA</h6>
+          <ul class="list-unstyled">
+            <li class="mb-3"><a class="text-color" href="/l-ohada/presentation-de-l-ohada.html">Présentation</a></li>
+            <li class="mb-3"><a class="text-color" href="/l-ohada/institutions-de-l-ohada.html">Institutions</a></li>
+            <li class="mb-3"><a class="text-color" href="/l-ohada/etats-membres-de-l-ohada.html">États-membres</a></li>
+          </ul>
+        </div>
+        <!-- links -->
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-5 mb-md-0">
+          <h6 class="text-white mb-5 small-caps"><i class="fad fa-gavel mr-2"></i>Textes OHADA</h6>
+          <ul class="list-unstyled">
+            <li class="mb-3"><a class="text-color" href="/textes-ohada/traite-ohada.html">Traité OHADA</a></li>
+            <li class="mb-3"><a class="text-color" href="/textes-ohada/actes-uniformes.html">Actes uniformes</a></li>
+            <li class="mb-3"><a class="text-color" href="/textes-ohada/reglements-d-application.html">Règlements</a></li>
+          </ul>
+        </div>
+        <!-- support -->
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-5 mb-md-0">
+          <h6 class="text-white mb-5 small-caps"><i class="fad fa-books mr-2"></i>Documentation</h6>
+          <ul class="list-unstyled">
+            <li class="mb-3"><a class="text-color" href="/documentation/jurisprudence.html">Jurisprudence</a></li>
+            <li class="mb-3"><a class="text-color" href="/documentation/doctrine.html">Doctrine</a></li>
+            <li class="mb-3"><a class="text-color" href="/actualite.html">Actualité</a></li>
+                      </ul>
+        </div>
+        <!-- support -->
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-5 mb-md-0">
+          <h6 class="text-white mb-5"><i class="fas fa-handshake"></i> Partenaires</h6>
+          <ul class="list-unstyled">
+            <li class="mb-3"><a class="text-color" href="https://www.ohada.org" target="_blank">OHADA.org</a></li>
+            <li class="mb-3"><a class="text-color" href="https://europa.eu" target="_blank">Union Européenne</a></li>
+            <li class="mb-3"><a class="text-color" href="http://www.ohadac.com" target="_blank">ACP Legal</a> / <a class="text-color" href="http://www.carohadac.org" target="_blank">CARO</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 col-sm-8 mb-5 mb-lg-0">
+          <!-- logo -->
+          <a class="logo-footer" href="index.html"><img class="img-fluid mb-4" src="/images/logo.png" alt="logo"></a>
+          <ul class="list-unstyled text-white">
+            <li class="mb-3">Site internet de l'Association pour l'Unification du Droit en Afrique (UNIDA)</li>
+                        <li class="mb-3"><i class="fas fa-envelope mr-2"></i><a class="text-primary" href="/contact.html">Contactez-nous</a></li>
+                     </ul>
+        </div>
+        <!-- company -->
+      </div>
+    </div>
+  </div>
+  <!-- copyright -->
+  <div class="copyright py-4 bg-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-7 text-sm-left text-center">
+          <p class="mb-0">
+          	          	<a class="text-color" href="https://www.ohada.com">UNIDA | OHADA.com</a> &copy2026 &bull; Tous droits réservés          </p>
+        </div>
+        <div class="col-sm-5 text-sm-right text-center">
+          <ul class="list-inline">
+            <li class="list-inline-item"><a class="d-inline-block p-2" href="https://www.facebook.com/ohadacom" target="_blank"><i class="bi bi-facebook fa-lg" style="color:#fff;"></i></a></li>
+            <li class="list-inline-item"><a class="d-inline-block p-2" href="https://twitter.com/droitohada" target="_blank"><i class="bi bi-twitter-x fa-lg" style="color:#fff;"></i></a></li>
+            <li class="list-inline-item"><a class="d-inline-block p-2" href="https://www.instagram.com/unidaohadacom" target="_blank"><i class="bi bi-instagram fa-lg" style="color:#fff;"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <a href="#" id="back-to-top" aria-hidden="true"><i class="fas fa-angle-up"></i></a>
+</footer>
+<!-- /footer -->
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- slick slider -->
+<script src="/plugins/slick-1.8.1/slick/slick.min.js"></script>
+<!-- aos -->
+<script src="/plugins/aos/aos.js"></script>
+<!-- venobox popup -->
+<script src="/plugins/venobox/venobox.min.js"></script>
+<!-- filter -->
+<script src="/plugins/filterizr/jquery.filterizr.min.js"></script>
+<!-- bootstrap-select JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+
+<!-- Main Script -->
+<script src="/js/script.js?t=1783539894"></script>
+<!-- svg map -->
+<script>
+var afjsconfig = {
+"afjsDZ":{"hover":"Algérie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsAO":{"hover":"Angola","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsBJ":{"hover":"Bénin","flag":"&#x1f1e7;&#x1f1ef;","url":"/etats-membres/benin.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsBW":{"hover":"Botswana","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsBF":{"hover":"Burkina Faso","flag":"&#x1f1e7;&#x1f1eb;","url":"/etats-membres/burkina-faso.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsBI":{"hover":"Burundi","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#FCB731", "downColor": "#f8f8f8", "active": 0},
+"afjsCM":{"hover":"Cameroun","flag":"&#x1f1e8;&#x1f1f2;","url":"/etats-membres/cameroun.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsCV":{"hover":"Cap-Vert","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsCF":{"hover":"RCA","flag":"&#x1f1e8;&#x1f1eb;","url":"/etats-membres/rca.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsTD":{"hover":"Tchad","flag":"&#x1f1f9;&#x1f1e9;","url":"/etats-membres/tchad.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsKM":{"hover":"Comores","flag":"&#x1f1f0;&#x1f1f2;","url":"/etats-membres/comores.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsCI":{"hover":"Côte d'Ivoire","flag":"&#x1f1e8;&#x1f1ee;","url":"/etats-membres/cote-divoire.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsCD":{"hover":"RDC","flag":"&#x1f1e8;&#x1f1e9;","url":"/etats-membres/rdc.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsDJ":{"hover":"Djibouti","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#FCB731", "downColor": "#f8f8f8", "active": 0},
+"afjsEG":{"hover":"Egypte","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsGQ":{"hover":"Guinée Équatoriale","flag":"&#x1f1ec;&#x1f1f6;","url":"/etats-membres/guinee-equatoriale.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsER":{"hover":"Erythrée","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsET":{"hover":"Ethiopie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsGA":{"hover":"Gabon","flag":"&#x1f1ec;&#x1f1e6;","url":"/etats-membres/gabon.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsGM":{"hover":"Gambie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsGH":{"hover":"Ghana","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsGN":{"hover":"Guinée","flag":"&#x1f1ec;&#x1f1f3;","url":"/etats-membres/guinee.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsGW":{"hover":"Guinée Bissau","flag":"&#x1f1ec;&#x1f1fc;","url":"/etats-membres/guinee-bissau.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsKE":{"hover":"Kenya","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsLS":{"hover":"Lesotho","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsLR":{"hover":"Liberia","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsLY":{"hover":"Libye","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsMG":{"hover":"Madagascar","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#FCB731", "downColor": "#f8f8f8", "active": 0},
+"afjsMW":{"hover":"Malawi","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsML":{"hover":"Mali","flag":"&#x1f1f2;&#x1f1f1;","url":"/etats-membres/mali.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsMR":{"hover":"Mauritanie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsMU":{"hover":"Maurice","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsMA":{"hover":"Maroc","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#FCB731", "downColor": "#f8f8f8", "active": 0},
+"afjsMZ":{"hover":"Mozambique","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsNA":{"hover":"Namibie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsNE":{"hover":"Niger","flag":"&#x1f1f3;&#x1f1ea;","url":"/etats-membres/niger.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsNG":{"hover":"Nigéria","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsCG":{"hover":"Congo","flag":"&#x1f1e8;&#x1f1ec;","url":"/etats-membres/congo.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsRW":{"hover":"Rwanda","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsSN":{"hover":"Sénégal","flag":"&#x1f1f8;&#x1f1f3;","url":"/etats-membres/senegal.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsSC":{"hover":"Seychelles","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsSL":{"hover":"Sierra Leone","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsSO":{"hover":"Somalie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsZA":{"hover":"Afrique du Sud","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsSS":{"hover":"Soudan du Sud","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsSD":{"hover":"Soudan","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsSZ":{"hover":"Swaziland","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsST":{"hover":"Sao Tomé-et-Principe","url":"/#","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": 0},
+"afjsTZ":{"hover":"République unie de Tanzanie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsTG":{"hover":"Togo","flag":"&#x1f1f9;&#x1f1ec;","url":"/etats-membres/togo.html","target":"same_window","upColor": "#1e1e4b", "overColor": "#FCB731", "downColor": "#1e1e4b", "active": !0},
+"afjsTN":{"hover":"Tunisie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsUG":{"hover":"Ouganda","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsZM":{"hover":"Zambie","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"afjsZW":{"hover":"Zimbabwé","":"","target":"same_window","upColor": "#f8f8f8", "overColor": "#f8f8f8", "downColor": "#f8f8f8", "active": 0},
+"general": {"borderColor": "#adadad", "visibleNames": "#adadad"}
+};
+var pins_config= {"pins":[]};</script>
+<script src="/js/svgmap.js"></script>
+</body>
+</html>
