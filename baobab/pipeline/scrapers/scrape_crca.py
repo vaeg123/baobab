@@ -51,37 +51,52 @@ async def fetch(client: httpx.AsyncClient, url: str, retries: int = 3) -> str | 
 
 
 def parse_decision_list(html: str) -> list[dict]:
-    """Parse une page de liste CRCA → liste de stubs {titre, url, date, ref}."""
+    """Parse une page de liste CRCA.
+
+    Le site cima-afrique.org présente les décisions dans un tableau HTML :
+    chaque <tr> contient date + titre + lien PDF direct.
+    """
     soup = BeautifulSoup(html, "html.parser")
     items = []
 
-    # Le site CIMA affiche les décisions dans des articles / divs de liste
-    for article in soup.select("article, .decision-item, .entry-item, li.decision"):
-        title_tag = article.select_one("h2 a, h3 a, .entry-title a, a")
-        if not title_tag:
+    for row in soup.select("tr"):
+        a = row.select_one("a[href$='.pdf']")
+        if not a:
             continue
-        href = title_tag.get("href", "")
-        if not href:
-            continue
-        titre = title_tag.get_text(strip=True)
-        date_tag = article.select_one("time, .entry-date, .date")
-        date_str = date_tag.get("datetime", date_tag.get_text(strip=True)) if date_tag else ""
+        href = a["href"]
+        full_text = row.get_text(" ", strip=True)
+
+        # Date en début de cellule (ex: "13 décembre 2025")
+        date_m = re.search(
+            r"(\d{1,2}\s+(?:janvier|février|mars|avril|mai|juin|juillet|août"
+            r"|septembre|octobre|novembre|décembre)\s+\d{4}|\d{4})",
+            full_text, re.IGNORECASE
+        )
+        date_str = date_m.group(0) if date_m else ""
+
+        # Titre = texte du lien ou contenu de la cellule
+        titre = a.get_text(strip=True) or full_text[:120]
+
+        # Référence n°XXX-YY extraite du nom de fichier ou titre
+        ref_m = re.search(r"[Dd]écision[\s_-]*n[°o]?[\s_-]*([\w\-]+)", titre + " " + href)
+        ref = f"n°{ref_m.group(1)}" if ref_m else ""
+
+        # Sanction détectée dans le titre
+        sanction_m = re.search(
+            r"(retrait\s+d.agr[eé]ment|amende|bl[âa]me|avertissement"
+            r"|surveillance permanente|liquidation|approbation|levée|agrément)",
+            titre, re.IGNORECASE
+        )
+        sanction = sanction_m.group(0).strip() if sanction_m else ""
+
         items.append({
             "titre": titre,
             "url": urljoin(BASE_URL, href),
             "date_str": date_str,
+            "ref": ref,
+            "sanction": sanction,
+            "is_pdf": True,
         })
-
-    # Fallback : liens directs vers PDFs listés dans la page
-    if not items:
-        for a in soup.select("a[href*='.pdf'], a[href*='decision']"):
-            titre = a.get_text(strip=True) or a["href"].split("/")[-1]
-            items.append({
-                "titre": titre,
-                "url": urljoin(BASE_URL, a["href"]),
-                "date_str": "",
-                "is_pdf": a["href"].endswith(".pdf"),
-            })
 
     return items
 
@@ -150,60 +165,71 @@ def next_page_url(html: str, current_url: str) -> str | None:
     return None
 
 
+async def get_year_filter_urls(client: httpx.AsyncClient) -> list[str]:
+    """Récupère les URLs de filtre par année depuis la page principale."""
+    html = await fetch(client, LIST_URL)
+    if not html:
+        return [LIST_URL]
+    soup = BeautifulSoup(html, "html.parser")
+    # Liens avec paramètre ?y= (filtres par année sur cima-afrique.org)
+    year_links = [
+        urljoin(BASE_URL, a["href"])
+        for a in soup.select("a[href*='?y=']")
+        if a.get("href")
+    ]
+    # Toujours inclure la page principale
+    return [LIST_URL] + list(dict.fromkeys(year_links))
+
+
 async def scrape(page_range: tuple[int, int] | None = None, out: Path = OUTPUT_DEFAULT) -> list[dict]:
     out.parent.mkdir(parents=True, exist_ok=True)
     decisions: list[dict] = []
+    seen_pdfs: set[str] = set()
 
     async with httpx.AsyncClient() as client:
-        url = LIST_URL
-        page_num = 1
-
         log.info(f"Démarrage scraping CRCA depuis {LIST_URL}")
 
-        while url:
-            if page_range:
-                lo, hi = page_range
-                if page_num < lo:
-                    page_num += 1
-                    url = f"{LIST_URL}page/{page_num}/"
-                    continue
-                if page_num > hi:
-                    break
+        # Le site CIMA liste les décisions sur une page principale + filtres par année
+        urls_to_scrape = await get_year_filter_urls(client)
+        log.info(f"URLs à scraper : {len(urls_to_scrape)} (page principale + filtres annuels)")
 
-            log.info(f"Page liste {page_num}: {url}")
+        for url in urls_to_scrape:
+            log.info(f"Scraping : {url}")
             html = await fetch(client, url)
             if not html:
-                log.error(f"Impossible de charger {url}")
-                break
+                log.warning(f"Impossible de charger {url}")
+                continue
 
             stubs = parse_decision_list(html)
             log.info(f"  {len(stubs)} décisions trouvées")
 
             for stub in stubs:
-                detail_url = stub["url"]
-                if stub.get("is_pdf"):
-                    # Décision = fichier PDF direct, pas de page détail
-                    decisions.append({
-                        **stub,
-                        "type": "decision_crca",
-                        "corpus": "cima",
-                        "juridiction": "CRCA",
-                        "texte_integral": "",
-                        "source_url": detail_url,
-                        "source_pdf_url": detail_url,
-                    })
-                else:
-                    detail_html = await fetch(client, detail_url)
-                    if detail_html:
-                        d = parse_decision_detail(detail_html, detail_url)
-                        d["date_str"] = d["date_str"] or stub["date_str"]
-                        decisions.append(d)
-                    await asyncio.sleep(0.8)
+                pdf_url = stub["url"]
+                if pdf_url in seen_pdfs:
+                    continue
+                seen_pdfs.add(pdf_url)
 
-            nxt = next_page_url(html, url)
-            url = nxt
-            page_num += 1
-            await asyncio.sleep(1.2)
+                decisions.append({
+                    "ref": stub.get("ref", ""),
+                    "titre": stub["titre"],
+                    "date_str": stub["date_str"],
+                    "sanction": stub.get("sanction", ""),
+                    "pays": "",
+                    "articles_cites": [],
+                    "texte_integral": "",
+                    "resume": stub["titre"],
+                    "mots_cles": [stub.get("sanction", "")] if stub.get("sanction") else [],
+                    "parties": {},
+                    "metadata": {},
+                    "source_url": pdf_url,
+                    "source_pdf_url": pdf_url,
+                    "type": "decision_crca",
+                    "corpus": "cima",
+                    "juridiction": "CRCA",
+                    "domaine": "Assurances / Contrôle prudentiel",
+                })
+
+            await asyncio.sleep(1.0)
 
     log.info(f"Total décisions CRCA collectées : {len(decisions)}")
     with open(out, "w", encoding="utf-8") as f:

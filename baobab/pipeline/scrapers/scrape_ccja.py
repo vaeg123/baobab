@@ -21,8 +21,9 @@ import httpx
 from bs4 import BeautifulSoup
 
 JURICAF_BASE = "https://juricaf.org"
-# CCJA sur JURICAF : recherche par juridiction
-SEARCH_URL = f"{JURICAF_BASE}/recherche/pays-OHADACCJA/tri-dateDecision/ordre-desc"
+# CCJA sur JURICAF : terme de recherche "CCJA" + tri par date desc
+# Pagination : ?tri=DESC&page=N (149 pages au total)
+SEARCH_URL = f"{JURICAF_BASE}/recherche/CCJA?tri=DESC"
 
 OUTPUT_DEFAULT = Path(__file__).parent.parent.parent.parent / "data" / "raw" / "ccja_arrets.json"
 
@@ -56,34 +57,25 @@ def parse_juricaf_list(html: str) -> list[dict]:
     soup = BeautifulSoup(html, "html.parser")
     items = []
 
-    for row in soup.select(".resultat, .decision-row, li.arret, .jurisprudence-item"):
-        a = row.select_one("a")
-        if not a:
-            continue
-        titre = a.get_text(strip=True)
+    # JURICAF structure : liens /arret/ dans la page de résultats
+    for a in soup.select("a[href*='/arret/']"):
         href = a.get("href", "")
-        date_tag = row.select_one(".date, time, .dateDecision")
-        date_str = date_tag.get_text(strip=True) if date_tag else ""
-        ref_tag = row.select_one(".reference, .numero, .ref")
-        ref = ref_tag.get_text(strip=True) if ref_tag else ""
+        titre = a.get_text(strip=True)
+        if not titre or len(titre) < 5:
+            continue
+        # Extraire date depuis le href : /arret/PAYS-JURIDICTION-AAAAMMJJ-NUM
+        date_m = re.search(r"-(\d{8})-", href)
+        date_str = ""
+        if date_m:
+            d = date_m.group(1)
+            date_str = f"{d[:4]}-{d[4:6]}-{d[6:8]}"
+
         items.append({
             "titre": titre,
             "url": urljoin(JURICAF_BASE, href),
             "date_str": date_str,
-            "ref": ref,
+            "ref": href.split("/")[-1],
         })
-
-    # Fallback si structure différente
-    if not items:
-        for a in soup.select("a[href*='/arret/']"):
-            titre = a.get_text(strip=True)
-            if titre and len(titre) > 10:
-                items.append({
-                    "titre": titre,
-                    "url": urljoin(JURICAF_BASE, a["href"]),
-                    "date_str": "",
-                    "ref": "",
-                })
 
     return items
 
@@ -144,13 +136,18 @@ def parse_juricaf_detail(html: str, url: str) -> dict:
     }
 
 
-def next_page_url(html: str) -> str | None:
+def next_page_url(html: str, current_page: int) -> str | None:
     soup = BeautifulSoup(html, "html.parser")
-    for sel in ["a.next", "a[rel='next']", ".pagination a.suivant", ".pager .next a"]:
-        nxt = soup.select_one(sel)
-        if nxt and nxt.get("href"):
-            return urljoin(JURICAF_BASE, nxt["href"])
-    return None
+    # JURICAF pagination : /recherche/CCJA?tri=DESC&page=N
+    for a in soup.select("a[href*='page=']"):
+        href = a.get("href", "")
+        m = re.search(r"page=(\d+)", href)
+        if m and int(m.group(1)) == current_page + 1:
+            return urljoin(JURICAF_BASE, href)
+    # Fallback : incrémenter page manuellement
+    # Page 1 n'a pas de paramètre page, pages suivantes ont &page=N
+    next_p = current_page + 1
+    return f"{JURICAF_BASE}/recherche/CCJA?tri=DESC&page={next_p}"
 
 
 async def scrape(page_range: tuple[int, int] | None = None, out: Path = OUTPUT_DEFAULT) -> list[dict]:
@@ -195,7 +192,7 @@ async def scrape(page_range: tuple[int, int] | None = None, out: Path = OUTPUT_D
                     arrets.append(d)
                 await asyncio.sleep(1.0)
 
-            nxt = next_page_url(html)
+            nxt = next_page_url(html, page_num)
             url = nxt
             page_num += 1
             await asyncio.sleep(1.5)

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Téléchargeur des Actes Uniformes OHADA.
-Source : https://www.ohadalegis.com (PDFs librement accessibles)
-16 actes uniformes officiels.
+Source : https://www.ohada.com/actes-uniformes.html (PDFs librement accessibles)
+18 actes uniformes officiels.
 
 Usage:
     python -m baobab.pipeline.scrapers.download_ohada
@@ -31,119 +31,135 @@ HEADERS = {
     ),
 }
 
-# 16 Actes Uniformes OHADA avec leurs URLs sur ohadalegis.com
+# 18 Actes Uniformes OHADA — source : https://www.ohada.com/actes-uniformes.html
+OHADA_BASE = "https://www.ohada.com"
+
 ACTES_UNIFORMES = [
     {
-        "code": "AU-DCG",
-        "titre": "Acte Uniforme relatif au Droit Commercial Général",
-        "domaine": "Droit commercial",
-        "date": "2010-12-15",
-        "url": "https://www.ohadalegis.com/textes/aucg2010fr.pdf",
-    },
-    {
-        "code": "AU-SCCIV",
-        "titre": "Acte Uniforme relatif au Droit des Sociétés Commerciales et du GIE",
-        "domaine": "Droit des sociétés",
-        "date": "2014-01-30",
-        "url": "https://www.ohadalegis.com/textes/auscgie2014fr.pdf",
-    },
-    {
-        "code": "AU-SUR",
-        "titre": "Acte Uniforme portant organisation des Sûretés",
-        "domaine": "Sûretés / Garanties",
-        "date": "2010-12-15",
-        "url": "https://www.ohadalegis.com/textes/ausur2010fr.pdf",
-    },
-    {
-        "code": "AU-REC",
-        "titre": "Acte Uniforme portant organisation des Procédures Simplifiées de Recouvrement",
+        "code": "AUPSRVE-2023",
+        "titre": "Acte Uniforme portant organisation des Procédures Simplifiées de Recouvrement et des Voies d'Exécution (révisé 2023)",
         "domaine": "Recouvrement / Voies d'exécution",
-        "date": "1996-04-10",
-        "url": "https://www.ohadalegis.com/textes/aurecouvrement1996fr.pdf",
+        "date": "2023-01-01",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUPSRVE-2023_fr.pdf",
     },
     {
-        "code": "AU-VEX",
-        "titre": "Acte Uniforme portant organisation des Voies d'Exécution",
-        "domaine": "Voies d'exécution",
-        "date": "1998-04-10",
-        "url": "https://www.ohadalegis.com/textes/auexecution1998fr.pdf",
+        "code": "SYCEBNL-2022",
+        "titre": "Acte Uniforme relatif au Droit des Sociétés Coopératives et des Mutuelles (SYCEBNL 2022)",
+        "domaine": "Sociétés coopératives / Mutuelles",
+        "date": "2022-01-01",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/SYCEBNL-2022_fr.pdf",
     },
     {
-        "code": "AU-PCAP",
-        "titre": "Acte Uniforme portant organisation des Procédures Collectives d'Apurement du Passif",
-        "domaine": "Procédures collectives / Faillite",
-        "date": "2015-09-10",
-        "url": "https://www.ohadalegis.com/textes/aupcap2015fr.pdf",
-    },
-    {
-        "code": "AU-ARB",
-        "titre": "Acte Uniforme relatif au Droit de l'Arbitrage",
+        "code": "AUA-2017",
+        "titre": "Acte Uniforme relatif au Droit de l'Arbitrage (2017)",
         "domaine": "Arbitrage",
         "date": "2017-03-23",
-        "url": "https://www.ohadalegis.com/textes/auarbitrage2017fr.pdf",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUA-2017_fr.pdf",
     },
     {
-        "code": "AU-COMP",
-        "titre": "Acte Uniforme relatif au Droit Comptable et à l'Information Financière",
-        "domaine": "Comptabilité / Finance",
-        "date": "2017-01-26",
-        "url": "https://www.ohadalegis.com/textes/audcif2017fr.pdf",
-    },
-    {
-        "code": "AU-TRANS",
-        "titre": "Acte Uniforme relatif aux Contrats de Transport de Marchandises par Route",
-        "domaine": "Transport",
-        "date": "2003-03-22",
-        "url": "https://www.ohadalegis.com/textes/autransport2003fr.pdf",
-    },
-    {
-        "code": "AU-DROIT-SOC-COOP",
-        "titre": "Acte Uniforme relatif au Droit des Sociétés Coopératives",
-        "domaine": "Sociétés coopératives",
-        "date": "2010-12-15",
-        "url": "https://www.ohadalegis.com/textes/auscoop2010fr.pdf",
-    },
-    {
-        "code": "AU-MED",
-        "titre": "Acte Uniforme relatif à la Médiation",
+        "code": "AUM-2017",
+        "titre": "Acte Uniforme relatif à la Médiation (2017)",
         "domaine": "Médiation",
         "date": "2017-01-23",
-        "url": "https://www.ohadalegis.com/textes/aumediation2017fr.pdf",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUM-2017_fr.pdf",
     },
     {
-        "code": "TRAITE-OHADA",
-        "titre": "Traité relatif à l'Harmonisation du Droit des Affaires en Afrique",
-        "domaine": "Traité fondateur OHADA",
-        "date": "2008-10-17",
-        "url": "https://www.ohadalegis.com/textes/traiteohadafr.pdf",
+        "code": "AUDCIF-2017",
+        "titre": "Acte Uniforme relatif au Droit Comptable et à l'Information Financière (2017)",
+        "domaine": "Comptabilité / Finance",
+        "date": "2017-01-26",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUDCIF-2017_fr.pdf",
     },
     {
-        "code": "REG-ARB-CCJA",
-        "titre": "Règlement d'Arbitrage de la CCJA",
-        "domaine": "Arbitrage CCJA",
-        "date": "2017-03-23",
-        "url": "https://www.ohadalegis.com/textes/regarbitrageccja2017fr.pdf",
+        "code": "AUPCAP-2015",
+        "titre": "Acte Uniforme portant organisation des Procédures Collectives d'Apurement du Passif (2015)",
+        "domaine": "Procédures collectives / Faillite",
+        "date": "2015-09-10",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUPCAP-2015_fr.pdf",
     },
     {
-        "code": "REG-CCJA",
-        "titre": "Règlement de Procédure de la CCJA",
-        "domaine": "Procédure CCJA",
-        "date": "2017-01-30",
-        "url": "https://www.ohadalegis.com/textes/regprocedureccja2017fr.pdf",
+        "code": "AUSCGIE-2014",
+        "titre": "Acte Uniforme relatif au Droit des Sociétés Commerciales et du GIE (2014)",
+        "domaine": "Droit des sociétés",
+        "date": "2014-01-30",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUSCGIE-2014_fr.pdf",
     },
     {
-        "code": "AU-DROIT-BAUX",
-        "titre": "Acte Uniforme sur le Bail Commercial",
-        "domaine": "Baux commerciaux",
-        "date": "1997-04-17",
-        "url": "https://www.ohadalegis.com/textes/aubail1997fr.pdf",
-    },
-    {
-        "code": "AU-ECT",
-        "titre": "Acte Uniforme relatif au Droit des Contrats",
-        "domaine": "Droit des contrats",
+        "code": "AUS-2010",
+        "titre": "Acte Uniforme portant organisation des Sûretés (2010)",
+        "domaine": "Suretés / Garanties",
         "date": "2010-12-15",
-        "url": "https://www.ohadalegis.com/textes/audroitcontrats2010fr.pdf",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUS-2010_fr.pdf",
+    },
+    {
+        "code": "AUSCOOP-2010",
+        "titre": "Acte Uniforme relatif au Droit des Sociétés Coopératives (2010)",
+        "domaine": "Sociétés coopératives",
+        "date": "2010-12-15",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUSCOOP-2010_fr.pdf",
+    },
+    {
+        "code": "AUDCG-2010",
+        "titre": "Acte Uniforme relatif au Droit Commercial Général (2010)",
+        "domaine": "Droit commercial",
+        "date": "2010-12-15",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUDCG-2010_fr.pdf",
+    },
+    {
+        "code": "AUCTMR-2003",
+        "titre": "Acte Uniforme relatif aux Contrats de Transport de Marchandises par Route (2003)",
+        "domaine": "Transport",
+        "date": "2003-03-22",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUCTMR-2003_fr.pdf",
+    },
+    {
+        "code": "AUCE-2000",
+        "titre": "Acte Uniforme relatif au Droit des Contrats (2000)",
+        "domaine": "Droit des contrats",
+        "date": "2000-01-01",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUCE-2000_fr.pdf",
+    },
+    {
+        "code": "AUA-1999",
+        "titre": "Acte Uniforme relatif au Droit de l'Arbitrage (1999)",
+        "domaine": "Arbitrage",
+        "date": "1999-03-11",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUA-1999_fr.pdf",
+    },
+    {
+        "code": "AUPSRVE-1998",
+        "titre": "Acte Uniforme portant organisation des Procédures Simplifiées de Recouvrement (1998)",
+        "domaine": "Recouvrement / Voies d'exécution",
+        "date": "1998-04-10",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUPSRVE-1998_fr.pdf",
+    },
+    {
+        "code": "AUPCAP-1998",
+        "titre": "Acte Uniforme portant organisation des Procédures Collectives d'Apurement du Passif (1998)",
+        "domaine": "Procédures collectives / Faillite",
+        "date": "1998-04-10",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUPCAP-1998_fr.pdf",
+    },
+    {
+        "code": "AUDCG-1997",
+        "titre": "Acte Uniforme relatif au Droit Commercial Général (1997)",
+        "domaine": "Droit commercial",
+        "date": "1997-04-17",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUDCG-1997_fr.pdf",
+    },
+    {
+        "code": "AUSCGIE-1997",
+        "titre": "Acte Uniforme relatif au Droit des Sociétés Commerciales et du GIE (1997)",
+        "domaine": "Droit des sociétés",
+        "date": "1997-04-17",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUSCGIE-1997_fr.pdf",
+    },
+    {
+        "code": "AUS-1997",
+        "titre": "Acte Uniforme portant organisation des Sûretés (1997)",
+        "domaine": "Suretés / Garanties",
+        "date": "1997-04-17",
+        "url": f"{OHADA_BASE}/telechargement/actes-uniformes/AUS-1997_fr.pdf",
     },
 ]
 
