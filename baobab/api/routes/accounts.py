@@ -85,6 +85,10 @@ class AdminLogin(BaseModel):
     admin_token: str = Field(..., min_length=12, max_length=80)
 
 
+class AccessLogin(BaseModel):
+    access_code: str = Field(..., min_length=12, max_length=80)
+
+
 def _require_superadmin(x_superadmin_token: str | None) -> None:
     if x_superadmin_token != SUPERADMIN_TOKEN:
         raise HTTPException(
@@ -221,6 +225,30 @@ async def admin_login(request: AdminLogin):
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
         detail="Invalid admin token",
+    )
+
+
+@router.post("/access/login")
+async def access_login(request: AccessLogin):
+    if request.access_code == SUPERADMIN_TOKEN:
+        return {
+            "role": "superadmin",
+            "token": request.access_code,
+            "message": "Superadmin access granted",
+        }
+
+    for workspace in WORKSPACES.values():
+        if workspace["admin_token"] == request.access_code:
+            return {
+                "role": "admin",
+                "token": request.access_code,
+                "workspace": _admin_workspace(workspace),
+                "message": "Workspace admin access granted",
+            }
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Invalid access code",
     )
 
 

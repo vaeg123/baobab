@@ -208,3 +208,39 @@ def test_superadmin_can_see_platform_overview():
     overview = overview_response.json()
     assert overview["workspaces_count"] >= 1
     assert overview["confirmed_revenue_xof"] >= 5000
+
+
+def test_access_code_routes_to_admin_or_superadmin_space():
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Code Admin",
+            "email": "code-admin@example.com",
+            "organization_name": "Code Admin SARL",
+            "territory": "CI",
+        },
+    ).json()
+
+    admin_access = client.post(
+        "/api/v1/accounts/access/login",
+        json={"access_code": workspace["admin_token"]},
+    )
+
+    assert admin_access.status_code == 200
+    assert admin_access.json()["role"] == "admin"
+    assert admin_access.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
+
+    superadmin_access = client.post(
+        "/api/v1/accounts/access/login",
+        json={"access_code": "baobab-superadmin-dev"},
+    )
+
+    assert superadmin_access.status_code == 200
+    assert superadmin_access.json()["role"] == "superadmin"
+
+    invalid_access = client.post(
+        "/api/v1/accounts/access/login",
+        json={"access_code": "invalid-access-code"},
+    )
+
+    assert invalid_access.status_code == 403

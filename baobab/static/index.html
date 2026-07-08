@@ -580,8 +580,7 @@
   <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
   <button class="tab-btn" onclick="switchTab('bceao', this)">BCEAO &mdash; Banque &amp; Finance</button>
   <button class="tab-btn" onclick="switchTab('espace', this)">Espace &mdash; Abonnement</button>
-  <button class="tab-btn" onclick="switchTab('admin', this)">Admin</button>
-  <button class="tab-btn" onclick="switchTab('superadmin', this)">Superadmin</button>
+  <button class="tab-btn" onclick="switchTab('access', this)">Acces securise</button>
 </div>
 
 <!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
@@ -876,6 +875,46 @@
   </div>
 </div>
 
+<div id="tab-access" class="tab-panel">
+  <div class="container">
+    <div class="page-title">Acces securise</div>
+    <div class="page-sub">Saisissez votre code. Un code admin ouvre l'espace admin, un code superadmin ouvre l'espace superadmin.</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#f0ead6">KEY</div>
+            <span class="card-title">Code d'acces</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Code admin ou superadmin</label>
+              <input type="password" id="access_code" placeholder="Saisissez votre code" />
+            </div>
+            <button class="btn btn-primary" onclick="loginWithAccessCode()">Entrer</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#eef0f7">AUTH</div>
+            <span class="card-title">Resultat</span>
+          </div>
+          <div class="card-body" id="access-results">
+            <div class="empty-state" style="padding:1.5rem">
+              <div class="empty-icon">KEY</div>
+              <div class="empty-text">Votre espace s'ouvrira automatiquement selon le code.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="tab-admin" class="tab-panel">
   <div class="container">
     <div class="page-title">Espace admin</div>
@@ -931,7 +970,7 @@
           <div class="card-body">
             <div class="form-group">
               <label>Superadmin token</label>
-              <input type="text" id="superadmin_token" value="baobab-superadmin-dev" />
+              <input type="password" id="superadmin_token" placeholder="Code superadmin" />
             </div>
             <button class="btn btn-primary" onclick="loadSuperadmin()">Charger la plateforme</button>
           </div>
@@ -968,7 +1007,7 @@
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
   }
 
   // ── Shared helpers ──
@@ -1393,7 +1432,10 @@
       alert('Renseignez le token admin.');
       return;
     }
+    adminLoginWithToken(admin_token);
+  }
 
+  async function adminLoginWithToken(admin_token) {
     try {
       const login = await fetch('/api/v1/accounts/admin/login', {
         method: 'POST',
@@ -1434,6 +1476,10 @@
 
   async function loadSuperadmin() {
     const token = document.getElementById('superadmin_token').value.trim();
+    loadSuperadminWithToken(token);
+  }
+
+  async function loadSuperadminWithToken(token) {
     try {
       const overviewResponse = await fetch('/api/v1/accounts/superadmin/overview', {
         headers: { 'X-Superadmin-Token': token }
@@ -1460,6 +1506,45 @@
     } catch (e) {
       document.getElementById('superadmin-results').innerHTML = `
         <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur superadmin : ${e.message}</div></div>`;
+    }
+  }
+
+  async function loginWithAccessCode() {
+    const accessCode = document.getElementById('access_code').value.trim();
+    if (!accessCode) {
+      alert('Saisissez votre code.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/v1/accounts/access/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access_code: accessCode })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+
+      if (data.role === 'admin') {
+        document.getElementById('admin_token').value = accessCode;
+        document.getElementById('access-results').innerHTML = '<div class="event-id-box">Code admin valide. Ouverture de l espace admin...</div>';
+        switchTab('admin');
+        await adminLoginWithToken(accessCode);
+        return;
+      }
+
+      if (data.role === 'superadmin') {
+        document.getElementById('superadmin_token').value = accessCode;
+        document.getElementById('access-results').innerHTML = '<div class="event-id-box">Code superadmin valide. Ouverture de l espace superadmin...</div>';
+        switchTab('superadmin');
+        await loadSuperadminWithToken(accessCode);
+        return;
+      }
+
+      throw new Error('Role inconnu.');
+    } catch (e) {
+      document.getElementById('access-results').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Acces refuse : ${e.message}</div></div>`;
     }
   }
 </script>
