@@ -885,6 +885,82 @@
       .container  { padding: 1rem 0.9rem; }
     }
 
+    /* ── TIMELINE ARRÊT ───────────────────── */
+    .arret-timeline {
+      padding: 1.5rem 1.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      background: rgba(0,0,0,0.15);
+    }
+    .atl-head {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;
+    }
+    .atl-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--sub);
+    }
+    .atl-legend { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+    .atl-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--sub); }
+    .atl-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .atl-track {
+      position: relative;
+      min-width: 560px;
+      height: 130px;
+    }
+    .atl-axis {
+      position: absolute;
+      left: 0; right: 0;
+      top: 64px; height: 2px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.08) 6%, rgba(255,255,255,0.08) 94%, transparent);
+    }
+    .atl-tick {
+      position: absolute; top: 60px;
+      width: 1px; height: 10px;
+      background: rgba(255,255,255,0.08);
+    }
+    .atl-evt {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+    .atl-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      position: absolute; left: 50%; top: 59px;
+      transform: translateX(-50%);
+      border: 2px solid var(--bg);
+    }
+    .atl-dot.past  { background: var(--sub); }
+    .atl-dot.now   {
+      width: 16px; height: 16px; top: 56px;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(212,165,58,0.22), 0 0 16px rgba(212,165,58,0.3);
+    }
+    .atl-dot.future { background: #6090E0; }
+    .atl-etxt {
+      position: absolute; left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px; line-height: 1.35;
+      text-align: center; max-width: 80px;
+      white-space: normal; word-break: break-word;
+    }
+    .atl-etxt.top  { bottom: 76px; color: var(--sub); }
+    .atl-etxt.bot  { top: 77px; color: var(--sub); }
+    .atl-etxt.now  { bottom: 80px; color: var(--text); font-weight: 700; }
+    .atl-yr {
+      display: block; font-weight: 700; font-size: 10px; margin-bottom: 1px;
+    }
+    .atl-yr.past   { color: var(--sub); }
+    .atl-yr.now    { color: var(--gold); }
+    .atl-yr.future { color: #6090E0; }
+    .atl-connector {
+      position: absolute; top: 63px; height: 1px;
+      background: linear-gradient(to right, var(--sub), #6090E0);
+      opacity: 0.2;
+    }
+    @media (max-width: 768px) {
+      .arret-timeline { padding: 1rem; }
+      .atl-legend { display: none; }
+    }
+
     /* ── VEILLE JURIDIQUE ──────────────────── */
     .veille-filters {
       display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -995,7 +1071,78 @@
       .article-stats-row { grid-template-columns: 1fr; }
       .article-stat-col { border-right: none; border-bottom: 1px solid var(--border); }
       .article-stat-col:last-child { border-bottom: none; }
+      .pays-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── BIBLIOTHÈQUE ──────────────────────── */
+    .biblio-domain-tabs {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border); padding-bottom: 1rem;
+    }
+    .biblio-tab-btn {
+      padding: 7px 16px; border-radius: 8px 8px 0 0; border: 1px solid var(--border);
+      border-bottom: none; background: transparent; color: var(--sub);
+      font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+      transition: all 0.15s; letter-spacing: 0.2px;
+    }
+    .biblio-tab-btn.active {
+      background: var(--card); color: var(--gold); border-color: rgba(212,165,58,0.3);
+    }
+    .biblio-tab-btn:hover:not(.active) { background: rgba(255,255,255,0.04); color: var(--text); }
+    .biblio-section { display: none; }
+    .biblio-section.active { display: block; }
+    .biblio-section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--sub); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .biblio-count {
+      font-size: 10px; background: rgba(255,255,255,0.07);
+      padding: 2px 8px; border-radius: 10px; color: var(--sub); font-weight: 600;
+    }
+    .biblio-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 2rem; }
+    @media (max-width: 700px) { .biblio-cards { grid-template-columns: 1fr; } }
+    .biblio-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; cursor: pointer; transition: all 0.15s;
+    }
+    .biblio-card:hover { border-color: rgba(212,165,58,0.35); transform: translateY(-1px); }
+    .biblio-card-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+    .biblio-card-ref { font-size: 12px; font-weight: 700; color: var(--text); flex: 1; line-height: 1.3; }
+    .biblio-card-date { font-size: 10px; color: var(--sub); flex-shrink: 0; }
+    .biblio-card-theme { font-size: 11px; color: var(--sub); line-height: 1.4; margin-bottom: 6px; }
+    .biblio-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .biblio-tag {
+      font-size: 10px; color: var(--sub); background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); padding: 2px 7px; border-radius: 5px;
+    }
+    .crca-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 8px; cursor: pointer; transition: all 0.15s;
+    }
+    .crca-row:hover { background: rgba(255,255,255,0.03); border-color: rgba(212,165,58,0.25); }
+    .crca-icon { font-size: 16px; flex-shrink: 0; }
+    .crca-info { flex: 1; }
+    .crca-societe { font-size: 13px; font-weight: 700; color: var(--text); }
+    .crca-detail { font-size: 11px; color: var(--sub); margin-top: 2px; }
+    .synthese-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s;
+    }
+    .synthese-card:hover { border-color: rgba(212,165,58,0.3); }
+    .synthese-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .synthese-card-sub { font-size: 12px; color: var(--sub); line-height: 1.5; }
+    .biblio-corpus-stat {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 2rem;
+    }
+    @media (max-width: 700px) { .biblio-corpus-stat { grid-template-columns: repeat(2, 1fr); } }
+    .bcs-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 14px; text-align: center;
+    }
+    .bcs-num { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .bcs-lbl { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
   </style>
 </head>
 <body>
@@ -1530,6 +1677,60 @@
       </div>
     </div>
 
+    <!-- ── BIBLIOTHÈQUE JURIDIQUE ── -->
+    <div id="tab-biblio" class="tab-panel">
+      <div class="container">
+        <div class="page-title">Bibliothèque juridique</div>
+        <div class="page-sub">Jurisprudence ivoirienne, décisions CRCA et fiches de synthèse — droit des entreprises, OHADA, CIMA.</div>
+
+        <!-- Stats corpus -->
+        <div class="biblio-corpus-stat">
+          <div class="bcs-item"><div class="bcs-num" style="color:var(--gold)">633</div><div class="bcs-lbl">Décisions CRCA</div></div>
+          <div class="bcs-item"><div class="bcs-num" style="color:#6090E0">480+</div><div class="bcs-lbl">Décisions TCA Abidjan</div></div>
+          <div class="bcs-item"><div class="bcs-num" style="color:#50D090">38</div><div class="bcs-lbl">Fiches de synthèse</div></div>
+          <div class="bcs-item"><div class="bcs-num" style="color:#E09040">9</div><div class="bcs-lbl">Domaines couverts</div></div>
+        </div>
+
+        <!-- Onglets domaines -->
+        <div class="biblio-domain-tabs">
+          <button class="biblio-tab-btn active" onclick="switchBiblioTab('juri', this)">⚖️ Jurisprudence TCA</button>
+          <button class="biblio-tab-btn" onclick="switchBiblioTab('crca', this)">🛡️ Jurisprudence CRCA</button>
+          <button class="biblio-tab-btn" onclick="switchBiblioTab('synthese', this)">📋 Fiches de synthèse</button>
+        </div>
+
+        <!-- Section 1 : Jurisprudence TCA -->
+        <div id="biblio-juri" class="biblio-section active">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem" id="juri-theme-filters">
+            <button class="veille-filter-btn active" onclick="filterJuri('all', this)">Tout</button>
+            <button class="veille-filter-btn" onclick="filterJuri('bail', this)">Bail & Expulsion</button>
+            <button class="veille-filter-btn" onclick="filterJuri('recouvrement', this)">Recouvrement</button>
+            <button class="veille-filter-btn" onclick="filterJuri('societes', this)">Sociétés & SA</button>
+            <button class="veille-filter-btn" onclick="filterJuri('cautions', this)">Cautions & Assurances</button>
+          </div>
+          <div class="biblio-cards" id="juri-cards"></div>
+        </div>
+
+        <!-- Section 2 : CRCA -->
+        <div id="biblio-crca" class="biblio-section">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem" id="crca-theme-filters">
+            <button class="veille-filter-btn active" onclick="filterCrca('all', this)">Tout</button>
+            <button class="veille-filter-btn" onclick="filterCrca('retrait', this)">Retrait d'agrément</button>
+            <button class="veille-filter-btn" onclick="filterCrca('amende', this)">Amendes</button>
+            <button class="veille-filter-btn" onclick="filterCrca('blame', this)">Blâmes</button>
+            <button class="veille-filter-btn" onclick="filterCrca('avertissement', this)">Avertissements</button>
+            <button class="veille-filter-btn" onclick="filterCrca('surveillance', this)">Surveillance permanente</button>
+          </div>
+          <div id="crca-list"></div>
+        </div>
+
+        <!-- Section 3 : Fiches de synthèse -->
+        <div id="biblio-synthese" class="biblio-section">
+          <div id="synthese-list"></div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ── VEILLE JURIDIQUE ── -->
     <div id="tab-veille" class="tab-panel">
       <div class="container">
@@ -1732,6 +1933,7 @@ function goHome() {
 const NAV_CONFIGS = {
   client: [
     { id: 'client',  label: '🏠  Mon espace' },
+    { id: 'biblio',  label: '📚  Bibliothèque' },
     { id: 'veille',  label: '📡  Veille juridique' },
     { id: 'cima',    label: '⚖️  CIMA — Sinistre' },
     { id: 'ohada',   label: '📜  OHADA' },
@@ -1740,6 +1942,7 @@ const NAV_CONFIGS = {
   ],
   admin: [
     { id: 'admin',   label: '🛡️  Tableau de bord' },
+    { id: 'biblio',  label: '📚  Bibliothèque' },
     { id: 'veille',  label: '📡  Veille juridique' },
     { id: 'cima',    label: '⚖️  CIMA' },
     { id: 'ohada',   label: '📜  OHADA' },
@@ -1747,6 +1950,7 @@ const NAV_CONFIGS = {
   ],
   superadmin: [
     { id: 'superadmin', label: '⚙️  Console' },
+    { id: 'biblio',     label: '📚  Bibliothèque' },
     { id: 'veille',     label: '📡  Veille juridique' },
     { id: 'cima',       label: '⚖️  CIMA' },
     { id: 'ohada',      label: '📜  OHADA' },
@@ -2661,6 +2865,9 @@ function renderFicheArret(d) {
         </div>
       </div>
 
+      <!-- Timeline visuelle -->
+      ${buildArretTimeline(d)}
+
       <!-- Principe mis en avant -->
       <div style="padding: 1rem 1.5rem 0">
         <div class="fiche-principe">
@@ -3021,6 +3228,319 @@ function chargerArticle(ref) {
   result.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// ════════════════════════════════════════════════
+// TIMELINE VISUELLE — VIE DE L'ARRÊT
+// ════════════════════════════════════════════════
+
+function buildArretTimeline(d) {
+  const events = [];
+
+  // Passé — alternance haut/bas pour la lisibilité
+  d.passe.forEach((s, i) => {
+    const yr = parseInt(s.date);
+    if (!yr) return;
+    const shortTxt = s.texte.length > 48 ? s.texte.substring(0, 48) + '…' : s.texte;
+    events.push({ yr, txt: shortTxt, type: 'past', side: i % 2 === 0 ? 'bot' : 'top' });
+  });
+
+  // Présent — l'arrêt lui-même
+  const mPresent = (d.identite.date || '').match(/\d{4}/);
+  const presentYr = mPresent ? parseInt(mPresent[0]) : null;
+  if (presentYr) {
+    events.push({ yr: presentYr, txt: `Arrêt ${d.identite.numero}`, type: 'now', side: 'top' });
+  }
+
+  // Futur — citations et usages
+  d.futur.usages.forEach((u, i) => {
+    const yr = parseInt(u.annee);
+    if (!yr) return;
+    const shortTxt = u.texte.length > 48 ? u.texte.substring(0, 48) + '…' : u.texte;
+    events.push({ yr, txt: shortTxt, type: 'future', side: i % 2 === 0 ? 'bot' : 'top' });
+  });
+
+  if (!events.length) return '';
+  events.sort((a, b) => a.yr - b.yr);
+
+  const years = events.map(e => e.yr);
+  const minYr = Math.min(...years) - 0.5;
+  const maxYr = Math.max(...years) + 0.5;
+  const span  = maxYr - minYr;
+  const pct   = yr => ((yr - minYr) / span * 100).toFixed(1);
+
+  // Generate ticks for each year on axis
+  const ticksHtml = [];
+  for (let y = Math.ceil(minYr); y <= Math.floor(maxYr); y++) {
+    ticksHtml.push(`<div class="atl-tick" style="left:${pct(y)}%"></div>`);
+  }
+
+  const eventsHtml = events.map(e => {
+    const p = pct(e.yr);
+    const dotCls = e.type === 'now' ? 'atl-dot now' : (e.type === 'past' ? 'atl-dot past' : 'atl-dot future');
+    const txtCls = e.type === 'now' ? 'atl-etxt now' : `atl-etxt ${e.side}`;
+    const yrCls  = `atl-yr ${e.type}`;
+    return `<div class="atl-evt" style="left:${p}%">
+      <div class="${dotCls}"></div>
+      <div class="${txtCls}"><span class="${yrCls}">${e.yr}</span>${escHtml(e.txt)}</div>
+    </div>`;
+  }).join('');
+
+  // Connector line from first to last event
+  const connectorHtml = events.length >= 2
+    ? `<div class="atl-connector" style="left:${pct(events[0].yr)}%;right:${(100 - parseFloat(pct(events[events.length-1].yr))).toFixed(1)}%"></div>`
+    : '';
+
+  return `
+    <div class="arret-timeline">
+      <div class="atl-head">
+        <span class="atl-label">Ligne du temps · Vie de l'arrêt</span>
+        <div class="atl-legend">
+          <div class="atl-legend-item"><div class="atl-legend-dot" style="background:var(--sub)"></div>Procédure</div>
+          <div class="atl-legend-item"><div class="atl-legend-dot" style="background:var(--gold)"></div>Arrêt</div>
+          <div class="atl-legend-item"><div class="atl-legend-dot" style="background:#6090E0"></div>Citations</div>
+        </div>
+      </div>
+      <div class="atl-track">
+        <div class="atl-axis"></div>
+        ${ticksHtml.join('')}
+        ${connectorHtml}
+        ${eventsHtml}
+      </div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// BIBLIOTHÈQUE — LUMIÈRE JURIDIQUE ABIDJAN
+// ════════════════════════════════════════════════
+
+const JURI_TCA = [
+  // Bail & Expulsion
+  { ref:'RG N°294/2023', date:'2023-09-15', juridiction:'TCA Abidjan', type:'Ordonnance', theme:'bail', tags:['Bail','Expulsion','Non-paiement','Référé'], resume:'Résiliation du bail et expulsion ordonnées par le juge des référés. FAKIMO SARL c/ KEITA ALFA. Loyers impayés : 800 000 FCFA.' },
+  { ref:'N°0411/2023', date:'2023-05-02', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Bail','Résiliation','Loyers'], resume:'Résiliation du contrat de bail pour non-paiement des loyers et expulsion du locataire commercial.' },
+  { ref:'RG N°4296/2024', date:'2025-01-29', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Expulsion','Défaut paiement','Résiliation'], resume:'Défaut de paiement — résiliation et expulsion ordonnées nonobstant voies de recours.' },
+  { ref:'N°0321/2023', date:'2023-05-17', juridiction:"Cour d'Appel Commercial Abidjan", type:'Arrêt', theme:'bail', tags:['Expulsion','Loyers','Résiliation','Appel'], resume:"Confirmation en appel de la résiliation du bail et de l'expulsion pour loyers impayés." },
+  { ref:'N°4670/2022', date:'2023-01-11', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Bail verbal','Compétence','Loyers impayés'], resume:'Question de compétence soulevée — bail verbal reconnu par le tribunal. Condamnation au paiement des loyers.' },
+  { ref:'RG N°4330/2023', date:'2023-12-22', juridiction:"Cour d'Appel Commercial Abidjan", type:'Arrêt', theme:'bail', tags:['Loyers impayés','Référé','Appel'], resume:'Confirmation en appel de la décision de première instance — loyers impayés établis.' },
+  { ref:'N°4057/2022', date:'2023-04-26', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Bail commercial','Expulsion','Loyers'], resume:'Bail commercial — résiliation et expulsion ordonnées pour défaut de paiement des loyers.' },
+  { ref:'N°3688/2023', date:'2023-11-02', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Bail commercial','Non-paiement','Compétence'], resume:'Exception de compétence rejetée — résiliation du bail commercial prononcée pour loyers impayés.' },
+  { ref:'N°1951/2023', date:'2023-07-05', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Mise en demeure','Loyers','Résiliation'], resume:'Mise en demeure préalable à la résiliation — condition satisfaite. Résiliation et expulsion ordonnées.' },
+  { ref:'RG N°4868/2023', date:'2024-02-28', juridiction:'TCA Abidjan', type:'Jugement', theme:'bail', tags:['Congé','Validation','Expulsion'], resume:'Validation du congé donné par le bailleur — expulsion ordonnée. Exécution provisoire accordée.' },
+  // Recouvrement
+  { ref:'N°3472/2024', date:'2024-06-12', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Injonction de payer','Créance','OHADA'], resume:"Injonction de payer accordée pour créance certaine, liquide et exigible. Application de l'art. 1 AURVE." },
+  { ref:'N°4317/2023', date:'2023-12-07', juridiction:'TCA Abidjan', type:'Ordonnance', theme:'recouvrement', tags:['Injonction de payer','Opposition','Cautionnement'], resume:'Opposition à ordonnance injonction de payer — AFRIQUE COMMERCE MARKETING c/ ORABANK CI. Opposition déclarée irrecevable.' },
+  { ref:'N°2932/2023', date:'2023-09-28', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Créance commerciale','Recouvrement','Dépens'], resume:'Recouvrement de créance commerciale — condamnation au paiement principal et intérêts de retard.' },
+  { ref:'RG N°2264/2024', date:'2024-05-15', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Voies d'exécution','Saisie','Recouvrement'], resume:'Saisie-attribution autorisée — créance non contestée dans son principe.' },
+  { ref:'RG N°3002/2024', date:'2024-06-28', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Créance','Prescription','Recouvrement'], resume:'Exception de prescription rejetée — interruption par mise en demeure. Condamnation au paiement.' },
+  { ref:'N°3277/2023', date:'2023-10-18', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Créance','Injonction','OHADA'], resume:"Injonction de payer — conditions de l'art. 1 AURVE remplies. Ordonnance signifiée et non contestée dans le délai." },
+  { ref:'RG N°2991/2022', date:'2023-03-16', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Solidarité','Créance','Recouvrement'], resume:'Condamnation solidaire de débiteurs principaux et cautions au paiement de la créance.' },
+  { ref:'RG N°0516/2023', date:'2023-03-30', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Référé','Provision','Urgence'], resume:'Référé-provision accordé — créance non sérieusement contestable. Exécution provisoire ordonnée.' },
+  { ref:'N°3589/2024', date:'2024-07-10', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Facture','Recouvrement','Dépens'], resume:'Recouvrement de factures impayées dans un contrat de prestation de services — condamnation aux dépens.' },
+  { ref:'RG N°0349/2023', date:'2023-02-23', juridiction:'TCA Abidjan', type:'Jugement', theme:'recouvrement', tags:['Caution','Créance garantie','Recouvrement'], resume:'Action en paiement contre la caution — appel de garantie régulier, caution condamnée solidairement.' },
+  // Sociétés & SA
+  { ref:'N°009/2023', date:'2023-01-19', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SA','Gouvernance','Dirigeant'], resume:"Contestation de décision d'assemblée générale — irrégularité de convocation. Nullité prononcée." },
+  { ref:'N°4688/2022', date:'2022-12-15', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SA','Cession parts','OHADA'], resume:"Cession de parts sociales — conditions de l'AUSC respectées. Opposabilité aux tiers vérifiée." },
+  { ref:'N°0351/2023', date:'2023-02-09', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SA','Responsabilité dirigeants','Faute de gestion'], resume:'Faute de gestion du DG — condamnation personnelle au remboursement de fonds sociaux détournés.' },
+  { ref:'N°0228/2023', date:'2023-01-26', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SARL','AGO','Résolutions'], resume:'Contestation des résolutions de l'AGO annuelle — défaut de quorum. Résolutions annulées.' },
+  { ref:'N°0383/2023', date:'2023-02-23', juridiction:'TCA Abidjan', type:'Ordonnance', theme:'societes', tags:['SARL','Gérant','Urgence'], resume:'Désignation d'un administrateur provisoire — paralysie des organes sociaux. Art. 147 AUSC.' },
+  { ref:'RG N°4671/2022', date:'2022-12-22', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SA','Actionnaires','Dividendes'], resume:'Action en paiement de dividendes non distribués — droit des actionnaires reconnu.' },
+  { ref:'N°0440/2023', date:'2023-03-02', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['Fusion','SA','OHADA'], resume:'Contestation d'une fusion-absorption — conditions légales non respectées. Nullité partielle.' },
+  { ref:'N°4113/2022', date:'2022-11-30', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SA','Commissaire comptes','Contrôle'], resume:'Manquement du commissaire aux comptes — responsabilité engagée pour certification non conforme.' },
+  { ref:'RG N°1230/2023', date:'2023-05-25', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SARL','Exclusion associé','Parts'], resume:'Exclusion d'un associé non statutairement prévue — nullité de la délibération. Art. 57 AUSC.' },
+  { ref:'RG N°105/2023', date:'2023-01-12', juridiction:'TCA Abidjan', type:'Jugement', theme:'societes', tags:['SA','Dissolution','Liquidation'], resume:'Dissolution judiciaire prononcée — impossibilité de fonctionnement régulier de la société. Art. 200 AUSC.' },
+  // Cautions & assurances
+  { ref:'N°4317/2023 (caution)', date:'2024-03-28', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Cautionnement','Injonction payer','Opposition','OHADA'], resume:'Opposition à injonction de payer — conditions de validité du cautionnement vérifiées. Opposition rejetée. AFRIQUE COMMERCE MARKETING c/ ORABANK CI.' },
+  { ref:'N°783/2023', date:'2023-04-06', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Caution','Garantie bancaire','Assurance'], resume:'Appel de garantie bancaire — conditions contractuelles respectées. Paiement ordonné.' },
+  { ref:'RG N°2484/2024', date:'2024-05-30', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Assurance','Indemnisation','Sinistre'], resume:'Action en indemnisation — sinistre prouvé. Assureur condamné au paiement de la somme assurée.' },
+  { ref:'RG N°4165/2023', date:'2023-11-16', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Caution','Pouvoirs signataire','Nullité'], resume:'Exception de nullité de la caution pour défaut de pouvoir du signataire — rejetée. Caution exécutée.' },
+  { ref:'N°0918/2023', date:'2023-04-20', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Assurance','Responsabilité','Indemnisation'], resume:"Action en responsabilité contre assureur — délai de déclaration respecté. Droit à l'indemnisation reconnu." },
+  { ref:'RG N°3030/2022', date:'2022-09-08', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Cautionnement','Prescription','Recouvrement'], resume:'Prescription de l'action contre la caution — délai de 5 ans non dépassé. Condamnation prononcée.' },
+  { ref:'N°3387/2023', date:'2023-10-26', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Garantie autonome','Appel première demande','OHADA'], resume:'Garantie autonome — paiement à première demande. Résistance du garant injustifiée.' },
+  { ref:'N°0220/2024', date:'2024-01-11', juridiction:'TCA Abidjan', type:'Jugement', theme:'cautions', tags:['Assurance vie','Bénéficiaire','Sinistre'], resume:'Désignation bénéficiaire assurance vie — droits du bénéficiaire confirmés malgré opposition des héritiers.' },
+];
+
+const CRCA_DECISIONS = [
+  // Retraits d'agrément
+  { ref:'Déc. D20-SAMIRIS', type:'retrait', societe:'SAMIRIS', pays:'Zone CIMA', sanction:'Retrait total d'agrément', manquement:'Insolvabilité persistante, impossibilité de redressement', articles:'Art. 312 et s. Code CIMA' },
+  { ref:'Déc. D5-BLI-CI', type:'retrait', societe:'BLI-CI', pays:'Côte d'Ivoire', sanction:'Retrait total d'agrément', manquement:'Non-respect des injonctions de la CRCA, insuffisance de couverture', articles:'Art. 308 Code CIMA' },
+  { ref:'Déc. N°0034 & 35', type:'retrait', societe:'OGAR CI', pays:'Côte d'Ivoire', sanction:'Retrait total d'agrément (2 décisions)', manquement:'Défaillance de gouvernance et solvabilité, non-exécution d'injonctions', articles:'Art. 312 Code CIMA' },
+  { ref:'Déc. N°2-ALPHA', type:'retrait', societe:'ALPHA Assurances', pays:'Zone CIMA', sanction:'Retrait totalité des agréments', manquement:'Insuffisance de marge de solvabilité, recidive', articles:'Art. 308, 312 Code CIMA' },
+  { ref:'Déc. N°003-17', type:'retrait', societe:'Société non identifiée', pays:'Zone CIMA', sanction:'Retrait totalité des agréments', manquement:'Non-exécution d'injonctions réitérées', articles:'Code CIMA' },
+  { ref:'Déc. N°0067', type:'retrait', societe:'ONE RE (succursale UK)', pays:'Zone CIMA', sanction:'Retrait d'agrément succursale', manquement:'Insuffisance réglementaire pour succursale étrangère', articles:'Code CIMA' },
+  { ref:'Déc. N°008', type:'retrait', societe:'TSA CI', pays:'Côte d'Ivoire', sanction:'Retrait totalité des agréments', manquement:'Insolvabilité, défaillance prudentielle grave', articles:'Art. 308, 312 Code CIMA' },
+  { ref:'Déc. N°0025', type:'retrait', societe:'AG Ga...', pays:'Zone CIMA', sanction:'Retrait totalité des agréments', manquement:'Manquements prudentiels persistants', articles:'Code CIMA' },
+  { ref:'Déc. N°0026', type:'retrait', societe:'SOMAV', pays:'Zone CIMA', sanction:'Retrait totalité des agréments', manquement:'Défaillances de gouvernance et solvabilité', articles:'Code CIMA' },
+  { ref:'Déc. N°0027', type:'retrait', societe:'STANE', pays:'Zone CIMA', sanction:'Retrait totalité des agréments', manquement:'Insuffisance de couverture des engagements réglementés', articles:'Code CIMA' },
+  { ref:'Déc. N°0046 (FEDAS)', type:'retrait', societe:'FEDAS Bénin', pays:'Bénin', sanction:'Retrait totalité des agréments', manquement:'Insolvabilité, impossibilité de redressement', articles:'Code CIMA' },
+  { ref:'Déc. N°0046 (OGAR Togo)', type:'retrait', societe:'OGAR TOGO', pays:'Togo', sanction:'Retrait totalité des agréments', manquement:'Non-respect des injonctions, défaillances persistantes', articles:'Code CIMA' },
+  { ref:'Déc. N°0024', type:'retrait', societe:'ATLAS Assurances', pays:'Zone CIMA', sanction:'Retrait totalité des agréments', manquement:'Insolvabilité chronique, défaut de couverture des sinistres', articles:'Art. 308, 312 Code CIMA' },
+  // Amendes
+  { ref:'Déc. N°0056', type:'amende', societe:'SONAC Sénégal', pays:'Sénégal', sanction:'Amende pécuniaire', manquement:'Défaut de transmission d'informations — secteur caution et cautionnement', articles:'Code CIMA' },
+  { ref:'Déc. N°0069', type:'amende', societe:'Garantie Mutuelle', pays:'Zone CIMA', sanction:'Amende pécuniaire', manquement:'Insuffisance de provisionnement dans la branche garantie', articles:'Code CIMA' },
+  { ref:'Corpus amendes', type:'amende', societe:'130 sociétés d'assurance CIMA', pays:'Zone CIMA (17 pays)', sanction:'Amendes pécuniaires', manquement:'Defaut de reporting, non-respect des ratios prudentiels, insuffisance provisions', articles:'Art. 308 et s. Code CIMA' },
+  // Blâmes
+  { ref:'Corpus blâmes', type:'blame', societe:'96 décisions CRCA', pays:'Zone CIMA', sanction:'Blâme', manquement:'Fautes de gouvernance, défauts de surveillance interne, manquements des organes dirigeants', articles:'Art. 308 Code CIMA' },
+  // Avertissements
+  { ref:'Corpus avertissements', type:'avertissement', societe:'134 décisions CRCA', pays:'Zone CIMA', sanction:'Avertissement', manquement:'Premier signal officiel : défaut de reporting, faiblesse contrôle interne, non-exécution injonctions', articles:'Code CIMA' },
+  // Surveillance
+  { ref:'Corpus surveillance', type:'surveillance', societe:'32 décisions CRCA', pays:'Zone CIMA', sanction:'Surveillance permanente', manquement:'Intervention renforcée du régulateur avant mesure plus lourde — restriction de libre disposition des actifs', articles:'Art. 312 Code CIMA' },
+  // Décision connue SERENITY
+  { ref:'Déc. N°020 (SERENITY)', type:'avertissement', societe:'SERENITY SA', pays:'Côte d'Ivoire', sanction:'Avertissement', manquement:'Manquement prudentiel relevé par la CRCA — nature exacte à confirmer par lecture du PDF', articles:'Code CIMA' },
+];
+
+const SYNTHESES = [
+  { domaine:'CIMA', titre:'Sanctions et pouvoirs de la CRCA', resume:'Gradation des sanctions (avertissement → blâme → amende → surveillance → retrait). 633 décisions analysées. Rôle de la gouvernance dans les décisions.', themes:['CRCA','Sanctions','Prudentiel','Gouvernance'] },
+  { domaine:'CIMA', titre:'Obligations des sociétés d'assurance', resume:'Obligations de couverture, provisionnement, marge de solvabilité, reporting CRCA et contrôle interne. Référence aux articles 308 et suivants du Code CIMA.', themes:['Provisionnement','Solvabilité','Reporting','Art. 308'] },
+  { domaine:'CIMA', titre:'Cautions dans les assurances CIMA/OHADA', resume:'Croisement du droit CIMA (branche caution), du droit OHADA des sûretés et de la jurisprudence ivoirienne. Nature, preuve et appel des garanties.', themes:['Cautionnement','Garantie autonome','AUS','CIMA'] },
+  { domaine:'OHADA', titre:'Droit commercial général OHADA', resume:'Actes de commerce, commerçants personnes physiques et morales, fonds de commerce, bail commercial, preuve. AUDCG révisé 2010.', themes:['AUDCG','Commerce','Bail commercial','Preuve'] },
+  { domaine:'OHADA', titre:'Sociétés commerciales — Formes sociales', resume:'SA, SARL, SNC, SCS, GIE — comparaison des formes sociales, création, gouvernance, dissolution. AUSC révisé.', themes:['AUSC','SA','SARL','Gouvernance'] },
+  { domaine:'OHADA', titre:'Création et changement de dirigeant', resume:'Étapes de création SARL/SA, nomination, révocation et remplacement de dirigeant, dépôt RCCM, opposabilité aux tiers.', themes:['Création','Dirigeant','RCCM','Art. 147 AUSC'] },
+  { domaine:'OHADA', titre:'Société anonyme — Gouvernance SA', resume:'PCA, DG, PDG, CA, commissaires aux comptes — rôles, pouvoirs, responsabilités et contrôle. Jurisprudence ivoirienne illustrée.', themes:['SA','CA','Commissaires','Responsabilité'] },
+  { domaine:'OHADA', titre:'Sûretés OHADA', resume:'Cautionnement, hypothèque, gage, nantissement, privilège. Conditions de validité, opposabilité, appel et extinction. AUS révisé 2010.', themes:['AUS','Cautionnement','Hypothèque','Nantissement'] },
+  { domaine:'OHADA', titre:'Procédures collectives OHADA', resume:'Règlement amiable, concordat préventif, liquidation. AUPC 2015. Droits des créanciers, plan de continuation, continuation d'entreprise.', themes:['AUPC','Concordat','Liquidation','Créanciers'] },
+  { domaine:'OHADA', titre:'Recouvrement et voies d'exécution', resume:"Injonction de payer, saisies (attribution, conservatoire, immobilière). Art. 1 AURVE — créance certaine, liquide, exigible. Pratique ivoirienne.", themes:['AURVE','Injonction payer','Saisie','Exigibilité'] },
+  { domaine:'CI', titre:'Droit des entreprises en Côte d'Ivoire', resume:'Création d'entreprise, RCCM, fiscalité, contentieux commercial. Tribunal de Commerce d'Abidjan — procédures et pratiques.', themes:['TCA','RCCM','Fiscalité','Contentieux'] },
+  { domaine:'CI', titre:'Preuve et contentieux commercial CI', resume:'Modes de preuve, fardeau, preuve par écrit, présomptions. Procédures d'urgence et référés au TCA. Exécution provisoire.', themes:['Preuve','Référé','Exécution provisoire','TCA'] },
+  { domaine:'CI', titre:'Responsabilité des dirigeants sociaux', resume:'Faute de gestion, abus de biens sociaux, responsabilité civile et pénale du dirigeant. Jurisprudence des juridictions ivoiriennes.', themes:['Dirigeant','Faute gestion','Responsabilité','ABS'] },
+  { domaine:'Famille', titre:'Décès du mari — Communauté et succession', resume:'Liquidation de la communauté, parts successorales du conjoint survivant. Droit ivoirien de la famille et OHADA (actions en justice).', themes:['Succession','Communauté','Conjoint survivant','CI'] },
+  { domaine:'Famille', titre:'Transmission des parts sociales et actions', resume:'Décès de l'associé et transmission des droits sociaux. Clauses d'agrément, rachats, liquidation de quote-part successorale.', themes:['Parts sociales','Succession','AUSC','Agrément'] },
+];
+
+let currentBiblioTab = 'juri';
+let currentJuriFilter = 'all';
+let currentCrcaFilter = 'all';
+
+function switchBiblioTab(tab, btn) {
+  currentBiblioTab = tab;
+  document.querySelectorAll('.biblio-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.biblio-section').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById('biblio-' + tab);
+  if (sec) sec.classList.add('active');
+  if (tab === 'juri')     renderJuriCards();
+  if (tab === 'crca')     renderCrcaList();
+  if (tab === 'synthese') renderSyntheseList();
+}
+
+function filterJuri(theme, btn) {
+  currentJuriFilter = theme;
+  document.querySelectorAll('#juri-theme-filters .veille-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderJuriCards();
+}
+
+function filterCrca(type, btn) {
+  currentCrcaFilter = type;
+  document.querySelectorAll('#crca-theme-filters .veille-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCrcaList();
+}
+
+const themePill = { bail:'pill-blue', recouvrement:'pill-orange', societes:'pill-gold', cautions:'pill-green' };
+const themeName = { bail:'Bail & Expulsion', recouvrement:'Recouvrement', societes:'Sociétés & SA', cautions:'Cautions & Assurances' };
+const typeDecision = { Ordonnance:'pill-blue', Jugement:'pill-gray', 'Arrêt':'pill-gold' };
+
+function renderJuriCards() {
+  const items = currentJuriFilter === 'all'
+    ? JURI_TCA
+    : JURI_TCA.filter(d => d.theme === currentJuriFilter);
+
+  const container = document.getElementById('juri-cards');
+  if (!items.length) { container.innerHTML = '<div class="empty-state"><div class="empty-text">Aucune décision pour ce filtre.</div></div>'; return; }
+
+  container.innerHTML = items.map(d => `
+    <div class="biblio-card" onclick="ouvrirDecisionJuri('${escHtml(d.ref)}')">
+      <div class="biblio-card-top">
+        <div class="biblio-card-ref">${escHtml(d.ref)}</div>
+        <div class="biblio-card-date">${escHtml(d.date)}</div>
+      </div>
+      <div class="biblio-card-theme">${escHtml(d.juridiction)} · ${escHtml(d.resume)}</div>
+      <div class="biblio-card-tags">
+        <span class="pill ${themePill[d.theme] || 'pill-gray'}" style="font-size:10px">${themeName[d.theme] || d.theme}</span>
+        <span class="pill ${typeDecision[d.type] || 'pill-gray'}" style="font-size:10px">${escHtml(d.type)}</span>
+        ${d.tags.map(t => `<span class="biblio-tag">${escHtml(t)}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+const crcaIcon = { retrait:'🚫', amende:'💰', blame:'⚠️', avertissement:'📢', surveillance:'👁️', gouvernance:'🏛️' };
+const crcaPill = { retrait:'pill-red', amende:'pill-orange', blame:'pill-orange', avertissement:'pill-blue', surveillance:'pill-gold' };
+
+function renderCrcaList() {
+  const items = currentCrcaFilter === 'all'
+    ? CRCA_DECISIONS
+    : CRCA_DECISIONS.filter(d => d.type === currentCrcaFilter);
+
+  const container = document.getElementById('crca-list');
+  if (!items.length) { container.innerHTML = '<div class="empty-state"><div class="empty-text">Aucune décision pour ce filtre.</div></div>'; return; }
+
+  container.innerHTML = items.map(d => `
+    <div class="crca-row" onclick="ouvrirDecisionCrca('${escHtml(d.ref)}')">
+      <div class="crca-icon">${crcaIcon[d.type] || '⚖️'}</div>
+      <div class="crca-info">
+        <div class="crca-societe">${escHtml(d.societe)} <span style="font-weight:400;font-size:11px;color:var(--sub)">— ${escHtml(d.pays)}</span></div>
+        <div class="crca-detail">${escHtml(d.manquement)}</div>
+      </div>
+      <div style="flex-shrink:0;text-align:right">
+        <span class="pill ${crcaPill[d.type] || 'pill-gray'}" style="font-size:10px">${escHtml(d.sanction)}</span><br>
+        <span style="font-size:10px;color:var(--sub);margin-top:4px;display:block">${escHtml(d.ref)}</span>
+      </div>
+    </div>`).join('');
+}
+
+const domainePill = { CIMA:'pill-gold', OHADA:'pill-blue', CI:'pill-green', Famille:'pill-gray' };
+
+function renderSyntheseList() {
+  const container = document.getElementById('synthese-list');
+  const grouped = {};
+  SYNTHESES.forEach(s => {
+    if (!grouped[s.domaine]) grouped[s.domaine] = [];
+    grouped[s.domaine].push(s);
+  });
+  container.innerHTML = Object.entries(grouped).map(([dom, items]) => `
+    <div class="biblio-section-title" style="margin-top:1.5rem">
+      <span class="pill ${domainePill[dom] || 'pill-gray'}">${escHtml(dom)}</span>
+      <span class="biblio-count">${items.length} fiches</span>
+    </div>
+    ${items.map(s => `
+      <div class="synthese-card" onclick="ouvrirSynthese('${escHtml(s.titre)}')">
+        <div class="synthese-card-title">${escHtml(s.titre)}</div>
+        <div class="synthese-card-sub">${escHtml(s.resume)}</div>
+        <div class="biblio-card-tags" style="margin-top:8px">
+          ${s.themes.map(t => `<span class="biblio-tag">${escHtml(t)}</span>`).join('')}
+        </div>
+      </div>`).join('')}
+  `).join('');
+}
+
+function ouvrirDecisionJuri(ref) {
+  const d = JURI_TCA.find(x => x.ref === ref);
+  if (!d) return;
+  alert(`${d.ref} — ${d.juridiction}\n${d.date}\n\n${d.resume}\n\nThèmes : ${d.tags.join(', ')}\n\nFiche complète disponible avec accès au corpus documentaire.`);
+}
+function ouvrirDecisionCrca(ref) {
+  const d = CRCA_DECISIONS.find(x => x.ref === ref);
+  if (!d) return;
+  alert(`${d.ref}\n${d.societe} — ${d.pays}\n\nSanction : ${d.sanction}\nManquement : ${d.manquement}\nTextes : ${d.articles}\n\nFiche complète disponible avec accès au corpus documentaire CRCA.`);
+}
+function ouvrirSynthese(titre) {
+  const s = SYNTHESES.find(x => x.titre === titre);
+  if (!s) return;
+  alert(`${s.titre}\n\n${s.resume}\n\nThèmes : ${s.themes.join(', ')}\n\nFiche de synthèse complète disponible dans la bibliothèque.`);
+}
+
+// Init biblio quand l'onglet s'ouvre
+(function patchSwitchTabForBiblio() {
+  const prev = window.switchTab;
+  window.switchTab = function(name) {
+    prev(name);
+    if (name === 'biblio') {
+      renderJuriCards();
+      if (currentBiblioTab === 'crca') renderCrcaList();
+      if (currentBiblioTab === 'synthese') renderSyntheseList();
+    }
+  };
+})();
+
+// ════════════════════════════════════════════════
 // Détection automatique dans analyserQuestion : "art." ou "article" → fiche article
 const _origAnalyserQuestion = analyserQuestion;
 analyserQuestion = function() {
