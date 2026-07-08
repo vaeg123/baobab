@@ -89,6 +89,38 @@ class AccessLogin(BaseModel):
     access_code: str = Field(..., min_length=12, max_length=80)
 
 
+class WorkspaceBranding(BaseModel):
+    display_name: str | None = Field(default=None, max_length=180)
+    primary_color: str | None = Field(default=None, max_length=32)
+    logo_url: str | None = Field(default=None, max_length=500)
+    welcome_message: str | None = Field(default=None, max_length=500)
+
+
+class SuperadminWorkspaceCreate(BaseModel):
+    owner_name: str = Field(..., min_length=2, max_length=120)
+    email: str = Field(..., min_length=5, max_length=180)
+    organization_name: str = Field(..., min_length=2, max_length=180)
+    territory: str = Field(default="CI", min_length=2, max_length=8)
+    admin_name: str = Field(..., min_length=2, max_length=120)
+    admin_email: str = Field(..., min_length=5, max_length=180)
+    grant_unlimited_access: bool = True
+    enabled_services: list[str] = Field(
+        default_factory=lambda: ["all_verticals", "alerts", "internal_requests", "priority_support"]
+    )
+    branding: WorkspaceBranding = Field(default_factory=WorkspaceBranding)
+
+
+class SuperadminWorkspaceUpdate(BaseModel):
+    owner_name: str | None = Field(default=None, min_length=2, max_length=120)
+    email: str | None = Field(default=None, min_length=5, max_length=180)
+    organization_name: str | None = Field(default=None, min_length=2, max_length=180)
+    admin_name: str | None = Field(default=None, min_length=2, max_length=120)
+    admin_email: str | None = Field(default=None, min_length=5, max_length=180)
+    grant_unlimited_access: bool | None = None
+    enabled_services: list[str] | None = None
+    branding: WorkspaceBranding | None = None
+
+
 def _require_superadmin(x_superadmin_token: str | None) -> None:
     if x_superadmin_token != SUPERADMIN_TOKEN:
         raise HTTPException(
@@ -128,6 +160,41 @@ def _admin_workspace(workspace: dict) -> dict:
     }
 
 
+def _create_workspace_record(
+    owner_name: str,
+    email: str,
+    organization_name: str,
+    territory: str,
+    admin_name: str | None = None,
+    admin_email: str | None = None,
+    grant_unlimited_access: bool = False,
+    enabled_services: list[str] | None = None,
+    branding: WorkspaceBranding | None = None,
+    provisioned_by: str = "self_service",
+) -> dict:
+    now = datetime.now(UTC)
+    workspace = {
+        "workspace_id": f"ws_{uuid4().hex[:12]}",
+        "owner_name": owner_name,
+        "email": email.lower(),
+        "organization_name": organization_name,
+        "territory": territory.upper(),
+        "admin_name": admin_name or owner_name,
+        "admin_email": (admin_email or email).lower(),
+        "admin_token": f"adm_{uuid4().hex}",
+        "plan": SubscriptionPlan.PREMIUM if grant_unlimited_access else SubscriptionPlan.FREE,
+        "subscription_status": "unlimited_grant" if grant_unlimited_access else "free",
+        "subscription_expires_at": None,
+        "billing_override": grant_unlimited_access,
+        "enabled_services": enabled_services or [],
+        "branding": (branding or WorkspaceBranding()).model_dump(),
+        "provisioned_by": provisioned_by,
+        "created_at": now.isoformat(),
+    }
+    WORKSPACES[workspace["workspace_id"]] = workspace
+    return workspace
+
+
 def _get_workspace(workspace_id: str) -> dict:
     workspace = WORKSPACES.get(workspace_id)
     if not workspace:
@@ -151,21 +218,12 @@ async def list_plans():
 
 @router.post("/workspaces", status_code=status.HTTP_201_CREATED)
 async def create_workspace(request: WorkspaceCreate):
-    workspace_id = f"ws_{uuid4().hex[:12]}"
-    now = datetime.now(UTC)
-    workspace = {
-        "workspace_id": workspace_id,
-        "owner_name": request.owner_name,
-        "email": request.email.lower(),
-        "organization_name": request.organization_name,
-        "territory": request.territory.upper(),
-        "admin_token": f"adm_{uuid4().hex}",
-        "plan": SubscriptionPlan.FREE,
-        "subscription_status": "free",
-        "subscription_expires_at": None,
-        "created_at": now.isoformat(),
-    }
-    WORKSPACES[workspace_id] = workspace
+    workspace = _create_workspace_record(
+        owner_name=request.owner_name,
+        email=request.email,
+        organization_name=request.organization_name,
+        territory=request.territory,
+    )
     return _admin_workspace(workspace)
 
 
@@ -333,6 +391,73 @@ async def list_superadmin_workspaces(
 ):
     _require_superadmin(x_superadmin_token)
     return {"workspaces": [_admin_workspace(workspace) for workspace in WORKSPACES.values()]}
+
+
+@router.post("/superadmin/workspaces", status_code=status.HTTP_201_CREATED)
+async def create_superadmin_workspace(
+    request: SuperadminWorkspaceCreate,
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    workspace = _create_workspace_record(
+        owner_name=request.owner_name,
+        email=request.email,
+        organization_name=request.organization_name,
+        territory=request.territory,
+        admin_name=request.admin_name,
+        admin_email=request.admin_email,
+        grant_unlimited_access=request.grant_unlimited_access,
+        enabled_services=request.enabled_services,
+        branding=request.branding,
+        provisioned_by="superadmin",
+    )
+    return _admin_workspace(workspace)
+
+
+@router.patch("/superadmin/workspaces/{workspace_id}")
+async def update_superadmin_workspace(
+    workspace_id: str,
+    request: SuperadminWorkspaceUpdate,
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    workspace = _get_workspace(workspace_id)
+    updates = request.model_dump(exclude_unset=True)
+
+    for field in ["owner_name", "organization_name", "admin_name"]:
+        if field in updates and updates[field] is not None:
+            workspace[field] = updates[field]
+    for field in ["email", "admin_email"]:
+        if field in updates and updates[field] is not None:
+            workspace[field] = updates[field].lower()
+    if "enabled_services" in updates and updates["enabled_services"] is not None:
+        workspace["enabled_services"] = updates["enabled_services"]
+    if "branding" in updates and updates["branding"] is not None:
+        workspace["branding"] = updates["branding"]
+    if updates.get("grant_unlimited_access") is True:
+        workspace["plan"] = SubscriptionPlan.PREMIUM
+        workspace["subscription_status"] = "unlimited_grant"
+        workspace["subscription_expires_at"] = None
+        workspace["billing_override"] = True
+    elif updates.get("grant_unlimited_access") is False and workspace["billing_override"]:
+        workspace["plan"] = SubscriptionPlan.FREE
+        workspace["subscription_status"] = "free"
+        workspace["billing_override"] = False
+
+    workspace["updated_at"] = datetime.now(UTC).isoformat()
+    return _admin_workspace(workspace)
+
+
+@router.post("/superadmin/workspaces/{workspace_id}/admin-token")
+async def regenerate_superadmin_workspace_admin_token(
+    workspace_id: str,
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    workspace = _get_workspace(workspace_id)
+    workspace["admin_token"] = f"adm_{uuid4().hex}"
+    workspace["updated_at"] = datetime.now(UTC).isoformat()
+    return _admin_workspace(workspace)
 
 
 @router.get("/superadmin/internal-requests")

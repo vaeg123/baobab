@@ -975,6 +975,48 @@
             <button class="btn btn-primary" onclick="loadSuperadmin()">Charger la plateforme</button>
           </div>
         </div>
+
+        <div class="card" style="margin-top:1.25rem">
+          <div class="card-header">
+            <div class="card-icon" style="background:#e6f4ee">NEW</div>
+            <span class="card-title">Creer un espace client</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Nom client</label>
+              <input type="text" id="sa_owner_name" value="Client Institutionnel" />
+            </div>
+            <div class="form-group">
+              <label>Email client</label>
+              <input type="email" id="sa_owner_email" value="client@example.com" />
+            </div>
+            <div class="form-group">
+              <label>Organisation</label>
+              <input type="text" id="sa_org_name" value="Client Institutionnel SA" />
+            </div>
+            <div class="form-group">
+              <label>Admin de l'espace</label>
+              <input type="text" id="sa_admin_name" value="Administrateur Client" />
+            </div>
+            <div class="form-group">
+              <label>Email admin</label>
+              <input type="email" id="sa_admin_email" value="admin-client@example.com" />
+            </div>
+            <div class="form-group">
+              <label>Nom affiche</label>
+              <input type="text" id="sa_display_name" value="Portail Client BAOBAB" />
+            </div>
+            <div class="form-group">
+              <label>Couleur principale</label>
+              <input type="text" id="sa_primary_color" value="#1A6B4A" />
+            </div>
+            <div class="form-group">
+              <label>Message d'accueil</label>
+              <textarea id="sa_welcome_message">Bienvenue dans votre espace BAOBAB personnalise.</textarea>
+            </div>
+            <button class="btn btn-primary" onclick="createSuperadminWorkspace()">Creer avec acces illimite</button>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -1492,7 +1534,14 @@
       });
       const workspaces = await workspacesResponse.json();
       const workspaceItems = (workspaces.workspaces || []).slice(-5).reverse().map(workspace => `
-        <div class="event-id-box">${workspace.workspace_id} - ${workspace.organization_name}<br>plan: ${workspace.plan}<br>status: ${workspace.subscription_status}</div>
+        <div class="event-id-box">
+          ${workspace.workspace_id} - ${workspace.organization_name}<br>
+          admin: ${workspace.admin_name || workspace.owner_name} (${workspace.admin_email || workspace.email})<br>
+          affichage: ${(workspace.branding && workspace.branding.display_name) || workspace.organization_name}<br>
+          plan: ${workspace.plan}<br>
+          status: ${workspace.subscription_status}<br>
+          billing_override: ${workspace.billing_override ? 'oui' : 'non'}
+        </div>
       `).join('');
 
       document.getElementById('superadmin-results').innerHTML = `
@@ -1506,6 +1555,51 @@
     } catch (e) {
       document.getElementById('superadmin-results').innerHTML = `
         <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur superadmin : ${e.message}</div></div>`;
+    }
+  }
+
+  async function createSuperadminWorkspace() {
+    const token = document.getElementById('superadmin_token').value.trim();
+    if (!token) {
+      alert('Renseignez le code superadmin.');
+      return;
+    }
+
+    const payload = {
+      owner_name: document.getElementById('sa_owner_name').value.trim(),
+      email: document.getElementById('sa_owner_email').value.trim(),
+      organization_name: document.getElementById('sa_org_name').value.trim(),
+      territory: 'CI',
+      admin_name: document.getElementById('sa_admin_name').value.trim(),
+      admin_email: document.getElementById('sa_admin_email').value.trim(),
+      grant_unlimited_access: true,
+      enabled_services: ['all_verticals', 'alerts', 'internal_requests', 'priority_support'],
+      branding: {
+        display_name: document.getElementById('sa_display_name').value.trim(),
+        primary_color: document.getElementById('sa_primary_color').value.trim(),
+        welcome_message: document.getElementById('sa_welcome_message').value.trim()
+      }
+    };
+
+    try {
+      const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
+        body: JSON.stringify(payload)
+      });
+      const workspace = await res.json();
+      if (!res.ok) throw new Error(workspace.detail || `HTTP ${res.status}`);
+      document.getElementById('superadmin-results').innerHTML = `
+        <div class="event-id-box">
+          espace cree: ${workspace.workspace_id}<br>
+          organisation: ${workspace.organization_name}<br>
+          acces: ${workspace.subscription_status}<br>
+          admin: ${workspace.admin_name} - ${workspace.admin_email}<br>
+          code admin a transmettre: ${workspace.admin_token}
+        </div>`;
+    } catch (e) {
+      document.getElementById('superadmin-results').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Creation refusee : ${e.message}</div></div>`;
     }
   }
 

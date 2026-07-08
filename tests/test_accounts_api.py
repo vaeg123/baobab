@@ -244,3 +244,110 @@ def test_access_code_routes_to_admin_or_superadmin_space():
     )
 
     assert invalid_access.status_code == 403
+
+
+def test_superadmin_can_provision_custom_workspace_with_unlimited_access():
+    create_response = client.post(
+        "/api/v1/accounts/superadmin/workspaces",
+        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        json={
+            "owner_name": "Client VIP",
+            "email": "client-vip@example.com",
+            "organization_name": "Client VIP Holding",
+            "territory": "CI",
+            "admin_name": "Admin VIP",
+            "admin_email": "admin-vip@example.com",
+            "grant_unlimited_access": True,
+            "enabled_services": ["all_verticals", "alerts", "internal_requests"],
+            "branding": {
+                "display_name": "Espace Client VIP",
+                "primary_color": "#1A6B4A",
+                "welcome_message": "Bienvenue dans votre espace juridique dedie.",
+            },
+        },
+    )
+
+    assert create_response.status_code == 201
+    workspace = create_response.json()
+    assert workspace["plan"] == "premium"
+    assert workspace["subscription_status"] == "unlimited_grant"
+    assert workspace["billing_override"] is True
+    assert workspace["subscription_expires_at"] is None
+    assert workspace["admin_name"] == "Admin VIP"
+    assert workspace["admin_email"] == "admin-vip@example.com"
+    assert workspace["branding"]["display_name"] == "Espace Client VIP"
+    assert workspace["admin_token"].startswith("adm_")
+
+    admin_access = client.post(
+        "/api/v1/accounts/access/login",
+        json={"access_code": workspace["admin_token"]},
+    )
+    assert admin_access.status_code == 200
+    assert admin_access.json()["role"] == "admin"
+
+    first_request = client.post(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        json={
+            "subject": "Demande illimitee 1",
+            "message": "Premiere demande depuis un espace accorde par superadmin.",
+        },
+    )
+    second_request = client.post(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        json={
+            "subject": "Demande illimitee 2",
+            "message": "Deuxieme demande sans paiement ni blocage de quota.",
+        },
+    )
+
+    assert first_request.status_code == 201
+    assert second_request.status_code == 201
+
+
+def test_superadmin_can_customize_workspace_and_regenerate_admin_token():
+    workspace = client.post(
+        "/api/v1/accounts/superadmin/workspaces",
+        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        json={
+            "owner_name": "Client Modifiable",
+            "email": "modifiable@example.com",
+            "organization_name": "Client Modifiable SA",
+            "territory": "CI",
+            "admin_name": "Ancien Admin",
+            "admin_email": "ancien-admin@example.com",
+        },
+    ).json()
+    old_token = workspace["admin_token"]
+
+    update_response = client.patch(
+        f"/api/v1/accounts/superadmin/workspaces/{workspace['workspace_id']}",
+        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        json={
+            "organization_name": "Client Personnalise SA",
+            "admin_name": "Nouvel Admin",
+            "admin_email": "nouvel-admin@example.com",
+            "enabled_services": ["cima", "ohada", "support"],
+            "branding": {
+                "display_name": "Portail Client Personnalise",
+                "primary_color": "#C9A84C",
+            },
+        },
+    )
+
+    assert update_response.status_code == 200
+    updated = update_response.json()
+    assert updated["organization_name"] == "Client Personnalise SA"
+    assert updated["admin_name"] == "Nouvel Admin"
+    assert updated["admin_email"] == "nouvel-admin@example.com"
+    assert updated["enabled_services"] == ["cima", "ohada", "support"]
+    assert updated["branding"]["display_name"] == "Portail Client Personnalise"
+
+    token_response = client.post(
+        f"/api/v1/accounts/superadmin/workspaces/{workspace['workspace_id']}/admin-token",
+        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+    )
+
+    assert token_response.status_code == 200
+    new_token = token_response.json()["admin_token"]
+    assert new_token.startswith("adm_")
+    assert new_token != old_token
