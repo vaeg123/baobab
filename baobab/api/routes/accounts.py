@@ -1,8 +1,9 @@
+import os
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
 router = APIRouter(tags=["accounts"])
@@ -54,6 +55,7 @@ PLAN_CATALOG = {
 WORKSPACES: dict[str, dict] = {}
 INTERNAL_REQUESTS: dict[str, dict] = {}
 PAYMENTS: dict[str, dict] = {}
+SUPERADMIN_TOKEN = os.getenv("BAOBAB_SUPERADMIN_TOKEN", "baobab-superadmin-dev")
 
 
 class WorkspaceCreate(BaseModel):
@@ -74,6 +76,33 @@ class SubscriptionCheckoutCreate(BaseModel):
     phone_number: str = Field(..., min_length=8, max_length=32)
 
 
+class InternalRequestUpdate(BaseModel):
+    status: str = Field(..., pattern="^(submitted|in_review|approved|rejected|closed)$")
+    admin_note: str | None = Field(default=None, max_length=2000)
+
+
+class AdminLogin(BaseModel):
+    admin_token: str = Field(..., min_length=12, max_length=80)
+
+
+def _require_superadmin(x_superadmin_token: str | None) -> None:
+    if x_superadmin_token != SUPERADMIN_TOKEN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Superadmin token required",
+        )
+
+
+def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> dict:
+    workspace = _get_workspace(workspace_id)
+    if x_admin_token != workspace["admin_token"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Workspace admin token required",
+        )
+    return workspace
+
+
 def _public_workspace(workspace: dict) -> dict:
     requests = [
         request
@@ -82,8 +111,16 @@ def _public_workspace(workspace: dict) -> dict:
     ]
     return {
         **workspace,
+        "admin_token": None,
         "plan_details": PLAN_CATALOG[workspace["plan"]],
         "internal_requests_used": len(requests),
+    }
+
+
+def _admin_workspace(workspace: dict) -> dict:
+    return {
+        **_public_workspace(workspace),
+        "admin_token": workspace["admin_token"],
     }
 
 
@@ -118,13 +155,14 @@ async def create_workspace(request: WorkspaceCreate):
         "email": request.email.lower(),
         "organization_name": request.organization_name,
         "territory": request.territory.upper(),
+        "admin_token": f"adm_{uuid4().hex}",
         "plan": SubscriptionPlan.FREE,
         "subscription_status": "free",
         "subscription_expires_at": None,
         "created_at": now.isoformat(),
     }
     WORKSPACES[workspace_id] = workspace
-    return _public_workspace(workspace)
+    return _admin_workspace(workspace)
 
 
 @router.get("/workspaces/{workspace_id}")
@@ -173,6 +211,116 @@ async def list_internal_requests(workspace_id: str):
             if request["workspace_id"] == workspace_id
         ]
     }
+
+
+@router.post("/admin/login")
+async def admin_login(request: AdminLogin):
+    for workspace in WORKSPACES.values():
+        if workspace["admin_token"] == request.admin_token:
+            return _admin_workspace(workspace)
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Invalid admin token",
+    )
+
+
+@router.get("/admin/workspaces/{workspace_id}")
+async def get_admin_workspace(
+    workspace_id: str,
+    x_admin_token: str | None = Header(default=None),
+):
+    workspace = _require_workspace_admin(workspace_id, x_admin_token)
+    return _admin_workspace(workspace)
+
+
+@router.get("/admin/workspaces/{workspace_id}/internal-requests")
+async def list_admin_internal_requests(
+    workspace_id: str,
+    x_admin_token: str | None = Header(default=None),
+):
+    _require_workspace_admin(workspace_id, x_admin_token)
+    return {
+        "requests": [
+            request
+            for request in INTERNAL_REQUESTS.values()
+            if request["workspace_id"] == workspace_id
+        ]
+    }
+
+
+@router.patch("/admin/internal-requests/{request_id}")
+async def update_admin_internal_request(
+    request_id: str,
+    request: InternalRequestUpdate,
+    x_admin_token: str | None = Header(default=None),
+):
+    item = INTERNAL_REQUESTS.get(request_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Internal request not found",
+        )
+    _require_workspace_admin(item["workspace_id"], x_admin_token)
+    item["status"] = request.status
+    item["admin_note"] = request.admin_note
+    item["updated_at"] = datetime.now(UTC).isoformat()
+    return item
+
+
+@router.get("/superadmin/overview")
+async def get_superadmin_overview(
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    active_subscriptions = [
+        workspace
+        for workspace in WORKSPACES.values()
+        if workspace["subscription_status"] == "active"
+    ]
+    pending_requests = [
+        request
+        for request in INTERNAL_REQUESTS.values()
+        if request["status"] in {"submitted", "in_review"}
+    ]
+    confirmed_payments = [
+        payment
+        for payment in PAYMENTS.values()
+        if payment["status"] == "confirmed"
+    ]
+    return {
+        "workspaces_count": len(WORKSPACES),
+        "active_subscriptions_count": len(active_subscriptions),
+        "pending_internal_requests_count": len(pending_requests),
+        "confirmed_revenue_xof": sum(payment["amount_xof"] for payment in confirmed_payments),
+        "plans": {
+            plan.value: sum(1 for workspace in WORKSPACES.values() if workspace["plan"] == plan)
+            for plan in SubscriptionPlan
+        },
+    }
+
+
+@router.get("/superadmin/workspaces")
+async def list_superadmin_workspaces(
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    return {"workspaces": [_admin_workspace(workspace) for workspace in WORKSPACES.values()]}
+
+
+@router.get("/superadmin/internal-requests")
+async def list_superadmin_internal_requests(
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    return {"requests": list(INTERNAL_REQUESTS.values())}
+
+
+@router.get("/superadmin/payments")
+async def list_superadmin_payments(
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
+    return {"payments": list(PAYMENTS.values())}
 
 
 @router.post("/workspaces/{workspace_id}/checkout", status_code=status.HTTP_201_CREATED)

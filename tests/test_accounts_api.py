@@ -92,3 +92,119 @@ def test_plan_catalog_contains_basic_premium_and_mobile_money_providers():
     assert prices["basic"] == 5000
     assert prices["premium"] == 10000
     assert {"orange_money", "mtn_money", "wave"} <= set(body["payment_providers"])
+
+
+def test_workspace_admin_can_manage_own_internal_requests():
+    workspace_response = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Admin Local",
+            "email": "admin-local@example.com",
+            "organization_name": "Admin Local SARL",
+            "territory": "CI",
+        },
+    )
+    workspace = workspace_response.json()
+    admin_token = workspace["admin_token"]
+
+    login_response = client.post(
+        "/api/v1/accounts/admin/login",
+        json={"admin_token": admin_token},
+    )
+    assert login_response.status_code == 200
+    assert login_response.json()["workspace_id"] == workspace["workspace_id"]
+
+    request_response = client.post(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        json={
+            "subject": "Demande admin",
+            "message": "Cette demande sera traitee depuis l'espace admin.",
+        },
+    )
+    internal_request = request_response.json()
+
+    update_response = client.patch(
+        f"/api/v1/accounts/admin/internal-requests/{internal_request['request_id']}",
+        headers={"X-Admin-Token": admin_token},
+        json={
+            "status": "in_review",
+            "admin_note": "Pris en charge par l'administrateur de l'espace.",
+        },
+    )
+
+    assert update_response.status_code == 200
+    updated = update_response.json()
+    assert updated["status"] == "in_review"
+    assert updated["admin_note"] == "Pris en charge par l'administrateur de l'espace."
+
+
+def test_workspace_admin_cannot_manage_another_workspace_request():
+    first_workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Premier Admin",
+            "email": "premier@example.com",
+            "organization_name": "Premier SARL",
+            "territory": "CI",
+        },
+    ).json()
+    second_workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Second Admin",
+            "email": "second@example.com",
+            "organization_name": "Second SARL",
+            "territory": "CI",
+        },
+    ).json()
+
+    request_response = client.post(
+        f"/api/v1/accounts/workspaces/{first_workspace['workspace_id']}/internal-requests",
+        json={
+            "subject": "Demande protegee",
+            "message": "Cette demande appartient au premier espace.",
+        },
+    )
+    internal_request = request_response.json()
+
+    forbidden_response = client.patch(
+        f"/api/v1/accounts/admin/internal-requests/{internal_request['request_id']}",
+        headers={"X-Admin-Token": second_workspace["admin_token"]},
+        json={"status": "closed", "admin_note": "Tentative interdite."},
+    )
+
+    assert forbidden_response.status_code == 403
+
+
+def test_superadmin_can_see_platform_overview():
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Super Admin Test",
+            "email": "super-admin-test@example.com",
+            "organization_name": "Super Admin Test SARL",
+            "territory": "CI",
+        },
+    ).json()
+    checkout = client.post(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/checkout",
+        json={
+            "plan": "basic",
+            "provider": "orange_money",
+            "phone_number": "+2250500000000",
+        },
+    ).json()
+    client.post(f"/api/v1/accounts/payments/{checkout['payment_id']}/confirm")
+
+    forbidden_response = client.get("/api/v1/accounts/superadmin/overview")
+    assert forbidden_response.status_code == 403
+
+    overview_response = client.get(
+        "/api/v1/accounts/superadmin/overview",
+        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+    )
+
+    assert overview_response.status_code == 200
+    overview = overview_response.json()
+    assert overview["workspaces_count"] >= 1
+    assert overview["confirmed_revenue_xof"] >= 5000

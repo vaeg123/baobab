@@ -580,6 +580,8 @@
   <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
   <button class="tab-btn" onclick="switchTab('bceao', this)">BCEAO &mdash; Banque &amp; Finance</button>
   <button class="tab-btn" onclick="switchTab('espace', this)">Espace &mdash; Abonnement</button>
+  <button class="tab-btn" onclick="switchTab('admin', this)">Admin</button>
+  <button class="tab-btn" onclick="switchTab('superadmin', this)">Superadmin</button>
 </div>
 
 <!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
@@ -867,6 +869,86 @@
               Initialiser le paiement
             </button>
             <div id="checkout-result" class="event-id-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-admin" class="tab-panel">
+  <div class="container">
+    <div class="page-title">Espace admin</div>
+    <div class="page-sub">Gerez les demandes internes et le statut d'un espace BAOBAB.</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#eef0f7">ADM</div>
+            <span class="card-title">Connexion admin</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Admin token</label>
+              <input type="text" id="admin_token" placeholder="adm_..." />
+            </div>
+            <button class="btn btn-primary" onclick="adminLogin()">Ouvrir l'espace admin</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#e6f4ee">REQ</div>
+            <span class="card-title">Demandes internes</span>
+          </div>
+          <div class="card-body" id="admin-results">
+            <div class="empty-state" style="padding:1.5rem">
+              <div class="empty-icon">ADM</div>
+              <div class="empty-text">Connectez un administrateur d'espace.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-superadmin" class="tab-panel">
+  <div class="container">
+    <div class="page-title">Superadmin BAOBAB</div>
+    <div class="page-sub">Pilotez les espaces, abonnements, paiements et demandes de toute la plateforme.</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#f0ead6">ROOT</div>
+            <span class="card-title">Acces superadmin</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Superadmin token</label>
+              <input type="text" id="superadmin_token" value="baobab-superadmin-dev" />
+            </div>
+            <button class="btn btn-primary" onclick="loadSuperadmin()">Charger la plateforme</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#e8f0fe">ALL</div>
+            <span class="card-title">Vue globale</span>
+          </div>
+          <div class="card-body" id="superadmin-results">
+            <div class="empty-state" style="padding:1.5rem">
+              <div class="empty-icon">ROOT</div>
+              <div class="empty-text">Chargez la vue superadmin.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1168,8 +1250,12 @@
 
   function renderWorkspace(workspace) {
     currentWorkspace = workspace;
+    if (workspace.admin_token) {
+      document.getElementById('admin_token').value = workspace.admin_token;
+    }
     const price = workspace.plan_details.monthly_price_xof;
     const expires = workspace.subscription_expires_at ? fmtDate(workspace.subscription_expires_at) : 'Non applicable';
+    const adminToken = workspace.admin_token || 'Masque';
     document.getElementById('workspace-results').innerHTML = `
       <div class="workspace-summary">
         <div class="summary-item">Espace<strong>${workspace.workspace_id}</strong></div>
@@ -1179,7 +1265,7 @@
         <div class="summary-item">Demandes internes<strong>${workspace.internal_requests_used}</strong></div>
         <div class="summary-item">Expiration<strong>${expires}</strong></div>
       </div>
-      <div class="event-id-box">email: ${workspace.email}<br>territory: ${workspace.territory}</div>`;
+      <div class="event-id-box">email: ${workspace.email}<br>territory: ${workspace.territory}<br>admin_token: ${adminToken}</div>`;
   }
 
   async function createWorkspace() {
@@ -1272,6 +1358,108 @@
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Initialiser le paiement';
+    }
+  }
+
+  let currentAdminWorkspace = null;
+
+  function renderAdminRequests(requests) {
+    if (!requests.length) {
+      document.getElementById('admin-results').innerHTML = `
+        <div class="empty-state" style="padding:1.5rem">
+          <div class="empty-icon">OK</div>
+          <div class="empty-text">Aucune demande interne pour cet espace.</div>
+        </div>`;
+      return;
+    }
+
+    const rows = requests.map(item => `
+      <div class="alert-item alert-info">
+        <div style="flex:1">
+          <div class="alert-text">${item.subject}</div>
+          <div class="alert-date">${item.message}</div>
+          <div class="event-id-box">request_id: ${item.request_id}<br>status: ${item.status}<br>${item.admin_note ? `note: ${item.admin_note}` : ''}</div>
+        </div>
+        <button class="btn btn-secondary" style="width:auto;padding:8px 12px" onclick="updateAdminRequest('${item.request_id}', 'in_review')">Revoir</button>
+        <button class="btn btn-primary" style="width:auto;padding:8px 12px" onclick="updateAdminRequest('${item.request_id}', 'closed')">Clore</button>
+      </div>`).join('');
+
+    document.getElementById('admin-results').innerHTML = rows;
+  }
+
+  async function adminLogin() {
+    const admin_token = document.getElementById('admin_token').value.trim();
+    if (!admin_token) {
+      alert('Renseignez le token admin.');
+      return;
+    }
+
+    try {
+      const login = await fetch('/api/v1/accounts/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ admin_token })
+      });
+      const workspace = await login.json();
+      if (!login.ok) throw new Error(workspace.detail || `HTTP ${login.status}`);
+      currentAdminWorkspace = workspace;
+      const requests = await fetch(`/api/v1/accounts/admin/workspaces/${workspace.workspace_id}/internal-requests`, {
+        headers: { 'X-Admin-Token': admin_token }
+      });
+      renderAdminRequests((await requests.json()).requests || []);
+    } catch (e) {
+      document.getElementById('admin-results').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur admin : ${e.message}</div></div>`;
+    }
+  }
+
+  async function updateAdminRequest(requestId, status) {
+    if (!currentAdminWorkspace) {
+      alert('Connectez d abord un administrateur.');
+      return;
+    }
+    const admin_token = document.getElementById('admin_token').value.trim();
+    const res = await fetch(`/api/v1/accounts/admin/internal-requests/${requestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': admin_token },
+      body: JSON.stringify({ status, admin_note: `Statut mis a jour par admin: ${status}` })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.detail || `Erreur ${res.status}`);
+      return;
+    }
+    adminLogin();
+  }
+
+  async function loadSuperadmin() {
+    const token = document.getElementById('superadmin_token').value.trim();
+    try {
+      const overviewResponse = await fetch('/api/v1/accounts/superadmin/overview', {
+        headers: { 'X-Superadmin-Token': token }
+      });
+      const overview = await overviewResponse.json();
+      if (!overviewResponse.ok) throw new Error(overview.detail || `HTTP ${overviewResponse.status}`);
+
+      const workspacesResponse = await fetch('/api/v1/accounts/superadmin/workspaces', {
+        headers: { 'X-Superadmin-Token': token }
+      });
+      const workspaces = await workspacesResponse.json();
+      const workspaceItems = (workspaces.workspaces || []).slice(-5).reverse().map(workspace => `
+        <div class="event-id-box">${workspace.workspace_id} - ${workspace.organization_name}<br>plan: ${workspace.plan}<br>status: ${workspace.subscription_status}</div>
+      `).join('');
+
+      document.getElementById('superadmin-results').innerHTML = `
+        <div class="stats-row">
+          <div class="stat-card gold"><div class="stat-value">${overview.workspaces_count}</div><div class="stat-label">Espaces</div></div>
+          <div class="stat-card green"><div class="stat-value">${overview.active_subscriptions_count}</div><div class="stat-label">Abonnes actifs</div></div>
+          <div class="stat-card orange"><div class="stat-value">${overview.pending_internal_requests_count}</div><div class="stat-label">Demandes ouvertes</div></div>
+        </div>
+        <div class="event-id-box">revenu confirme: ${overview.confirmed_revenue_xof.toLocaleString('fr-FR')} FCFA<br>free: ${overview.plans.free} - basic: ${overview.plans.basic} - premium: ${overview.plans.premium}</div>
+        ${workspaceItems || '<div class="empty-state" style="padding:1rem">Aucun espace.</div>'}`;
+    } catch (e) {
+      document.getElementById('superadmin-results').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur superadmin : ${e.message}</div></div>`;
     }
   }
 </script>
