@@ -1014,7 +1014,7 @@
               <label>Message d'accueil</label>
               <textarea id="sa_welcome_message">Bienvenue dans votre espace BAOBAB personnalise.</textarea>
             </div>
-            <button class="btn btn-primary" onclick="createSuperadminWorkspace()">Creer avec acces illimite</button>
+            <button class="btn btn-primary" onclick="createSuperadminWorkspace(this)">Creer avec acces illimite</button>
           </div>
         </div>
       </div>
@@ -1443,6 +1443,7 @@
   }
 
   let currentAdminWorkspace = null;
+  let currentSuperadminToken = null;
 
   function renderAdminRequests(requests) {
     if (!requests.length) {
@@ -1522,6 +1523,7 @@
   }
 
   async function loadSuperadminWithToken(token) {
+    currentSuperadminToken = token;
     try {
       const overviewResponse = await fetch('/api/v1/accounts/superadmin/overview', {
         headers: { 'X-Superadmin-Token': token }
@@ -1558,11 +1560,15 @@
     }
   }
 
-  async function createSuperadminWorkspace() {
-    const token = document.getElementById('superadmin_token').value.trim();
+  async function createSuperadminWorkspace(button) {
+    const token = currentSuperadminToken || document.getElementById('superadmin_token').value.trim();
     if (!token) {
       alert('Renseignez le code superadmin.');
       return;
+    }
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner"></span>Creation...';
     }
 
     const payload = {
@@ -1588,7 +1594,7 @@
         body: JSON.stringify(payload)
       });
       const workspace = await res.json();
-      if (!res.ok) throw new Error(workspace.detail || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(formatApiError(workspace.detail || workspace || `HTTP ${res.status}`));
       document.getElementById('superadmin-results').innerHTML = `
         <div class="event-id-box">
           espace cree: ${workspace.workspace_id}<br>
@@ -1600,7 +1606,21 @@
     } catch (e) {
       document.getElementById('superadmin-results').innerHTML = `
         <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Creation refusee : ${e.message}</div></div>`;
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = 'Creer avec acces illimite';
+      }
     }
+  }
+
+  function formatApiError(detail) {
+    if (typeof detail === 'string') return detail;
+    if (Array.isArray(detail)) {
+      return detail.map(item => `${(item.loc || []).join('.')}: ${item.msg}`).join(' | ');
+    }
+    if (detail && typeof detail === 'object') return JSON.stringify(detail);
+    return String(detail);
   }
 
   async function loginWithAccessCode() {
