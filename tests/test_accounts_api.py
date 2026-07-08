@@ -277,6 +277,17 @@ def test_superadmin_can_provision_custom_workspace_with_unlimited_access():
     assert workspace["admin_email"] == "admin-vip@example.com"
     assert workspace["branding"]["display_name"] == "Espace Client VIP"
     assert workspace["admin_token"].startswith("adm_")
+    assert workspace["user_token"].startswith("usr_")
+
+    client_access = client.post(
+        "/api/v1/accounts/access/login",
+        json={"access_code": workspace["user_token"]},
+    )
+    assert client_access.status_code == 200
+    assert client_access.json()["role"] == "client"
+    assert client_access.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
+    assert client_access.json()["workspace"]["admin_token"] is None
+    assert client_access.json()["workspace"]["user_token"] is None
 
     admin_access = client.post(
         "/api/v1/accounts/access/login",

@@ -116,6 +116,8 @@ class SuperadminWorkspaceCreate(BaseModel):
     email: str = Field(..., min_length=5, max_length=180)
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
+    user_name: str | None = Field(default=None, min_length=2, max_length=120)
+    user_email: str | None = Field(default=None, min_length=5, max_length=180)
     admin_name: str = Field(..., min_length=2, max_length=120)
     admin_email: str = Field(..., min_length=5, max_length=180)
     grant_unlimited_access: bool = True
@@ -129,6 +131,8 @@ class SuperadminWorkspaceUpdate(BaseModel):
     owner_name: str | None = Field(default=None, min_length=2, max_length=120)
     email: str | None = Field(default=None, min_length=5, max_length=180)
     organization_name: str | None = Field(default=None, min_length=2, max_length=180)
+    user_name: str | None = Field(default=None, min_length=2, max_length=120)
+    user_email: str | None = Field(default=None, min_length=5, max_length=180)
     admin_name: str | None = Field(default=None, min_length=2, max_length=120)
     admin_email: str | None = Field(default=None, min_length=5, max_length=180)
     grant_unlimited_access: bool | None = None
@@ -366,6 +370,7 @@ async def _public_workspace(workspace: dict) -> dict:
     return {
         **workspace,
         "admin_token": None,
+        "user_token": None,
         "plan_details": PLAN_CATALOG[workspace["plan"]],
         "internal_requests_used": len(requests),
     }
@@ -375,6 +380,7 @@ async def _admin_workspace(workspace: dict) -> dict:
     return {
         **await _public_workspace(workspace),
         "admin_token": workspace["admin_token"],
+        "user_token": workspace["user_token"],
     }
 
 
@@ -383,6 +389,8 @@ def _create_workspace_record(
     email: str,
     organization_name: str,
     territory: str,
+    user_name: str | None = None,
+    user_email: str | None = None,
     admin_name: str | None = None,
     admin_email: str | None = None,
     grant_unlimited_access: bool = False,
@@ -397,6 +405,9 @@ def _create_workspace_record(
         "email": email.lower(),
         "organization_name": organization_name,
         "territory": territory.upper(),
+        "user_name": user_name or owner_name,
+        "user_email": (user_email or email).lower(),
+        "user_token": f"usr_{uuid4().hex}",
         "admin_name": admin_name or owner_name,
         "admin_email": (admin_email or email).lower(),
         "admin_token": f"adm_{uuid4().hex}",
@@ -504,6 +515,13 @@ async def access_login(request: AccessLogin):
         }
 
     for workspace in await _list_workspaces():
+        if workspace.get("user_token") == request.access_code:
+            return {
+                "role": "client",
+                "token": request.access_code,
+                "workspace": await _public_workspace(workspace),
+                "message": "Client workspace access granted",
+            }
         if workspace["admin_token"] == request.access_code:
             return {
                 "role": "admin",
@@ -610,6 +628,8 @@ async def create_superadmin_workspace(
         email=request.email,
         organization_name=request.organization_name,
         territory=request.territory,
+        user_name=request.user_name,
+        user_email=request.user_email,
         admin_name=request.admin_name,
         admin_email=request.admin_email,
         grant_unlimited_access=request.grant_unlimited_access,
@@ -631,10 +651,10 @@ async def update_superadmin_workspace(
     workspace = await _get_workspace(workspace_id)
     updates = request.model_dump(exclude_unset=True)
 
-    for field in ["owner_name", "organization_name", "admin_name"]:
+    for field in ["owner_name", "organization_name", "user_name", "admin_name"]:
         if field in updates and updates[field] is not None:
             workspace[field] = updates[field]
-    for field in ["email", "admin_email"]:
+    for field in ["email", "user_email", "admin_email"]:
         if field in updates and updates[field] is not None:
             workspace[field] = updates[field].lower()
     if "enabled_services" in updates and updates["enabled_services"] is not None:

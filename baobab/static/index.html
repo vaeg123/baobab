@@ -576,15 +576,16 @@
 
 <!-- Tab bar -->
 <div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('cima', this)">CIMA &mdash; Sinistre</button>
+  <button class="tab-btn active" onclick="switchTab('access', this)">Acces</button>
+  <button class="tab-btn" onclick="switchTab('client', this)">Espace client</button>
   <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
   <button class="tab-btn" onclick="switchTab('bceao', this)">BCEAO &mdash; Banque &amp; Finance</button>
   <button class="tab-btn" onclick="switchTab('espace', this)">Espace &mdash; Abonnement</button>
-  <button class="tab-btn" onclick="switchTab('access', this)">Acces securise</button>
+  <button class="tab-btn" onclick="switchTab('cima', this)">CIMA &mdash; Sinistre</button>
 </div>
 
 <!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
-<div id="tab-cima" class="tab-panel active">
+<div id="tab-cima" class="tab-panel">
   <div class="container">
     <div class="page-title">Dashboard Sinistre CIMA</div>
     <div class="page-sub">Déclarez un sinistre — la cascade réglementaire est calculée automatiquement.</div>
@@ -875,10 +876,10 @@
   </div>
 </div>
 
-<div id="tab-access" class="tab-panel">
+<div id="tab-access" class="tab-panel active">
   <div class="container">
-    <div class="page-title">Acces securise</div>
-    <div class="page-sub">Saisissez votre code. Un code admin ouvre l'espace admin, un code superadmin ouvre l'espace superadmin.</div>
+    <div class="page-title">Acces a votre espace BAOBAB</div>
+    <div class="page-sub">Saisissez le code recu. Un code utilisateur ouvre l'espace client, un code admin ouvre la gestion, et le code superadmin ouvre la plateforme.</div>
 
     <div class="grid-2">
       <div>
@@ -889,8 +890,8 @@
           </div>
           <div class="card-body">
             <div class="form-group">
-              <label>Code admin ou superadmin</label>
-              <input type="password" id="access_code" placeholder="Saisissez votre code" />
+              <label>Code d'acces</label>
+              <input type="password" id="access_code" placeholder="usr_..., adm_... ou code superadmin" />
             </div>
             <button class="btn btn-primary" onclick="loginWithAccessCode()">Entrer</button>
           </div>
@@ -906,10 +907,33 @@
           <div class="card-body" id="access-results">
             <div class="empty-state" style="padding:1.5rem">
               <div class="empty-icon">KEY</div>
-              <div class="empty-text">Votre espace s'ouvrira automatiquement selon le code.</div>
+              <div class="empty-text">Votre espace s'ouvrira automatiquement selon votre code.</div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-client" class="tab-panel">
+  <div class="container">
+    <div class="page-title" id="client-title">Espace client</div>
+    <div class="page-sub" id="client-subtitle">Connectez-vous avec votre code utilisateur pour voir vos services.</div>
+
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Recherche</label>
+          <input type="search" id="client_search" placeholder="Rechercher un service, une obligation, un dossier..." oninput="renderClientWorkspace()" />
+        </div>
+      </div>
+    </div>
+
+    <div id="client-workspace">
+      <div class="empty-state">
+        <div class="empty-icon">B</div>
+        <div class="empty-text">Aucun espace client ouvert.</div>
       </div>
     </div>
   </div>
@@ -993,6 +1017,14 @@
             <div class="form-group">
               <label>Organisation</label>
               <input type="text" id="sa_org_name" value="Client Institutionnel SA" />
+            </div>
+            <div class="form-group">
+              <label>Utilisateur client</label>
+              <input type="text" id="sa_user_name" value="Utilisateur Client" />
+            </div>
+            <div class="form-group">
+              <label>Email utilisateur</label>
+              <input type="email" id="sa_user_email" value="utilisateur-client@example.com" />
             </div>
             <div class="form-group">
               <label>Admin de l'espace</label>
@@ -1328,15 +1360,70 @@
 
   // --- Espace utilisateur ---
   let currentWorkspace = null;
+  let currentClientWorkspace = null;
+
+  const serviceCatalog = [
+    { key: 'cima', title: 'CIMA - Sinistres', desc: 'Calculer une cascade reglementaire assurance.', action: 'Ouvrir CIMA', tab: 'cima' },
+    { key: 'ohada', title: 'OHADA - Droit des affaires', desc: 'Suivre les obligations societaires et evenements juridiques.', action: 'Ouvrir OHADA', tab: 'ohada' },
+    { key: 'bceao', title: 'BCEAO - Banque & Finance', desc: 'Piloter les obligations bancaires, KYC, LCB/FT et reporting.', action: 'Ouvrir BCEAO', tab: 'bceao' },
+    { key: 'internal_requests', title: 'Demandes internes', desc: 'Envoyer une demande a votre equipe ou a BAOBAB.', action: 'Faire une demande', tab: 'espace' },
+    { key: 'alerts', title: 'Alertes et echeances', desc: 'Voir les echeances critiques et les risques de non-conformite.', action: 'Voir les alertes', tab: 'client' },
+    { key: 'support', title: 'Support prioritaire', desc: 'Canal de support pour les espaces accordes ou Premium.', action: 'Contacter', tab: 'espace' },
+  ];
+
+  function visibleServices(workspace) {
+    const enabled = workspace.enabled_services || [];
+    if (enabled.includes('all_verticals')) return serviceCatalog;
+    if (!enabled.length && workspace.plan === 'free') {
+      return serviceCatalog.filter(s => ['internal_requests', 'cima'].includes(s.key));
+    }
+    return serviceCatalog.filter(s => enabled.includes(s.key) || enabled.includes(s.tab));
+  }
+
+  function renderClientWorkspace(workspace = currentClientWorkspace) {
+    currentClientWorkspace = workspace;
+    if (!workspace) return;
+
+    const branding = workspace.branding || {};
+    const displayName = branding.display_name || workspace.organization_name;
+    const query = (document.getElementById('client_search')?.value || '').toLowerCase();
+    const services = visibleServices(workspace).filter(service =>
+      `${service.title} ${service.desc} ${service.key}`.toLowerCase().includes(query)
+    );
+    const statusLabel = workspace.subscription_status === 'unlimited_grant'
+      ? 'Acces illimite accorde par BAOBAB'
+      : `${workspace.plan_details.name} - ${workspace.subscription_status}`;
+
+    document.getElementById('client-title').textContent = displayName;
+    document.getElementById('client-subtitle').textContent = branding.welcome_message || `Bienvenue ${workspace.user_name || workspace.owner_name}.`;
+    document.getElementById('client-workspace').innerHTML = `
+      <div class="workspace-summary">
+        <div class="summary-item">Organisation<strong>${workspace.organization_name}</strong></div>
+        <div class="summary-item">Utilisateur<strong>${workspace.user_name || workspace.owner_name}</strong></div>
+        <div class="summary-item">Acces<strong>${statusLabel}</strong></div>
+        <div class="summary-item">Demandes internes<strong>${workspace.internal_requests_used}</strong></div>
+      </div>
+      <div class="plan-grid">
+        ${services.map(service => `
+          <div class="plan-card">
+            <div class="plan-name">${service.title}</div>
+            <div class="plan-detail" style="min-height:44px">${service.desc}</div>
+            <button class="btn btn-secondary" style="margin-top:12px" onclick="switchTab('${service.tab}')">${service.action}</button>
+          </div>
+        `).join('') || '<div class="empty-state">Aucun service ne correspond a la recherche.</div>'}
+      </div>`;
+  }
 
   function renderWorkspace(workspace) {
     currentWorkspace = workspace;
     if (workspace.admin_token) {
       document.getElementById('admin_token').value = workspace.admin_token;
     }
+    renderClientWorkspace(workspace);
     const price = workspace.plan_details.monthly_price_xof;
     const expires = workspace.subscription_expires_at ? fmtDate(workspace.subscription_expires_at) : 'Non applicable';
     const adminToken = workspace.admin_token || 'Masque';
+    const userToken = workspace.user_token || 'Masque';
     document.getElementById('workspace-results').innerHTML = `
       <div class="workspace-summary">
         <div class="summary-item">Espace<strong>${workspace.workspace_id}</strong></div>
@@ -1346,7 +1433,7 @@
         <div class="summary-item">Demandes internes<strong>${workspace.internal_requests_used}</strong></div>
         <div class="summary-item">Expiration<strong>${expires}</strong></div>
       </div>
-      <div class="event-id-box">email: ${workspace.email}<br>territory: ${workspace.territory}<br>admin_token: ${adminToken}</div>`;
+      <div class="event-id-box">Code utilisateur: ${userToken}<br>Code admin: ${adminToken}<br>Pour se connecter: onglet Acces, saisir le code utilisateur.</div>`;
   }
 
   async function createWorkspace() {
@@ -1371,6 +1458,7 @@
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       renderWorkspace(await res.json());
+      switchTab('client');
     } catch (e) {
       document.getElementById('workspace-results').innerHTML = `
         <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
@@ -1576,6 +1664,8 @@
       email: document.getElementById('sa_owner_email').value.trim(),
       organization_name: document.getElementById('sa_org_name').value.trim(),
       territory: 'CI',
+      user_name: document.getElementById('sa_user_name').value.trim(),
+      user_email: document.getElementById('sa_user_email').value.trim(),
       admin_name: document.getElementById('sa_admin_name').value.trim(),
       admin_email: document.getElementById('sa_admin_email').value.trim(),
       grant_unlimited_access: true,
@@ -1597,11 +1687,19 @@
       if (!res.ok) throw new Error(formatApiError(workspace.detail || workspace || `HTTP ${res.status}`));
       document.getElementById('superadmin-results').innerHTML = `
         <div class="event-id-box">
-          espace cree: ${workspace.workspace_id}<br>
-          organisation: ${workspace.organization_name}<br>
-          acces: ${workspace.subscription_status}<br>
-          admin: ${workspace.admin_name} - ${workspace.admin_email}<br>
-          code admin a transmettre: ${workspace.admin_token}
+          ESPACE CREE: ${workspace.workspace_id}<br>
+          Organisation: ${workspace.organization_name}<br>
+          Acces: ${workspace.subscription_status}<br><br>
+          UTILISATEUR CLIENT<br>
+          Nom: ${workspace.user_name}<br>
+          Email: ${workspace.user_email}<br>
+          Code de connexion client: ${workspace.user_token}<br>
+          Instruction: aller dans Acces, saisir ce code, puis l'espace client s'ouvre.<br><br>
+          ADMIN DE L'ESPACE<br>
+          Nom: ${workspace.admin_name}<br>
+          Email: ${workspace.admin_email}<br>
+          Code admin: ${workspace.admin_token}<br>
+          Instruction: aller dans Acces, saisir ce code, puis l'espace admin s'ouvre.
         </div>`;
     } catch (e) {
       document.getElementById('superadmin-results').innerHTML = `
@@ -1638,6 +1736,13 @@
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+
+      if (data.role === 'client') {
+        document.getElementById('access-results').innerHTML = '<div class="event-id-box">Code utilisateur valide. Ouverture de votre espace client...</div>';
+        switchTab('client');
+        renderClientWorkspace(data.workspace);
+        return;
+      }
 
       if (data.role === 'admin') {
         document.getElementById('admin_token').value = accessCode;
