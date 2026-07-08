@@ -575,6 +575,195 @@
     .success-banner .title { font-size: 14px; font-weight: 700; color: #50D090; margin-bottom: 3px; }
     .success-banner .desc  { font-size: 12px; color: rgba(80,208,144,0.7); line-height: 1.5; }
 
+    /* ── QUESTION BAR ──────────────────── */
+    .question-block { margin-bottom: 2rem; }
+    .question-block-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--sub); margin-bottom: 10px;
+    }
+    .question-wrap {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 12px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .question-wrap:focus-within {
+      border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,165,58,0.08);
+    }
+    .question-wrap textarea {
+      border: none; border-radius: 0; background: transparent;
+      resize: none; padding: 16px 18px; font-size: 14px;
+      min-height: 88px; line-height: 1.6; box-shadow: none !important;
+    }
+    .question-footer {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .question-footer select {
+      width: auto; flex: 1; max-width: 220px; padding: 7px 10px;
+      font-size: 12px; background: var(--bg); border-color: var(--border);
+    }
+    .question-hint {
+      font-size: 11px; color: var(--sub); padding: 8px 18px 0; line-height: 1.5;
+    }
+
+    /* ── FICHE ARRÊT ───────────────────── */
+    .fiche-arret {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .fiche-top {
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    }
+    .fiche-badge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .fiche-badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--gold); background: var(--bgold); padding: 3px 10px; border-radius: 20px;
+    }
+    .fiche-type-badge {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      color: var(--sub); background: rgba(255,255,255,0.06); padding: 3px 10px; border-radius: 20px;
+    }
+    .fiche-titre { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin-bottom: 4px; }
+    .fiche-sous-titre { font-size: 12px; color: var(--sub); }
+    .fiche-solidite { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .solidite-stars { color: var(--gold); font-size: 15px; letter-spacing: 3px; }
+    .solidite-label { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
+    /* Schema 30s */
+    .fiche-schema {
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+      background: rgba(212,165,58,0.02);
+    }
+    .schema-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--gold); margin-bottom: 14px;
+    }
+    .schema-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .schema-node {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 14px;
+      font-size: 12px; font-weight: 600; color: var(--text);
+    }
+    .schema-node.hl { background: var(--bgold); border-color: rgba(212,165,58,0.35); color: var(--gold); }
+    .schema-arrow { color: var(--sub); font-size: 14px; padding: 0 2px; }
+
+    /* Passé / Présent / Futur */
+    .fiche-ppf {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .ppf-col { padding: 1.1rem 1.25rem; border-right: 1px solid var(--border); }
+    .ppf-col:last-child { border-right: none; }
+    .ppf-tag {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; margin-bottom: 12px; display: block;
+    }
+    .ppf-col.passe  .ppf-tag { color: var(--sub); }
+    .ppf-col.present .ppf-tag { color: var(--gold); }
+    .ppf-col.futur  .ppf-tag { color: #6090E0; }
+    .ppf-step { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 11px; }
+    .ppf-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sub); flex-shrink: 0; margin-top: 3px; }
+    .ppf-col.present .ppf-dot { background: var(--gold); }
+    .ppf-col.futur  .ppf-dot { background: #6090E0; }
+    .ppf-date { color: var(--gold); font-weight: 700; flex-shrink: 0; min-width: 38px; }
+    .ppf-text { color: var(--sub); line-height: 1.4; }
+    .ppf-stat-num { font-size: 32px; font-weight: 700; color: #6090E0; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .ppf-stat-lbl { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+    .ppf-statut {
+      display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 4px 12px; border-radius: 20px; margin-top: 10px;
+    }
+    .ppf-statut.confirme { background: var(--green-bg); color: #50D090; }
+    .ppf-statut.ecarte   { background: var(--orange-bg); color: #E09040; }
+    .ppf-statut.casse    { background: var(--red-bg); color: #F08080; }
+    .ppf-statut.consacre { background: var(--bgold); color: var(--gold); }
+
+    /* Sections accordéon */
+    .fiche-sections { padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 6px; }
+    .fiche-section { border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    .fiche-section-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; cursor: pointer; user-select: none; transition: background 0.15s;
+    }
+    .fiche-section-hdr:hover { background: rgba(255,255,255,0.03); }
+    .fiche-section-title { font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
+    .fiche-chevron { color: var(--sub); font-size: 11px; transition: transform 0.2s; }
+    .fiche-section.open .fiche-chevron { transform: rotate(180deg); }
+    .fiche-section-body {
+      display: none; padding: 14px 16px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--sub); line-height: 1.7; background: rgba(255,255,255,0.01);
+    }
+    .fiche-section.open .fiche-section-body { display: block; }
+
+    .visa-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .visa-pill {
+      font-size: 11px; font-weight: 600; color: var(--gold);
+      background: var(--bgold); border: 1px solid rgba(212,165,58,0.2);
+      padding: 4px 10px; border-radius: 6px;
+    }
+
+    .args-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .args-side-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--sub); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    }
+    .args-item { display: flex; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--sub); line-height: 1.5; }
+    .args-num { color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+    .juges-grid { display: flex; flex-direction: column; gap: 8px; }
+    .juge-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+    }
+    .juge-avatar {
+      width: 32px; height: 32px; border-radius: 8px; background: var(--bgold);
+      border: 1px solid rgba(212,165,58,0.2); color: var(--gold);
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;
+    }
+    .juge-nom { font-size: 13px; font-weight: 600; color: var(--text); }
+    .juge-role { font-size: 11px; color: var(--sub); }
+    .juge-stat { font-size: 11px; color: var(--sub); text-align: right; }
+    .juge-stat strong { display: block; font-size: 16px; font-weight: 700; color: var(--text); }
+
+    /* Fiche actions */
+    .fiche-actions {
+      display: flex; gap: 8px; padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border); background: rgba(255,255,255,0.02); flex-wrap: wrap;
+    }
+    .fiche-action {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--sub); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; font-family: inherit; text-decoration: none;
+    }
+    .fiche-action:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .fiche-action.gold { background: var(--gold); color: #07070F; border-color: var(--gold); }
+    .fiche-action.gold:hover { background: var(--gold-h); }
+
+    /* Principe mis en avant */
+    .fiche-principe {
+      margin: 0 1.5rem 1rem;
+      padding: 14px 16px;
+      background: rgba(212,165,58,0.06); border: 1px solid rgba(212,165,58,0.2);
+      border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0;
+      font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.6;
+    }
+    .fiche-principe-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--gold); margin-bottom: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .fiche-ppf { grid-template-columns: 1fr; }
+      .ppf-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .ppf-col:last-child { border-bottom: none; }
+      .args-grid { grid-template-columns: 1fr; }
+      .fiche-top { flex-direction: column; }
+      .fiche-solidite { align-items: flex-start; }
+      .schema-flow { gap: 4px; }
+    }
+
     /* ── MOBILE TOP BAR (app) ──────────────── */
     .mobile-topbar {
       display: none;
@@ -881,18 +1070,34 @@
     <!-- ── ESPACE CLIENT ── -->
     <div id="tab-client" class="tab-panel">
       <div class="container">
-        <div class="page-title" id="client-title">Espace client</div>
+        <div class="page-title" id="client-title">Mon espace</div>
         <div class="page-sub" id="client-subtitle">Bienvenue sur BAOBAB.</div>
 
-        <div class="card" style="margin-bottom:1.5rem">
-          <div class="card-body" style="padding:0.8rem 1.2rem">
-            <input type="search" id="client_search"
-              placeholder="Rechercher un service..."
-              oninput="renderClientWorkspace()"
-              style="width:100%;background:transparent;border:none;outline:none;font-size:14px;color:var(--text);font-family:inherit" />
+        <!-- Barre de question juridique -->
+        <div class="question-block">
+          <div class="question-block-label">Question juridique · Analyse d'arrêt · Recherche de texte</div>
+          <div class="question-wrap">
+            <textarea id="legal_question"
+              placeholder="Posez votre question en langage courant, collez un arrêt, un article de loi ou décrivez votre situation…"></textarea>
+            <div class="question-footer">
+              <select id="question_domain">
+                <option value="">Tous les domaines</option>
+                <option value="cima">Assurance — CIMA</option>
+                <option value="ohada">Droit des affaires — OHADA</option>
+                <option value="bceao">Banque & Finance — BCEAO</option>
+                <option value="civil">Droit civil</option>
+                <option value="penal">Droit pénal</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="analyserQuestion()" id="question-btn" style="white-space:nowrap">Analyser →</button>
+            </div>
           </div>
+          <div class="question-hint">Exemples : <em>"Délais après sinistre incendie CIMA"</em> · <em>"Délibération CCJA n°045/2019"</em> · <em>"Art. 234 AUDCG"</em></div>
         </div>
 
+        <!-- Zone de résultat -->
+        <div id="legal-result" class="hidden"></div>
+
+        <!-- Services disponibles -->
         <div id="client-workspace">
           <div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-text">Chargement…</div></div>
         </div>
@@ -2107,6 +2312,266 @@ function fmtError(detail) {
   if (typeof detail === 'string') return detail;
   if (Array.isArray(detail)) return detail.map(i => `${(i.loc||[]).join('.')}: ${i.msg}`).join(' | ');
   return JSON.stringify(detail);
+}
+
+// ════════════════════════════════════════════════
+// FICHE ARRÊT / QUESTION JURIDIQUE
+// ════════════════════════════════════════════════
+
+// Données de démonstration — arrêt CCJA OHADA
+const DEMO_ARRET = {
+  identite: {
+    numero: 'n°045/2019',
+    date: '28 mars 2019',
+    juridiction: 'CCJA — Cour Commune de Justice et d\'Arbitrage',
+    formation: 'Troisième Chambre',
+    president: 'M. Victoriano OBIANG ABOGO',
+    rapporteur: 'M. César Apollinaire ONDO MVE',
+    avocat_general: 'M. Jean-Marie SPENER YOCKOMBEL',
+    numero_recueil: 'Recueil n°32 — 2019',
+    domaine: 'OHADA · Droit Commercial Général',
+  },
+  solidite: { score: 4, label: 'Jurisprudence établie' },
+  principe: 'Le défaut de mention de la cause dans un acte de cautionnement n\'entraîne pas sa nullité dès lors que la cause peut être déterminée par référence aux documents contractuels auxquels l\'acte renvoie expressément.',
+  schema: {
+    question: 'La cause peut-elle être implicite dans un acte de cautionnement ?',
+    reponse: 'Oui — si elle est déterminable par référence aux autres documents',
+    consequence: 'L\'acte de cautionnement reste valide',
+  },
+  passe: [
+    { date: '2015', texte: 'Contrat de prêt entre la SGBCI et la société ATLAS SARL, cautionné par M. Konan' },
+    { date: '2016', texte: 'Défaut de remboursement — mise en demeure de la caution' },
+    { date: '2017', texte: 'TPI Abidjan Plateau — condamnation de la caution au paiement' },
+    { date: '2018', texte: 'Cour d\'Appel d\'Abidjan — confirmation du jugement de première instance' },
+  ],
+  present: {
+    faits: 'La société ATLAS SARL a obtenu un prêt de 45 000 000 FCFA auprès de la SGBCI, garanti par un acte de cautionnement signé par M. Konan en qualité de gérant. L\'acte de cautionnement ne mentionnait pas expressément la cause de l\'engagement mais renvoyait au contrat de prêt principal.',
+    pretentions: [
+      { partie: 'Demandeur (M. Konan)', arg: 'Nullité de l\'acte de cautionnement pour absence de mention de la cause — violation de l\'article 4 du Code Civil OHADA' },
+      { partie: 'Demandeur (M. Konan)', arg: 'Prescription de l\'action en paiement — délai de 5 ans dépassé depuis la mise en demeure' },
+      { partie: 'Défendeur (SGBCI)', arg: 'La cause est déterminable par référence au contrat de prêt expressément visé dans l\'acte' },
+      { partie: 'Défendeur (SGBCI)', arg: 'La prescription n\'est pas acquise — la mise en demeure a interrompu le délai' },
+    ],
+    moyens: [
+      'Violation de l\'article 4 AUDCG relatif aux conditions de validité des actes de cautionnement',
+      'Mauvaise application des règles de prescription de l\'action en paiement',
+    ],
+    question_droit: 'L\'absence de mention expresse de la cause dans un acte de cautionnement entraîne-t-elle sa nullité lorsque cette cause est déterminable par référence aux documents contractuels expressément visés ?',
+    raisonnement: 'La Cour relève que si la mention de la cause constitue une condition de validité du cautionnement, cette exigence est satisfaite dès lors que la cause peut être déterminée avec certitude par référence aux autres documents contractuels. En l\'espèce, l\'acte de cautionnement visait expressément le contrat de prêt n°2015/SGBCI/047, permettant ainsi de déterminer avec précision la nature et l\'étendue de l\'engagement de la caution.',
+    visa: ['Art. 4 AUDCG', 'Art. 13 AUS', 'Art. 1131 du Code Civil applicable'],
+    dispositif: 'Rejet du pourvoi — confirmation de l\'arrêt de la Cour d\'Appel d\'Abidjan du 14 septembre 2018',
+  },
+  futur: {
+    citations: 134,
+    decisions: 78,
+    statut: 'consacre',
+    statut_label: 'Consacré',
+    usages: [
+      { annee: '2020', texte: 'Cour d\'Appel de Dakar — appliqué dans un litige de garantie bancaire' },
+      { annee: '2021', texte: 'CCJA n°112/2021 — principe confirmé et étendu aux lettres de garantie' },
+      { annee: '2023', texte: 'TPI Douala — invoqué dans 3 affaires de cautionnement commercial' },
+    ],
+  },
+  juges: [
+    { nom: 'Victoriano OBIANG ABOGO', role: 'Président de chambre', initiale: 'V', decisions: 312, specialites: 'Commercial · OHADA' },
+    { nom: 'César A. ONDO MVE', role: 'Conseiller rapporteur', initiale: 'C', decisions: 187, specialites: 'Sûretés · Arbitrage' },
+  ],
+};
+
+function analyserQuestion() {
+  const texte = document.getElementById('legal_question').value.trim();
+  const domaine = document.getElementById('question_domain').value;
+  if (!texte) { alert('Veuillez saisir une question ou coller un texte juridique.'); return; }
+
+  const btn = document.getElementById('question-btn');
+  btn.disabled = true; btn.textContent = 'Analyse…';
+
+  const result = document.getElementById('legal-result');
+  result.classList.remove('hidden');
+  result.innerHTML = `<div class="empty-state"><span class="spinner" style="width:24px;height:24px;border-width:3px"></span><div class="empty-text" style="margin-top:1rem">Analyse en cours…</div></div>`;
+
+  // Appel API — fallback sur la démo si non disponible
+  fetch('/api/v1/legal/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: texte, domain: domaine })
+  })
+  .then(async r => {
+    if (!r.ok) throw new Error('demo');
+    const data = await r.json();
+    result.innerHTML = renderFicheArret(data);
+  })
+  .catch(() => {
+    // Démo — montre la fiche avec les données d'exemple
+    result.innerHTML = `
+      <div style="font-size:11px;color:var(--sub);background:rgba(212,165,58,0.06);border:1px solid rgba(212,165,58,0.15);border-radius:8px;padding:10px 14px;margin-bottom:1rem">
+        ★ Aperçu du format de réponse — données d'illustration (CCJA n°045/2019)
+      </div>
+      ${renderFicheArret(DEMO_ARRET)}`;
+  })
+  .finally(() => {
+    btn.disabled = false; btn.textContent = 'Analyser →';
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function renderFicheArret(d) {
+  const stars = '★'.repeat(d.solidite.score) + '☆'.repeat(5 - d.solidite.score);
+
+  const ppfPasse = d.passe.map(s => `
+    <div class="ppf-step">
+      <div class="ppf-dot"></div>
+      <div><span class="ppf-date">${s.date}</span><br><span class="ppf-text">${escHtml(s.texte)}</span></div>
+    </div>`).join('');
+
+  const statutClass = d.futur.statut;
+  const futurUsages = d.futur.usages.map(u => `
+    <div class="ppf-step">
+      <div class="ppf-dot"></div>
+      <div><span class="ppf-date">${u.annee}</span><br><span class="ppf-text">${escHtml(u.texte)}</span></div>
+    </div>`).join('');
+
+  const visaPills = d.present.visa.map(v => `<span class="visa-pill">${escHtml(v)}</span>`).join('');
+
+  // Arguments — split demandeur / défendeur
+  const argsDem = d.present.pretentions.filter(p => p.partie.startsWith('Demandeur'));
+  const argsDef = d.present.pretentions.filter(p => p.partie.startsWith('Défendeur'));
+  const argsHtml = `
+    <div class="args-grid">
+      <div>
+        <div class="args-side-label">Demandeur</div>
+        ${argsDem.map((a, i) => `<div class="args-item"><span class="args-num">${i+1}.</span>${escHtml(a.arg)}</div>`).join('')}
+      </div>
+      <div>
+        <div class="args-side-label">Défendeur</div>
+        ${argsDef.map((a, i) => `<div class="args-item"><span class="args-num">${i+1}.</span>${escHtml(a.arg)}</div>`).join('')}
+      </div>
+    </div>`;
+
+  const jugesHtml = d.juges.map(j => `
+    <div class="juge-row">
+      <div class="juge-avatar">${escHtml(j.initiale)}</div>
+      <div style="flex:1">
+        <div class="juge-nom">${escHtml(j.nom)}</div>
+        <div class="juge-role">${escHtml(j.role)}</div>
+        <div class="juge-role" style="margin-top:2px">${escHtml(j.specialites)}</div>
+      </div>
+      <div class="juge-stat"><strong>${j.decisions}</strong>décisions recensées</div>
+    </div>`).join('');
+
+  const sections = [
+    { titre: 'Les faits', contenu: `<p>${escHtml(d.present.faits)}</p>` },
+    { titre: 'Arguments des parties', contenu: argsHtml },
+    {
+      titre: 'Question de droit',
+      contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.question_droit)}</p>`
+    },
+    { titre: 'Raisonnement de la Cour', contenu: `<p>${escHtml(d.present.raisonnement)}</p>` },
+    {
+      titre: 'Visa · Articles appliqués',
+      contenu: `<p style="margin-bottom:10px">Articles sur lesquels la décision est fondée :</p><div class="visa-list">${visaPills}</div>`
+    },
+    { titre: 'Moyens du pourvoi', contenu: d.present.moyens.map((m, i) => `<div class="args-item"><span class="args-num">${i+1}.</span>${escHtml(m)}</div>`).join('') },
+    { titre: 'Dispositif — La décision', contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.dispositif)}</p>` },
+    { titre: 'Profil des magistrats', contenu: `<div class="juges-grid">${jugesHtml}</div>` },
+  ];
+
+  const sectionsHtml = sections.map((s, i) => `
+    <div class="fiche-section${i === 0 ? ' open' : ''}">
+      <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+        <span class="fiche-section-title">${s.titre}</span>
+        <span class="fiche-chevron">▼</span>
+      </div>
+      <div class="fiche-section-body">${s.contenu}</div>
+    </div>`).join('');
+
+  return `
+    <div class="fiche-arret">
+
+      <!-- En-tête identité + solidité -->
+      <div class="fiche-top">
+        <div>
+          <div class="fiche-badge-row">
+            <span class="fiche-badge">${escHtml(d.identite.juridiction.split('—')[0].trim())}</span>
+            <span class="fiche-type-badge">Arrêt ${escHtml(d.identite.numero)}</span>
+            <span class="fiche-type-badge">${escHtml(d.identite.domaine)}</span>
+          </div>
+          <div class="fiche-titre">${escHtml(d.identite.juridiction)} · ${escHtml(d.identite.date)}</div>
+          <div class="fiche-sous-titre">${escHtml(d.identite.formation)} · ${escHtml(d.identite.numero_recueil)}</div>
+        </div>
+        <div class="fiche-solidite">
+          <span class="solidite-stars">${stars}</span>
+          <span class="solidite-label">${escHtml(d.solidite.label)}</span>
+        </div>
+      </div>
+
+      <!-- Schéma 30 secondes -->
+      <div class="fiche-schema">
+        <div class="schema-label">Lecture 30 secondes</div>
+        <div class="schema-flow">
+          <div class="schema-node">${escHtml(d.schema.question)}</div>
+          <span class="schema-arrow">→</span>
+          <div class="schema-node hl">${escHtml(d.schema.reponse)}</div>
+          <span class="schema-arrow">→</span>
+          <div class="schema-node">${escHtml(d.schema.consequence)}</div>
+        </div>
+      </div>
+
+      <!-- Principe mis en avant -->
+      <div style="padding: 1rem 1.5rem 0">
+        <div class="fiche-principe">
+          <div class="fiche-principe-label">Principe dégagé</div>
+          ${escHtml(d.principe)}
+        </div>
+      </div>
+
+      <!-- Passé / Présent / Futur -->
+      <div class="fiche-ppf">
+        <div class="ppf-col passe">
+          <span class="ppf-tag">Passé — Procédure</span>
+          ${ppfPasse}
+        </div>
+        <div class="ppf-col present">
+          <span class="ppf-tag">Présent — La décision</span>
+          <div class="ppf-step">
+            <div class="ppf-dot"></div>
+            <div><span class="ppf-date">${escHtml(d.identite.date.split(' ').pop())}</span><br>
+            <span class="ppf-text" style="color:var(--text);font-weight:600">${escHtml(d.present.dispositif)}</span></div>
+          </div>
+          <div style="margin-top:10px">
+            <div class="visa-list">${visaPills}</div>
+          </div>
+        </div>
+        <div class="ppf-col futur">
+          <span class="ppf-tag">Futur — Impact</span>
+          <div class="ppf-stat-num">${d.futur.citations}</div>
+          <div class="ppf-stat-lbl">citations dans ${d.futur.decisions} décisions</div>
+          <span class="ppf-statut ${statutClass}">${escHtml(d.futur.statut_label)}</span>
+          <div style="margin-top:12px">${futurUsages}</div>
+        </div>
+      </div>
+
+      <!-- Sections accordéon -->
+      <div class="fiche-sections">${sectionsHtml}</div>
+
+      <!-- Actions -->
+      <div class="fiche-actions">
+        <button class="fiche-action gold" onclick="alert('Téléchargement PDF disponible en version connectée.')">⬇ Télécharger PDF</button>
+        <button class="fiche-action" onclick="alert('Prévisualisation disponible en version connectée.')">👁 Prévisualiser</button>
+        <button class="fiche-action" onclick="copierCitation('${escHtml(d.identite.juridiction)}, ${escHtml(d.identite.date)}, ${escHtml(d.identite.numero)}')">📋 Copier la citation</button>
+        <button class="fiche-action" style="margin-left:auto" onclick="document.getElementById('legal-result').classList.add('hidden')">✕ Fermer</button>
+      </div>
+    </div>`;
+}
+
+function toggleFicheSection(el) {
+  el.classList.toggle('open');
+}
+
+function copierCitation(texte) {
+  navigator.clipboard.writeText(texte).then(() => {
+    alert('Citation copiée : ' + texte);
+  }).catch(() => alert('Citation : ' + texte));
 }
 </script>
 </body>
