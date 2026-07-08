@@ -139,6 +139,34 @@
       z-index: 1;
     }
 
+    /* Feature list on login screen */
+    .login-features {
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+      z-index: 1;
+      position: relative;
+      margin-top: 1.75rem;
+    }
+    .login-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.15s;
+      cursor: default;
+    }
+    .login-feature-item:last-child { border-bottom: none; }
+    .login-feature-item:hover { background: rgba(212,165,58,0.04); }
+    .lfi-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .lfi-name {
+      font-size: 12px; font-weight: 700;
+      color: var(--text); margin-bottom: 2px; letter-spacing: 0.1px;
+    }
+    .lfi-desc { font-size: 11px; color: var(--sub); line-height: 1.5; }
+
     /* Right: form */
     .login-right {
       flex: 0 0 42%;
@@ -595,21 +623,19 @@
 
       .login-left {
         flex: 0 0 auto;
-        padding: 1.75rem 1.5rem 1.25rem;
-        min-height: 220px;
+        padding: 1.5rem 1.25rem 1.25rem;
       }
       .login-big {
-        font-size: clamp(44px, 13vw, 68px);
+        font-size: clamp(38px, 11vw, 56px);
         letter-spacing: -2px;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.6rem;
       }
-      .login-tagline { font-size: 13px; max-width: 100%; }
+      .login-tagline { font-size: 12px; max-width: 100%; margin-bottom: 0; }
       .login-footer  { display: none; }
-      .tree-wrap {
-        width: 160px;
-        right: -10px;
-        bottom: -5px;
-      }
+      .tree-wrap     { display: none; }
+      .login-features { margin-top: 1.25rem; }
+      .login-feature-item { padding: 10px 14px; }
+      .lfi-desc { display: none; }  /* sur mobile: nom seul, pas de description */
 
       .login-right {
         flex: 1;
@@ -690,8 +716,53 @@
     <div class="login-hero">
       <div class="login-big">Legal<em>OS.</em></div>
       <p class="login-tagline">
-        Plateforme juridique pour l'Afrique — conformité CIMA, OHADA et BCEAO calculée en temps réel.
+        La plateforme juridique africaine qui calcule vos obligations, répond à vos questions et surveille la réglementation pour vous.
       </p>
+
+      <!-- Ce que propose BAOBAB — visible avant connexion -->
+      <div class="login-features">
+
+        <div class="login-feature-item">
+          <span class="lfi-icon">💬</span>
+          <div>
+            <div class="lfi-name">Question juridique</div>
+            <div class="lfi-desc">Posez une question en langage courant, collez un arrêt ou un contrat — vous recevez une analyse structurée et sourcée.</div>
+          </div>
+        </div>
+
+        <div class="login-feature-item">
+          <span class="lfi-icon">⚖️</span>
+          <div>
+            <div class="lfi-name">Cascade réglementaire automatique</div>
+            <div class="lfi-desc">Un sinistre, une création de société, un incident bancaire — BAOBAB calcule immédiatement toutes les étapes légales obligatoires avec leurs délais.</div>
+          </div>
+        </div>
+
+        <div class="login-feature-item">
+          <span class="lfi-icon">📡</span>
+          <div>
+            <div class="lfi-name">Veille juridique</div>
+            <div class="lfi-desc">Nouvelles lois, circulaires BCEAO, actes uniformes OHADA, instructions CIMA — suivis, résumés et classés dès leur publication.</div>
+          </div>
+        </div>
+
+        <div class="login-feature-item">
+          <span class="lfi-icon">🚨</span>
+          <div>
+            <div class="lfi-name">Alertes & Échéances</div>
+            <div class="lfi-desc">Aucune date limite ne vous échappe. Alertes préventives à J-15, J-7 et J-0 sur chaque obligation réglementaire.</div>
+          </div>
+        </div>
+
+        <div class="login-feature-item">
+          <span class="lfi-icon">📊</span>
+          <div>
+            <div class="lfi-name">Score de conformité</div>
+            <div class="lfi-desc">Tableau de bord visuel de votre niveau de conformité CIMA, OHADA et BCEAO — en temps réel.</div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- Baobab tree SVG silhouette -->
