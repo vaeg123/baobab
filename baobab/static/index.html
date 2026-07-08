@@ -205,7 +205,7 @@
       margin-bottom: 6px;
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 9px 12px;
       border: 1px solid var(--border);
@@ -217,7 +217,13 @@
       transition: border-color 0.15s;
     }
 
-    input:focus, select:focus {
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
       border-color: var(--or);
       box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
     }
@@ -242,6 +248,77 @@
     .btn-primary:hover { background: var(--or-light); transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      background: var(--anthracite);
+      color: var(--blanc);
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      .plan-grid { grid-template-columns: 1fr; }
+    }
+
+    .plan-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      background: var(--blanc);
+    }
+
+    .plan-name {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--anthracite);
+      letter-spacing: 0.6px;
+    }
+
+    .plan-price {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--or);
+      margin: 8px 0 4px;
+    }
+
+    .plan-detail {
+      color: var(--gris);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .workspace-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 700px) {
+      .workspace-summary { grid-template-columns: 1fr; }
+    }
+
+    .summary-item {
+      background: var(--gris-clair);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--gris);
+    }
+
+    .summary-item strong {
+      display: block;
+      color: var(--anthracite);
+      font-size: 14px;
+      margin-top: 3px;
+      word-break: break-word;
+    }
 
     /* ── Stats row ── */
     .stats-row {
@@ -502,6 +579,7 @@
   <button class="tab-btn active" onclick="switchTab('cima', this)">CIMA &mdash; Sinistre</button>
   <button class="tab-btn" onclick="switchTab('ohada', this)">OHADA &mdash; Droit des affaires</button>
   <button class="tab-btn" onclick="switchTab('bceao', this)">BCEAO &mdash; Banque &amp; Finance</button>
+  <button class="tab-btn" onclick="switchTab('espace', this)">Espace &mdash; Abonnement</button>
 </div>
 
 <!-- ══════════════════════════ CIMA TAB ══════════════════════════ -->
@@ -666,6 +744,130 @@
         <div class="empty-state">
           <div class="empty-icon">🏦</div>
           <div class="empty-text">Déclarez un événement pour voir<br>la cascade réglementaire BCEAO.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-espace" class="tab-panel">
+  <div class="container">
+    <div class="page-title">Espace utilisateur BAOBAB</div>
+    <div class="page-sub">Creez un espace gratuit, envoyez une demande interne, puis activez Basic ou Premium par paiement mobile mensuel.</div>
+
+    <div class="plan-grid" id="plan-catalog">
+      <div class="plan-card">
+        <div class="plan-name">Gratuit</div>
+        <div class="plan-price">0 FCFA</div>
+        <div class="plan-detail">Espace personnel et 1 demande interne incluse.</div>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Basic</div>
+        <div class="plan-price">5 000 FCFA</div>
+        <div class="plan-detail">Paiement mensuel via Orange Money, MTN Money ou Wave.</div>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">10 000 FCFA</div>
+        <div class="plan-detail">Acces complet aux services BAOBAB et support prioritaire.</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="card-header">
+            <div class="card-icon" style="background:#f0ead6">B</div>
+            <span class="card-title">Creation de l'espace</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Nom du responsable</label>
+              <input type="text" id="workspace_owner" value="Awa Kouassi" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="workspace_email" value="awa@example.com" />
+            </div>
+            <div class="form-group">
+              <label>Organisation</label>
+              <input type="text" id="workspace_org" value="Cabinet Awa" />
+            </div>
+            <div class="form-group">
+              <label>Pays / territoire</label>
+              <input type="text" id="workspace_territory" value="CI" />
+            </div>
+            <button class="btn btn-primary" id="workspace-create-btn" onclick="createWorkspace()">
+              Creer mon espace gratuit
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#eef0f7">?</div>
+            <span class="card-title">Demande interne</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Sujet</label>
+              <input type="text" id="internal_subject" value="Analyse de dossier" />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="internal_message">Je souhaite faire une demande interne depuis mon espace BAOBAB.</textarea>
+            </div>
+            <button class="btn btn-secondary" id="internal-request-btn" onclick="submitInternalRequest()">
+              Envoyer la demande
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:1.25rem">
+          <div class="card-header">
+            <div class="card-icon" style="background:#e6f4ee">+</div>
+            <span class="card-title">Mon espace</span>
+          </div>
+          <div class="card-body" id="workspace-results">
+            <div class="empty-state" style="padding:1.5rem">
+              <div class="empty-icon">B</div>
+              <div class="empty-text">Aucun espace cree pour le moment.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" style="background:#f0ead6">FCFA</div>
+            <span class="card-title">Activation payante mensuelle</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Offre</label>
+              <select id="checkout_plan">
+                <option value="basic">Basic - 5 000 FCFA / mois</option>
+                <option value="premium">Premium - 10 000 FCFA / mois</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Moyen de paiement</label>
+              <select id="checkout_provider">
+                <option value="orange_money">Orange Money</option>
+                <option value="mtn_money">MTN Money</option>
+                <option value="wave">Wave</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Numero mobile money</label>
+              <input type="tel" id="checkout_phone" value="+2250700000000" />
+            </div>
+            <button class="btn btn-primary" id="checkout-btn" onclick="startCheckout()">
+              Initialiser le paiement
+            </button>
+            <div id="checkout-result" class="event-id-box hidden"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -958,6 +1160,118 @@
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Calculer la cascade OHADA';
+    }
+  }
+
+  // --- Espace utilisateur ---
+  let currentWorkspace = null;
+
+  function renderWorkspace(workspace) {
+    currentWorkspace = workspace;
+    const price = workspace.plan_details.monthly_price_xof;
+    const expires = workspace.subscription_expires_at ? fmtDate(workspace.subscription_expires_at) : 'Non applicable';
+    document.getElementById('workspace-results').innerHTML = `
+      <div class="workspace-summary">
+        <div class="summary-item">Espace<strong>${workspace.workspace_id}</strong></div>
+        <div class="summary-item">Organisation<strong>${workspace.organization_name}</strong></div>
+        <div class="summary-item">Offre<strong>${workspace.plan_details.name} - ${price.toLocaleString('fr-FR')} FCFA/mois</strong></div>
+        <div class="summary-item">Statut<strong>${workspace.subscription_status}</strong></div>
+        <div class="summary-item">Demandes internes<strong>${workspace.internal_requests_used}</strong></div>
+        <div class="summary-item">Expiration<strong>${expires}</strong></div>
+      </div>
+      <div class="event-id-box">email: ${workspace.email}<br>territory: ${workspace.territory}</div>`;
+  }
+
+  async function createWorkspace() {
+    const btn = document.getElementById('workspace-create-btn');
+    const owner_name = document.getElementById('workspace_owner').value.trim();
+    const email = document.getElementById('workspace_email').value.trim();
+    const organization_name = document.getElementById('workspace_org').value.trim();
+    const territory = document.getElementById('workspace_territory').value.trim();
+
+    if (!owner_name || !email || !organization_name) {
+      alert('Veuillez remplir les champs de creation.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Creation...';
+    try {
+      const res = await fetch('/api/v1/accounts/workspaces', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ owner_name, email, organization_name, territory })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      renderWorkspace(await res.json());
+    } catch (e) {
+      document.getElementById('workspace-results').innerHTML = `
+        <div class="empty-state"><div class="empty-icon">X</div><div class="empty-text">Erreur : ${e.message}</div></div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Creer mon espace gratuit';
+    }
+  }
+
+  async function submitInternalRequest() {
+    if (!currentWorkspace) {
+      alert('Creez d abord votre espace gratuit.');
+      return;
+    }
+    const btn = document.getElementById('internal-request-btn');
+    const subject = document.getElementById('internal_subject').value.trim();
+    const message = document.getElementById('internal_message').value.trim();
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Envoi...';
+    try {
+      const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/internal-requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, message })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+      const refreshed = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}`);
+      renderWorkspace(await refreshed.json());
+      alert('Demande interne envoyee.');
+    } catch (e) {
+      alert(`Demande refusee : ${e.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Envoyer la demande';
+    }
+  }
+
+  async function startCheckout() {
+    if (!currentWorkspace) {
+      alert('Creez d abord votre espace gratuit.');
+      return;
+    }
+    const btn = document.getElementById('checkout-btn');
+    const result = document.getElementById('checkout-result');
+    const plan = document.getElementById('checkout_plan').value;
+    const provider = document.getElementById('checkout_provider').value;
+    const phone_number = document.getElementById('checkout_phone').value.trim();
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Paiement...';
+    try {
+      const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, provider, phone_number })
+      });
+      const payment = await res.json();
+      if (!res.ok) throw new Error(payment.detail || `HTTP ${res.status}`);
+      result.classList.remove('hidden');
+      result.innerHTML = `payment_id: ${payment.payment_id}<br>reference: ${payment.provider_reference}<br>montant: ${payment.amount_xof.toLocaleString('fr-FR')} FCFA<br>statut: ${payment.status}`;
+    } catch (e) {
+      result.classList.remove('hidden');
+      result.innerHTML = `Erreur paiement: ${e.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Initialiser le paiement';
     }
   }
 </script>
