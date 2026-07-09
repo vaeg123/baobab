@@ -4177,14 +4177,16 @@ async function frLoadStatus() {
     const d = await r.json();
     const bar = document.getElementById('fr-status-bar');
     if (!bar) return;
+    const tokenLabel = d.token_ok ? 'Token OK' : (d.token_error ? 'Erreur token' : (d.configured ? 'Non testé' : 'Non configuré'));
     const items = [
       { label: 'PISTE', val: d.configured ? 'Connecté' : 'Non configuré', ok: d.configured },
+      { label: 'Token', val: tokenLabel, ok: d.token_ok, title: d.token_error || '' },
       { label: 'Env.', val: d.env === 'sandbox' ? 'Sandbox' : 'Production', ok: true },
       { label: 'Judilibre', val: d.judilibre_base ? '✓' : '—', ok: !!d.judilibre_base },
       { label: 'Légifrance', val: d.legifrance_base ? '✓' : '—', ok: !!d.legifrance_base },
     ];
     bar.innerHTML = items.map(i => `
-      <div style="padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:12px;">
+      <div style="padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:12px;" title="${escHtml(i.title||'')}">
         <div style="color:var(--sub)">${i.label}</div>
         <div style="color:${i.ok ? 'var(--green)' : 'var(--red)'};font-weight:600;margin-top:2px">${i.val}</div>
       </div>`).join('');

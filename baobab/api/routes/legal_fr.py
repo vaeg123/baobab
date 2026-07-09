@@ -42,18 +42,22 @@ async def _get_token() -> str:
     if not PISTE_CLIENT_ID or not PISTE_CLIENT_SECRET:
         raise HTTPException(503, "PISTE non configuré (PISTE_CLIENT_ID / PISTE_CLIENT_SECRET manquants)")
 
-    async with httpx.AsyncClient(timeout=10) as client:
-        r = await client.post(
-            PISTE_TOKEN_URL,
-            data={
-                "grant_type": "client_credentials",
-                "client_id": PISTE_CLIENT_ID,
-                "client_secret": PISTE_CLIENT_SECRET,
-                "scope": PISTE_SCOPE,
-            },
-        )
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.post(
+                PISTE_TOKEN_URL,
+                data={
+                    "grant_type": "client_credentials",
+                    "client_id": PISTE_CLIENT_ID,
+                    "client_secret": PISTE_CLIENT_SECRET,
+                    "scope": PISTE_SCOPE,
+                },
+            )
+    except httpx.RequestError as exc:
+        raise HTTPException(503, f"Impossible de joindre PISTE OAuth ({PISTE_TOKEN_URL}): {exc}")
+
     if r.status_code != 200:
-        raise HTTPException(502, f"Erreur token PISTE {r.status_code}: {r.text[:200]}")
+        raise HTTPException(502, f"Erreur token PISTE {r.status_code}: {r.text[:300]}")
 
     payload = r.json()
     _token_cache["access_token"] = payload["access_token"]
@@ -63,12 +67,15 @@ async def _get_token() -> str:
 
 async def _piste_get(base: str, path: str, params: dict | None = None) -> Any:
     token = await _get_token()
-    async with httpx.AsyncClient(timeout=15) as client:
-        r = await client.get(
-            f"{base}{path}",
-            params={k: v for k, v in (params or {}).items() if v is not None},
-            headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
-        )
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get(
+                f"{base}{path}",
+                params={k: v for k, v in (params or {}).items() if v is not None},
+                headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+            )
+    except httpx.RequestError as exc:
+        raise HTTPException(503, f"Erreur réseau PISTE GET {path}: {exc}")
     if r.status_code != 200:
         raise HTTPException(r.status_code, f"PISTE GET {path} → {r.status_code}: {r.text[:300]}")
     return r.json()
@@ -76,12 +83,15 @@ async def _piste_get(base: str, path: str, params: dict | None = None) -> Any:
 
 async def _piste_post(base: str, path: str, body: dict) -> Any:
     token = await _get_token()
-    async with httpx.AsyncClient(timeout=15) as client:
-        r = await client.post(
-            f"{base}{path}",
-            json=body,
-            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json", "Accept": "application/json"},
-        )
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.post(
+                f"{base}{path}",
+                json=body,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json", "Accept": "application/json"},
+            )
+    except httpx.RequestError as exc:
+        raise HTTPException(503, f"Erreur réseau PISTE POST {path}: {exc}")
     if r.status_code != 200:
         raise HTTPException(r.status_code, f"PISTE POST {path} → {r.status_code}: {r.text[:300]}")
     return r.json()
@@ -101,10 +111,24 @@ class SearchRequest(BaseModel):
 
 @router.get("/legal-fr/status")
 async def status():
-    """Statut de la connexion PISTE."""
+    """Statut de la connexion PISTE — tente réellement d'obtenir un token."""
     configured = bool(PISTE_CLIENT_ID and PISTE_CLIENT_SECRET)
+    token_ok = False
+    token_error = None
+
+    if configured:
+        try:
+            await _get_token()
+            token_ok = True
+        except HTTPException as exc:
+            token_error = exc.detail
+        except Exception as exc:
+            token_error = str(exc)
+
     return {
         "configured": configured,
+        "token_ok": token_ok,
+        "token_error": token_error,
         "env": "sandbox" if "sandbox" in JUDILIBRE_BASE else "production",
         "judilibre_base": JUDILIBRE_BASE,
         "legifrance_base": LEGIFRANCE_BASE,
