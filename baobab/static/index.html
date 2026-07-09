@@ -493,7 +493,7 @@
       border-radius: 12px; padding: 1.25rem; transition: border-color 0.2s, transform 0.2s;
     }
     .service-card:hover { border-color: rgba(191,78,30,0.35); transform: translateY(-2px); }
-    .service-icon { font-size: 22px; margin-bottom: 10px; }
+    .service-icon { display: none; }
     .service-name { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .service-desc { font-size: 12px; color: var(--sub); line-height: 1.5; margin-bottom: 14px; min-height: 36px; }
 
@@ -2609,36 +2609,36 @@ function goHome() {
 // ════════════════════════════════════════════════
 const NAV_CONFIGS = {
   client: [
-    { id: 'client',    label: '🏠  Mon espace' },
-    { id: 'biblio',    label: '📚  Bibliothèque' },
-    { id: 'veille',    label: '📡  Veille juridique' },
-    { id: 'cima',      label: '⚖️  CIMA — Sinistre' },
-    { id: 'ohada',     label: '📜  OHADA' },
-    { id: 'bceao',     label: '🏦  BCEAO' },
-    { id: 'droit-fr',  label: '🇫🇷  Droit français' },
-    { id: 'espace',    label: '💳  Abonnement' },
+    { id: 'client',    label: 'Mon espace' },
+    { id: 'biblio',    label: 'Bibliothèque' },
+    { id: 'veille',    label: 'Veille juridique' },
+    { id: 'cima',      label: 'CIMA — Sinistre' },
+    { id: 'ohada',     label: 'OHADA' },
+    { id: 'bceao',     label: 'BCEAO' },
+    { id: 'droit-fr',  label: 'FR  Droit français' },
+    { id: 'espace',    label: 'Abonnement' },
   ],
   admin: [
-    { id: 'admin',    label: '🛡️  Tableau de bord' },
-    { id: 'biblio',   label: '📚  Bibliothèque' },
-    { id: 'veille',   label: '📡  Veille juridique' },
-    { id: 'cima',     label: '⚖️  CIMA' },
-    { id: 'ohada',    label: '📜  OHADA' },
-    { id: 'bceao',    label: '🏦  BCEAO' },
-    { id: 'droit-fr', label: '🇫🇷  Droit français' },
+    { id: 'admin',    label: 'Tableau de bord' },
+    { id: 'biblio',   label: 'Bibliothèque' },
+    { id: 'veille',   label: 'Veille juridique' },
+    { id: 'cima',     label: 'CIMA' },
+    { id: 'ohada',    label: 'OHADA' },
+    { id: 'bceao',    label: 'BCEAO' },
+    { id: 'droit-fr', label: 'FR  Droit français' },
   ],
   superadmin: [
-    { id: 'superadmin',  label: '⚙️  Console' },
-    { id: 'submissions', label: '📥  Soumissions' },
-    { id: 'biblio',      label: '📚  Bibliothèque' },
-    { id: 'veille',      label: '📡  Veille juridique' },
-    { id: 'cima',        label: '⚖️  CIMA' },
-    { id: 'ohada',       label: '📜  OHADA' },
-    { id: 'bceao',       label: '🏦  BCEAO' },
-    { id: 'droit-fr',    label: '🇫🇷  Droit français' },
+    { id: 'superadmin',  label: 'Console' },
+    { id: 'submissions', label: 'Soumissions' },
+    { id: 'biblio',      label: 'Bibliothèque' },
+    { id: 'veille',      label: 'Veille juridique' },
+    { id: 'cima',        label: 'CIMA' },
+    { id: 'ohada',       label: 'OHADA' },
+    { id: 'bceao',       label: 'BCEAO' },
+    { id: 'droit-fr',    label: 'FR  Droit français' },
   ],
   register: [
-    { id: 'register', label: '📝  Créer un espace' },
+    { id: 'register', label: 'Créer un espace' },
   ],
 };
 
@@ -2676,12 +2676,12 @@ function closeSidebar() {
 // CLIENT WORKSPACE
 // ════════════════════════════════════════════════
 const serviceCatalog = [
-  { key: 'cima',              icon: '⚖️',  title: 'CIMA — Sinistres',           desc: 'Calculer une cascade réglementaire assurance.',             tab: 'cima'   },
-  { key: 'ohada',             icon: '📜',  title: 'OHADA — Droit des affaires', desc: 'Suivre les obligations sociétaires.',                       tab: 'ohada'  },
-  { key: 'bceao',             icon: '🏦',  title: 'BCEAO — Banque & Finance',   desc: 'Obligations bancaires, KYC, LCB/FT et reporting.',          tab: 'bceao'  },
-  { key: 'internal_requests', icon: '💬',  title: 'Demandes internes',          desc: 'Envoyer une demande à votre équipe BAOBAB.',                tab: 'espace' },
-  { key: 'alerts',            icon: '🚨',  title: 'Alertes & Échéances',        desc: 'Surveiller les risques de non-conformité.',                 tab: 'client' },
-  { key: 'priority_support',  icon: '🎯',  title: 'Support prioritaire',        desc: 'Canal de support dédié pour les espaces Premium.',          tab: 'espace' },
+  { key: 'cima',              icon: '',  title: 'CIMA — Sinistres',           desc: 'Calculer une cascade réglementaire assurance.',             tab: 'cima'   },
+  { key: 'ohada',             icon: '',  title: 'OHADA — Droit des affaires', desc: 'Suivre les obligations sociétaires.',                       tab: 'ohada'  },
+  { key: 'bceao',             icon: '',  title: 'BCEAO — Banque & Finance',   desc: 'Obligations bancaires, KYC, LCB/FT et reporting.',          tab: 'bceao'  },
+  { key: 'internal_requests', icon: '',  title: 'Demandes internes',          desc: 'Envoyer une demande à votre équipe BAOBAB.',                tab: 'espace' },
+  { key: 'alerts',            icon: '',  title: 'Alertes & Échéances',        desc: 'Surveiller les risques de non-conformité.',                 tab: 'client' },
+  { key: 'priority_support',  icon: '',  title: 'Support prioritaire',        desc: 'Canal de support dédié pour les espaces Premium.',          tab: 'espace' },
 ];
 
 let currentClientWorkspace = null;
@@ -2725,7 +2725,7 @@ function renderClientWorkspace(workspace) {
           <div class="service-icon">${s.icon}</div>
           <div class="service-name">${s.title}</div>
           <div class="service-desc">${s.desc}</div>
-          <button class="btn btn-secondary btn-sm" style="width:100%" onclick="switchTab('${s.tab}')">Ouvrir</button>
+          <button class="btn btn-sm" style="width:100%;background:var(--clay);color:#FDF8F3;border:none" onclick="switchTab('${s.tab}')">Ouvrir</button>
         </div>`).join('')
       : '<div class="empty-state" style="padding:1rem">Aucun service ne correspond.</div>'}
     </div>`;
