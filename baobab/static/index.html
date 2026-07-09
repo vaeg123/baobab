@@ -7,24 +7,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:        #07070F;
-      --surface:   #0D0D1C;
-      --card:      #111121;
-      --border:    rgba(255,255,255,0.07);
-      --bgold:     rgba(212,165,58,0.18);
-      --gold:      #D4A53A;
-      --gold-h:    #E8C060;
-      --terra:     #C4512A;
-      --text:      #EDE8DF;
-      --sub:       #8A8C9E;
-      --green:     #1F8C60;
-      --green-bg:  rgba(31,140,96,0.12);
+      /* ── Palette Terre Battue × Baobab ───────────────── */
+      --bg:        #150C06;   /* nuit de savane */
+      --surface:   #1E1108;   /* terre sèche profonde */
+      --card:      #271608;   /* argile sombre */
+      --border:    rgba(196,149,106,0.15);
+      --bgold:     rgba(196,149,106,0.14);
+      --gold:      #C4956A;   /* terre battue claire */
+      --gold-h:    #D9B08C;   /* ocre lumineux */
+      --terra:     #A0522D;   /* tronc baobab */
+      --text:      #F0E6D3;   /* crème sable */
+      --sub:       #A08060;   /* sable ombré */
+      --green:     #4A7C59;   /* feuillage savane */
+      --green-bg:  rgba(74,124,89,0.14);
       --red:       #C03030;
       --red-bg:    rgba(192,48,48,0.13);
-      --orange:    #C87A20;
+      --orange:    #C87A20;   /* ambre baobab */
       --orange-bg: rgba(200,122,32,0.12);
-      --blue:      #3060B0;
-      --blue-bg:   rgba(48,96,176,0.13);
+      --blue:      #4A6E9A;   /* ciel harmattan */
+      --blue-bg:   rgba(74,110,154,0.13);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,8 +60,8 @@
       position: absolute;
       inset: 0;
       background-image:
-        repeating-linear-gradient(45deg, rgba(212,165,58,0.04) 0px, rgba(212,165,58,0.04) 1px, transparent 1px, transparent 28px),
-        repeating-linear-gradient(-45deg, rgba(212,165,58,0.04) 0px, rgba(212,165,58,0.04) 1px, transparent 1px, transparent 28px);
+        repeating-linear-gradient(45deg, rgba(196,149,106,0.06) 0px, rgba(196,149,106,0.06) 1px, transparent 1px, transparent 28px),
+        repeating-linear-gradient(-45deg, rgba(160,82,45,0.05) 0px, rgba(160,82,45,0.05) 1px, transparent 1px, transparent 28px);
       pointer-events: none;
     }
 
@@ -1143,6 +1144,109 @@
     }
     .bcs-num { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
     .bcs-lbl { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── SUBMISSIONS DASHBOARD ─────────────────── */
+    .sub-filter-bar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .sub-filter-btn {
+      padding: 7px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      border: 1.5px solid var(--border); background: none; color: var(--sub);
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .sub-filter-btn.active { background: var(--bgold); color: var(--gold); border-color: rgba(196,149,106,0.4); }
+    .sub-filter-btn:hover:not(.active) { background: rgba(255,255,255,0.05); color: var(--text); }
+    .sub-filter-sep { flex: 1; }
+    .sub-table { width: 100%; border-collapse: collapse; }
+    .sub-table th {
+      text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      color: var(--sub); text-transform: uppercase; padding: 10px 14px;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .sub-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; vertical-align: middle; }
+    .sub-table tr:last-child td { border-bottom: none; }
+    .sub-table tr { transition: background 0.12s; cursor: pointer; }
+    .sub-table tr:hover td { background: rgba(196,149,106,0.04); }
+    .score-bar {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
+    }
+    .score-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* Modal soumission */
+    #sub-modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    #sub-modal-overlay.open { display: flex; }
+    #sub-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; width: 90vw; max-width: 1100px;
+      max-height: 92vh; display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .sub-modal-header {
+      padding: 18px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .sub-modal-header h2 { font-size: 16px; font-weight: 700; flex: 1; }
+    .sub-modal-close {
+      background: none; border: none; color: var(--sub); font-size: 20px;
+      cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.15s;
+    }
+    .sub-modal-close:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .sub-modal-body {
+      flex: 1; overflow: hidden; display: grid;
+      grid-template-columns: 1fr 420px;
+    }
+    .sub-modal-left {
+      padding: 20px 24px; border-right: 1px solid var(--border);
+      overflow-y: auto; display: flex; flex-direction: column; gap: 14px;
+    }
+    .sub-modal-right {
+      padding: 20px 24px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .sub-text-preview {
+      background: rgba(0,0,0,0.25); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; font-size: 12px;
+      color: var(--sub); line-height: 1.7; white-space: pre-wrap;
+      max-height: 380px; overflow-y: auto; font-family: monospace;
+    }
+    .sub-section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      color: var(--sub); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .sub-ia-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .sub-ia-field { display: flex; flex-direction: column; gap: 4px; }
+    .sub-ia-field label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
+    .sub-ia-field input, .sub-ia-field textarea, .sub-ia-field select {
+      width: 100%; padding: 8px 12px; font-size: 12px;
+      border: 1.5px solid var(--border); border-radius: 7px;
+      background: var(--card); color: var(--text);
+      outline: none; font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .sub-ia-field input:focus, .sub-ia-field textarea:focus, .sub-ia-field select:focus {
+      border-color: var(--gold);
+    }
+    .sub-ia-note {
+      background: var(--bgold); border: 1px solid rgba(196,149,106,0.25);
+      border-radius: 8px; padding: 10px 14px; font-size: 12px;
+      color: var(--gold); line-height: 1.6;
+    }
+    .sub-actions {
+      display: flex; flex-direction: column; gap: 8px;
+      padding-top: 8px; border-top: 1px solid var(--border);
+    }
+    .sub-actions-row { display: flex; gap: 8px; }
+    .sub-reject-form { display: none; flex-direction: column; gap: 8px; }
+    .sub-reject-form.open { display: flex; }
   </style>
 </head>
 <body>
@@ -1461,6 +1565,180 @@
               </div>
               <div id="sa-workspaces-list">
                 <div class="empty-state" style="padding:2rem"><div class="empty-icon">🌍</div><div class="empty-text">Chargement…</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SOUMISSIONS ADMIN ── -->
+    <div id="tab-submissions" class="tab-panel">
+      <div class="container">
+        <div class="page-title">Soumissions</div>
+        <div class="page-sub">Documents soumis par les utilisateurs — analysés par IA, à valider avant intégration au corpus.</div>
+
+        <div class="stats-row" id="sub-stats-row">
+          <div class="stat-card orange"><div class="stat-value" id="sub-stat-pending">—</div><div class="stat-label">En attente</div></div>
+          <div class="stat-card green"><div class="stat-value" id="sub-stat-approved">—</div><div class="stat-label">Approuvés</div></div>
+          <div class="stat-card red"><div class="stat-value" id="sub-stat-rejected">—</div><div class="stat-label">Rejetés</div></div>
+          <div class="stat-card gold"><div class="stat-value" id="sub-stat-score">—</div><div class="stat-label">Score IA moyen</div></div>
+        </div>
+
+        <div class="sub-filter-bar">
+          <button class="sub-filter-btn active" onclick="subSetFilter('pending')">En attente</button>
+          <button class="sub-filter-btn" onclick="subSetFilter('approved')">Approuvés</button>
+          <button class="sub-filter-btn" onclick="subSetFilter('rejected')">Rejetés</button>
+          <button class="sub-filter-btn" onclick="subSetFilter('all')">Tous</button>
+          <div class="sub-filter-sep"></div>
+          <select id="sub-corpus-filter" onchange="loadSubmissions()" style="width:auto;padding:7px 12px;font-size:12px">
+            <option value="">Tous corpus</option>
+            <option value="cima">CIMA</option>
+            <option value="ohada">OHADA</option>
+            <option value="ci">Droit CI</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="loadSubmissions()">↻ Actualiser</button>
+        </div>
+
+        <div class="card">
+          <div style="overflow-x:auto">
+            <table class="sub-table">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Corpus</th>
+                  <th>Type</th>
+                  <th>Soumetteur</th>
+                  <th>Score IA</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="sub-table-body">
+                <tr><td colspan="7" style="text-align:center;color:var(--sub);padding:2rem">Chargement…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="sub-empty" class="hidden" style="padding:3rem;text-align:center;color:var(--sub)">
+            Aucune soumission dans cette catégorie.
+          </div>
+        </div>
+
+        <!-- Clé admin -->
+        <div style="margin-top:1.5rem">
+          <div class="card">
+            <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Authentification admin</span></div>
+            <div class="card-body" style="display:flex;gap:10px;align-items:flex-end">
+              <div style="flex:1">
+                <label>Clé admin (BAOBAB_ADMIN_KEY)</label>
+                <input type="password" id="sub-admin-key" placeholder="Entrez la clé admin…" onchange="loadSubmissions()" />
+              </div>
+              <button class="btn btn-primary" style="width:auto;padding:11px 20px" onclick="loadSubmissions()">Charger</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal détail soumission -->
+    <div id="sub-modal-overlay" onclick="closeSubModal(event)">
+      <div id="sub-modal">
+        <div class="sub-modal-header">
+          <div>
+            <h2 id="sub-modal-titre">Document soumis</h2>
+            <div style="font-size:12px;color:var(--sub);margin-top:3px" id="sub-modal-meta"></div>
+          </div>
+          <div id="sub-modal-statut-pill"></div>
+          <button class="sub-modal-close" onclick="closeSubModal()">✕</button>
+        </div>
+        <div class="sub-modal-body">
+          <!-- Gauche : texte extrait + note IA -->
+          <div class="sub-modal-left">
+            <div>
+              <div class="sub-section-label">Analyse IA</div>
+              <div class="sub-ia-note" id="sub-modal-ia-note"></div>
+            </div>
+            <div>
+              <div class="sub-section-label">Texte extrait</div>
+              <div class="sub-text-preview" id="sub-modal-texte"></div>
+            </div>
+            <div id="sub-modal-notes-wrap" class="hidden">
+              <div class="sub-section-label">Notes du soumetteur</div>
+              <div style="font-size:13px;color:var(--sub);line-height:1.6;background:rgba(255,255,255,0.03);border-radius:8px;padding:12px" id="sub-modal-notes"></div>
+            </div>
+          </div>
+
+          <!-- Droite : métadonnées éditables + actions -->
+          <div class="sub-modal-right">
+            <div>
+              <div class="sub-section-label">Métadonnées (modifiables avant approbation)</div>
+              <div class="sub-ia-grid">
+                <div class="sub-ia-field" style="grid-column:1/-1">
+                  <label>Titre</label>
+                  <input type="text" id="sm-titre" />
+                </div>
+                <div class="sub-ia-field">
+                  <label>Référence</label>
+                  <input type="text" id="sm-ref" />
+                </div>
+                <div class="sub-ia-field">
+                  <label>Date (YYYY-MM-DD)</label>
+                  <input type="text" id="sm-date" placeholder="2024-03-15" />
+                </div>
+                <div class="sub-ia-field">
+                  <label>Juridiction</label>
+                  <input type="text" id="sm-juridiction" />
+                </div>
+                <div class="sub-ia-field">
+                  <label>Pays</label>
+                  <input type="text" id="sm-pays" />
+                </div>
+                <div class="sub-ia-field" style="grid-column:1/-1">
+                  <label>Domaine</label>
+                  <input type="text" id="sm-domaine" />
+                </div>
+                <div class="sub-ia-field" style="grid-column:1/-1">
+                  <label>Résumé</label>
+                  <textarea id="sm-resume" rows="3"></textarea>
+                </div>
+                <div class="sub-ia-field" style="grid-column:1/-1">
+                  <label>Mots-clés (séparés par ;)</label>
+                  <input type="text" id="sm-mots" />
+                </div>
+                <div class="sub-ia-field" style="grid-column:1/-1">
+                  <label>Articles cités (séparés par ;)</label>
+                  <input type="text" id="sm-articles" />
+                </div>
+                <div class="sub-ia-field">
+                  <label>Sanction / Dispositif</label>
+                  <input type="text" id="sm-sanction" />
+                </div>
+              </div>
+            </div>
+
+            <div class="sub-actions">
+              <div id="sub-approve-section">
+                <div class="form-group" style="margin-bottom:10px">
+                  <label>Note de validation (optionnel)</label>
+                  <input type="text" id="sm-review-note" placeholder="Tout est conforme, document vérifié…" />
+                </div>
+                <div class="sub-actions-row">
+                  <button class="btn btn-success" onclick="approveSubmission()" id="sm-approve-btn">✓ Approuver et intégrer</button>
+                  <button class="btn btn-danger btn-sm" onclick="toggleRejectForm()">✕ Rejeter</button>
+                </div>
+              </div>
+              <div class="sub-reject-form" id="sub-reject-form">
+                <label>Motif du rejet (obligatoire)</label>
+                <textarea id="sm-reject-reason" rows="2" placeholder="Document hors périmètre, doublon, qualité insuffisante…"></textarea>
+                <div class="sub-actions-row">
+                  <button class="btn btn-danger" onclick="rejectSubmission()">Confirmer le rejet</button>
+                  <button class="btn btn-ghost btn-sm" onclick="toggleRejectForm()">Annuler</button>
+                </div>
+              </div>
+              <div id="sub-already-done" class="hidden">
+                <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;color:var(--sub);text-align:center">
+                  Cette soumission a déjà été traitée.
+                </div>
               </div>
             </div>
           </div>
@@ -1949,12 +2227,13 @@ const NAV_CONFIGS = {
     { id: 'bceao',   label: '🏦  BCEAO' },
   ],
   superadmin: [
-    { id: 'superadmin', label: '⚙️  Console' },
-    { id: 'biblio',     label: '📚  Bibliothèque' },
-    { id: 'veille',     label: '📡  Veille juridique' },
-    { id: 'cima',       label: '⚖️  CIMA' },
-    { id: 'ohada',      label: '📜  OHADA' },
-    { id: 'bceao',      label: '🏦  BCEAO' },
+    { id: 'superadmin',  label: '⚙️  Console' },
+    { id: 'submissions', label: '📥  Soumissions' },
+    { id: 'biblio',      label: '📚  Bibliothèque' },
+    { id: 'veille',      label: '📡  Veille juridique' },
+    { id: 'cima',        label: '⚖️  CIMA' },
+    { id: 'ohada',       label: '📜  OHADA' },
+    { id: 'bceao',       label: '🏦  BCEAO' },
   ],
   register: [
     { id: 'register', label: '📝  Créer un espace' },
@@ -3549,6 +3828,280 @@ function ouvrirSynthese(titre) {
       if (currentBiblioTab === 'crca') renderCrcaList();
       if (currentBiblioTab === 'synthese') renderSyntheseList();
     }
+  };
+})();
+
+// ════════════════════════════════════════════════
+// SUBMISSIONS DASHBOARD
+// ════════════════════════════════════════════════
+
+let subCurrentFilter = 'pending';
+let subCurrentId     = null;
+
+function subGetAdminKey() {
+  return (document.getElementById('sub-admin-key')?.value || '').trim();
+}
+
+function subSetFilter(f) {
+  subCurrentFilter = f;
+  document.querySelectorAll('.sub-filter-btn').forEach(b => b.classList.remove('active'));
+  const idx = ['pending', 'approved', 'rejected', 'all'].indexOf(f);
+  document.querySelectorAll('.sub-filter-btn')[idx]?.classList.add('active');
+  loadSubmissions();
+}
+
+async function loadSubmissionsStats() {
+  const key = subGetAdminKey();
+  if (!key) return;
+  try {
+    const r = await fetch('/api/v1/submissions/stats', { headers: { 'X-Admin-Key': key } });
+    if (!r.ok) return;
+    const d = await r.json();
+    const by = d.by_statut || {};
+    document.getElementById('sub-stat-pending').textContent  = by.pending   || 0;
+    document.getElementById('sub-stat-approved').textContent = by.approved  || 0;
+    document.getElementById('sub-stat-rejected').textContent = by.rejected  || 0;
+    const sc = d.avg_score_pending != null ? Math.round(d.avg_score_pending * 100) + '%' : '—';
+    document.getElementById('sub-stat-score').textContent = sc;
+  } catch {}
+}
+
+async function loadSubmissions() {
+  const key    = subGetAdminKey();
+  const corpus = document.getElementById('sub-corpus-filter')?.value || '';
+  const tbody  = document.getElementById('sub-table-body');
+  const empty  = document.getElementById('sub-empty');
+
+  if (!key) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:2rem">Entrez la clé admin pour charger les soumissions.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:2rem">Chargement…</td></tr>`;
+  empty.classList.add('hidden');
+
+  loadSubmissionsStats();
+
+  let url = `/api/v1/submissions?statut=${subCurrentFilter}&limit=100`;
+  if (corpus) url += `&corpus=${corpus}`;
+
+  try {
+    const r = await fetch(url, { headers: { 'X-Admin-Key': key } });
+    if (r.status === 403) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#F08080;padding:2rem">Clé admin invalide.</td></tr>`;
+      return;
+    }
+    const d = await r.json();
+    const rows = d.results || [];
+
+    if (!rows.length) {
+      tbody.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    const pillClass = { pending: 'pill-orange', approved: 'pill-green', rejected: 'pill-red' };
+    const pillLabel = { pending: 'En attente', approved: 'Approuvé', rejected: 'Rejeté' };
+
+    tbody.innerHTML = rows.map(s => {
+      const score    = s.score_confiance != null ? Math.round(s.score_confiance * 100) : 0;
+      const scoreCol = score >= 70 ? '#50D090' : score >= 40 ? '#E09040' : '#F08080';
+      const statut   = s.statut || 'pending';
+      const date     = s.created_at ? s.created_at.slice(0, 10) : '—';
+      const titre    = escHtml((s.titre || s.ref || 'Sans titre').slice(0, 60));
+      const corp     = s.corpus?.toUpperCase() || '—';
+      const typ      = (s.type || '').replace(/_/g, ' ');
+      const sub      = escHtml(s.submitter || 'anonyme');
+
+      return `<tr onclick="openSubModal('${s.id}')">
+        <td>
+          <div style="font-weight:600;color:var(--text)">${titre}</div>
+          ${s.ref ? `<div style="font-size:11px;color:var(--sub)">${escHtml(s.ref)}</div>` : ''}
+        </td>
+        <td><span class="pill pill-gold">${corp}</span></td>
+        <td style="font-size:11px;color:var(--sub)">${typ}</td>
+        <td style="font-size:12px;color:var(--sub)">${sub}</td>
+        <td>
+          <div class="score-bar">
+            <div class="score-dot" style="background:${scoreCol}"></div>
+            <span style="color:${scoreCol};font-weight:600">${score}%</span>
+          </div>
+        </td>
+        <td><span class="pill ${pillClass[statut] || 'pill-gray'}">${pillLabel[statut] || statut}</span></td>
+        <td style="font-size:11px;color:var(--sub)">${date}</td>
+      </tr>`;
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#F08080;padding:2rem">Erreur : ${escHtml(String(e))}</td></tr>`;
+  }
+}
+
+async function openSubModal(id) {
+  subCurrentId = id;
+  const key = subGetAdminKey();
+  if (!key) return;
+
+  // Réinitialiser modal
+  document.getElementById('sub-modal-titre').textContent  = 'Chargement…';
+  document.getElementById('sub-modal-meta').textContent   = '';
+  document.getElementById('sub-modal-ia-note').textContent = '';
+  document.getElementById('sub-modal-texte').textContent  = '';
+  document.getElementById('sub-modal-statut-pill').innerHTML = '';
+  document.getElementById('sub-reject-form').classList.remove('open');
+  document.getElementById('sub-modal-overlay').classList.add('open');
+
+  try {
+    const r = await fetch(`/api/v1/submissions/${id}`, { headers: { 'X-Admin-Key': key } });
+    if (!r.ok) { alert('Erreur lors du chargement'); return; }
+    const s = await r.json();
+    const m = s.metadata_ia || {};
+
+    // Header
+    document.getElementById('sub-modal-titre').textContent =
+      m.titre || s.titre_user || 'Document sans titre';
+    document.getElementById('sub-modal-meta').textContent =
+      `${(s.corpus || '').toUpperCase()} · ${(s.type || '').replace(/_/g, ' ')} · ${s.submitter_name || s.submitter_email || 'anonyme'} · ${s.created_at?.slice(0, 10) || ''}`;
+
+    const pillClass = { pending: 'pill-orange', approved: 'pill-green', rejected: 'pill-red' };
+    const pillLabel = { pending: 'En attente', approved: 'Approuvé', rejected: 'Rejeté' };
+    document.getElementById('sub-modal-statut-pill').innerHTML =
+      `<span class="pill ${pillClass[s.statut] || 'pill-gray'}">${pillLabel[s.statut] || s.statut}</span>`;
+
+    // Note IA
+    const isLegal = m.is_legal_document !== false;
+    const score   = m.score_confiance != null ? Math.round(m.score_confiance * 100) : '?';
+    document.getElementById('sub-modal-ia-note').innerHTML =
+      `<strong>Score IA : ${score}%</strong> · Document juridique : ${isLegal ? 'Oui ✓' : 'Non ✗'}` +
+      (m.note_ia ? `<br><span style="opacity:0.75">${escHtml(m.note_ia)}</span>` : '');
+
+    // Texte
+    document.getElementById('sub-modal-texte').textContent =
+      (s.texte_integral || '').slice(0, 4000) + (s.texte_integral?.length > 4000 ? '\n\n[… texte tronqué pour affichage …]' : '');
+
+    // Notes soumetteur
+    if (s.notes) {
+      document.getElementById('sub-modal-notes').textContent = s.notes;
+      document.getElementById('sub-modal-notes-wrap').classList.remove('hidden');
+    } else {
+      document.getElementById('sub-modal-notes-wrap').classList.add('hidden');
+    }
+
+    // Champs éditables (préremplis avec IA)
+    document.getElementById('sm-titre').value      = m.titre       || s.titre_user || '';
+    document.getElementById('sm-ref').value        = m.ref         || '';
+    document.getElementById('sm-date').value       = m.date_str    || s.date_str   || '';
+    document.getElementById('sm-juridiction').value = m.juridiction || '';
+    document.getElementById('sm-pays').value       = m.pays        || '';
+    document.getElementById('sm-domaine').value    = m.domaine     || '';
+    document.getElementById('sm-resume').value     = m.resume      || '';
+    document.getElementById('sm-mots').value       = (m.mots_cles  || []).join('; ');
+    document.getElementById('sm-articles').value   = (m.articles_cites || []).join('; ');
+    document.getElementById('sm-sanction').value   = m.sanction    || '';
+    document.getElementById('sm-review-note').value = '';
+
+    // Actions selon statut
+    const isDone = s.statut !== 'pending';
+    document.getElementById('sub-approve-section').style.display = isDone ? 'none' : 'block';
+    document.getElementById('sub-already-done').classList.toggle('hidden', !isDone);
+
+  } catch (e) {
+    alert('Erreur : ' + e);
+  }
+}
+
+function closeSubModal(e) {
+  if (e && e.target !== document.getElementById('sub-modal-overlay')) return;
+  document.getElementById('sub-modal-overlay').classList.remove('open');
+  subCurrentId = null;
+}
+
+function toggleRejectForm() {
+  document.getElementById('sub-reject-form').classList.toggle('open');
+}
+
+async function approveSubmission() {
+  if (!subCurrentId) return;
+  const key = subGetAdminKey();
+
+  const split = v => v.split(';').map(x => x.trim()).filter(Boolean);
+
+  const body = {
+    titre:          document.getElementById('sm-titre').value.trim()       || null,
+    ref:            document.getElementById('sm-ref').value.trim()         || null,
+    date_str:       document.getElementById('sm-date').value.trim()        || null,
+    juridiction:    document.getElementById('sm-juridiction').value.trim() || null,
+    pays:           document.getElementById('sm-pays').value.trim()        || null,
+    domaine:        document.getElementById('sm-domaine').value.trim()     || null,
+    resume:         document.getElementById('sm-resume').value.trim()      || null,
+    mots_cles:      split(document.getElementById('sm-mots').value)        || null,
+    articles_cites: split(document.getElementById('sm-articles').value)    || null,
+    sanction:       document.getElementById('sm-sanction').value.trim()    || null,
+    review_note:    document.getElementById('sm-review-note').value.trim() || null,
+  };
+
+  const btn = document.getElementById('sm-approve-btn');
+  btn.disabled = true; btn.textContent = 'Intégration…';
+
+  try {
+    const r = await fetch(`/api/v1/submissions/${subCurrentId}/approve`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': key },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || JSON.stringify(d));
+
+    document.getElementById('sub-modal-statut-pill').innerHTML =
+      `<span class="pill pill-green">Approuvé</span>`;
+    document.getElementById('sub-approve-section').style.display = 'none';
+    document.getElementById('sub-already-done').classList.remove('hidden');
+    document.getElementById('sub-already-done').innerHTML =
+      `<div style="background:var(--green-bg);border:1px solid rgba(31,140,96,0.3);border-radius:8px;padding:12px;font-size:13px;color:#50D090;text-align:center">
+        ✓ Intégré dans le corpus — ID : ${escHtml(d.corpus_id)}
+      </div>`;
+    loadSubmissions();
+  } catch (e) {
+    alert('Erreur approbation : ' + e);
+  } finally {
+    btn.disabled = false; btn.textContent = '✓ Approuver et intégrer';
+  }
+}
+
+async function rejectSubmission() {
+  if (!subCurrentId) return;
+  const key    = subGetAdminKey();
+  const reason = document.getElementById('sm-reject-reason').value.trim();
+  if (!reason) { alert('Veuillez indiquer un motif de rejet.'); return; }
+
+  try {
+    const r = await fetch(`/api/v1/submissions/${subCurrentId}/reject`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': key },
+      body: JSON.stringify({ review_note: reason }),
+    });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.detail); }
+
+    document.getElementById('sub-modal-statut-pill').innerHTML =
+      `<span class="pill pill-red">Rejeté</span>`;
+    document.getElementById('sub-approve-section').style.display = 'none';
+    document.getElementById('sub-reject-form').classList.remove('open');
+    document.getElementById('sub-already-done').classList.remove('hidden');
+    document.getElementById('sub-already-done').innerHTML =
+      `<div style="background:var(--red-bg);border:1px solid rgba(192,48,48,0.3);border-radius:8px;padding:12px;font-size:13px;color:#F08080;text-align:center">
+        ✕ Soumission rejetée
+      </div>`;
+    loadSubmissions();
+  } catch (e) {
+    alert('Erreur rejet : ' + e);
+  }
+}
+
+// Charger les soumissions quand on ouvre l'onglet
+(function patchSwitchTabForSubmissions() {
+  const prev = window.switchTab;
+  window.switchTab = function(name) {
+    prev(name);
+    if (name === 'submissions') loadSubmissions();
   };
 })();
 
