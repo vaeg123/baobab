@@ -889,14 +889,14 @@
     }
 
     /* ── TIMELINE ARRÊT ───────────────────── */
+    /* ── TIMELINE — architecture 3 rangées ──── */
     .arret-timeline {
-      padding: 1.5rem 1.75rem 1.25rem;
+      padding: 1.5rem 1.75rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      overflow-x: auto;
-      background: rgba(60,20,5,0.12);
+      background: rgba(60,20,5,0.06);
     }
     .atl-head {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem;
     }
     .atl-label {
       font-size: 9px; font-weight: 700; text-transform: uppercase;
@@ -905,62 +905,119 @@
     .atl-legend { display: flex; align-items: center; gap: 14px; margin-left: auto; }
     .atl-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--sub); }
     .atl-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .atl-track {
+
+    /* Conteneur scrollable */
+    .atl-scroll { overflow-x: auto; overflow-y: visible; }
+
+    /* Les 3 rangées empilées */
+    .atl-canvas {
       position: relative;
-      min-width: 560px;
-      height: 160px;
+      min-width: 540px;
+      display: flex;
+      flex-direction: column;
     }
-    .atl-axis {
+
+    /* Rangée labels haut et bas — hauteur fixe, labels absolus à l'intérieur */
+    .atl-row-labels {
+      position: relative;
+      height: 68px;
+      flex-shrink: 0;
+    }
+
+    /* Rangée axe — contient la ligne et les dots */
+    .atl-row-axis {
+      position: relative;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .atl-line {
       position: absolute;
-      left: 0; right: 0;
-      top: 78px; height: 2px;
-      background: linear-gradient(to right, transparent, rgba(60,20,5,0.09) 6%, rgba(60,20,5,0.09) 94%, transparent);
+      left: 3%; right: 3%;
+      top: 50%; height: 2px;
+      background: linear-gradient(to right,
+        transparent 0%, rgba(60,20,5,0.15) 5%,
+        rgba(60,20,5,0.15) 95%, transparent 100%);
     }
-    .atl-tick {
-      position: absolute; top: 74px;
+    .atl-tick-mark {
+      position: absolute;
+      top: calc(50% - 5px);
       width: 1px; height: 10px;
-      background: rgba(60,20,5,0.09);
+      background: rgba(60,20,5,0.12);
     }
-    .atl-evt {
+
+    /* Slot label — centré sur son x% */
+    .atl-slot {
       position: absolute;
-      top: 0; height: 100%;
+      width: 96px;
       transform: translateX(-50%);
-    }
-    .atl-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      position: absolute; left: 50%; top: 73px;
-      transform: translateX(-50%);
-      border: 2px solid var(--bg);
-    }
-    .atl-dot.past  { background: var(--sub); }
-    .atl-dot.now   {
-      width: 16px; height: 16px; top: 70px;
-      background: var(--gold);
-      box-shadow: 0 0 0 4px rgba(191,78,30,0.22), 0 0 16px rgba(191,78,30,0.30);
-    }
-    .atl-dot.future { background: #6090E0; }
-    .atl-etxt {
-      position: absolute; left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      font-size: 9px; line-height: 1.35;
       text-align: center;
-      white-space: normal; word-break: break-word;
     }
-    .atl-etxt.top  { bottom: 90px; color: var(--sub); }
-    .atl-etxt.bot  { top: 91px; color: var(--sub); }
-    .atl-etxt.now  { bottom: 94px; color: var(--text); font-weight: 700; }
+    .atl-row-labels.top .atl-slot { bottom: 4px; }
+    .atl-row-labels.bot .atl-slot { top: 4px; }
+
     .atl-yr {
-      display: block; font-weight: 700; font-size: 10px; margin-bottom: 1px;
+      display: block;
+      font-weight: 700; font-size: 10px;
+      margin-bottom: 2px;
+      line-height: 1;
     }
     .atl-yr.past   { color: var(--sub); }
-    .atl-yr.now    { color: var(--gold); }
-    .atl-yr.future { color: #6090E0; }
-    .atl-connector {
-      position: absolute; top: 77px; height: 1px;
-      background: linear-gradient(to right, var(--sub), #6090E0);
-      opacity: 0.2;
+    .atl-yr.now    { color: var(--clay); }
+    .atl-yr.future { color: #4A72B8; }
+
+    .atl-txt {
+      font-size: 9px; line-height: 1.4;
+      color: var(--sub);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
+    .atl-txt.now { color: var(--text); font-weight: 600; }
+
+    /* Dot centré dans la rangée axe */
+    .atl-dot {
+      position: absolute;
+      top: 50%; transform: translate(-50%, -50%);
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+    .atl-dot.past   { background: var(--sub); }
+    .atl-dot.future { background: #4A72B8; }
+    .atl-dot.now {
+      width: 16px; height: 16px;
+      background: var(--clay);
+      box-shadow: 0 0 0 4px rgba(191,78,30,0.18), 0 0 12px rgba(191,78,30,0.25);
+    }
+
+    /* Texte label dans un slot */
+    .atl-etxt {
+      font-size: 9px; line-height: 1.35;
+      color: var(--sub);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Trait vertical reliant le dot au label (haut ou bas) */
+    .atl-connector-v {
+      position: absolute;
+      left: 0; width: 1px;
+      background: rgba(60,20,5,0.15);
+      transform: translateX(-50%);
+    }
+    .atl-connector-v.top { bottom: 50%; height: 68px; }
+    .atl-connector-v.bot { top: 50%;    height: 68px; }
+
+    /* Ligne de connexion premier→dernier event (legacy kept) */
+    .atl-connector {
+      position: absolute;
+      top: 50%; height: 1px;
+      background: linear-gradient(to right, rgba(60,20,5,0.12), rgba(74,114,184,0.2));
+    }
+
     @media (max-width: 768px) {
       .arret-timeline { padding: 1rem; }
       .atl-legend { display: none; }
@@ -4031,92 +4088,102 @@ function chargerArticle(ref) {
 // ════════════════════════════════════════════════
 
 function buildArretTimeline(d) {
-  const events = [];
+  const clip = (t, n) => t.length > n ? t.slice(0, n) + '…' : t;
 
-  // Passé — alternance haut/bas
+  // ── Collect raw events ────────────────────────────────────────────────
+  const raw = [];
+
   d.passe.forEach((s, i) => {
     const yr = parseInt(s.date);
     if (!yr) return;
-    const shortTxt = s.texte.length > 50 ? s.texte.substring(0, 50) + '…' : s.texte;
-    events.push({ yr, txt: shortTxt, type: 'past', side: i % 2 === 0 ? 'bot' : 'top' });
+    raw.push({ yr, txt: clip(s.texte, 60), type: 'past', side: i % 2 === 0 ? 'bot' : 'top' });
   });
 
-  // Présent — l'arrêt lui-même
-  const mPresent = (d.identite.date || '').match(/\d{4}/);
-  const presentYr = mPresent ? parseInt(mPresent[0]) : null;
-  if (presentYr) {
-    events.push({ yr: presentYr, txt: `Arrêt ${d.identite.numero}`, type: 'now', side: 'top' });
+  const mNow = (d.identite.date || '').match(/\d{4}/);
+  if (mNow) {
+    raw.push({ yr: parseInt(mNow[0]), txt: clip(`Arrêt ${d.identite.numero}`, 60), type: 'now', side: 'top' });
   }
 
-  // Futur — max 2 usages pour éviter la surcharge
   d.futur.usages.slice(0, 2).forEach((u, i) => {
     const yr = parseInt(u.annee);
     if (!yr) return;
-    const shortTxt = u.texte.length > 50 ? u.texte.substring(0, 50) + '…' : u.texte;
-    events.push({ yr, txt: shortTxt, type: 'future', side: i % 2 === 0 ? 'bot' : 'top' });
+    raw.push({ yr, txt: clip(u.texte, 60), type: 'future', side: i % 2 === 0 ? 'bot' : 'top' });
   });
 
-  if (!events.length) return '';
-  events.sort((a, b) => a.yr - b.yr);
+  if (!raw.length) return '';
+  raw.sort((a, b) => a.yr - b.yr);
 
-  // Étale les événements à même année pour éviter la superposition
-  const yearCount = {};
-  events.forEach(e => { yearCount[e.yr] = (yearCount[e.yr] || 0) + 1; });
-  const yearIdx = {};
-  events.forEach(e => {
-    yearIdx[e.yr] = (yearIdx[e.yr] || 0);
-    e._jitter = yearIdx[e.yr];
-    yearIdx[e.yr]++;
+  // ── Collision resolution: spread same-year events by 0.6yr ───────────
+  const placed = [];
+  raw.forEach(e => {
+    const conflicts = placed.filter(p => Math.abs(p.yrPos - e.yr) < 0.5);
+    e.yrPos = conflicts.length ? e.yr + conflicts.length * 0.6 : e.yr;
+    placed.push(e);
   });
 
-  const years = events.map(e => e.yr);
-  const minYr = Math.min(...years) - 1;
-  const maxYr = Math.max(...years) + 1;
-  const span  = maxYr - minYr;
-  // Décale légèrement les doublons
-  const pct = (yr, jitter) => {
-    const base = (yr - minYr) / span * 100;
-    const offset = jitter * (2.5 / span * 100);
-    return (base + offset).toFixed(1);
-  };
+  // ── Scale: 4%–96% range, minP/maxP padded by 1yr ────────────────────
+  const yrs  = raw.map(e => e.yr);
+  const minP = Math.min(...yrs) - 1;
+  const maxP = Math.max(...yrs) + 1;
+  const span = maxP - minP;
+  const toPct = v => ((v - minP) / span * 92 + 4).toFixed(2);
 
-  // Ticks annuels sur l'axe
-  const ticksHtml = [];
-  for (let y = Math.ceil(minYr); y <= Math.floor(maxYr); y++) {
-    ticksHtml.push(`<div class="atl-tick" style="left:${((y - minYr)/span*100).toFixed(1)}%"></div>`);
+  // ── Build three sections ─────────────────────────────────────────────
+  const topSlots = [];
+  const botSlots = [];
+  const dotSlots = [];
+  const tickSlots = [];
+
+  // Year ticks on axis
+  for (let y = Math.ceil(minP + 1); y <= Math.floor(maxP - 1); y++) {
+    tickSlots.push(`<div class="atl-tick-mark" style="left:${toPct(y)}%"></div>`);
   }
 
-  const eventsHtml = events.map(e => {
-    const p = pct(e.yr, e._jitter);
-    const dotCls = e.type === 'now' ? 'atl-dot now' : (e.type === 'past' ? 'atl-dot past' : 'atl-dot future');
-    const txtCls = e.type === 'now' ? 'atl-etxt now' : `atl-etxt ${e.side}`;
-    const yrCls  = `atl-yr ${e.type}`;
-    return `<div class="atl-evt" style="left:${p}%">
-      <div class="${dotCls}"></div>
-      <div class="${txtCls}"><span class="${yrCls}">${e.yr}</span>${escHtml(e.txt)}</div>
-    </div>`;
-  }).join('');
+  placed.forEach(e => {
+    const p = toPct(e.yrPos);
+    const typeClass = e.type === 'now' ? 'now' : (e.type === 'past' ? 'past' : 'future');
 
-  // Connector line from first to last event
-  const connectorHtml = events.length >= 2
-    ? `<div class="atl-connector" style="left:${pct(events[0].yr)}%;right:${(100 - parseFloat(pct(events[events.length-1].yr))).toFixed(1)}%"></div>`
-    : '';
+    // Dot on axis row
+    dotSlots.push(`
+      <div class="atl-dot ${typeClass}" style="left:${p}%"></div>
+      <div class="atl-connector-v ${e.side}" style="left:${p}%"></div>`);
+
+    // Label slot in top or bottom row
+    const labelHtml = `
+      <div class="atl-slot" style="left:${p}%">
+        <span class="atl-yr ${typeClass}">${e.yr}</span>
+        <span class="atl-etxt">${escHtml(e.txt)}</span>
+      </div>`;
+
+    if (e.side === 'top') topSlots.push(labelHtml);
+    else botSlots.push(labelHtml);
+  });
+
+  // Connector line spanning full event range
+  const connHtml = placed.length >= 2
+    ? `<div class="atl-line" style="left:${toPct(placed[0].yrPos)}%;right:${(100 - parseFloat(toPct(placed[placed.length-1].yrPos))).toFixed(2)}%"></div>`
+    : '<div class="atl-line" style="left:4%;right:4%"></div>';
 
   return `
     <div class="arret-timeline">
       <div class="atl-head">
-        <span class="atl-label">Ligne du temps · Vie de l'arrêt</span>
+        <span class="atl-label">Ligne du temps · Vie de l’arrêt</span>
         <div class="atl-legend">
           <div class="atl-legend-item"><div class="atl-legend-dot" style="background:var(--sub)"></div>Procédure</div>
           <div class="atl-legend-item"><div class="atl-legend-dot" style="background:var(--gold)"></div>Arrêt</div>
           <div class="atl-legend-item"><div class="atl-legend-dot" style="background:#6090E0"></div>Citations</div>
         </div>
       </div>
-      <div class="atl-track">
-        <div class="atl-axis"></div>
-        ${ticksHtml.join('')}
-        ${connectorHtml}
-        ${eventsHtml}
+      <div class="atl-scroll">
+        <div class="atl-canvas">
+          <div class="atl-row-labels top">${topSlots.join('')}</div>
+          <div class="atl-row-axis">
+            ${connHtml}
+            ${tickSlots.join('')}
+            ${dotSlots.join('')}
+          </div>
+          <div class="atl-row-labels bot">${botSlots.join('')}</div>
+        </div>
       </div>
     </div>`;
 }
