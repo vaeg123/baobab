@@ -306,10 +306,16 @@ async def analyze_question(req: AnalyzeRequest):
                     "role": "user",
                     "content": (
                         "Tu es BAOBAB, un assistant juridique spécialisé en droit africain "
-                        "(CIMA, OHADA, droit ivoirien). Réponds en français de façon précise et structurée.\n\n"
+                        "(CIMA, OHADA, droit ivoirien).\n\n"
+                        "RÈGLE ABSOLUE : Tu dois répondre UNIQUEMENT en te basant sur les documents "
+                        "du corpus ci-dessous. Ne complète JAMAIS avec ta connaissance générale. "
+                        "Si les documents fournis ne permettent pas de répondre à la question, "
+                        "réponds exactement : \"Les documents disponibles dans le corpus BAOBAB ne "
+                        "permettent pas de répondre à cette question. Veuillez enrichir le corpus "
+                        "avec les textes pertinents.\"\n\n"
                         f"QUESTION : {req.question}\n\n"
-                        f"CORPUS DISPONIBLE :\n{context}\n\n"
-                        "Fournis une analyse juridique rigoureuse en citant les textes pertinents."
+                        f"CORPUS BAOBAB ({len(docs)} document(s)) :\n{context}\n\n"
+                        "Analyse juridique fondée exclusivement sur le corpus ci-dessus :"
                     ),
                 }],
             )
