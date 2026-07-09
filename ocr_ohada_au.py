@@ -16,8 +16,12 @@ TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD
 
 TARGETS = [
-    {"ref": "AUDCG-2010",  "explnum_id": 6,   "max_pages": 78},
-    {"ref": "AUS-2010",    "explnum_id": 483,  "max_pages": 58},
+    {"ref": "AUDCG-2010",      "explnum_id": 6,   "max_pages": 78},
+    {"ref": "AUS-2010",        "explnum_id": 483,  "max_pages": 58},
+    {"ref": "AUSCOOP-2010",    "explnum_id": 487,  "max_pages": 78},
+    {"ref": "AUPSRVE-1998",    "explnum_id": 485,  "max_pages": 94},
+    {"ref": "AUCTMR-2003",     "explnum_id": 482,  "max_pages": 20},
+    {"ref": "Traité-OHADA-1993", "explnum_id": 12, "max_pages": 8},
 ]
 
 
