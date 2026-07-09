@@ -111,6 +111,8 @@ async def search_corpus(req: SearchRequest):
         # Snapshot des params filtres uniquement (pour la requête COUNT)
         filter_params = list(params)
 
+        rows = []
+
         if req.mode == "fulltext" or req.mode == "hybrid":
             fts_cond = (
                 f"to_tsvector('french', coalesce(titre,'') || ' ' || coalesce(resume,'') "
@@ -120,8 +122,8 @@ async def search_corpus(req: SearchRequest):
                 f"ts_rank(to_tsvector('french', coalesce(titre,'') || ' ' || coalesce(resume,'')"
                 f" || ' ' || coalesce(texte_integral,'')), plainto_tsquery('french', ${p})) AS rank"
             )
-            params.append(req.query); p += 1
-
+            fts_params = params + [req.query, req.limit, req.offset]
+            fts_p = p + 1  # after query param
             sql = f"""
                 SELECT id, ref, type, corpus, juridiction, titre, date_decision,
                        pays, domaine, resume, sanction, source_url,
@@ -129,25 +131,36 @@ async def search_corpus(req: SearchRequest):
                 FROM legal_corpus
                 WHERE {where} AND {fts_cond}
                 ORDER BY rank DESC
-                LIMIT ${p} OFFSET ${p+1}
+                LIMIT ${fts_p} OFFSET ${fts_p+1}
             """
-            params += [req.limit, req.offset]
-            rows = await conn.fetch(sql, *params)
+            rows = await conn.fetch(sql, *fts_params)
 
-        else:
-            like_cond = f"(titre ILIKE ${p} OR resume ILIKE ${p} OR texte_integral ILIKE ${p})"
-            params.append(f"%{req.query}%"); p += 1
+        # Fallback ILIKE si FTS vide ou mode semantic/ilike
+        if not rows:
+            # Décompose la query en mots-clés pour couvrir les variantes sans accent
+            keywords = [w for w in req.query.split() if len(w) > 3][:6]
+            if not keywords:
+                keywords = [req.query]
+            like_parts = []
+            ilike_params = list(params)
+            ip = p
+            for kw in keywords:
+                like_parts.append(
+                    f"(titre ILIKE ${ip} OR resume ILIKE ${ip} OR texte_integral ILIKE ${ip})"
+                )
+                ilike_params.append(f"%{kw}%"); ip += 1
+            like_cond = " OR ".join(like_parts)
+            ilike_params += [req.limit, req.offset]
             sql = f"""
                 SELECT id, ref, type, corpus, juridiction, titre, date_decision,
                        pays, domaine, resume, sanction, source_url,
                        1.0 AS rank
                 FROM legal_corpus
-                WHERE {where} AND {like_cond}
+                WHERE {where} AND ({like_cond})
                 ORDER BY date_decision DESC NULLS LAST
-                LIMIT ${p} OFFSET ${p+1}
+                LIMIT ${ip} OFFSET ${ip+1}
             """
-            params += [req.limit, req.offset]
-            rows = await conn.fetch(sql, *params)
+            rows = await conn.fetch(sql, *ilike_params)
 
         results = [_row_to_doc(r, float(r["rank"])) for r in rows]
 
