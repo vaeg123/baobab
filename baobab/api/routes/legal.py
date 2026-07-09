@@ -137,27 +137,33 @@ async def search_corpus(req: SearchRequest):
 
         # Fallback ILIKE si FTS vide ou mode semantic/ilike
         if not rows:
-            # Décompose la query en mots-clés pour couvrir les variantes sans accent
             keywords = [w for w in req.query.split() if len(w) > 3][:6]
             if not keywords:
                 keywords = [req.query]
             like_parts = []
+            score_parts = []
             ilike_params = list(params)
             ip = p
             for kw in keywords:
                 like_parts.append(
                     f"(titre ILIKE ${ip} OR resume ILIKE ${ip} OR texte_integral ILIKE ${ip})"
                 )
+                # Score : titre/résumé matchent = 3pts, texte_intégral = 1pt
+                score_parts.append(
+                    f"(CASE WHEN titre ILIKE ${ip} OR resume ILIKE ${ip} THEN 3 ELSE 0 END)"
+                    f" + (CASE WHEN texte_integral ILIKE ${ip} THEN 1 ELSE 0 END)"
+                )
                 ilike_params.append(f"%{kw}%"); ip += 1
             like_cond = " OR ".join(like_parts)
+            relevance = " + ".join(score_parts) if score_parts else "1"
             ilike_params += [req.limit, req.offset]
             sql = f"""
                 SELECT id, ref, type, corpus, juridiction, titre, date_decision,
                        pays, domaine, resume, sanction, source_url,
-                       1.0 AS rank
+                       ({relevance})::float AS rank
                 FROM legal_corpus
                 WHERE {where} AND ({like_cond})
-                ORDER BY date_decision DESC NULLS LAST
+                ORDER BY rank DESC, date_decision DESC NULLS LAST
                 LIMIT ${ip} OFFSET ${ip+1}
             """
             rows = await conn.fetch(sql, *ilike_params)
@@ -276,7 +282,7 @@ async def analyze_question(
     search_req = SearchRequest(
         query=req.question,
         corpus=req.corpus,
-        limit=req.context_docs,
+        limit=max(req.context_docs, 8),
         mode="fulltext",
     )
     # Quota par utilisateur
