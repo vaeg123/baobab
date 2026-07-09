@@ -299,9 +299,48 @@ async def analyze_question(
     except Exception as exc:
         raise HTTPException(503, f"Erreur base de données : {exc}") from exc
 
+    # Récupère le texte intégral pour chaque document trouvé
+    import re as _re
+    import html as _html
+
+    def _clean_text(raw: str) -> str:
+        """Supprime les balises HTML et décode les entités."""
+        if not raw:
+            return ""
+        # Décode entités HTML (&nbsp; &#039; etc.)
+        text = _html.unescape(raw)
+        # Supprime les balises HTML
+        text = _re.sub(r"<[^>]+>", " ", text)
+        # Normalise les espaces
+        text = _re.sub(r"\s{3,}", "\n", text)
+        text = _re.sub(r" {2,}", " ", text)
+        return text.strip()
+
+    doc_ids = [d["id"] for d in docs if d.get("id")]
+    full_texts: dict[str, str] = {}
+    if doc_ids:
+        try:
+            conn2 = await _conn()
+            try:
+                rows = await conn2.fetch(
+                    f"SELECT id, texte_integral FROM legal_corpus WHERE id = ANY($1::uuid[])",
+                    [__import__("uuid").UUID(i) for i in doc_ids],
+                )
+                for r in rows:
+                    full_texts[str(r["id"])] = _clean_text(r["texte_integral"] or "")
+            finally:
+                await conn2.close()
+        except Exception:
+            pass  # on continue sans les textes intégraux si erreur
+
     context_parts = []
     for d in docs:
-        snippet = f"[{d['ref'] or d['titre']}] {d['resume'] or ''}"
+        ref = d["ref"] or d["titre"] or "Document"
+        resume = (d["resume"] or "").strip()
+        full = full_texts.get(d["id"], "")
+        # Tronque le texte intégral à 2000 chars pour ne pas saturer le contexte
+        body = full[:2000] if full else resume
+        snippet = f"--- [{ref}] ---\n{body}"
         context_parts.append(snippet)
     context = "\n\n".join(context_parts) if context_parts else "Aucun document trouvé dans le corpus."
 
