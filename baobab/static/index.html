@@ -3079,14 +3079,42 @@ function analyserQuestion() {
   result.classList.remove('hidden');
   result.innerHTML = `<div class="empty-state"><span class="spinner" style="width:24px;height:24px;border-width:3px"></span><div class="empty-text" style="margin-top:1rem">Analyse en cours…</div></div>`;
 
+  const analyzeHeaders = { 'Content-Type': 'application/json' };
+  if (state.token) analyzeHeaders['X-User-Token'] = state.token;
+
   fetch('/api/v1/legal/analyze', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: analyzeHeaders,
     body: JSON.stringify({ question: texte, corpus: domaine === 'cima' ? 'cima' : domaine === 'ohada' ? 'ohada' : domaine === 'ci' ? 'ci' : 'all' })
   })
   .then(async r => {
     if (!r.ok) {
       const err = await r.json().catch(() => ({}));
+      // Quota dépassé
+      if (r.status === 429 && err.detail?.code === 'quota_exceeded') {
+        const d = err.detail;
+        result.innerHTML = `
+          <div style="padding:16px;background:rgba(212,165,58,0.07);border:1px solid rgba(212,165,58,0.25);border-radius:10px">
+            <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px">Quota journalier atteint</div>
+            <div style="font-size:13px;color:var(--fg);margin-bottom:12px">${escHtml(d.message)}</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <div style="flex:1;min-width:140px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px">
+                <div style="font-size:11px;color:var(--sub)">Basic</div>
+                <div style="font-size:13px;font-weight:600;color:var(--fg);margin:2px 0">30 analyses/jour</div>
+                <div style="font-size:12px;color:var(--gold)">5 000 FCFA/mois</div>
+              </div>
+              <div style="flex:1;min-width:140px;padding:10px;background:var(--card);border:1px solid var(--gold);border-radius:8px">
+                <div style="font-size:11px;color:var(--sub)">Premium</div>
+                <div style="font-size:13px;font-weight:600;color:var(--fg);margin:2px 0">Illimité</div>
+                <div style="font-size:12px;color:var(--gold)">10 000 FCFA/mois</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;font-size:11px;color:var(--sub)">Contactez votre gestionnaire BAOBAB pour upgrader.</div>
+          </div>`;
+        btn.disabled = false; btn.textContent = 'Analyser →';
+        result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       throw new Error(err.detail || `Erreur ${r.status}`);
     }
     const data = await r.json();
@@ -3109,9 +3137,18 @@ function analyserQuestion() {
            Analyse IA non disponible — ajoutez ANTHROPIC_API_KEY dans les variables d\'environnement Vercel pour activer la synthèse.
          </div>`;
 
+    const q = data.quota || {};
+    const quotaBadge = q.limit != null
+      ? `<div style="margin-top:10px;font-size:11px;color:var(--sub);text-align:right">
+           Analyses restantes aujourd\'hui : <strong style="color:${q.remaining <= 1 ? 'var(--red)' : 'var(--green)'}">${q.remaining}</strong> / ${q.limit}
+           ${q.remaining <= 1 ? ' — <span style="color:var(--gold)">pensez à upgrader</span>' : ''}
+         </div>`
+      : '';
+
     result.innerHTML = `
       ${analysisBlock}
-      ${docs ? `<div class="card-block"><div class="card-block-title">Sources consultées (${(data.context_docs||[]).length})</div>${docs}</div>` : '<div class="empty-state"><div class="empty-text">Aucun document trouvé pour cette question.</div></div>'}`;
+      ${docs ? `<div class="card-block"><div class="card-block-title">Sources consultées (${(data.context_docs||[]).length})</div>${docs}</div>` : '<div class="empty-state"><div class="empty-text">Aucun document trouvé pour cette question.</div></div>'}
+      ${quotaBadge}`;
   })
   .catch(err => {
     result.innerHTML = `

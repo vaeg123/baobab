@@ -12,7 +12,7 @@ import os
 from typing import Literal
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Header, HTTPException, Query
 from pydantic import BaseModel
 
 router = APIRouter(tags=["legal"])
@@ -263,7 +263,10 @@ async def get_document(doc_id: str):
 
 
 @router.post("/legal/analyze")
-async def analyze_question(req: AnalyzeRequest):
+async def analyze_question(
+    req: AnalyzeRequest,
+    x_user_token: str | None = Header(None),
+):
     """
     Analyse une question juridique :
     1. Recherche les documents pertinents dans le corpus
@@ -276,6 +279,12 @@ async def analyze_question(req: AnalyzeRequest):
         limit=req.context_docs,
         mode="fulltext",
     )
+    # Quota par utilisateur
+    quota_info: dict = {"allowed": True, "used": None, "limit": None, "remaining": None}
+    if x_user_token:
+        from baobab.api.routes.accounts import check_and_increment_analyses_quota
+        quota_info = await check_and_increment_analyses_quota(x_user_token)
+
     try:
         search_result = await search_corpus(search_req)
         docs = search_result.get("results", [])
@@ -329,6 +338,7 @@ async def analyze_question(req: AnalyzeRequest):
         "context_docs": docs,
         "analysis": analysis,
         "ai_available": ai_available,
+        "quota": quota_info,
     }
 
 

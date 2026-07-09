@@ -32,6 +32,7 @@ PLAN_CATALOG = {
         "monthly_price_xof": 0,
         "currency": "XOF",
         "internal_request_quota": 1,
+        "analyses_daily_limit": 5,
         "services": ["workspace", "one_internal_request"],
     },
     SubscriptionPlan.BASIC: {
@@ -39,6 +40,7 @@ PLAN_CATALOG = {
         "monthly_price_xof": 5000,
         "currency": "XOF",
         "internal_request_quota": None,
+        "analyses_daily_limit": 30,
         "services": ["workspace", "internal_requests", "legal_dashboards", "alerts"],
     },
     SubscriptionPlan.PREMIUM: {
@@ -46,6 +48,7 @@ PLAN_CATALOG = {
         "monthly_price_xof": 10000,
         "currency": "XOF",
         "internal_request_quota": None,
+        "analyses_daily_limit": None,  # illimité
         "services": [
             "workspace",
             "internal_requests",
@@ -466,6 +469,73 @@ async def _get_workspace(workspace_id: str) -> dict:
             detail="Workspace not found",
         )
     return workspace
+
+
+async def _find_workspace_by_token(user_token: str) -> dict | None:
+    """Trouve un workspace par son user_token."""
+    for ws in await _list_workspaces():
+        if ws.get("user_token") == user_token:
+            return ws
+    return None
+
+
+async def check_and_increment_analyses_quota(user_token: str) -> dict:
+    """
+    Vérifie le quota d'analyses du workspace et l'incrémente.
+    Retourne {"allowed": bool, "used": int, "limit": int|None, "remaining": int|None}.
+    Lève HTTPException 429 si quota dépassé.
+    """
+    workspace = await _find_workspace_by_token(user_token)
+    if not workspace:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token utilisateur invalide.")
+
+    plan = workspace.get("plan", SubscriptionPlan.FREE)
+    limit = PLAN_CATALOG[plan]["analyses_daily_limit"]
+
+    today = datetime.now(UTC).date().isoformat()
+    reset_date = workspace.get("analyses_reset_date")
+    used = workspace.get("analyses_today", 0)
+
+    # Remise à zéro si nouveau jour
+    if reset_date != today:
+        used = 0
+        workspace["analyses_reset_date"] = today
+
+    # Vérification quota
+    if limit is not None and used >= limit:
+        plan_name = PLAN_CATALOG[plan]["name"]
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            detail={
+                "code": "quota_exceeded",
+                "message": (
+                    f"Quota journalier atteint ({used}/{limit} analyses). "
+                    f"Plan actuel : {plan_name}."
+                ),
+                "used": used,
+                "limit": limit,
+                "plan": plan,
+                "upgrade_plans": {
+                    "basic": {"name": "Basic", "price_xof": 5000, "limit_daily": 30},
+                    "premium": {"name": "Premium", "price_xof": 10000, "limit_daily": "illimité"},
+                },
+            },
+        )
+
+    # Incrément
+    workspace["analyses_today"] = used + 1
+    workspace["analyses_reset_date"] = today
+    workspace["updated_at"] = datetime.now(UTC).isoformat()
+    await _save_workspace(workspace)
+
+    remaining = (limit - used - 1) if limit is not None else None
+    return {
+        "allowed": True,
+        "used": used + 1,
+        "limit": limit,
+        "remaining": remaining,
+        "plan": plan,
+    }
 
 
 @router.get("/plans")
