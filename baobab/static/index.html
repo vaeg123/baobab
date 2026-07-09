@@ -908,16 +908,16 @@
     .atl-track {
       position: relative;
       min-width: 560px;
-      height: 130px;
+      height: 160px;
     }
     .atl-axis {
       position: absolute;
       left: 0; right: 0;
-      top: 64px; height: 2px;
+      top: 78px; height: 2px;
       background: linear-gradient(to right, transparent, rgba(60,20,5,0.09) 6%, rgba(60,20,5,0.09) 94%, transparent);
     }
     .atl-tick {
-      position: absolute; top: 60px;
+      position: absolute; top: 74px;
       width: 1px; height: 10px;
       background: rgba(60,20,5,0.09);
     }
@@ -928,13 +928,13 @@
     }
     .atl-dot {
       width: 10px; height: 10px; border-radius: 50%;
-      position: absolute; left: 50%; top: 59px;
+      position: absolute; left: 50%; top: 73px;
       transform: translateX(-50%);
       border: 2px solid var(--bg);
     }
     .atl-dot.past  { background: var(--sub); }
     .atl-dot.now   {
-      width: 16px; height: 16px; top: 56px;
+      width: 16px; height: 16px; top: 70px;
       background: var(--gold);
       box-shadow: 0 0 0 4px rgba(191,78,30,0.22), 0 0 16px rgba(191,78,30,0.30);
     }
@@ -947,9 +947,9 @@
       text-align: center;
       white-space: normal; word-break: break-word;
     }
-    .atl-etxt.top  { bottom: 76px; color: var(--sub); }
-    .atl-etxt.bot  { top: 77px; color: var(--sub); }
-    .atl-etxt.now  { bottom: 80px; color: var(--text); font-weight: 700; }
+    .atl-etxt.top  { bottom: 90px; color: var(--sub); }
+    .atl-etxt.bot  { top: 91px; color: var(--sub); }
+    .atl-etxt.now  { bottom: 94px; color: var(--text); font-weight: 700; }
     .atl-yr {
       display: block; font-weight: 700; font-size: 10px; margin-bottom: 1px;
     }
@@ -957,7 +957,7 @@
     .atl-yr.now    { color: var(--gold); }
     .atl-yr.future { color: #6090E0; }
     .atl-connector {
-      position: absolute; top: 63px; height: 1px;
+      position: absolute; top: 77px; height: 1px;
       background: linear-gradient(to right, var(--sub), #6090E0);
       opacity: 0.2;
     }
@@ -4033,11 +4033,11 @@ function chargerArticle(ref) {
 function buildArretTimeline(d) {
   const events = [];
 
-  // Passé — alternance haut/bas pour la lisibilité
+  // Passé — alternance haut/bas
   d.passe.forEach((s, i) => {
     const yr = parseInt(s.date);
     if (!yr) return;
-    const shortTxt = s.texte.length > 48 ? s.texte.substring(0, 48) + '…' : s.texte;
+    const shortTxt = s.texte.length > 50 ? s.texte.substring(0, 50) + '…' : s.texte;
     events.push({ yr, txt: shortTxt, type: 'past', side: i % 2 === 0 ? 'bot' : 'top' });
   });
 
@@ -4048,31 +4048,46 @@ function buildArretTimeline(d) {
     events.push({ yr: presentYr, txt: `Arrêt ${d.identite.numero}`, type: 'now', side: 'top' });
   }
 
-  // Futur — citations et usages
-  d.futur.usages.forEach((u, i) => {
+  // Futur — max 2 usages pour éviter la surcharge
+  d.futur.usages.slice(0, 2).forEach((u, i) => {
     const yr = parseInt(u.annee);
     if (!yr) return;
-    const shortTxt = u.texte.length > 48 ? u.texte.substring(0, 48) + '…' : u.texte;
+    const shortTxt = u.texte.length > 50 ? u.texte.substring(0, 50) + '…' : u.texte;
     events.push({ yr, txt: shortTxt, type: 'future', side: i % 2 === 0 ? 'bot' : 'top' });
   });
 
   if (!events.length) return '';
   events.sort((a, b) => a.yr - b.yr);
 
-  const years = events.map(e => e.yr);
-  const minYr = Math.min(...years) - 0.5;
-  const maxYr = Math.max(...years) + 0.5;
-  const span  = maxYr - minYr;
-  const pct   = yr => ((yr - minYr) / span * 100).toFixed(1);
+  // Étale les événements à même année pour éviter la superposition
+  const yearCount = {};
+  events.forEach(e => { yearCount[e.yr] = (yearCount[e.yr] || 0) + 1; });
+  const yearIdx = {};
+  events.forEach(e => {
+    yearIdx[e.yr] = (yearIdx[e.yr] || 0);
+    e._jitter = yearIdx[e.yr];
+    yearIdx[e.yr]++;
+  });
 
-  // Generate ticks for each year on axis
+  const years = events.map(e => e.yr);
+  const minYr = Math.min(...years) - 1;
+  const maxYr = Math.max(...years) + 1;
+  const span  = maxYr - minYr;
+  // Décale légèrement les doublons
+  const pct = (yr, jitter) => {
+    const base = (yr - minYr) / span * 100;
+    const offset = jitter * (2.5 / span * 100);
+    return (base + offset).toFixed(1);
+  };
+
+  // Ticks annuels sur l'axe
   const ticksHtml = [];
   for (let y = Math.ceil(minYr); y <= Math.floor(maxYr); y++) {
-    ticksHtml.push(`<div class="atl-tick" style="left:${pct(y)}%"></div>`);
+    ticksHtml.push(`<div class="atl-tick" style="left:${((y - minYr)/span*100).toFixed(1)}%"></div>`);
   }
 
   const eventsHtml = events.map(e => {
-    const p = pct(e.yr);
+    const p = pct(e.yr, e._jitter);
     const dotCls = e.type === 'now' ? 'atl-dot now' : (e.type === 'past' ? 'atl-dot past' : 'atl-dot future');
     const txtCls = e.type === 'now' ? 'atl-etxt now' : `atl-etxt ${e.side}`;
     const yrCls  = `atl-yr ${e.type}`;
