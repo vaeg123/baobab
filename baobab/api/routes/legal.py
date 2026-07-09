@@ -108,19 +108,19 @@ async def search_corpus(req: SearchRequest):
             conditions.append(f"domaine ILIKE ${p}"); params.append(f"%{req.domaine}%"); p += 1
 
         where = " AND ".join(conditions)
+        # Snapshot des params filtres uniquement (pour la requête COUNT)
+        filter_params = list(params)
 
         if req.mode == "fulltext" or req.mode == "hybrid":
-            # Recherche fulltext PostgreSQL
             fts_cond = (
                 f"to_tsvector('french', coalesce(titre,'') || ' ' || coalesce(resume,'') "
                 f"|| ' ' || coalesce(texte_integral,'')) @@ plainto_tsquery('french', ${p})"
             )
-            params.append(req.query)
             rank_expr = (
                 f"ts_rank(to_tsvector('french', coalesce(titre,'') || ' ' || coalesce(resume,'')"
                 f" || ' ' || coalesce(texte_integral,'')), plainto_tsquery('french', ${p})) AS rank"
             )
-            p += 1
+            params.append(req.query); p += 1
 
             sql = f"""
                 SELECT id, ref, type, corpus, juridiction, titre, date_decision,
@@ -135,7 +135,6 @@ async def search_corpus(req: SearchRequest):
             rows = await conn.fetch(sql, *params)
 
         else:
-            # Fallback ILIKE si pas de fulltext
             like_cond = f"(titre ILIKE ${p} OR resume ILIKE ${p} OR texte_integral ILIKE ${p})"
             params.append(f"%{req.query}%"); p += 1
             sql = f"""
@@ -152,10 +151,8 @@ async def search_corpus(req: SearchRequest):
 
         results = [_row_to_doc(r, float(r["rank"])) for r in rows]
 
-        # Compte total
         count_sql = f"SELECT COUNT(*) FROM legal_corpus WHERE {where}"
-        count_params = params[: p - 3]  # exclure query + limit + offset
-        total = await conn.fetchval(count_sql, *count_params)
+        total = await conn.fetchval(count_sql, *filter_params)
 
         return {
             "query": req.query,
@@ -266,8 +263,13 @@ async def analyze_question(req: AnalyzeRequest):
         limit=req.context_docs,
         mode="fulltext",
     )
-    search_result = await search_corpus(search_req)
-    docs = search_result.get("results", [])
+    try:
+        search_result = await search_corpus(search_req)
+        docs = search_result.get("results", [])
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(503, f"Erreur base de données : {exc}") from exc
 
     context_parts = []
     for d in docs:

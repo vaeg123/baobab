@@ -921,6 +921,7 @@
     }
     .atl-evt {
       position: absolute;
+      top: 0; height: 100%;
       transform: translateX(-50%);
     }
     .atl-dot {
@@ -3078,14 +3079,16 @@ function analyserQuestion() {
   result.classList.remove('hidden');
   result.innerHTML = `<div class="empty-state"><span class="spinner" style="width:24px;height:24px;border-width:3px"></span><div class="empty-text" style="margin-top:1rem">Analyse en cours…</div></div>`;
 
-  // Appel API — fallback sur la démo si non disponible
   fetch('/api/v1/legal/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question: texte, corpus: domaine === 'cima' ? 'cima' : domaine === 'ohada' ? 'ohada' : domaine === 'ci' ? 'ci' : 'all' })
   })
   .then(async r => {
-    if (!r.ok) throw new Error('demo');
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.detail || `Erreur ${r.status}`);
+    }
     const data = await r.json();
     const docs = (data.context_docs || []).map(d => `
       <div style="border-left:2px solid var(--gold-dim);padding:6px 12px;margin-bottom:8px">
@@ -3101,13 +3104,11 @@ function analyserQuestion() {
       </div>
       ${docs ? `<div class="card-block"><div class="card-block-title">Sources consultées (${(data.context_docs||[]).length})</div>${docs}</div>` : ''}`;
   })
-  .catch(() => {
-    // Démo — montre la fiche avec les données d'exemple
+  .catch(err => {
     result.innerHTML = `
-      <div style="font-size:11px;color:var(--sub);background:rgba(212,165,58,0.06);border:1px solid rgba(212,165,58,0.15);border-radius:8px;padding:10px 14px;margin-bottom:1rem">
-        ★ Aperçu du format de réponse — données d'illustration (CCJA n°045/2019)
-      </div>
-      ${renderFicheArret(DEMO_ARRET)}`;
+      <div style="padding:14px 16px;background:rgba(220,60,60,0.07);border:1px solid rgba(220,60,60,0.2);border-radius:8px;font-size:13px;color:var(--red)">
+        Erreur : ${escHtml(err.message || String(err))}
+      </div>`;
   })
   .finally(() => {
     btn.disabled = false; btn.textContent = 'Analyser →';
