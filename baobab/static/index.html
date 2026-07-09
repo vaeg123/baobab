@@ -2009,6 +2009,64 @@
       </div>
     </div>
 
+    <!-- ── DROIT FRANÇAIS ── -->
+    <div id="tab-droit-fr" class="tab-panel">
+      <div class="container">
+        <div class="page-title">Droit français</div>
+        <div class="page-sub">Jurisprudence et textes législatifs français — Judilibre (Cour de Cassation) et Légifrance — pour le droit comparé OHADA/CI.</div>
+
+        <!-- Statut PISTE -->
+        <div id="fr-status-bar" style="display:flex;gap:10px;margin:18px 0 22px;flex-wrap:wrap;"></div>
+
+        <!-- Barre de recherche -->
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;">
+          <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <button onclick="frSetSource('judilibre',this)" id="fr-btn-judi"
+              style="padding:8px 16px;font-size:13px;font-weight:600;background:var(--gold);color:var(--bg);border:none;cursor:pointer;">
+              ⚖️ Judilibre
+            </button>
+            <button onclick="frSetSource('legifrance',this)" id="fr-btn-legi"
+              style="padding:8px 16px;font-size:13px;font-weight:500;color:var(--sub);border:none;background:transparent;cursor:pointer;">
+              📜 Légifrance
+            </button>
+          </div>
+          <input id="fr-query" placeholder="Rechercher une notion, une décision, un article…"
+            style="flex:1;min-width:220px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;"
+            onkeydown="if(event.key==='Enter')frSearch()" />
+          <select id="fr-type" style="padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--sub);font-size:13px;">
+            <option value="">Tous types</option>
+            <option value="arret">Arrêt</option>
+            <option value="CODE">Code</option>
+            <option value="LOI">Loi</option>
+            <option value="ORDONNANCE">Ordonnance</option>
+            <option value="DECRET">Décret</option>
+          </select>
+          <button onclick="frSearch()"
+            style="padding:10px 20px;background:var(--gold);color:var(--bg);border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">
+            Rechercher
+          </button>
+        </div>
+
+        <!-- Résultats -->
+        <div id="fr-results" style="display:flex;flex-direction:column;gap:10px;min-height:80px;">
+          <div style="color:var(--sub);font-size:13px;padding:20px 0;">Lance une recherche pour afficher les résultats.</div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="fr-pagination" style="display:none;display:flex;gap:10px;margin-top:18px;align-items:center;">
+          <button id="fr-prev" onclick="frPage(-1)"
+            style="padding:7px 16px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;font-size:13px;">
+            ← Précédent
+          </button>
+          <span id="fr-page-label" style="color:var(--sub);font-size:13px;"></span>
+          <button id="fr-next" onclick="frPage(1)"
+            style="padding:7px 16px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;font-size:13px;">
+            Suivant →
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ── VEILLE JURIDIQUE ── -->
     <div id="tab-veille" class="tab-panel">
       <div class="container">
@@ -2210,21 +2268,23 @@ function goHome() {
 // ════════════════════════════════════════════════
 const NAV_CONFIGS = {
   client: [
-    { id: 'client',  label: '🏠  Mon espace' },
-    { id: 'biblio',  label: '📚  Bibliothèque' },
-    { id: 'veille',  label: '📡  Veille juridique' },
-    { id: 'cima',    label: '⚖️  CIMA — Sinistre' },
-    { id: 'ohada',   label: '📜  OHADA' },
-    { id: 'bceao',   label: '🏦  BCEAO' },
-    { id: 'espace',  label: '💳  Abonnement' },
+    { id: 'client',    label: '🏠  Mon espace' },
+    { id: 'biblio',    label: '📚  Bibliothèque' },
+    { id: 'veille',    label: '📡  Veille juridique' },
+    { id: 'cima',      label: '⚖️  CIMA — Sinistre' },
+    { id: 'ohada',     label: '📜  OHADA' },
+    { id: 'bceao',     label: '🏦  BCEAO' },
+    { id: 'droit-fr',  label: '🇫🇷  Droit français' },
+    { id: 'espace',    label: '💳  Abonnement' },
   ],
   admin: [
-    { id: 'admin',   label: '🛡️  Tableau de bord' },
-    { id: 'biblio',  label: '📚  Bibliothèque' },
-    { id: 'veille',  label: '📡  Veille juridique' },
-    { id: 'cima',    label: '⚖️  CIMA' },
-    { id: 'ohada',   label: '📜  OHADA' },
-    { id: 'bceao',   label: '🏦  BCEAO' },
+    { id: 'admin',    label: '🛡️  Tableau de bord' },
+    { id: 'biblio',   label: '📚  Bibliothèque' },
+    { id: 'veille',   label: '📡  Veille juridique' },
+    { id: 'cima',     label: '⚖️  CIMA' },
+    { id: 'ohada',    label: '📜  OHADA' },
+    { id: 'bceao',    label: '🏦  BCEAO' },
+    { id: 'droit-fr', label: '🇫🇷  Droit français' },
   ],
   superadmin: [
     { id: 'superadmin',  label: '⚙️  Console' },
@@ -2234,6 +2294,7 @@ const NAV_CONFIGS = {
     { id: 'cima',        label: '⚖️  CIMA' },
     { id: 'ohada',       label: '📜  OHADA' },
     { id: 'bceao',       label: '🏦  BCEAO' },
+    { id: 'droit-fr',    label: '🇫🇷  Droit français' },
   ],
   register: [
     { id: 'register', label: '📝  Créer un espace' },
@@ -4102,6 +4163,123 @@ async function rejectSubmission() {
   window.switchTab = function(name) {
     prev(name);
     if (name === 'submissions') loadSubmissions();
+  };
+})();
+
+// ════════════════════════════════════════════════
+// DROIT FRANÇAIS — connecteur PISTE
+// ════════════════════════════════════════════════
+const frState = { source: 'judilibre', page: 0, lastQuery: '' };
+
+async function frLoadStatus() {
+  try {
+    const r = await fetch('/api/v1/legal-fr/status');
+    const d = await r.json();
+    const bar = document.getElementById('fr-status-bar');
+    if (!bar) return;
+    const items = [
+      { label: 'PISTE', val: d.configured ? 'Connecté' : 'Non configuré', ok: d.configured },
+      { label: 'Env.', val: d.env === 'sandbox' ? 'Sandbox' : 'Production', ok: true },
+      { label: 'Judilibre', val: d.judilibre_base ? '✓' : '—', ok: !!d.judilibre_base },
+      { label: 'Légifrance', val: d.legifrance_base ? '✓' : '—', ok: !!d.legifrance_base },
+    ];
+    bar.innerHTML = items.map(i => `
+      <div style="padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:12px;">
+        <div style="color:var(--sub)">${i.label}</div>
+        <div style="color:${i.ok ? 'var(--green)' : 'var(--red)'};font-weight:600;margin-top:2px">${i.val}</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+function frSetSource(src, btn) {
+  frState.source = src;
+  frState.page = 0;
+  document.getElementById('fr-btn-judi').style.cssText = 'padding:8px 16px;font-size:13px;font-weight:500;color:var(--sub);border:none;background:transparent;cursor:pointer;';
+  document.getElementById('fr-btn-legi').style.cssText = 'padding:8px 16px;font-size:13px;font-weight:500;color:var(--sub);border:none;background:transparent;cursor:pointer;';
+  btn.style.cssText = 'padding:8px 16px;font-size:13px;font-weight:600;background:var(--gold);color:var(--bg);border:none;cursor:pointer;';
+}
+
+async function frSearch(resetPage = true) {
+  const query = document.getElementById('fr-query').value.trim();
+  if (!query) return;
+  if (resetPage) frState.page = 0;
+  frState.lastQuery = query;
+  const type = document.getElementById('fr-type').value;
+  const box = document.getElementById('fr-results');
+  box.innerHTML = '<div style="color:var(--sub);font-size:13px;padding:16px 0">Recherche en cours…</div>';
+
+  try {
+    const body = { query, page: frState.page, page_size: 10, type: type || null };
+    const endpoint = frState.source === 'judilibre'
+      ? '/api/v1/legal-fr/judilibre/search'
+      : '/api/v1/legal-fr/legifrance/search';
+    const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!r.ok) { box.innerHTML = `<div style="color:var(--red);font-size:13px">Erreur ${r.status} — vérifiez la configuration PISTE.</div>`; return; }
+    const data = await r.json();
+    frRenderResults(data);
+  } catch(e) {
+    box.innerHTML = `<div style="color:var(--red);font-size:13px">Erreur : ${e.message}</div>`;
+  }
+}
+
+function frPage(dir) {
+  frState.page = Math.max(0, frState.page + dir);
+  frSearch(false);
+}
+
+function frExtractItems(data) {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== 'object') return [];
+  return data.results || data.resultats || data.decisions || data.documents || data.items ||
+    (data.data && (data.data.results || data.data.resultats)) || [];
+}
+
+function frRenderResults(data) {
+  const box = document.getElementById('fr-results');
+  const items = frExtractItems(data);
+  const total = data.total || data.totalResultNumber || items.length;
+
+  if (!items.length) {
+    box.innerHTML = '<div style="color:var(--sub);font-size:13px;padding:16px 0">Aucun résultat.</div>';
+    document.getElementById('fr-pagination').style.display = 'none';
+    return;
+  }
+
+  box.innerHTML = items.map(item => {
+    const id    = item.id || item._id || item.textId || item.cid || '—';
+    const titre = item.title || item.titre || item.titreOfficiel || item.titreLong || item.nature || `Résultat`;
+    const date  = item.date || item.dateDecision || item.dateTexte || item.dateSignature || '';
+    const extrait = (item.summary || item.sommaire || item.abstract || item.texte || '').slice(0, 500);
+    const src   = frState.source === 'judilibre' ? '⚖️ Judilibre' : '📜 Légifrance';
+    return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+        <div>
+          <span style="font-size:11px;color:var(--gold);font-weight:600;text-transform:uppercase">${src}</span>
+          <div style="font-size:15px;font-weight:600;color:var(--text);margin-top:4px">${titre}</div>
+          ${date ? `<div style="font-size:12px;color:var(--sub);margin-top:2px">${date}</div>` : ''}
+        </div>
+        <span style="font-size:11px;color:var(--sub);background:var(--surface);border:1px solid var(--border);padding:3px 10px;border-radius:20px;white-space:nowrap">${id}</span>
+      </div>
+      ${extrait ? `<p style="margin-top:10px;font-size:13px;color:var(--sub);line-height:1.6">${extrait}</p>` : ''}
+    </div>`;
+  }).join('');
+
+  // Pagination
+  const pg = document.getElementById('fr-pagination');
+  const lbl = document.getElementById('fr-page-label');
+  pg.style.display = 'flex';
+  lbl.textContent = `Page ${frState.page + 1} — ${total} résultat(s)`;
+  document.getElementById('fr-prev').disabled = frState.page === 0;
+  document.getElementById('fr-next').disabled = items.length < 10;
+}
+
+// Patch switchTab pour charger le statut PISTE à l'ouverture
+(function() {
+  const _prev = window.switchTab;
+  window.switchTab = function(name) {
+    _prev(name);
+    if (name === 'droit-fr') frLoadStatus();
   };
 })();
 

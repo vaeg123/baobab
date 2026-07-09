@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions
+from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions, legal_fr
 
 app = FastAPI(
     title="BAOBAB API",
@@ -31,6 +31,7 @@ app.include_router(bceao.router, prefix="/api/v1/bceao")
 app.include_router(accounts.router, prefix="/api/v1/accounts")
 app.include_router(legal.router, prefix="/api/v1")
 app.include_router(submissions.router, prefix="/api/v1")
+app.include_router(legal_fr.router, prefix="/api/v1")
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
