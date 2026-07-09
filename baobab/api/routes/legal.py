@@ -338,8 +338,8 @@ async def analyze_question(
         ref = d["ref"] or d["titre"] or "Document"
         resume = (d["resume"] or "").strip()
         full = full_texts.get(d["id"], "")
-        # Tronque le texte intégral à 2000 chars pour ne pas saturer le contexte
-        body = full[:2000] if full else resume
+        # Tronque le texte intégral à 1500 chars par doc pour libérer des tokens de sortie
+        body = full[:1500] if full else resume
         snippet = f"--- [{ref}] ---\n{body}"
         context_parts.append(snippet)
     context = "\n\n".join(context_parts) if context_parts else "Aucun document trouvé dans le corpus."
@@ -355,7 +355,7 @@ async def analyze_question(
             client = anthropic.Anthropic(api_key=api_key)
             message = client.messages.create(
                 model="claude-sonnet-4-6",
-                max_tokens=3072,
+                max_tokens=6000,
                 messages=[{
                     "role": "user",
                     "content": (
@@ -431,7 +431,20 @@ async def analyze_question(
         try:
             fiche = json_lib.loads(analysis)
         except Exception:
-            fiche = None
+            # Tentative de réparation si JSON tronqué (manque de tokens)
+            try:
+                txt = analysis.strip()
+                # Ferme les structures JSON ouvertes non fermées
+                opens = txt.count('{') - txt.count('}')
+                arr_opens = txt.count('[') - txt.count(']')
+                # Retire la dernière ligne incomplète (pas de virgule/quote fermante)
+                lines = txt.rsplit('\n', 1)
+                if len(lines) == 2 and not lines[1].strip().endswith(('}', ']', '"', ',')):
+                    txt = lines[0].rstrip().rstrip(',')
+                txt += ']' * max(0, arr_opens) + '}' * max(0, opens)
+                fiche = json_lib.loads(txt)
+            except Exception:
+                fiche = None
 
     return {
         "question": req.question,
