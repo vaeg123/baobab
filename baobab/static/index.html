@@ -1248,6 +1248,230 @@
     .sub-actions-row { display: flex; gap: 8px; }
     .sub-reject-form { display: none; flex-direction: column; gap: 8px; }
     .sub-reject-form.open { display: flex; }
+
+    /* ── BAOBAB Fiche Premium ──────────────────────────────────────────── */
+    .baobab-fiche-wrapper {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(212,165,58,0.18);
+      background: var(--card);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.28), 0 0 0 1px rgba(212,165,58,0.06);
+      margin-bottom: 1.5rem;
+    }
+    .baobab-fiche-header-band {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, rgba(212,165,58,0.12) 0%, rgba(212,165,58,0.04) 100%);
+      border-bottom: 1px solid rgba(212,165,58,0.15);
+    }
+    .baobab-logo-text {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .baobab-fiche-tag {
+      font-size: 10px;
+      color: var(--sub);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    /* Sources grid */
+    .baobab-sources-block {
+      margin: 0 1rem 1rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .baobab-sources-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .baobab-sources-icon { font-size: 13px; }
+    .baobab-sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 8px;
+    }
+    .baobab-source-card {
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      border-left: 3px solid rgba(212,165,58,0.4);
+      transition: border-color .2s;
+    }
+    .baobab-source-card:hover { border-left-color: var(--gold); }
+    .bsc-meta {
+      font-size: 9px;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 4px;
+    }
+    .bsc-titre {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+    .bsc-sous-titre {
+      font-size: 11px;
+      color: var(--sub-2);
+      margin-bottom: 3px;
+    }
+    .bsc-resume {
+      font-size: 11px;
+      color: var(--sub-2);
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+    .bsc-sanction {
+      font-size: 11px;
+      color: var(--gold);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .bsc-link {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 10px;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    /* Quota badge */
+    .baobab-quota-badge {
+      margin: 0 1rem 1rem;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+      color: var(--sub);
+      text-align: right;
+    }
+    /* Upgrade fiche existing styles */
+    .fiche-arret {
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+    .fiche-top {
+      padding: 1.5rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .fiche-titre {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 8px;
+      line-height: 1.3;
+      letter-spacing: -.01em;
+    }
+    .fiche-sous-titre {
+      font-size: 12px;
+      color: var(--sub);
+      margin-top: 4px;
+      letter-spacing: .02em;
+    }
+    .fiche-schema {
+      margin: 0;
+      padding: 1rem 1.5rem;
+      background: rgba(212,165,58,0.04);
+      border-bottom: 1px solid rgba(212,165,58,0.1);
+    }
+    .fiche-principe {
+      background: linear-gradient(135deg, rgba(212,165,58,0.08), rgba(212,165,58,0.03));
+      border: 1px solid rgba(212,165,58,0.2);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--fg);
+      margin-bottom: 0;
+    }
+    .fiche-principe-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .fiche-sections { padding: 0 1.5rem 1rem; }
+    .fiche-section {
+      border-bottom: 1px solid var(--border);
+    }
+    .fiche-section-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .fiche-section-hdr:hover .fiche-section-title { color: var(--gold); }
+    .fiche-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--fg);
+      transition: color .2s;
+      letter-spacing: .01em;
+    }
+    .fiche-chevron {
+      font-size: 10px;
+      color: var(--sub);
+      transition: transform .25s;
+    }
+    .fiche-section.open .fiche-chevron { transform: rotate(180deg); }
+    .fiche-section-body {
+      display: none;
+      padding: 0 0 16px;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--sub-2);
+      animation: fadeIn .2s ease;
+    }
+    .fiche-section.open .fiche-section-body { display: block; }
+    .fiche-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.01);
+    }
+    .fiche-action {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--sub);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .fiche-action:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,165,58,0.06); }
+    .fiche-action.gold {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+      font-weight: 700;
+    }
+    .fiche-action.gold:hover { opacity: .88; }
   </style>
 </head>
 <body>
@@ -3118,37 +3342,67 @@ function analyserQuestion() {
       throw new Error(err.detail || `Erreur ${r.status}`);
     }
     const data = await r.json();
-    const docs = (data.context_docs || []).map(d => `
-      <div style="border-left:2px solid var(--gold-dim);padding:8px 14px;margin-bottom:10px;border-radius:0 6px 6px 0">
-        <div style="font-size:10px;color:var(--sub);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">${escHtml(d.type.replace(/_/g,' '))} · ${d.corpus.toUpperCase()}${d.pays ? ' · '+escHtml(d.pays) : ''}${d.date_decision ? ' · '+d.date_decision : ''}</div>
-        <div style="font-size:13px;font-weight:600;color:var(--fg);margin-bottom:4px">${escHtml(d.ref || d.titre)}</div>
-        ${d.titre && d.ref && d.titre !== d.ref ? `<div style="font-size:11px;color:var(--sub-2);margin-bottom:4px">${escHtml(d.titre)}</div>` : ''}
-        ${d.resume ? `<div style="font-size:12px;color:var(--sub-2);line-height:1.5">${escHtml(d.resume)}</div>` : ''}
-        ${d.sanction ? `<div style="font-size:11px;color:var(--gold);margin-top:4px">⚖ ${escHtml(d.sanction)}</div>` : ''}
-        ${d.source_url ? `<a href="${d.source_url}" target="_blank" style="font-size:10px;color:var(--gold);margin-top:4px;display:inline-block">→ Source</a>` : ''}
-      </div>`).join('');
 
-    const analysisBlock = data.analysis
-      ? `<div class="card-block" style="margin-bottom:1rem">
-           <div class="card-block-title">Analyse juridique BAOBAB</div>
-           <div style="white-space:pre-wrap;font-size:13px;line-height:1.7;color:var(--fg)">${escHtml(data.analysis)}</div>
-         </div>`
-      : `<div style="padding:10px 14px;background:rgba(212,165,58,0.06);border:1px solid rgba(212,165,58,0.15);border-radius:8px;font-size:12px;color:var(--sub);margin-bottom:1rem">
-           Analyse IA non disponible — ajoutez ANTHROPIC_API_KEY dans les variables d\'environnement Vercel pour activer la synthèse.
-         </div>`;
+    // Sources
+    const docs = (data.context_docs || []).map(d => `
+      <div class="baobab-source-card">
+        <div class="bsc-meta">${escHtml((d.type||'').replace(/_/g,' '))} · ${(d.corpus||'').toUpperCase()}${d.pays ? ' · '+escHtml(d.pays) : ''}${d.date_decision ? ' · '+d.date_decision : ''}</div>
+        <div class="bsc-titre">${escHtml(d.ref || d.titre)}</div>
+        ${d.titre && d.ref && d.titre !== d.ref ? `<div class="bsc-sous-titre">${escHtml(d.titre)}</div>` : ''}
+        ${d.resume ? `<div class="bsc-resume">${escHtml(d.resume)}</div>` : ''}
+        ${d.sanction ? `<div class="bsc-sanction">⚖ ${escHtml(d.sanction)}</div>` : ''}
+        ${d.source_url ? `<a href="${d.source_url}" target="_blank" class="bsc-link">→ Source</a>` : ''}
+      </div>`).join('');
 
     const q = data.quota || {};
     const quotaBadge = q.limit != null
-      ? `<div style="margin-top:10px;font-size:11px;color:var(--sub);text-align:right">
-           Analyses restantes aujourd\'hui : <strong style="color:${q.remaining <= 1 ? 'var(--red)' : 'var(--green)'}">${q.remaining}</strong> / ${q.limit}
-           ${q.remaining <= 1 ? ' — <span style="color:var(--gold)">pensez à upgrader</span>' : ''}
+      ? `<div class="baobab-quota-badge">
+           Analyses restantes aujourd\'hui : <strong style="color:${q.remaining <= 1 ? 'var(--red)' : 'var(--gold)'}">${q.remaining} / ${q.limit}</strong>
+           ${q.remaining <= 1 ? ' · <span style="color:var(--gold)">Upgrader →</span>' : ''}
          </div>`
       : '';
 
-    result.innerHTML = `
-      ${analysisBlock}
-      ${docs ? `<div class="card-block"><div class="card-block-title">Sources consultées (${(data.context_docs||[]).length})</div>${docs}</div>` : '<div class="empty-state"><div class="empty-text">Aucun document trouvé pour cette question.</div></div>'}
-      ${quotaBadge}`;
+    if (data.fiche) {
+      // Rendu premium fiche structurée
+      const sourcesSection = docs ? `
+        <div class="baobab-sources-block">
+          <div class="baobab-sources-title">
+            <span class="baobab-sources-icon">📚</span>
+            Sources du corpus (${(data.context_docs||[]).length})
+          </div>
+          <div class="baobab-sources-grid">${docs}</div>
+        </div>` : '';
+
+      result.innerHTML = `
+        <div class="baobab-fiche-wrapper">
+          <div class="baobab-fiche-header-band">
+            <span class="baobab-logo-text">BAOBAB</span>
+            <span class="baobab-fiche-tag">Analyse Juridique</span>
+          </div>
+          ${renderFicheArret(data.fiche)}
+          ${sourcesSection}
+          ${quotaBadge}
+        </div>`;
+    } else if (data.analysis) {
+      // Fallback texte si JSON invalide
+      result.innerHTML = `
+        <div class="baobab-fiche-wrapper">
+          <div class="baobab-fiche-header-band">
+            <span class="baobab-logo-text">BAOBAB</span>
+            <span class="baobab-fiche-tag">Analyse Juridique</span>
+          </div>
+          <div class="card-block" style="margin:1rem">
+            <div style="white-space:pre-wrap;font-size:13px;line-height:1.8;color:var(--fg)">${escHtml(data.analysis)}</div>
+          </div>
+          ${docs ? `<div class="baobab-sources-block"><div class="baobab-sources-title"><span class="baobab-sources-icon">📚</span>Sources (${(data.context_docs||[]).length})</div><div class="baobab-sources-grid">${docs}</div></div>` : ''}
+          ${quotaBadge}
+        </div>`;
+    } else {
+      result.innerHTML = `
+        <div style="padding:14px;background:rgba(212,165,58,0.06);border:1px solid rgba(212,165,58,0.15);border-radius:8px;font-size:12px;color:var(--sub)">
+          Analyse IA non disponible — ajoutez ANTHROPIC_API_KEY dans les variables d\'environnement Vercel.
+        </div>`;
+    }
   })
   .catch(err => {
     result.innerHTML = `
@@ -3195,7 +3449,7 @@ function renderFicheArret(d) {
       </div>
     </div>`;
 
-  const jugesHtml = d.juges.map(j => `
+  const jugesHtml = (d.juges && d.juges.length > 0) ? d.juges.map(j => `
     <div class="juge-row">
       <div class="juge-avatar">${escHtml(j.initiale)}</div>
       <div style="flex:1">
@@ -3204,23 +3458,17 @@ function renderFicheArret(d) {
         <div class="juge-role" style="margin-top:2px">${escHtml(j.specialites)}</div>
       </div>
       <div class="juge-stat"><strong>${j.decisions}</strong>décisions recensées</div>
-    </div>`).join('');
+    </div>`).join('') : '<div style="font-size:12px;color:var(--sub);padding:8px 0">Analyse thématique — pas de composition de cour identifiée.</div>';
 
   const sections = [
     { titre: 'Les faits', contenu: `<p>${escHtml(d.present.faits)}</p>` },
     { titre: 'Arguments des parties', contenu: argsHtml },
-    {
-      titre: 'Question de droit',
-      contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.question_droit)}</p>`
-    },
-    { titre: 'Raisonnement de la Cour', contenu: `<p>${escHtml(d.present.raisonnement)}</p>` },
-    {
-      titre: 'Visa · Articles appliqués',
-      contenu: `<p style="margin-bottom:10px">Articles sur lesquels la décision est fondée :</p><div class="visa-list">${visaPills}</div>`
-    },
-    { titre: 'Moyens du pourvoi', contenu: d.present.moyens.map((m, i) => `<div class="args-item"><span class="args-num">${i+1}.</span>${escHtml(m)}</div>`).join('') },
-    { titre: 'Dispositif — La décision', contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.dispositif)}</p>` },
-    { titre: 'Profil des magistrats', contenu: `<div class="juges-grid">${jugesHtml}</div>` },
+    { titre: 'Question de droit', contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.question_droit)}</p>` },
+    { titre: 'Raisonnement juridique', contenu: `<p>${escHtml(d.present.raisonnement)}</p>` },
+    { titre: 'Visa · Textes appliqués', contenu: `<p style="margin-bottom:10px">Textes sur lesquels l\'analyse est fondée :</p><div class="visa-list">${visaPills}</div>` },
+    { titre: 'Points juridiques clés', contenu: d.present.moyens.map((m, i) => `<div class="args-item"><span class="args-num">${i+1}.</span>${escHtml(m)}</div>`).join('') },
+    { titre: 'Conclusion juridique', contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.dispositif)}</p>` },
+    ...(d.juges && d.juges.length > 0 ? [{ titre: 'Profil des magistrats', contenu: `<div class="juges-grid">${jugesHtml}</div>` }] : []),
   ];
 
   const sectionsHtml = sections.map((s, i) => `

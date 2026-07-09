@@ -310,21 +310,69 @@ async def analyze_question(
             client = anthropic.Anthropic(api_key=api_key)
             message = client.messages.create(
                 model="claude-sonnet-4-6",
-                max_tokens=2048,
+                max_tokens=3072,
                 messages=[{
                     "role": "user",
                     "content": (
                         "Tu es BAOBAB, un assistant juridique spécialisé en droit africain "
                         "(CIMA, OHADA, droit ivoirien).\n\n"
                         "RÈGLE ABSOLUE : Tu dois répondre UNIQUEMENT en te basant sur les documents "
-                        "du corpus ci-dessous. Ne complète JAMAIS avec ta connaissance générale. "
-                        "Si les documents fournis ne permettent pas de répondre à la question, "
-                        "réponds exactement : \"Les documents disponibles dans le corpus BAOBAB ne "
-                        "permettent pas de répondre à cette question. Veuillez enrichir le corpus "
-                        "avec les textes pertinents.\"\n\n"
+                        "du corpus ci-dessous. Ne complète JAMAIS avec ta connaissance générale.\n\n"
+                        "FORMAT DE RÉPONSE : Retourne UNIQUEMENT un objet JSON valide, sans bloc "
+                        "markdown, sans texte avant ou après, sans ``` ni ```json. "
+                        "La réponse doit commencer directement par { et finir par }.\n\n"
+                        "SCHÉMA JSON REQUIS :\n"
+                        "{\n"
+                        '  "identite": {\n'
+                        '    "numero": "Analyse #001",\n'
+                        '    "date": "date du jour en français ex: 9 juillet 2026",\n'
+                        '    "juridiction": "BAOBAB — Analyse Juridique CIMA/OHADA",\n'
+                        '    "formation": "corpus concerné ex: Droit CIMA — Zone CIMA",\n'
+                        '    "numero_recueil": "Corpus BAOBAB · [nombre] documents analysés",\n'
+                        '    "domaine": "ex: Contrôle prudentiel · Sanctions CRCA"\n'
+                        "  },\n"
+                        '  "solidite": { "score": 4, "label": "ex: Jurisprudence établie" },\n'
+                        '  "principe": "Le principe juridique central dégagé en 1-2 phrases.",\n'
+                        '  "schema": {\n'
+                        '    "question": "La question juridique reformulée précisément",\n'
+                        '    "reponse": "Réponse courte directe (1 ligne)",\n'
+                        '    "consequence": "Conséquence pratique principale"\n'
+                        "  },\n"
+                        '  "passe": [\n'
+                        '    { "date": "1992", "texte": "Événement législatif ou jurisprudentiel historique pertinent" }\n'
+                        "  ],\n"
+                        '  "present": {\n'
+                        '    "faits": "Contexte factuel et juridique de la question posée, 3-5 phrases.",\n'
+                        '    "pretentions": [\n'
+                        '      { "partie": "Demandeur (position favorable)", "arg": "Argument en faveur de la thèse A" },\n'
+                        '      { "partie": "Défendeur (position contraire)", "arg": "Argument en faveur de la thèse B" }\n'
+                        "    ],\n"
+                        '    "moyens": ["Point juridique clé 1", "Point juridique clé 2"],\n'
+                        '    "question_droit": "La question de droit précise à trancher.",\n'
+                        '    "raisonnement": "L\'analyse juridique complète et rigoureuse fondée sur les documents du corpus. Paragraphes détaillés.",\n'
+                        '    "visa": ["Art. 312 Code CIMA", "Art. 325 Code CIMA"],\n'
+                        '    "dispositif": "Conclusion juridique claire et applicable."\n'
+                        "  },\n"
+                        '  "futur": {\n'
+                        '    "citations": 0,\n'
+                        '    "decisions": 0,\n'
+                        '    "statut": "consacre",\n'
+                        '    "statut_label": "Consacré en droit CIMA",\n'
+                        '    "usages": [\n'
+                        '      { "annee": "2024", "texte": "Application pratique ou recommandation concrète" }\n'
+                        "    ]\n"
+                        "  },\n"
+                        '  "juges": []\n'
+                        "}\n\n"
+                        "NOTES :\n"
+                        "- passe = évolution législative/jurisprudentielle chronologique\n"
+                        "- futur.usages = recommandations pratiques concrètes\n"
+                        "- juges = [] si aucun juge identifié (c'est le cas par défaut pour les analyses thématiques)\n"
+                        "- Si le corpus ne permet pas de répondre, remplis quand même le JSON avec "
+                        "une réponse honnête indiquant le manque de sources dans les champs textuels.\n\n"
                         f"QUESTION : {req.question}\n\n"
                         f"CORPUS BAOBAB ({len(docs)} document(s)) :\n{context}\n\n"
-                        "Analyse juridique fondée exclusivement sur le corpus ci-dessus :"
+                        "Retourne le JSON ci-dessus complété, sans aucun texte autour :"
                     ),
                 }],
             )
@@ -332,11 +380,20 @@ async def analyze_question(
         except Exception as exc:
             analysis = f"Erreur IA : {exc}"
 
+    import json as json_lib
+    fiche = None
+    if analysis:
+        try:
+            fiche = json_lib.loads(analysis)
+        except Exception:
+            fiche = None
+
     return {
         "question": req.question,
         "corpus": req.corpus,
         "context_docs": docs,
         "analysis": analysis,
+        "fiche": fiche,
         "ai_available": ai_available,
         "quota": quota_info,
     }
