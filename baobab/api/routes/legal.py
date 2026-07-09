@@ -353,11 +353,11 @@ async def analyze_question(
                         '      { "partie": "Demandeur (position favorable)", "arg": "Argument en faveur de la thèse A" },\n'
                         '      { "partie": "Défendeur (position contraire)", "arg": "Argument en faveur de la thèse B" }\n'
                         "    ],\n"
-                        '    "moyens": ["Point juridique clé 1", "Point juridique clé 2"],\n'
-                        '    "question_droit": "La question de droit précise à trancher.",\n'
-                        '    "raisonnement": "L\'analyse juridique complète et rigoureuse fondée sur les documents du corpus. Paragraphes détaillés.",\n'
+                        '    "moyens": ["Point juridique clé 1 — formule courte", "Point juridique clé 2 — formule courte"],\n'
+                        '    "question_droit": "La question de droit précise à trancher — une seule phrase.",\n'
+                        '    "raisonnement": "Analyse juridique rigoureuse. Utilise **gras** pour les termes juridiques clés, des tirets (- point) pour les listes, et des sauts de ligne entre paragraphes. JAMAIS de numérotation (1)...(2)...",\n'
                         '    "visa": ["Art. 312 Code CIMA", "Art. 325 Code CIMA"],\n'
-                        '    "dispositif": "Conclusion juridique claire et applicable."\n'
+                        '    "dispositif": "Conclusion en paragraphes courts ou liste à tirets (- point). Gras pour les obligations/sanctions. JAMAIS de (1)...(2)..."\n'
                         "  },\n"
                         '  "futur": {\n'
                         '    "citations": 0,\n'

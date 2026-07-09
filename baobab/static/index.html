@@ -1351,6 +1351,118 @@
       color: var(--gold);
       text-decoration: none;
     }
+    .bsc-read-btn {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 9px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gold);
+      border: 1px solid rgba(196,149,106,0.35);
+      border-radius: 4px;
+      cursor: pointer;
+      background: rgba(196,149,106,0.06);
+      transition: background .15s, border-color .15s;
+      letter-spacing: .03em;
+    }
+    .bsc-read-btn:hover { background: rgba(196,149,106,0.14); border-color: var(--gold); }
+    /* Modal source viewer */
+    #source-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #source-modal.open { display: flex; }
+    .src-modal-box {
+      background: var(--surface);
+      border: 1px solid rgba(196,149,106,0.2);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 760px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    .src-modal-hdr {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .src-modal-info { flex: 1; min-width: 0; }
+    .src-modal-tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+    .src-modal-titre {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .src-modal-close {
+      flex-shrink: 0;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--sub);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s, border-color .15s;
+    }
+    .src-modal-close:hover { color: var(--text); border-color: var(--sub); }
+    .src-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .src-modal-resume {
+      background: rgba(196,149,106,0.06);
+      border-left: 3px solid rgba(196,149,106,0.4);
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .src-modal-texte {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.8;
+      white-space: pre-wrap;
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    .src-modal-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px;
+      color: var(--sub);
+      font-size: 13px;
+    }
     /* Quota badge */
     .baobab-quota-badge {
       margin: 0 1rem 1rem;
@@ -3351,7 +3463,10 @@ function analyserQuestion() {
         ${d.titre && d.ref && d.titre !== d.ref ? `<div class="bsc-sous-titre">${escHtml(d.titre)}</div>` : ''}
         ${d.resume ? `<div class="bsc-resume">${escHtml(d.resume)}</div>` : ''}
         ${d.sanction ? `<div class="bsc-sanction">⚖ ${escHtml(d.sanction)}</div>` : ''}
-        ${d.source_url ? `<a href="${d.source_url}" target="_blank" class="bsc-link">→ Source</a>` : ''}
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+          <button class="bsc-read-btn" onclick="openSourceDoc('${d.id}')">Lire le texte →</button>
+          ${d.source_url ? `<a href="${d.source_url}" target="_blank" class="bsc-link">↗ Source externe</a>` : ''}
+        </div>
       </div>`).join('');
 
     const q = data.quota || {};
@@ -3416,6 +3531,37 @@ function analyserQuestion() {
   });
 }
 
+function mdToHtml(text) {
+  if (!text) return '';
+  // Split into blocks at double newlines, render each block
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inlineFormat = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const blocks = text.split(/\n{2,}/);
+  return blocks.map(block => {
+    const lines = block.split('\n').filter(l => l.trim());
+    if (!lines.length) return '';
+    // Heading block
+    if (/^#{1,3}\s+/.test(lines[0])) {
+      return lines.map(l => {
+        const m = l.match(/^#{1,3}\s+(.+)/);
+        return m ? `<div style="font-weight:700;color:var(--gold);margin:10px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.04em">${inlineFormat(m[1])}</div>` : `<p>${inlineFormat(l)}</p>`;
+      }).join('');
+    }
+    // Bullet list block
+    if (lines.every(l => /^[-•]\s+/.test(l.trim()))) {
+      const items = lines.map(l => `<li style="margin-bottom:2px">${inlineFormat(l.replace(/^[-•]\s+/,''))}</li>`).join('');
+      return `<ul style="margin:4px 0 8px 18px;display:flex;flex-direction:column">${items}</ul>`;
+    }
+    // Mixed block — render line by line
+    const html = lines.map(l => {
+      if (/^[-•]\s+/.test(l.trim())) return `<li style="margin-bottom:2px">${inlineFormat(l.replace(/^[-•]\s+/,''))}</li>`;
+      if (/^#{1,3}\s+/.test(l)) { const m = l.match(/^#{1,3}\s+(.+)/); return m ? `<div style="font-weight:700;color:var(--gold);margin:8px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.04em">${inlineFormat(m[1])}</div>` : `<span>${inlineFormat(l)}</span>`; }
+      return inlineFormat(l);
+    }).join(' ');
+    return `<p style="margin-bottom:6px">${html}</p>`;
+  }).join('');
+}
+
 function renderFicheArret(d) {
   const stars = '★'.repeat(d.solidite.score) + '☆'.repeat(5 - d.solidite.score);
 
@@ -3464,10 +3610,10 @@ function renderFicheArret(d) {
     { titre: 'Les faits', contenu: `<p>${escHtml(d.present.faits)}</p>` },
     { titre: 'Arguments des parties', contenu: argsHtml },
     { titre: 'Question de droit', contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.question_droit)}</p>` },
-    { titre: 'Raisonnement juridique', contenu: `<p>${escHtml(d.present.raisonnement)}</p>` },
+    { titre: 'Raisonnement juridique', contenu: `<div style="font-size:13px;line-height:1.8;color:var(--text)">${mdToHtml(d.present.raisonnement)}</div>` },
     { titre: 'Visa · Textes appliqués', contenu: `<p style="margin-bottom:10px">Textes sur lesquels l\'analyse est fondée :</p><div class="visa-list">${visaPills}</div>` },
     { titre: 'Points juridiques clés', contenu: d.present.moyens.map((m, i) => `<div class="args-item"><span class="args-num">${i+1}.</span>${escHtml(m)}</div>`).join('') },
-    { titre: 'Conclusion juridique', contenu: `<p style="color:var(--text);font-weight:600">${escHtml(d.present.dispositif)}</p>` },
+    { titre: 'Conclusion juridique', contenu: `<div style="font-size:13px;line-height:1.8;color:var(--text)">${mdToHtml(d.present.dispositif)}</div>` },
     ...(d.juges && d.juges.length > 0 ? [{ titre: 'Profil des magistrats', contenu: `<div class="juges-grid">${jugesHtml}</div>` }] : []),
   ];
 
@@ -3534,7 +3680,7 @@ function renderFicheArret(d) {
           <div class="ppf-step">
             <div class="ppf-dot"></div>
             <div><span class="ppf-date">${escHtml(d.identite.date.split(' ').pop())}</span><br>
-            <span class="ppf-text" style="color:var(--text);font-weight:600">${escHtml(d.present.dispositif)}</span></div>
+            <span class="ppf-text" style="color:var(--text);font-weight:600">${mdToHtml(d.present.dispositif)}</span></div>
           </div>
           <div style="margin-top:10px">
             <div class="visa-list">${visaPills}</div>
@@ -4599,6 +4745,75 @@ analyserQuestion = function() {
   }
   _origAnalyserQuestion();
 };
+
+// ════════════════════════════════════════════════
+// MODAL LECTEUR DE SOURCE
+// ════════════════════════════════════════════════
+
+function openSourceDoc(docId) {
+  const modal = document.getElementById('source-modal');
+  const body  = document.getElementById('source-modal-body');
+  const hdrTag   = document.getElementById('source-modal-tag');
+  const hdrTitre = document.getElementById('source-modal-titre');
+
+  hdrTag.textContent   = '';
+  hdrTitre.textContent = 'Chargement…';
+  body.innerHTML = '<div class="src-modal-loading"><span class="spinner" style="width:18px;height:18px;border-width:2px"></span>Chargement du document…</div>';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  fetch(`/api/v1/legal/corpus/${encodeURIComponent(docId)}`)
+    .then(r => { if (!r.ok) throw new Error('Document introuvable'); return r.json(); })
+    .then(doc => {
+      hdrTag.textContent   = `${(doc.type||'').replace(/_/g,' ')} · ${(doc.corpus||'').toUpperCase()}${doc.pays ? ' · '+doc.pays : ''}${doc.date_decision ? ' · '+doc.date_decision : ''}`;
+      hdrTitre.textContent = doc.titre || doc.ref || 'Document';
+
+      const resumeHtml = doc.resume
+        ? `<div class="src-modal-resume">${escHtml(doc.resume)}</div>` : '';
+
+      const keywords = (doc.mots_cles||[]).length > 0
+        ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">${
+            doc.mots_cles.map(k => `<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(196,149,106,0.1);color:var(--gold);border:1px solid rgba(196,149,106,0.25)">${escHtml(k)}</span>`).join('')
+          }</div>` : '';
+
+      const articles = (doc.articles_cites||[]).length > 0
+        ? `<div style="margin-bottom:14px;font-size:11px;color:var(--sub)">Articles cités : ${doc.articles_cites.map(a => `<span style="color:var(--gold)">${escHtml(a)}</span>`).join(' · ')}</div>` : '';
+
+      const texte = doc.texte_integral
+        ? `<div class="src-modal-texte">${escHtml(doc.texte_integral)}</div>`
+        : '<div style="font-size:12px;color:var(--sub);padding:20px 0;text-align:center">Texte intégral non disponible pour ce document.</div>';
+
+      body.innerHTML = resumeHtml + keywords + articles + texte;
+    })
+    .catch(err => {
+      hdrTitre.textContent = 'Erreur';
+      body.innerHTML = `<div style="padding:20px;color:var(--red);font-size:13px">Impossible de charger le document : ${escHtml(err.message)}</div>`;
+    });
+}
+
+function closeSourceModal() {
+  document.getElementById('source-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSourceModal();
+});
 </script>
+
+<!-- Modal lecteur de source -->
+<div id="source-modal" onclick="if(event.target===this)closeSourceModal()">
+  <div class="src-modal-box">
+    <div class="src-modal-hdr">
+      <div class="src-modal-info">
+        <div class="src-modal-tag" id="source-modal-tag"></div>
+        <div class="src-modal-titre" id="source-modal-titre"></div>
+      </div>
+      <button class="src-modal-close" onclick="closeSourceModal()">✕</button>
+    </div>
+    <div class="src-modal-body" id="source-modal-body"></div>
+  </div>
+</div>
+
 </body>
 </html>
