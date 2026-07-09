@@ -277,38 +277,39 @@ async def analyze_question(req: AnalyzeRequest):
         context_parts.append(snippet)
     context = "\n\n".join(context_parts) if context_parts else "Aucun document trouvé dans le corpus."
 
-    # Étape 2 : appel Claude
-    try:
-        import anthropic
-        client = anthropic.Anthropic()
-        message = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=2048,
-            messages=[{
-                "role": "user",
-                "content": (
-                    "Tu es BAOBAB, un assistant juridique spécialisé en droit africain "
-                    "(CIMA, OHADA, droit ivoirien). Réponds en français de façon précise et structurée.\n\n"
-                    f"QUESTION : {req.question}\n\n"
-                    f"CORPUS DISPONIBLE :\n{context}\n\n"
-                    "Fournis une analyse juridique rigoureuse en citant les textes pertinents."
-                ),
-            }],
-        )
-        analysis = message.content[0].text
-    except ImportError:
-        analysis = (
-            "Module anthropic non disponible. "
-            "Installez-le avec : pip install anthropic"
-        )
-    except Exception as exc:
-        analysis = f"Erreur lors de l'analyse IA : {exc}"
+    # Étape 2 : appel Claude (optionnel — dégradé si clé absente)
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    analysis = None
+    ai_available = bool(api_key)
+
+    if ai_available:
+        try:
+            import anthropic
+            client = anthropic.Anthropic(api_key=api_key)
+            message = client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=2048,
+                messages=[{
+                    "role": "user",
+                    "content": (
+                        "Tu es BAOBAB, un assistant juridique spécialisé en droit africain "
+                        "(CIMA, OHADA, droit ivoirien). Réponds en français de façon précise et structurée.\n\n"
+                        f"QUESTION : {req.question}\n\n"
+                        f"CORPUS DISPONIBLE :\n{context}\n\n"
+                        "Fournis une analyse juridique rigoureuse en citant les textes pertinents."
+                    ),
+                }],
+            )
+            analysis = message.content[0].text
+        except Exception as exc:
+            analysis = f"Erreur IA : {exc}"
 
     return {
         "question": req.question,
         "corpus": req.corpus,
         "context_docs": docs,
         "analysis": analysis,
+        "ai_available": ai_available,
     }
 
 
