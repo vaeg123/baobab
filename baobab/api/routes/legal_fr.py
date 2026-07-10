@@ -42,17 +42,17 @@ async def _get_token() -> str:
     if not PISTE_CLIENT_ID or not PISTE_CLIENT_SECRET:
         raise HTTPException(503, "PISTE non configuré (PISTE_CLIENT_ID / PISTE_CLIENT_SECRET manquants)")
 
+    token_data: dict[str, str] = {
+        "grant_type": "client_credentials",
+        "client_id": PISTE_CLIENT_ID,
+        "client_secret": PISTE_CLIENT_SECRET,
+    }
+    if PISTE_SCOPE:
+        token_data["scope"] = PISTE_SCOPE
+
     try:
         async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.post(
-                PISTE_TOKEN_URL,
-                data={
-                    "grant_type": "client_credentials",
-                    "client_id": PISTE_CLIENT_ID,
-                    "client_secret": PISTE_CLIENT_SECRET,
-                    "scope": PISTE_SCOPE,
-                },
-            )
+            r = await client.post(PISTE_TOKEN_URL, data=token_data)
     except httpx.RequestError as exc:
         raise HTTPException(503, f"Impossible de joindre PISTE OAuth ({PISTE_TOKEN_URL}): {exc}")
 
