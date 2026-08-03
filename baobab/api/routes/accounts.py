@@ -10,6 +10,7 @@ from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
 from baobab.config import settings
+from baobab import notifications
 
 router = APIRouter(tags=["accounts"])
 
@@ -834,19 +835,32 @@ async def create_checkout(workspace_id: str, request: SubscriptionCheckoutCreate
         "provider_reference": f"BAOBAB-{uuid4().hex[:10].upper()}",
     }
     await _save_payment(payment)
+    await notifications.notify_admin_payment_pending(payment, workspace)
     return {
         **payment,
-        "message": "Payment initialized. Provider confirmation must activate the subscription.",
+        "message": (
+            "Demande d'abonnement enregistrée. "
+            "L'administrateur BAOBAB va vérifier votre paiement et activer votre accès sous 24h."
+        ),
     }
 
 
 @router.post("/payments/{payment_id}/confirm")
-async def confirm_payment(payment_id: str):
+async def confirm_payment(
+    payment_id: str,
+    x_superadmin_token: str | None = Header(default=None),
+):
+    _require_superadmin(x_superadmin_token)
     payment = await _load_payment(payment_id)
     if not payment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Payment not found",
+        )
+    if payment["status"] == "confirmed":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Payment already confirmed.",
         )
     workspace = await _get_workspace(payment["workspace_id"])
     payment["status"] = "confirmed"
@@ -858,6 +872,7 @@ async def confirm_payment(payment_id: str):
     ).isoformat()
     await _save_payment(payment)
     await _save_workspace(workspace)
+    await notifications.notify_user_payment_confirmed(payment, workspace)
     return {
         "payment": payment,
         "workspace": await _public_workspace(workspace),

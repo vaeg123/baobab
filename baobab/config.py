@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     neo4j_password: str = "baobab"
     secret_key: str = "dev-secret-key"
     environment: str = "development"
+    resend_api_key: str = ""
+    resend_from: str = "BAOBAB <noreply@baobab.legal>"
+    app_url: str = "https://baobab.legal"
 
 
 settings = Settings()
