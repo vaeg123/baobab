@@ -560,6 +560,7 @@ async def create_workspace(request: WorkspaceCreate):
     )
     await _save_workspace(workspace)
     await notifications.notify_user_workspace_created(workspace)
+    await notifications.notify_admin_new_workspace(workspace)
     return await _admin_workspace(workspace)
 
 

@@ -84,6 +84,40 @@ async def notify_user_workspace_created(workspace: dict) -> bool:
     )
 
 
+async def notify_admin_new_workspace(workspace: dict) -> bool:
+    """Alerte le compte contact dès qu'un nouveau client crée son espace."""
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a">
+      <div style="background:#A67C2A;padding:24px;border-radius:8px 8px 0 0">
+        <h1 style="color:#FDF8F3;margin:0;font-size:20px">🌳 BAOBAB — Nouveau client inscrit</h1>
+      </div>
+      <div style="background:#f9f9f9;padding:24px;border-radius:0 0 8px 8px;border:1px solid #e0e0e0">
+        <p style="margin:0 0 16px">Un nouveau client vient de créer son espace BAOBAB.</p>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+          <tr><td style="padding:8px;color:#555;width:40%">Organisation</td>
+              <td style="padding:8px;font-weight:bold">{workspace['organization_name']}</td></tr>
+          <tr style="background:#fff"><td style="padding:8px;color:#555">Contact</td>
+              <td style="padding:8px">{workspace['owner_name']} — {workspace['email']}</td></tr>
+          <tr><td style="padding:8px;color:#555">Territoire</td>
+              <td style="padding:8px">{workspace['territory']}</td></tr>
+          <tr style="background:#fff"><td style="padding:8px;color:#555">Statut</td>
+              <td style="padding:8px">Espace gratuit créé — formule non encore choisie</td></tr>
+          <tr><td style="padding:8px;color:#555">ID espace</td>
+              <td style="padding:8px;font-family:monospace;font-size:12px">{workspace['workspace_id']}</td></tr>
+        </table>
+        <p style="font-size:12px;color:#888;margin:0">
+          Un second email suivra si ce client soumet une demande d'abonnement.
+        </p>
+      </div>
+    </div>
+    """
+    return await _send(
+        ADMIN_EMAIL,
+        f"[BAOBAB] Nouveau client — {workspace['organization_name']} ({workspace['territory']})",
+        html,
+    )
+
+
 async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
     """Alerte l'admin qu'un paiement est en attente d'approbation."""
     plan_labels = {"basic": "Basic — 5 000 XOF/mois", "premium": "Premium — 10 000 XOF/mois"}
