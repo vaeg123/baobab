@@ -1964,6 +1964,12 @@
     <div class="plans-welcome">
       <div class="plans-welcome-name" id="plans-welcome-name">Votre espace est créé 🎉</div>
       <div class="plans-welcome-sub">Choisissez la formule qui correspond à vos besoins pour accéder à BAOBAB.</div>
+      <div id="plans-access-code-box" style="display:none;margin-top:14px;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;max-width:480px;margin-left:auto;margin-right:auto;text-align:left">
+        <div style="font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">
+          📧 Un email vous a été envoyé · Votre code d'accès (à conserver)
+        </div>
+        <div id="plans-access-code" style="font-family:monospace;font-size:13px;color:var(--clay);font-weight:700;word-break:break-all"></div>
+      </div>
     </div>
 
     <div class="plans-grid" id="plans-grid">
@@ -3478,9 +3484,19 @@ function showPlansScreen(workspace) {
   document.getElementById('plans-pending-box').classList.remove('active');
   _plansSelectedPlan = null;
 
-  const name = (workspace || currentWorkspace)?.organization_name || 'votre organisation';
-  document.getElementById('plans-welcome-name').textContent =
-    `Bienvenue, ${name} 👋`;
+  const ws = workspace || currentWorkspace;
+  const name = ws?.organization_name || 'votre organisation';
+  document.getElementById('plans-welcome-name').textContent = `Bienvenue, ${name} 👋`;
+
+  // Afficher le code d'accès pour que l'utilisateur puisse revenir plus tard
+  const token = ws?.user_token;
+  const codeBox = document.getElementById('plans-access-code-box');
+  if (token) {
+    document.getElementById('plans-access-code').textContent = token;
+    codeBox.style.display = '';
+  } else {
+    codeBox.style.display = 'none';
+  }
 
   ['basic','premium'].forEach(p => {
     document.getElementById(`plan-card-${p}`)?.classList.remove('selected');

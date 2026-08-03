@@ -559,6 +559,7 @@ async def create_workspace(request: WorkspaceCreate):
         territory=request.territory,
     )
     await _save_workspace(workspace)
+    await notifications.notify_user_workspace_created(workspace)
     return await _admin_workspace(workspace)
 
 

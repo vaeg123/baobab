@@ -41,6 +41,49 @@ async def _send(to: str, subject: str, html: str) -> bool:
         return False
 
 
+async def notify_user_workspace_created(workspace: dict) -> bool:
+    """Email de bienvenue envoyé dès la création du compte, avec le code d'accès conservé."""
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a">
+      <div style="background:#BF4E1E;padding:24px;border-radius:8px 8px 0 0">
+        <h1 style="color:#FDF8F3;margin:0;font-size:20px">🌳 BAOBAB — Votre espace est créé</h1>
+      </div>
+      <div style="background:#f9f9f9;padding:24px;border-radius:0 0 8px 8px;border:1px solid #e0e0e0">
+        <p>Bonjour <strong>{workspace['owner_name']}</strong>,</p>
+        <p style="margin:8px 0 16px">
+          Votre espace BAOBAB pour <strong>{workspace['organization_name']}</strong> a bien été créé.
+          Conservez précieusement le code ci-dessous — il vous permettra de vous reconnecter à tout moment.
+        </p>
+        <div style="background:#fff;border:2px solid #BF4E1E;border-radius:8px;padding:16px;margin:20px 0">
+          <p style="margin:0 0 6px;font-size:12px;color:#7A5035;text-transform:uppercase;letter-spacing:1px">
+            Votre code d'accès personnel
+          </p>
+          <p style="margin:0;font-family:monospace;font-size:15px;color:#BF4E1E;font-weight:bold;word-break:break-all">
+            {workspace['user_token']}
+          </p>
+        </div>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">
+          Pour activer votre accès complet, choisissez une formule d'abonnement sur notre site.<br>
+          Votre demande sera traitée sous <strong>24h</strong>.
+        </p>
+        <a href="{APP_URL}" style="display:inline-block;background:#BF4E1E;color:#FDF8F3;padding:12px 24px;
+           border-radius:6px;text-decoration:none;font-weight:bold">
+          Choisir ma formule →
+        </a>
+        <p style="margin:20px 0 0;font-size:11px;color:#aaa">
+          Organisation : {workspace['organization_name']} · Territoire : {workspace['territory']} ·
+          ID espace : {workspace['workspace_id']}
+        </p>
+      </div>
+    </div>
+    """
+    return await _send(
+        workspace["email"],
+        "[BAOBAB] Votre espace est créé — conservez votre code d'accès",
+        html,
+    )
+
+
 async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
     """Alerte l'admin qu'un paiement est en attente d'approbation."""
     plan_labels = {"basic": "Basic — 5 000 XOF/mois", "premium": "Premium — 10 000 XOF/mois"}
