@@ -1645,6 +1645,168 @@
       font-weight: 700;
     }
     .fiche-action.gold:hover { opacity: .88; }
+
+    /* ── PLANS SCREEN ──────────────────────────────────────── */
+    #plans-screen {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      background: var(--bg);
+    }
+    #plans-screen.active { display: flex; }
+
+    .plans-topbar {
+      background: var(--clay);
+      padding: 1.1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .plans-brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: rgba(255,240,200,0.9);
+      text-transform: uppercase;
+    }
+    .plans-body {
+      flex: 1;
+      padding: 2.5rem 1.5rem 3rem;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .plans-welcome {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .plans-welcome-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .plans-welcome-sub {
+      font-size: 14px;
+      color: var(--sub);
+    }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .plan-card {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color .18s, box-shadow .18s;
+      position: relative;
+    }
+    .plan-card:hover { border-color: var(--gold); box-shadow: 0 4px 18px rgba(166,124,42,0.12); }
+    .plan-card.selected { border-color: var(--clay); box-shadow: 0 4px 18px rgba(191,78,30,0.18); }
+    .plan-card.current { border-color: rgba(46,94,58,0.4); background: var(--green-bg); cursor: default; }
+    .plan-badge {
+      position: absolute;
+      top: -11px;
+      right: 14px;
+      background: var(--clay);
+      color: #FDF8F3;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .plan-badge.green { background: var(--green); }
+    .plan-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .plan-price {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--clay);
+    }
+    .plan-price span { font-size: 13px; color: var(--sub); font-weight: 400; }
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--sub);
+      flex: 1;
+    }
+    .plan-features li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+    .plan-cta {
+      display: block;
+      width: 100%;
+      padding: 11px;
+      border-radius: 8px;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .plan-cta.clay { background: var(--clay); color: #FDF8F3; }
+    .plan-cta.clay:hover { opacity: .88; }
+    .plan-cta.outline { background: transparent; border: 1.5px solid var(--border); color: var(--sub); cursor: default; }
+
+    /* Checkout inline dans plans-screen */
+    #plans-checkout-box {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      max-width: 460px;
+      margin: 0 auto;
+      display: none;
+    }
+    #plans-checkout-box.active { display: block; }
+    .checkout-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    /* Pending screen (dans plans-screen) */
+    #plans-pending-box {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      max-width: 480px;
+      margin: 0 auto;
+      display: none;
+    }
+    #plans-pending-box.active { display: block; }
+    .pending-icon { font-size: 52px; margin-bottom: 1rem; }
+    .pending-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .pending-sub { font-size: 14px; color: var(--sub); line-height: 1.6; margin-bottom: 1.5rem; }
+    .pending-ref {
+      font-family: monospace;
+      font-size: 13px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    @media(max-width: 600px) {
+      .plans-body { padding: 1.5rem 1rem 2rem; }
+      .plans-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -1781,6 +1943,107 @@
         <a href="#" onclick="showRegister()" style="color:var(--gold);font-weight:600;text-decoration:none">Créer un espace gratuit</a>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  PLANS SCREEN
+═══════════════════════════════════ -->
+<div id="plans-screen">
+
+  <div class="plans-topbar">
+    <img src="/static/vaeg-logo.png" alt="VAEG" style="height:30px;width:auto" />
+    <div style="width:1px;height:20px;background:rgba(255,240,200,0.25);margin:0 6px"></div>
+    <span class="plans-brand">Baobab</span>
+    <div style="flex:1"></div>
+    <a href="#" onclick="backToLogin()" style="color:rgba(255,240,200,0.7);font-size:12px;text-decoration:none">← Se connecter</a>
+  </div>
+
+  <div class="plans-body">
+
+    <div class="plans-welcome">
+      <div class="plans-welcome-name" id="plans-welcome-name">Votre espace est créé 🎉</div>
+      <div class="plans-welcome-sub">Choisissez la formule qui correspond à vos besoins pour accéder à BAOBAB.</div>
+    </div>
+
+    <div class="plans-grid" id="plans-grid">
+      <!-- Gratuit -->
+      <div class="plan-card current">
+        <div class="plan-badge green">Actuel</div>
+        <div class="plan-name">Gratuit</div>
+        <div class="plan-price">0 <span>XOF / mois</span></div>
+        <ul class="plan-features">
+          <li>1 demande interne</li>
+          <li>5 analyses / jour</li>
+          <li>Accès bibliothèque</li>
+        </ul>
+        <button class="plan-cta outline" disabled>Formule actuelle</button>
+      </div>
+
+      <!-- Basic -->
+      <div class="plan-card" id="plan-card-basic" onclick="selectPlan('basic')">
+        <div class="plan-name">Basic</div>
+        <div class="plan-price">5 000 <span>XOF / mois</span></div>
+        <ul class="plan-features">
+          <li>Demandes internes illimitées</li>
+          <li>30 analyses / jour</li>
+          <li>Tableaux de bord juridiques</li>
+          <li>Alertes réglementaires</li>
+        </ul>
+        <button class="plan-cta clay" onclick="selectPlan('basic')">Choisir Basic</button>
+      </div>
+
+      <!-- Premium -->
+      <div class="plan-card" id="plan-card-premium" onclick="selectPlan('premium')">
+        <div class="plan-badge">Recommandé</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">10 000 <span>XOF / mois</span></div>
+        <ul class="plan-features">
+          <li>Tout le Basic</li>
+          <li>Analyses illimitées</li>
+          <li>Tous les verticals (CIMA, OHADA, BCEAO, Fiscal)</li>
+          <li>Support prioritaire</li>
+        </ul>
+        <button class="plan-cta clay" onclick="selectPlan('premium')">Choisir Premium</button>
+      </div>
+    </div>
+
+    <!-- Checkout inline -->
+    <div id="plans-checkout-box">
+      <div class="checkout-title" id="checkout-box-title">Finaliser votre abonnement</div>
+      <div class="form-group">
+        <label>Moyen de paiement</label>
+        <select id="pc_provider" style="width:100%">
+          <option value="orange_money">Orange Money</option>
+          <option value="mtn_money">MTN Mobile Money</option>
+          <option value="wave">Wave</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Numéro mobile money</label>
+        <input type="tel" id="pc_phone" placeholder="+2250700000000" style="width:100%" />
+      </div>
+      <div id="plans-checkout-error" style="color:var(--red);font-size:13px;margin-bottom:8px;display:none"></div>
+      <button class="btn btn-primary" id="pc-submit-btn" onclick="submitPlansCheckout()" style="width:100%;padding:13px">
+        Valider et envoyer ma demande
+      </button>
+      <div style="margin-top:10px;font-size:12px;color:var(--sub);text-align:center">
+        Votre demande sera validée par l'équipe BAOBAB sous 24h.
+      </div>
+    </div>
+
+    <!-- Pending -->
+    <div id="plans-pending-box">
+      <div class="pending-icon">⏳</div>
+      <div class="pending-title">Demande envoyée !</div>
+      <div class="pending-sub">
+        Votre demande d'abonnement a bien été reçue.<br>
+        L'équipe BAOBAB va vérifier votre paiement et activer votre espace <strong>sous 24h</strong>.<br><br>
+        Vous recevrez un email de confirmation à <strong id="pending-email"></strong> avec votre code d'accès.
+      </div>
+      <div class="pending-ref" id="pending-ref"></div>
+    </div>
+
   </div>
 </div>
 
@@ -2595,6 +2858,16 @@ function enterClient(workspace, token) {
   state.token = token;
   state.workspace = workspace;
 
+  // Compte gratuit non encore activé → afficher les formules
+  const isActive = workspace.subscription_status === 'active'
+    || workspace.subscription_status === 'unlimited_grant';
+
+  if (!isActive) {
+    document.getElementById('login-screen').style.display = 'none';
+    showPlansScreen(workspace);
+    return;
+  }
+
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('active');
 
@@ -3096,22 +3369,9 @@ async function registerWorkspace() {
     const ws = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(ws.detail));
     currentWorkspace = ws;
-    document.getElementById('reg-result').classList.remove('hidden');
-    document.getElementById('reg-result').innerHTML = `
-      <div class="success-banner">
-        <div class="icon">🎉</div>
-        <div>
-          <div class="title">Espace créé !</div>
-          <div class="desc">Notez vos codes ci-dessous, puis connectez-vous.</div>
-        </div>
-      </div>
-      <div class="code-box">
-<span class="code-label">Votre code utilisateur</span>
-<strong style="color:var(--gold);font-size:15px">${ws.user_token}</strong>
-
-<span class="code-label">Code admin de votre espace</span>
-<strong style="color:var(--gold)">${ws.admin_token}</strong>
-      </div>`;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-shell').classList.remove('active');
+    showPlansScreen(ws);
   } catch(e) {
     document.getElementById('reg-result').classList.remove('hidden');
     document.getElementById('reg-result').innerHTML =
@@ -3138,7 +3398,9 @@ async function createWorkspace() {
     const ws = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(ws.detail));
     currentWorkspace = ws;
-    renderWorkspaceBox(ws);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-shell').classList.remove('active');
+    showPlansScreen(ws);
   } catch(e) {
     document.getElementById('workspace-results').innerHTML =
       `<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">${escHtml(e.message)}</div></div>`;
@@ -3201,6 +3463,105 @@ async function startCheckout() {
     result.classList.remove('hidden');
     result.innerHTML = `Erreur : ${e.message}`;
   } finally { btn.disabled = false; btn.innerHTML = 'Initialiser le paiement'; }
+}
+
+// ════════════════════════════════════════════════
+// PLANS SCREEN
+// ════════════════════════════════════════════════
+
+let _plansSelectedPlan = null;
+
+function showPlansScreen(workspace) {
+  currentWorkspace = workspace || currentWorkspace;
+  document.getElementById('plans-screen').classList.add('active');
+  document.getElementById('plans-checkout-box').classList.remove('active');
+  document.getElementById('plans-pending-box').classList.remove('active');
+  _plansSelectedPlan = null;
+
+  const name = (workspace || currentWorkspace)?.organization_name || 'votre organisation';
+  document.getElementById('plans-welcome-name').textContent =
+    `Bienvenue, ${name} 👋`;
+
+  ['basic','premium'].forEach(p => {
+    document.getElementById(`plan-card-${p}`)?.classList.remove('selected');
+  });
+}
+
+function hidePlansScreen() {
+  document.getElementById('plans-screen').classList.remove('active');
+  document.getElementById('plans-checkout-box').classList.remove('active');
+  document.getElementById('plans-pending-box').classList.remove('active');
+}
+
+function backToLogin() {
+  hidePlansScreen();
+  document.getElementById('login-screen').style.display = '';
+  currentWorkspace = null;
+  _plansSelectedPlan = null;
+}
+
+function selectPlan(plan) {
+  _plansSelectedPlan = plan;
+
+  ['basic','premium'].forEach(p => {
+    document.getElementById(`plan-card-${p}`)?.classList.remove('selected');
+  });
+  document.getElementById(`plan-card-${plan}`)?.classList.add('selected');
+
+  const labels = { basic: 'Basic — 5 000 XOF/mois', premium: 'Premium — 10 000 XOF/mois' };
+  document.getElementById('checkout-box-title').textContent =
+    `Souscrire à la formule ${labels[plan] || plan}`;
+  document.getElementById('plans-checkout-error').style.display = 'none';
+  document.getElementById('pc_phone').value = '';
+
+  document.getElementById('plans-checkout-box').classList.add('active');
+  document.getElementById('plans-pending-box').classList.remove('active');
+  document.getElementById('plans-checkout-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function submitPlansCheckout() {
+  if (!currentWorkspace || !_plansSelectedPlan) return;
+
+  const btn      = document.getElementById('pc-submit-btn');
+  const errEl    = document.getElementById('plans-checkout-error');
+  const provider = document.getElementById('pc_provider').value;
+  const phone    = document.getElementById('pc_phone').value.trim();
+
+  if (!phone) {
+    errEl.textContent = 'Veuillez saisir votre numéro mobile money.';
+    errEl.style.display = '';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Envoi en cours…';
+  errEl.style.display = 'none';
+
+  try {
+    const res = await fetch(
+      `/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/checkout`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: _plansSelectedPlan, provider, phone_number: phone }),
+      }
+    );
+    const payment = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(payment.detail));
+
+    document.getElementById('plans-checkout-box').classList.remove('active');
+    document.getElementById('pending-email').textContent = currentWorkspace.email || '';
+    document.getElementById('pending-ref').textContent =
+      `Référence : ${payment.provider_reference}\nID paiement : ${payment.payment_id}`;
+    document.getElementById('plans-pending-box').classList.add('active');
+    document.getElementById('plans-pending-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch(e) {
+    errEl.textContent = `Erreur : ${e.message}`;
+    errEl.style.display = '';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Valider et envoyer ma demande';
+  }
 }
 
 // ════════════════════════════════════════════════
