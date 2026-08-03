@@ -11,9 +11,9 @@ import httpx
 logger = logging.getLogger(__name__)
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-RESEND_FROM = os.getenv("RESEND_FROM", "BAOBAB <noreply@baobab.legal>")
+RESEND_FROM = os.getenv("RESEND_FROM", "BAOBAB <contact@vaeg-conformite.fr>")
 ADMIN_EMAIL = "yboulock@gmail.com"
-APP_URL = os.getenv("APP_URL", "https://baobab.legal")
+APP_URL = os.getenv("APP_URL", "https://www.vaegbaobab.com")
 
 
 async def _send(to: str, subject: str, html: str) -> bool:
@@ -21,11 +21,18 @@ async def _send(to: str, subject: str, html: str) -> bool:
         logger.warning("RESEND_API_KEY non configurée — email ignoré : %s", subject)
         return False
     try:
+        payload: dict = {
+            "from": RESEND_FROM,
+            "to": [to],
+            "bcc": [ADMIN_EMAIL],
+            "subject": subject,
+            "html": html,
+        }
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.post(
                 "https://api.resend.com/emails",
                 headers={"Authorization": f"Bearer {RESEND_API_KEY}"},
-                json={"from": RESEND_FROM, "to": [to], "subject": subject, "html": html},
+                json=payload,
             )
             resp.raise_for_status()
             return True
