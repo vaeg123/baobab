@@ -11,8 +11,11 @@ class Settings(BaseSettings):
     secret_key: str = "dev-secret-key"
     environment: str = "development"
     resend_api_key: str = ""
-    resend_from: str = "BAOBAB <noreply@baobab.legal>"
-    app_url: str = "https://baobab.legal"
+    resend_from: str = "BAOBAB <contact@vaeg-conformite.fr>"
+    app_url: str = "https://www.vaegbaobab.com"
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_currency: str = "xof"
 
 
 settings = Settings()

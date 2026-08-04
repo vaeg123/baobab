@@ -2017,24 +2017,16 @@
     <!-- Checkout inline -->
     <div id="plans-checkout-box">
       <div class="checkout-title" id="checkout-box-title">Finaliser votre abonnement</div>
-      <div class="form-group">
-        <label>Moyen de paiement</label>
-        <select id="pc_provider" style="width:100%">
-          <option value="orange_money">Orange Money</option>
-          <option value="mtn_money">MTN Mobile Money</option>
-          <option value="wave">Wave</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Numéro mobile money</label>
-        <input type="tel" id="pc_phone" placeholder="+2250700000000" style="width:100%" />
-      </div>
+      <p style="font-size:13px;color:var(--sub);margin-bottom:1.25rem">
+        Paiement sécurisé par carte bancaire via Stripe. Vous serez redirigé vers la page de paiement Stripe.
+      </p>
       <div id="plans-checkout-error" style="color:var(--red);font-size:13px;margin-bottom:8px;display:none"></div>
-      <button class="btn btn-primary" id="pc-submit-btn" onclick="submitPlansCheckout()" style="width:100%;padding:13px">
-        Valider et envoyer ma demande
+      <button class="btn btn-primary" id="pc-submit-btn" onclick="submitPlansCheckout()" style="width:100%;padding:14px;display:flex;align-items:center;justify-content:center;gap:10px">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#635BFF"/><rect x="5" y="11" width="22" height="3" rx="1.5" fill="#fff" opacity=".9"/><rect x="5" y="18" width="8" height="3" rx="1.5" fill="#fff" opacity=".7"/></svg>
+        Payer par carte Stripe
       </button>
       <div style="margin-top:10px;font-size:12px;color:var(--sub);text-align:center">
-        Votre demande sera validée par l'équipe BAOBAB sous 24h.
+        🔒 Paiement chiffré SSL — vos données bancaires ne transitent jamais par nos serveurs.
       </div>
     </div>
 
@@ -3538,45 +3530,32 @@ function selectPlan(plan) {
 async function submitPlansCheckout() {
   if (!currentWorkspace || !_plansSelectedPlan) return;
 
-  const btn      = document.getElementById('pc-submit-btn');
-  const errEl    = document.getElementById('plans-checkout-error');
-  const provider = document.getElementById('pc_provider').value;
-  const phone    = document.getElementById('pc_phone').value.trim();
-
-  if (!phone) {
-    errEl.textContent = 'Veuillez saisir votre numéro mobile money.';
-    errEl.style.display = '';
-    return;
-  }
+  const btn   = document.getElementById('pc-submit-btn');
+  const errEl = document.getElementById('plans-checkout-error');
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Envoi en cours…';
+  btn.innerHTML = '<span class="spinner"></span>Redirection vers Stripe…';
   errEl.style.display = 'none';
 
   try {
     const res = await fetch(
-      `/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/checkout`,
+      `/api/v1/stripe/checkout/${currentWorkspace.workspace_id}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: _plansSelectedPlan, provider, phone_number: phone }),
+        body: JSON.stringify({ plan: _plansSelectedPlan }),
       }
     );
-    const payment = await parseJson(res);
-    if (!res.ok) throw new Error(fmtError(payment.detail));
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(data.detail));
 
-    document.getElementById('plans-checkout-box').classList.remove('active');
-    document.getElementById('pending-email').textContent = currentWorkspace.email || '';
-    document.getElementById('pending-ref').textContent =
-      `Référence : ${payment.provider_reference}\nID paiement : ${payment.payment_id}`;
-    document.getElementById('plans-pending-box').classList.add('active');
-    document.getElementById('plans-pending-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Redirection vers la page Stripe Checkout
+    window.location.href = data.url;
   } catch(e) {
     errEl.textContent = `Erreur : ${e.message}`;
     errEl.style.display = '';
-  } finally {
     btn.disabled = false;
-    btn.innerHTML = 'Valider et envoyer ma demande';
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#635BFF"/><rect x="5" y="11" width="22" height="3" rx="1.5" fill="#fff" opacity=".9"/><rect x="5" y="18" width="8" height="3" rx="1.5" fill="#fff" opacity=".7"/></svg> Payer par carte Stripe';
   }
 }
 
@@ -5264,6 +5243,43 @@ function closeSourceModal() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSourceModal();
 });
+
+// Gestion retour Stripe (success / cancelled)
+(function handleStripeReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const payment = params.get('payment');
+  const workspaceId = params.get('workspace_id');
+  if (!payment) return;
+
+  // Nettoyer l'URL sans recharger la page
+  window.history.replaceState({}, '', window.location.pathname);
+
+  if (payment === 'success') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('plans-screen').classList.add('active');
+    document.getElementById('plans-checkout-box').classList.remove('active');
+    document.getElementById('plans-grid').style.display = 'none';
+
+    document.getElementById('plans-welcome-name').textContent = 'Paiement reçu 🎉';
+    document.getElementById('plans-access-code-box').style.display = 'none';
+
+    const pendingBox = document.getElementById('plans-pending-box');
+    pendingBox.classList.add('active');
+    document.getElementById('pending-email').textContent = 'votre adresse email';
+    document.getElementById('pending-ref').textContent =
+      workspaceId ? `Espace : ${workspaceId}` : '';
+
+    // Surcharger le message pour le cas Stripe
+    pendingBox.querySelector('.pending-title').textContent = 'Paiement confirmé !';
+    pendingBox.querySelector('.pending-sub').innerHTML =
+      'Votre paiement Stripe a bien été reçu.<br>' +
+      'Votre espace BAOBAB va être activé sous quelques minutes.<br><br>' +
+      'Vous recevrez un email de confirmation avec votre code d\'accès.';
+  } else if (payment === 'cancelled') {
+    // Retour silencieux à la page d'accueil
+    document.getElementById('login-screen').style.display = '';
+  }
+})();
 </script>
 
 <!-- Modal lecteur de source -->
