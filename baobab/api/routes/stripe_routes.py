@@ -33,13 +33,13 @@ PLAN_PRICES_XOF = {
 }
 
 
-def _stripe_client() -> stripe.Stripe:
+def _stripe_client() -> stripe.StripeClient:
     if not settings.stripe_secret_key:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Stripe non configuré sur ce serveur.",
         )
-    return stripe.Stripe(settings.stripe_secret_key)
+    return stripe.StripeClient(settings.stripe_secret_key)
 
 
 class CheckoutRequest(BaseModel):
@@ -120,10 +120,10 @@ async def stripe_webhook(
 
     client = _stripe_client()
     try:
-        event = client.webhooks.construct_event(
+        event = client.construct_event(
             payload, stripe_signature or "", settings.stripe_webhook_secret
         )
-    except stripe.errors.SignatureVerificationError:
+    except stripe.SignatureVerificationError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Signature Stripe invalide.")
 
