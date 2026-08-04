@@ -1943,31 +1943,28 @@
         <a href="#" onclick="showRegister()" style="color:var(--gold);font-weight:600;text-decoration:none">Créer un espace gratuit</a>
       </div>
 
-      <div style="margin-top:2rem;border-top:1px solid var(--border);padding-top:1.5rem">
-        <div id="superadmin-login-section" style="display:none">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:1rem">Espace BAOBAB — Administration</div>
-          <div class="form-group" style="margin-bottom:0.75rem">
-            <label>Email</label>
-            <input type="email" id="sa_login_email" placeholder="admin@vaegbaobab.com" autocomplete="off" style="font-size:14px;padding:12px 14px" />
-          </div>
-          <div class="form-group" style="margin-bottom:1rem">
-            <label>Mot de passe</label>
-            <input type="password" id="sa_login_password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doSuperadminLogin()" style="font-size:14px;padding:12px 14px" />
-          </div>
-          <button class="btn btn-primary" onclick="doSuperadminLogin()" id="sa-login-btn" style="width:100%;padding:12px">Connexion superadmin</button>
-          <div style="margin-top:8px;text-align:center;font-size:12px;color:var(--sub)">
-            <a href="#" onclick="showSuperadminSetup()" style="color:var(--sub)">Première connexion ? Configurer votre compte</a>
-          </div>
+      <div id="superadmin-login-section" style="display:none;margin-top:2rem;border-top:1px solid var(--border);padding-top:1.5rem">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:1rem">Administration</div>
+        <div class="form-group" style="margin-bottom:0.75rem">
+          <label>Email</label>
+          <input type="email" id="sa_login_email" placeholder="admin@vaegbaobab.com" autocomplete="off" style="font-size:14px;padding:12px 14px" />
         </div>
-        <div id="superadmin-setup-section" style="display:none">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--clay);margin-bottom:1rem">Configuration initiale superadmin</div>
-          <div class="form-group" style="margin-bottom:0.75rem"><label>Email</label><input type="email" id="sa_setup_email" placeholder="admin@vaegbaobab.com" style="font-size:14px;padding:12px 14px" /></div>
-          <div class="form-group" style="margin-bottom:0.75rem"><label>Mot de passe</label><input type="password" id="sa_setup_password" placeholder="Min. 8 caractères" style="font-size:14px;padding:12px 14px" /></div>
-          <div class="form-group" style="margin-bottom:1rem"><label>Token de bootstrap</label><input type="password" id="sa_setup_token" placeholder="BAOBAB_SUPERADMIN_TOKEN" style="font-size:14px;padding:12px 14px" /></div>
-          <button class="btn btn-primary" onclick="doSuperadminSetup()" id="sa-setup-btn" style="width:100%;padding:12px;background:var(--clay)">Créer le compte superadmin</button>
-          <div style="margin-top:8px;text-align:center;font-size:12px"><a href="#" onclick="showSuperadminLogin()" style="color:var(--sub)">← Retour à la connexion</a></div>
+        <div class="form-group" style="margin-bottom:1rem">
+          <label>Mot de passe</label>
+          <input type="password" id="sa_login_password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doSuperadminLogin()" style="font-size:14px;padding:12px 14px" />
         </div>
-        <a href="#" id="toggle-superadmin-link" onclick="toggleSuperadminSection()" style="display:block;text-align:center;font-size:11px;color:var(--sub);text-decoration:none;opacity:0.5">Espace administration BAOBAB</a>
+        <button class="btn btn-primary" onclick="doSuperadminLogin()" id="sa-login-btn" style="width:100%;padding:12px">Connexion</button>
+        <div style="margin-top:8px;text-align:center;font-size:12px;color:var(--sub)">
+          <a href="#" onclick="showSuperadminSetup()" style="color:var(--sub)">Première connexion ? Configurer votre compte</a>
+        </div>
+      </div>
+      <div id="superadmin-setup-section" style="display:none;margin-top:2rem;border-top:1px solid var(--border);padding-top:1.5rem">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--clay);margin-bottom:1rem">Configuration initiale</div>
+        <div class="form-group" style="margin-bottom:0.75rem"><label>Email</label><input type="email" id="sa_setup_email" placeholder="admin@vaegbaobab.com" style="font-size:14px;padding:12px 14px" /></div>
+        <div class="form-group" style="margin-bottom:0.75rem"><label>Mot de passe</label><input type="password" id="sa_setup_password" placeholder="Min. 8 caractères" style="font-size:14px;padding:12px 14px" /></div>
+        <div class="form-group" style="margin-bottom:1rem"><label>Token de bootstrap</label><input type="password" id="sa_setup_token" placeholder="••••••••••••" style="font-size:14px;padding:12px 14px" /></div>
+        <button class="btn btn-primary" onclick="doSuperadminSetup()" id="sa-setup-btn" style="width:100%;padding:12px;background:var(--clay)">Créer le compte</button>
+        <div style="margin-top:8px;text-align:center;font-size:12px"><a href="#" onclick="showSuperadminLogin()" style="color:var(--sub)">← Retour</a></div>
       </div>
     </div>
   </div>
@@ -2868,14 +2865,23 @@ function showLoginError(msg) {
   el.style.display = 'block';
 }
 
-function toggleSuperadminSection() {
-  const section = document.getElementById('superadmin-login-section');
-  const link = document.getElementById('toggle-superadmin-link');
-  const isVisible = section.style.display !== 'none';
-  section.style.display = isVisible ? 'none' : '';
-  document.getElementById('superadmin-setup-section').style.display = 'none';
-  link.style.opacity = isVisible ? '0.5' : '0';
+let _saClickCount = 0, _saClickTimer = null;
+function _onLoginLogoClick() {
+  _saClickCount++;
+  clearTimeout(_saClickTimer);
+  _saClickTimer = setTimeout(() => { _saClickCount = 0; }, 1500);
+  if (_saClickCount >= 5) {
+    _saClickCount = 0;
+    const section = document.getElementById('superadmin-login-section');
+    const isVisible = section.style.display !== 'none';
+    section.style.display = isVisible ? 'none' : '';
+    document.getElementById('superadmin-setup-section').style.display = 'none';
+  }
 }
+document.addEventListener('DOMContentLoaded', function() {
+  const loginLeft = document.querySelector('.login-left');
+  if (loginLeft) loginLeft.addEventListener('click', _onLoginLogoClick);
+});
 
 function showSuperadminSetup() {
   document.getElementById('superadmin-login-section').style.display = 'none';
