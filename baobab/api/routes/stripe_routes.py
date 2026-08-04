@@ -62,29 +62,36 @@ async def create_stripe_checkout(workspace_id: str, request: CheckoutRequest):
     currency = settings.stripe_currency
     app_url = settings.app_url
 
-    session = client.v1.checkout.sessions.create({
-        "payment_method_types": ["card"],
-        "line_items": [{
-            "price_data": {
-                "currency": currency,
-                "product_data": {
-                    "name": f"BAOBAB {plan_name}",
-                    "description": f"Abonnement mensuel BAOBAB {plan_name} — Legal OS for Africa",
+    try:
+        session = client.v1.checkout.sessions.create({
+            "payment_method_types": ["card"],
+            "line_items": [{
+                "price_data": {
+                    "currency": currency,
+                    "product_data": {
+                        "name": f"BAOBAB {plan_name}",
+                        "description": f"Abonnement mensuel BAOBAB {plan_name} — Legal OS for Africa",
+                    },
+                    "unit_amount": amount,
+                    "recurring": {"interval": "month"},
                 },
-                "unit_amount": amount,
-                "recurring": {"interval": "month"},
+                "quantity": 1,
+            }],
+            "mode": "subscription",
+            "success_url": f"{app_url}?payment=success&workspace_id={workspace_id}",
+            "cancel_url": f"{app_url}?payment=cancelled",
+            "customer_email": workspace["email"],
+            "metadata": {
+                "workspace_id": workspace_id,
+                "plan": request.plan,
             },
-            "quantity": 1,
-        }],
-        "mode": "subscription",
-        "success_url": f"{app_url}?payment=success&workspace_id={workspace_id}",
-        "cancel_url": f"{app_url}?payment=cancelled",
-        "customer_email": workspace["email"],
-        "metadata": {
-            "workspace_id": workspace_id,
-            "plan": request.plan,
-        },
-    })
+        })
+    except stripe.StripeError as e:
+        logger.error("Stripe API error: %s", e.user_message if hasattr(e, 'user_message') else str(e))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=str(e),
+        )
 
     # Enregistrer le paiement en statut pending
     payment = {
