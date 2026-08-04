@@ -3520,7 +3520,6 @@ function selectPlan(plan) {
   document.getElementById('checkout-box-title').textContent =
     `Souscrire à la formule ${labels[plan] || plan}`;
   document.getElementById('plans-checkout-error').style.display = 'none';
-  document.getElementById('pc_phone').value = '';
 
   document.getElementById('plans-checkout-box').classList.add('active');
   document.getElementById('plans-pending-box').classList.remove('active');
