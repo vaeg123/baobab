@@ -62,9 +62,9 @@ async def create_stripe_checkout(workspace_id: str, request: CheckoutRequest):
     currency = settings.stripe_currency
     app_url = settings.app_url
 
-    session = client.checkout.sessions.create(
-        payment_method_types=["card"],
-        line_items=[{
+    session = client.v1.checkout.sessions.create({
+        "payment_method_types": ["card"],
+        "line_items": [{
             "price_data": {
                 "currency": currency,
                 "product_data": {
@@ -76,15 +76,15 @@ async def create_stripe_checkout(workspace_id: str, request: CheckoutRequest):
             },
             "quantity": 1,
         }],
-        mode="subscription",
-        success_url=f"{app_url}?payment=success&workspace_id={workspace_id}",
-        cancel_url=f"{app_url}?payment=cancelled",
-        customer_email=workspace["email"],
-        metadata={
+        "mode": "subscription",
+        "success_url": f"{app_url}?payment=success&workspace_id={workspace_id}",
+        "cancel_url": f"{app_url}?payment=cancelled",
+        "customer_email": workspace["email"],
+        "metadata": {
             "workspace_id": workspace_id,
             "plan": request.plan,
         },
-    )
+    })
 
     # Enregistrer le paiement en statut pending
     payment = {
