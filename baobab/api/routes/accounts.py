@@ -397,7 +397,7 @@ async def _list_payments() -> list[dict]:
 
 async def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> dict:
     workspace = await _get_workspace(workspace_id)
-    if x_admin_token != workspace["admin_token"]:
+    if x_admin_token != workspace.get("admin_token"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Workspace admin token required",
@@ -419,8 +419,8 @@ async def _public_workspace(workspace: dict) -> dict:
 async def _admin_workspace(workspace: dict) -> dict:
     return {
         **await _public_workspace(workspace),
-        "admin_token": workspace["admin_token"],
-        "user_token": workspace["user_token"],
+        "admin_token": workspace.get("admin_token"),
+        "user_token": workspace.get("user_token"),
     }
 
 
