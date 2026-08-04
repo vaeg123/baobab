@@ -1942,6 +1942,33 @@
         Pas encore d'espace ?
         <a href="#" onclick="showRegister()" style="color:var(--gold);font-weight:600;text-decoration:none">Créer un espace gratuit</a>
       </div>
+
+      <div style="margin-top:2rem;border-top:1px solid var(--border);padding-top:1.5rem">
+        <div id="superadmin-login-section" style="display:none">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:1rem">Espace BAOBAB — Administration</div>
+          <div class="form-group" style="margin-bottom:0.75rem">
+            <label>Email</label>
+            <input type="email" id="sa_login_email" placeholder="admin@vaegbaobab.com" autocomplete="off" style="font-size:14px;padding:12px 14px" />
+          </div>
+          <div class="form-group" style="margin-bottom:1rem">
+            <label>Mot de passe</label>
+            <input type="password" id="sa_login_password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doSuperadminLogin()" style="font-size:14px;padding:12px 14px" />
+          </div>
+          <button class="btn btn-primary" onclick="doSuperadminLogin()" id="sa-login-btn" style="width:100%;padding:12px">Connexion superadmin</button>
+          <div style="margin-top:8px;text-align:center;font-size:12px;color:var(--sub)">
+            <a href="#" onclick="showSuperadminSetup()" style="color:var(--sub)">Première connexion ? Configurer votre compte</a>
+          </div>
+        </div>
+        <div id="superadmin-setup-section" style="display:none">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--clay);margin-bottom:1rem">Configuration initiale superadmin</div>
+          <div class="form-group" style="margin-bottom:0.75rem"><label>Email</label><input type="email" id="sa_setup_email" placeholder="admin@vaegbaobab.com" style="font-size:14px;padding:12px 14px" /></div>
+          <div class="form-group" style="margin-bottom:0.75rem"><label>Mot de passe</label><input type="password" id="sa_setup_password" placeholder="Min. 8 caractères" style="font-size:14px;padding:12px 14px" /></div>
+          <div class="form-group" style="margin-bottom:1rem"><label>Token de bootstrap</label><input type="password" id="sa_setup_token" placeholder="BAOBAB_SUPERADMIN_TOKEN" style="font-size:14px;padding:12px 14px" /></div>
+          <button class="btn btn-primary" onclick="doSuperadminSetup()" id="sa-setup-btn" style="width:100%;padding:12px;background:var(--clay)">Créer le compte superadmin</button>
+          <div style="margin-top:8px;text-align:center;font-size:12px"><a href="#" onclick="showSuperadminLogin()" style="color:var(--sub)">← Retour à la connexion</a></div>
+        </div>
+        <a href="#" id="toggle-superadmin-link" onclick="toggleSuperadminSection()" style="display:block;text-align:center;font-size:11px;color:var(--sub);text-decoration:none;opacity:0.5">Espace administration BAOBAB</a>
+      </div>
     </div>
   </div>
 </div>
@@ -2841,6 +2868,77 @@ function showLoginError(msg) {
   el.style.display = 'block';
 }
 
+function toggleSuperadminSection() {
+  const section = document.getElementById('superadmin-login-section');
+  const link = document.getElementById('toggle-superadmin-link');
+  const isVisible = section.style.display !== 'none';
+  section.style.display = isVisible ? 'none' : '';
+  document.getElementById('superadmin-setup-section').style.display = 'none';
+  link.style.opacity = isVisible ? '0.5' : '0';
+}
+
+function showSuperadminSetup() {
+  document.getElementById('superadmin-login-section').style.display = 'none';
+  document.getElementById('superadmin-setup-section').style.display = '';
+}
+
+function showSuperadminLogin() {
+  document.getElementById('superadmin-setup-section').style.display = 'none';
+  document.getElementById('superadmin-login-section').style.display = '';
+}
+
+async function doSuperadminLogin() {
+  const email = document.getElementById('sa_login_email').value.trim();
+  const password = document.getElementById('sa_login_password').value;
+  if (!email || !password) { showLoginError('Email et mot de passe requis.'); return; }
+
+  const btn = document.getElementById('sa-login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Connexion…';
+
+  try {
+    const res = await fetch('/api/v1/superadmin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    enterSuperadmin(data.token);
+  } catch(e) {
+    showLoginError(e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Connexion superadmin';
+  }
+}
+
+async function doSuperadminSetup() {
+  const email = document.getElementById('sa_setup_email').value.trim();
+  const password = document.getElementById('sa_setup_password').value;
+  const bootstrap_token = document.getElementById('sa_setup_token').value.trim();
+  if (!email || !password || !bootstrap_token) { showLoginError('Tous les champs sont requis.'); return; }
+  if (password.length < 8) { showLoginError('Mot de passe : minimum 8 caractères.'); return; }
+
+  const btn = document.getElementById('sa-setup-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Création…';
+
+  try {
+    const res = await fetch('/api/v1/superadmin/setup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, bootstrap_token }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    enterSuperadmin(data.token);
+  } catch(e) {
+    showLoginError(e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Créer le compte superadmin';
+  }
+}
+
 function showRegister() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('active');
@@ -3186,7 +3284,7 @@ async function createClientWorkspace() {
   try {
     const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(payload)
     });
     const ws = await parseJson(res);
@@ -3211,8 +3309,8 @@ async function loadSuperadminData() {
 
   try {
     const [ovRes, wsRes] = await Promise.all([
-      fetch('/api/v1/accounts/superadmin/overview',   { headers: { 'X-Superadmin-Token': token } }),
-      fetch('/api/v1/accounts/superadmin/workspaces', { headers: { 'X-Superadmin-Token': token } }),
+      fetch('/api/v1/accounts/superadmin/overview',   { headers: { 'Authorization': `Bearer ${token}` } }),
+      fetch('/api/v1/accounts/superadmin/workspaces', { headers: { 'Authorization': `Bearer ${token}` } }),
     ]);
     const overview = await parseJson(ovRes);
     const wsData   = await parseJson(wsRes);
@@ -3282,7 +3380,7 @@ async function createNewWorkspace() {
   try {
     const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Superadmin-Token': token },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(payload)
     });
     const ws = await parseJson(res);

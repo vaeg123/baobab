@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
     stripe_currency: str = "xof"
+    jwt_secret: str = "dev-jwt-secret-change-me"
 
 
 settings = Settings()

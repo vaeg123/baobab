@@ -9,6 +9,7 @@ import asyncpg
 from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
+from baobab.auth import verify_superadmin_jwt
 from baobab.config import settings
 from baobab import notifications
 
@@ -64,7 +65,6 @@ PLAN_CATALOG = {
 WORKSPACES: dict[str, dict] = {}
 INTERNAL_REQUESTS: dict[str, dict] = {}
 PAYMENTS: dict[str, dict] = {}
-SUPERADMIN_TOKEN = os.getenv("BAOBAB_SUPERADMIN_TOKEN", "baobab-superadmin-dev")
 DB_INITIALIZED = False
 
 
@@ -145,12 +145,13 @@ class SuperadminWorkspaceUpdate(BaseModel):
     branding: WorkspaceBranding | None = None
 
 
-def _require_superadmin(x_superadmin_token: str | None) -> None:
-    if x_superadmin_token != SUPERADMIN_TOKEN:
+def _require_superadmin(authorization: str | None) -> None:
+    if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Superadmin token required",
+            detail="Bearer token superadmin requis.",
         )
+    verify_superadmin_jwt(authorization[7:], settings.jwt_secret)
 
 
 def _normalize_database_url(database_url: str) -> str:
@@ -615,13 +616,6 @@ async def admin_login(request: AdminLogin):
 
 @router.post("/access/login")
 async def access_login(request: AccessLogin):
-    if request.access_code == SUPERADMIN_TOKEN:
-        return {
-            "role": "superadmin",
-            "token": request.access_code,
-            "message": "Superadmin access granted",
-        }
-
     for workspace in await _list_workspaces():
         if workspace.get("user_token") == request.access_code:
             return {
@@ -684,9 +678,9 @@ async def update_admin_internal_request(
 
 @router.get("/superadmin/overview")
 async def get_superadmin_overview(
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     workspaces = await _list_workspaces()
     requests = await _list_internal_requests()
     payments = await _list_payments()
@@ -719,18 +713,18 @@ async def get_superadmin_overview(
 
 @router.get("/superadmin/workspaces")
 async def list_superadmin_workspaces(
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     return {"workspaces": [await _admin_workspace(workspace) for workspace in await _list_workspaces()]}
 
 
 @router.post("/superadmin/workspaces", status_code=status.HTTP_201_CREATED)
 async def create_superadmin_workspace(
     request: SuperadminWorkspaceCreate,
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     workspace = _create_workspace_record(
         owner_name=request.owner_name,
         email=request.email,
@@ -753,9 +747,9 @@ async def create_superadmin_workspace(
 async def update_superadmin_workspace(
     workspace_id: str,
     request: SuperadminWorkspaceUpdate,
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     workspace = await _get_workspace(workspace_id)
     updates = request.model_dump(exclude_unset=True)
 
@@ -787,9 +781,9 @@ async def update_superadmin_workspace(
 @router.post("/superadmin/workspaces/{workspace_id}/admin-token")
 async def regenerate_superadmin_workspace_admin_token(
     workspace_id: str,
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     workspace = await _get_workspace(workspace_id)
     workspace["admin_token"] = f"adm_{uuid4().hex}"
     workspace["updated_at"] = datetime.now(UTC).isoformat()
@@ -799,17 +793,17 @@ async def regenerate_superadmin_workspace_admin_token(
 
 @router.get("/superadmin/internal-requests")
 async def list_superadmin_internal_requests(
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     return {"requests": await _list_internal_requests()}
 
 
 @router.get("/superadmin/payments")
 async def list_superadmin_payments(
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     return {"payments": await _list_payments()}
 
 
@@ -850,9 +844,9 @@ async def create_checkout(workspace_id: str, request: SubscriptionCheckoutCreate
 @router.post("/payments/{payment_id}/confirm")
 async def confirm_payment(
     payment_id: str,
-    x_superadmin_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
 ):
-    _require_superadmin(x_superadmin_token)
+    _require_superadmin(authorization)
     payment = await _load_payment(payment_id)
     if not payment:
         raise HTTPException(
