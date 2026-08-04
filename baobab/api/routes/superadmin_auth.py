@@ -1,7 +1,8 @@
+import hashlib
+import hmac
 import os
 from datetime import UTC, datetime
 
-import bcrypt
 from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
@@ -10,6 +11,19 @@ from baobab.config import settings
 from baobab.api.routes.accounts import _connect_db, _use_database
 
 router = APIRouter(tags=["superadmin-auth"])
+
+
+def _hash_password(password: str) -> str:
+    salt = os.urandom(32)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 260_000)
+    return (salt + key).hex()
+
+
+def _verify_password(password: str, stored: str) -> bool:
+    data = bytes.fromhex(stored)
+    salt, key = data[:32], data[32:]
+    new_key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 260_000)
+    return hmac.compare_digest(key, new_key)
 
 
 class SuperadminSetup(BaseModel):
@@ -50,108 +64,72 @@ async def setup_superadmin(request: SuperadminSetup):
             detail="Token de bootstrap invalide.",
         )
 
-    await _ensure_superadmin_table()
-
     if not _use_database():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Base de données requise pour la configuration superadmin.",
         )
 
+    await _ensure_superadmin_table()
     conn = await _connect_db()
     try:
-        existing = await conn.fetchrow(
-            "SELECT id FROM account_superadmins LIMIT 1"
-        )
+        existing = await conn.fetchrow("SELECT id FROM account_superadmins LIMIT 1")
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Un compte superadmin existe déjà.",
+                detail="Un compte superadmin existe déjà. Utilisez /superadmin/login.",
             )
 
-        password_hash = bcrypt.hashpw(
-            request.password.encode("utf-8"),
-            bcrypt.gensalt(),
-        ).decode("utf-8")
-
         email = request.email.lower()
+        password_hash = _hash_password(request.password)
         await conn.execute(
-            """
-            INSERT INTO account_superadmins (email, password_hash)
-            VALUES ($1, $2)
-            """,
+            "INSERT INTO account_superadmins (email, password_hash) VALUES ($1, $2)",
             email,
             password_hash,
         )
-
-        token = create_superadmin_jwt(email, settings.jwt_secret)
-        return {
-            "message": "Compte superadmin créé avec succès.",
-            "email": email,
-            "token": token,
-        }
     finally:
         await conn.close()
+
+    token = create_superadmin_jwt(email, settings.jwt_secret)
+    return {"message": "Compte superadmin créé avec succès.", "email": email, "token": token}
 
 
 @router.post("/superadmin/login")
 async def login_superadmin(request: SuperadminLogin):
-    await _ensure_superadmin_table()
-
     if not _use_database():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Base de données requise pour l'authentification superadmin.",
         )
 
+    await _ensure_superadmin_table()
     conn = await _connect_db()
     try:
         email = request.email.lower()
         row = await conn.fetchrow(
-            "SELECT id, email, password_hash FROM account_superadmins WHERE email = $1",
+            "SELECT id, password_hash FROM account_superadmins WHERE email = $1",
             email,
         )
-        if not row:
+        if not row or not _verify_password(request.password, row["password_hash"]):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Email ou mot de passe incorrect.",
             )
-
-        password_matches = bcrypt.checkpw(
-            request.password.encode("utf-8"),
-            row["password_hash"].encode("utf-8"),
-        )
-        if not password_matches:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Email ou mot de passe incorrect.",
-            )
-
         await conn.execute(
             "UPDATE account_superadmins SET last_login_at = $1 WHERE id = $2",
             datetime.now(UTC),
             row["id"],
         )
-
-        token = create_superadmin_jwt(email, settings.jwt_secret)
-        return {
-            "token": token,
-            "email": email,
-            "expires_in_hours": JWT_EXPIRY_HOURS,
-        }
     finally:
         await conn.close()
+
+    token = create_superadmin_jwt(email, settings.jwt_secret)
+    return {"token": token, "email": email, "expires_in_hours": JWT_EXPIRY_HOURS}
 
 
 @router.get("/superadmin/me")
 async def me_superadmin(authorization: str | None = Header(default=None)):
     if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Bearer token superadmin requis.",
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Bearer token requis.")
     payload = verify_superadmin_jwt(authorization[7:], settings.jwt_secret)
-    return {
-        "email": payload.get("email"),
-        "role": "superadmin",
-    }
+    return {"email": payload.get("email"), "role": "superadmin"}
