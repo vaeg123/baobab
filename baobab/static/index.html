@@ -171,6 +171,184 @@
     }
     .lfi-desc { font-size: 11px; color: rgba(255,220,190,0.70); line-height: 1.5; }
 
+    /* ── Login-left addictive redesign ── */
+    .ll-stats {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 1.5rem;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,220,190,0.18);
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 1;
+      position: relative;
+    }
+    .ll-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 8px;
+      gap: 2px;
+    }
+    .ll-stat + .ll-stat { border-left: 1px solid rgba(255,220,190,0.12); }
+    .ll-stat-n {
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFE08A;
+      letter-spacing: -0.5px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .ll-stat-lbl {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: rgba(255,220,190,0.55);
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .ll-corpus {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+      z-index: 1;
+      position: relative;
+    }
+    .ll-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: 1px solid;
+    }
+    .ll-pill em { font-style: normal; font-weight: 400; opacity: 0.7; font-size: 10px; }
+    .ll-pill-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      animation: llpulse 1.8s ease-in-out infinite;
+    }
+    @keyframes llpulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .ll-pill-cima  { background: rgba(180,60,20,0.20); border-color: rgba(220,100,60,0.40); color: #FFBFA0; }
+    .ll-pill-cima  .ll-pill-dot { background: #FF8060; }
+    .ll-pill-ohada { background: rgba(30,100,160,0.20); border-color: rgba(80,160,220,0.35); color: #A0D4FF; }
+    .ll-pill-ohada .ll-pill-dot { background: #60AAFF; }
+    .ll-pill-bceao { background: rgba(20,130,80,0.20); border-color: rgba(60,180,120,0.35); color: #90EEC4; }
+    .ll-pill-bceao .ll-pill-dot { background: #40CC90; animation-delay: 0.6s; }
+
+    .ll-ticker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1rem;
+      padding: 9px 14px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,220,190,0.14);
+      border-radius: 8px;
+      z-index: 1;
+      position: relative;
+      min-height: 36px;
+    }
+    .ll-ticker-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #FF6060;
+      white-space: nowrap;
+      animation: llpulse 1.2s ease-in-out infinite;
+    }
+    .ll-ticker-track {
+      font-size: 11px;
+      color: rgba(255,220,190,0.80);
+      flex: 1;
+      transition: opacity 0.35s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ll-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1rem;
+      z-index: 1;
+      position: relative;
+    }
+    .ll-tl-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 0;
+      position: relative;
+    }
+    .ll-tl-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 22px;
+      width: 2px;
+      height: calc(100% - 8px);
+      background: rgba(255,220,190,0.18);
+    }
+    .ll-tl-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid rgba(255,220,190,0.30);
+      background: rgba(255,220,190,0.10);
+      flex-shrink: 0;
+    }
+    .ll-tl-dot-now {
+      background: #FFE08A;
+      border-color: #FFE08A;
+      box-shadow: 0 0 0 4px rgba(255,224,138,0.20);
+      animation: tlpulse 1.8s ease-in-out infinite;
+    }
+    .ll-tl-text {
+      font-size: 11px;
+      color: rgba(255,220,190,0.70);
+      line-height: 1.4;
+    }
+    .ll-tl-text strong { color: rgba(255,240,220,0.90); font-weight: 700; }
+    .ll-tl-now .ll-tl-text { color: rgba(255,230,150,0.90); }
+    .ll-tl-past .ll-tl-text { opacity: 0.65; }
+
+    .ll-proof {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 1rem;
+      z-index: 1;
+      position: relative;
+    }
+    .ll-proof-avatars {
+      display: flex;
+    }
+    .ll-proof-av {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 2px solid rgba(180,100,40,0.8);
+      background: rgba(180,100,40,0.4);
+      margin-left: -8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,240,200,0.9);
+    }
+    .ll-proof-av:first-child { margin-left: 0; }
+    .ll-proof-text {
+      font-size: 11px;
+      color: rgba(255,220,190,0.65);
+      line-height: 1.4;
+    }
+    .ll-proof-text strong { color: rgba(255,240,200,0.90); }
+
     /* Right: form */
     .login-right {
       flex: 0 0 42%;
@@ -828,7 +1006,12 @@
       .tree-wrap     { display: none; }
       .login-features { margin-top: 1.25rem; }
       .login-feature-item { padding: 10px 14px; }
-      .lfi-desc { display: none; }  /* sur mobile: nom seul, pas de description */
+      .lfi-desc { display: none; }
+      .ll-stats { margin-top: 1rem; }
+      .ll-stat-n { font-size: 18px; }
+      .ll-corpus { flex-wrap: wrap; gap: 6px; }
+      .ll-timeline { display: none; }
+      .ll-proof { display: none; }
 
       .login-right {
         flex: 1;
@@ -1832,53 +2015,79 @@
     <div class="login-hero">
       <div class="login-big">Legal<em>OS.</em></div>
       <p class="login-tagline">
-        La plateforme juridique africaine qui calcule vos obligations, répond à vos questions et surveille la réglementation pour vous.
+        Zéro amende. Zéro retard. Zéro surprise réglementaire.<br>
+        La plateforme qui pense comme un juriste, à la vitesse d'un serveur.
       </p>
 
-      <!-- Ce que propose BAOBAB — visible avant connexion -->
-      <div class="login-features">
-
-        <div class="login-feature-item">
-          <span class="lfi-icon">💬</span>
-          <div>
-            <div class="lfi-name">Question juridique</div>
-            <div class="lfi-desc">Posez une question en langage courant, collez un arrêt ou un contrat — vous recevez une analyse structurée et sourcée.</div>
-          </div>
+      <!-- Live stats — animated counters -->
+      <div class="ll-stats">
+        <div class="ll-stat">
+          <span class="ll-stat-n" data-target="633">0</span>
+          <span class="ll-stat-lbl">décisions CRCA</span>
         </div>
-
-        <div class="login-feature-item">
-          <span class="lfi-icon">⚖️</span>
-          <div>
-            <div class="lfi-name">Cascade réglementaire automatique</div>
-            <div class="lfi-desc">Un sinistre, une création de société, un incident bancaire — BAOBAB calcule immédiatement toutes les étapes légales obligatoires avec leurs délais.</div>
-          </div>
+        <div class="ll-stat">
+          <span class="ll-stat-n" data-target="1100" data-suffix="+">0</span>
+          <span class="ll-stat-lbl">textes intégrés</span>
         </div>
-
-        <div class="login-feature-item">
-          <span class="lfi-icon">📡</span>
-          <div>
-            <div class="lfi-name">Veille juridique</div>
-            <div class="lfi-desc">Nouvelles lois, circulaires BCEAO, actes uniformes OHADA, instructions CIMA — suivis, résumés et classés dès leur publication.</div>
-          </div>
+        <div class="ll-stat">
+          <span class="ll-stat-n" data-target="14">0</span>
+          <span class="ll-stat-lbl">pays CIMA</span>
         </div>
-
-        <div class="login-feature-item">
-          <span class="lfi-icon">🚨</span>
-          <div>
-            <div class="lfi-name">Alertes & Échéances</div>
-            <div class="lfi-desc">Aucune date limite ne vous échappe. Alertes préventives à J-15, J-7 et J-0 sur chaque obligation réglementaire.</div>
-          </div>
+        <div class="ll-stat">
+          <span class="ll-stat-n" data-target="24">0</span>
+          <span class="ll-stat-lbl">cascades actives</span>
         </div>
-
-        <div class="login-feature-item">
-          <span class="lfi-icon">📊</span>
-          <div>
-            <div class="lfi-name">Score de conformité</div>
-            <div class="lfi-desc">Tableau de bord visuel de votre niveau de conformité CIMA, OHADA et BCEAO — en temps réel.</div>
-          </div>
-        </div>
-
       </div>
+
+      <!-- Corpus pills -->
+      <div class="ll-corpus">
+        <div class="ll-pill ll-pill-cima">
+          <span class="ll-pill-dot"></span>CIMA <em>· 14 pays</em>
+        </div>
+        <div class="ll-pill ll-pill-ohada">
+          <span class="ll-pill-dot"></span>OHADA <em>· 17 États</em>
+        </div>
+        <div class="ll-pill ll-pill-bceao">
+          <span class="ll-pill-dot"></span>BCEAO <em>· 8 marchés</em>
+        </div>
+      </div>
+
+      <!-- Live ticker -->
+      <div class="ll-ticker-wrap">
+        <div class="ll-ticker-label">● LIVE</div>
+        <div class="ll-ticker-track" id="ll-ticker">Chargement…</div>
+      </div>
+
+      <!-- Mini timeline: passé → présent → futur -->
+      <div class="ll-timeline">
+        <div class="ll-tl-item ll-tl-past">
+          <div class="ll-tl-dot"></div>
+          <div class="ll-tl-text"><strong>Passé</strong> — 633 décisions CRCA · OHADA 2010–2023 · Code CIMA révisé</div>
+        </div>
+        <div class="ll-tl-item ll-tl-now">
+          <div class="ll-tl-dot ll-tl-dot-now"></div>
+          <div class="ll-tl-text"><strong>Maintenant</strong> — Votre conformité calculée en temps réel</div>
+        </div>
+        <div class="ll-tl-item ll-tl-future">
+          <div class="ll-tl-dot"></div>
+          <div class="ll-tl-text"><strong>Futur</strong> — Alertes J-15 · J-7 · J-0 avant chaque échéance</div>
+        </div>
+      </div>
+
+      <!-- Social proof -->
+      <div class="ll-proof">
+        <div class="ll-proof-avatars">
+          <div class="ll-proof-av">CI</div>
+          <div class="ll-proof-av">SN</div>
+          <div class="ll-proof-av">CM</div>
+          <div class="ll-proof-av">BF</div>
+          <div class="ll-proof-av">+</div>
+        </div>
+        <div class="ll-proof-text">
+          Cabinets juridiques et assureurs dans <strong>14 pays</strong> font confiance à BAOBAB chaque jour.
+        </div>
+      </div>
+
     </div>
 
     <!-- Baobab tree SVG silhouette -->
@@ -3237,6 +3446,58 @@ function initTip() {
   setInterval(nextTip, 12000);
 }
 document.addEventListener('DOMContentLoaded', initTip);
+
+/* ── Login-left: animated counters ── */
+function initLLCounters() {
+  document.querySelectorAll('.ll-stat-n').forEach(el => {
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1600;
+    const steps = 60;
+    const increment = target / steps;
+    let current = 0;
+    let count = 0;
+    const timer = setInterval(() => {
+      count++;
+      current = count >= steps ? target : Math.round(increment * count);
+      el.textContent = current.toLocaleString('fr-FR') + suffix;
+      if (count >= steps) clearInterval(timer);
+    }, duration / steps);
+  });
+}
+
+/* ── Login-left: live ticker ── */
+const _llTickerItems = [
+  "Sinistre vie · Côte d'Ivoire · cascade 7 étapes calculée en 0,4 s",
+  "Circulaire BCEAO n°009-2024 · indexée et résumée automatiquement",
+  "Contrat de prestation · 3 clauses abusives détectées par l'IA",
+  "Déclaration DACS · délai J-3 · alerte envoyée à l'équipe compliance",
+  "OHADA · Acte Uniforme révisé Sociétés · mis à jour 2023",
+  "Sinistre incendie RCA · plafond d'indemnisation calculé selon Art. 231",
+  "Veille CIMA · instruction du Conseil n°0034 · résumé IA disponible",
+  "Échéance cotisation mutuelle · rappel automatique déclenché · J-7",
+  "Question jurisprudentielle · CCJA arrêt n°047 · sourcing en 1,2 s",
+  "Nouveau texte UEMOA · classification automatique dans le corpus",
+];
+let _llTickerIndex = 0;
+function initLLTicker() {
+  const el = document.getElementById('ll-ticker');
+  if (!el) return;
+  _llTickerIndex = Math.floor(Math.random() * _llTickerItems.length);
+  el.textContent = _llTickerItems[_llTickerIndex];
+  setInterval(() => {
+    el.style.opacity = '0';
+    setTimeout(() => {
+      _llTickerIndex = (_llTickerIndex + 1) % _llTickerItems.length;
+      el.textContent = _llTickerItems[_llTickerIndex];
+      el.style.opacity = '1';
+    }, 350);
+  }, 3800);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  initLLCounters();
+  initLLTicker();
+});
 
 function renderClientWorkspace(workspace) {
   currentClientWorkspace = workspace;
