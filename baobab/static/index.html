@@ -4278,17 +4278,25 @@ async function loadSuperadminData() {
           </div>
         </div>
         <div class="ws-badges" style="align-self:flex-start;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-          <div style="display:flex;gap:6px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
             ${planPills[ws.plan] || `<span class="pill pill-gray">${ws.plan}</span>`}
             ${subPills[ws.subscription_status] || `<span class="pill pill-gray">${ws.subscription_status}</span>`}
+            ${ws.suspended ? '<span class="pill" style="background:#FEE2E2;color:#991B1B">Suspendu</span>' : ''}
           </div>
-          <div style="display:flex;gap:4px">
+          <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
             <select id="plan-sel-${ws.workspace_id}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text)">
               <option value="free" ${ws.plan==='free'?'selected':''}>Gratuit</option>
               <option value="basic" ${ws.plan==='basic'?'selected':''}>Basic</option>
               <option value="premium" ${ws.plan==='premium'?'selected':''}>Premium</option>
             </select>
-            <button onclick="activateWorkspacePlan('${ws.workspace_id}')" style="font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:var(--clay);color:#FDF8F3;cursor:pointer">Activer</button>
+            <button onclick="activateWorkspacePlan('${ws.workspace_id}')" style="font-size:11px;padding:3px 8px;border:none;border-radius:6px;background:var(--clay);color:#FDF8F3;cursor:pointer">Activer</button>
+          </div>
+          <div style="display:flex;gap:4px">
+            <button onclick="toggleSuspendWorkspace('${ws.workspace_id}',${!!ws.suspended})" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer">
+              ${ws.suspended ? 'Réactiver' : 'Suspendre'}
+            </button>
+            <button onclick="resetWorkspacePasswords('${ws.workspace_id}')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer">Rég. mdp</button>
+            <button onclick="deleteWorkspace('${ws.workspace_id}','${escHtml(ws.organization_name)}')" style="font-size:11px;padding:3px 8px;border:none;border-radius:6px;background:#DC2626;color:#fff;cursor:pointer">Supprimer</button>
           </div>
         </div>
       </div>`).join('');
@@ -4296,6 +4304,55 @@ async function loadSuperadminData() {
     document.getElementById('sa-workspaces-list').innerHTML =
       `<div class="empty-state" style="padding:2rem"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${escHtml(e.message)}</div></div>`;
   }
+}
+
+async function toggleSuspendWorkspace(wsId, isSuspended) {
+  const token = state.superadminToken;
+  if (!token) return;
+  const action = isSuspended ? 'réactiver' : 'suspendre';
+  if (!confirm(`Voulez-vous ${action} ce workspace ? ${isSuspended ? "L'utilisateur pourra de nouveau se connecter." : "L'utilisateur ne pourra plus se connecter."}`)) return;
+  const res = await fetch(`/api/v1/accounts/superadmin/workspaces/${wsId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ suspended: !isSuspended }),
+  });
+  if (res.ok) { loadSAWorkspaces(); }
+  else { const e = await res.json().catch(() => ({})); alert(`Erreur : ${e.detail || res.status}`); }
+}
+
+async function resetWorkspacePasswords(wsId) {
+  const token = state.superadminToken;
+  if (!token) return;
+  if (!confirm('Générer de nouveaux mots de passe pour admin et utilisateur ? Les anciens mots de passe ne fonctionneront plus.')) return;
+  const res = await fetch(`/api/v1/accounts/superadmin/workspaces/${wsId}/reset-password`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (res.ok) {
+    const data = await res.json();
+    alert(
+      `Nouveaux mots de passe générés :\n\n` +
+      `Admin (${data.admin_email}) : ${data.admin_password}\n` +
+      `Utilisateur (${data.user_email}) : ${data.user_password}\n\n` +
+      `Copiez-les maintenant — ils ne seront plus affichés.`
+    );
+    loadSAWorkspaces();
+  } else { const e = await res.json().catch(() => ({})); alert(`Erreur : ${e.detail || res.status}`); }
+}
+
+async function deleteWorkspace(wsId, orgName) {
+  const token = state.superadminToken;
+  if (!token) return;
+  const confirm1 = confirm(`Supprimer définitivement le workspace "${orgName}" ?\n\nCette action est irréversible.`);
+  if (!confirm1) return;
+  const input = window.prompt(`Pour confirmer, tapez exactement : SUPPRIMER`);
+  if (input !== 'SUPPRIMER') { alert('Suppression annulée.'); return; }
+  const res = await fetch(`/api/v1/accounts/superadmin/workspaces/${wsId}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (res.status === 204) { alert(`Workspace "${orgName}" supprimé.`); loadSAWorkspaces(); }
+  else { const e = await res.json().catch(() => ({})); alert(`Erreur : ${e.detail || res.status}`); }
 }
 
 async function activateWorkspacePlan(wsId) {

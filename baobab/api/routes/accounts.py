@@ -147,6 +147,10 @@ class SuperadminWorkspaceUpdate(BaseModel):
     grant_unlimited_access: bool | None = None
     enabled_services: list[str] | None = None
     branding: WorkspaceBranding | None = None
+    plan: str | None = None
+    subscription_status: str | None = None
+    subscription_expires_at: str | None = None
+    suspended: bool | None = None
 
 
 def _require_superadmin(authorization: str | None) -> None:
@@ -306,6 +310,20 @@ async def _save_payment(payment: dict) -> None:
             payment["payment_id"],
             payment["workspace_id"],
             _json_dump(payment),
+        )
+    finally:
+        await conn.close()
+
+
+async def _delete_workspace(workspace_id: str) -> None:
+    if not _use_database():
+        WORKSPACES.pop(workspace_id, None)
+        return
+    await _ensure_db()
+    conn = await _connect_db()
+    try:
+        await conn.execute(
+            "DELETE FROM account_workspaces WHERE workspace_id = $1", workspace_id
         )
     finally:
         await conn.close()
@@ -615,9 +633,17 @@ async def list_internal_requests(workspace_id: str):
 async def access_login(request: EmailPasswordLogin):
     email = request.email.strip().lower()
     for workspace in await _list_workspaces():
-        if workspace.get("admin_email") == email:
+        is_admin = workspace.get("admin_email") == email
+        is_user = workspace.get("user_email") == email
+        if not is_admin and not is_user:
+            continue
+        if workspace.get("suspended"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Ce compte est suspendu. Contactez l'administrateur BAOBAB.",
+            )
+        if is_admin:
             stored = workspace.get("admin_password_hash")
-            # Migration: si pas de hash, le code d'accès sert de mot de passe initial
             ok = verify_password(request.password, stored) if stored else (request.password == workspace.get("admin_token", ""))
             if ok:
                 return {
@@ -626,7 +652,7 @@ async def access_login(request: EmailPasswordLogin):
                     "workspace": await _admin_workspace(workspace),
                     "message": "Workspace admin access granted",
                 }
-        if workspace.get("user_email") == email:
+        if is_user:
             stored = workspace.get("user_password_hash")
             ok = verify_password(request.password, stored) if stored else (request.password == workspace.get("user_token", ""))
             if ok:
@@ -817,10 +843,52 @@ async def update_superadmin_workspace(
         workspace["plan"] = SubscriptionPlan.FREE
         workspace["subscription_status"] = "free"
         workspace["billing_override"] = False
+    if updates.get("plan") is not None:
+        workspace["plan"] = updates["plan"]
+    if updates.get("subscription_status") is not None:
+        workspace["subscription_status"] = updates["subscription_status"]
+    if "subscription_expires_at" in updates:
+        workspace["subscription_expires_at"] = updates["subscription_expires_at"]
+    if updates.get("suspended") is not None:
+        workspace["suspended"] = updates["suspended"]
 
     workspace["updated_at"] = datetime.now(UTC).isoformat()
     await _save_workspace(workspace)
     return await _admin_workspace(workspace)
+
+
+@router.delete("/superadmin/workspaces/{workspace_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_superadmin_workspace(
+    workspace_id: str,
+    authorization: str | None = Header(default=None),
+):
+    _require_superadmin(authorization)
+    await _get_workspace(workspace_id)
+    await _delete_workspace(workspace_id)
+
+
+@router.post("/superadmin/workspaces/{workspace_id}/reset-password")
+async def reset_workspace_passwords(
+    workspace_id: str,
+    authorization: str | None = Header(default=None),
+):
+    _require_superadmin(authorization)
+    workspace = await _get_workspace(workspace_id)
+    import secrets
+    import string
+    alphabet = string.ascii_letters + string.digits
+    new_admin_pwd = "".join(secrets.choice(alphabet) for _ in range(12))
+    new_user_pwd = "".join(secrets.choice(alphabet) for _ in range(12))
+    workspace["admin_password_hash"] = hash_password(new_admin_pwd)
+    workspace["user_password_hash"] = hash_password(new_user_pwd)
+    workspace["updated_at"] = datetime.now(UTC).isoformat()
+    await _save_workspace(workspace)
+    return {
+        "admin_email": workspace.get("admin_email"),
+        "admin_password": new_admin_pwd,
+        "user_email": workspace.get("user_email"),
+        "user_password": new_user_pwd,
+    }
 
 
 @router.post("/superadmin/workspaces/{workspace_id}/admin-token")
