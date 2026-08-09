@@ -512,6 +512,22 @@
       font-size: 10px; color: rgba(255,220,190,0.50); margin-top: 4px; line-height: 1.5;
     }
 
+    /* Pause state */
+    .ll-slides-wrap.ll-paused .ll-slide.active { outline: none; }
+    .ll-slides-wrap { cursor: default; }
+    .ll-slides-wrap:hover { cursor: crosshair; }
+    .ll-pause-hint {
+      display: none;
+      font-size: 10px;
+      color: rgba(255,220,190,0.50);
+      margin-left: 8px;
+      letter-spacing: 0.3px;
+      align-self: center;
+    }
+    .ll-paused ~ .ll-dots .ll-pause-hint,
+    #ll-dots .ll-pause-hint { display: none; }
+    .ll-dot.active.paused-dot { background: rgba(255,220,190,0.40); }
+
     /* Responsive: hide dots + timeline on very small */
     @media (max-width: 480px) {
       .ll-slide-title { font-size: 22px; }
@@ -2178,7 +2194,7 @@
         style="height:36px;width:auto;flex-shrink:0" />
       <div style="width:1px;height:24px;background:rgba(255,240,200,0.25);margin:0 4px"></div>
       <span class="login-brand-name">Baobab</span>
-      <span class="login-mvp">MVP · Africa</span>
+      <span class="login-mvp">Africa · 2025</span>
     </div>
 
     <div class="login-hero">
@@ -2336,10 +2352,11 @@
 
       <!-- Dots navigation -->
       <div class="ll-dots" id="ll-dots">
-        <button class="ll-dot active" onclick="llGoSlide(0)"></button>
-        <button class="ll-dot" onclick="llGoSlide(1)"></button>
-        <button class="ll-dot" onclick="llGoSlide(2)"></button>
-        <button class="ll-dot" onclick="llGoSlide(3)"></button>
+        <button class="ll-dot active" onclick="llGoSlide(0,true)"></button>
+        <button class="ll-dot" onclick="llGoSlide(1,true)"></button>
+        <button class="ll-dot" onclick="llGoSlide(2,true)"></button>
+        <button class="ll-dot" onclick="llGoSlide(3,true)"></button>
+        <span class="ll-pause-hint" id="ll-pause-hint">⏸ Reprise dans <span id="ll-resume-cd"></span></span>
       </div>
 
     </div>
@@ -3884,11 +3901,44 @@ function initLLTicker() {
 
 /* ── Login-left: 4-slide carousel ── */
 const LL_SLIDE_DURATION = 5500;
-let _llSlide = 0;
+const LL_RESUME_DELAY   = 10000;
+const LL_TOTAL_SLIDES   = 4;
+let _llSlide      = 0;
 let _llSlideTimer = null;
-const LL_TOTAL_SLIDES = 4;
+let _llPaused     = false;
+let _llResumeTimer = null;
 
-function llGoSlide(idx) {
+function _llSetPaused(paused) {
+  _llPaused = paused;
+  const wrap = document.getElementById('ll-slides-wrap');
+  if (wrap) wrap.classList.toggle('ll-paused', paused);
+}
+
+function llResume() {
+  clearTimeout(_llResumeTimer);
+  _llSetPaused(false);
+  clearTimeout(_llSlideTimer);
+  _llSlideTimer = setTimeout(() => llGoSlide(_llSlide + 1), LL_SLIDE_DURATION);
+}
+
+function llPause(autoResume) {
+  clearTimeout(_llSlideTimer);
+  _llSetPaused(true);
+  const hint = document.getElementById('ll-pause-hint');
+  const cd   = document.getElementById('ll-resume-cd');
+  if (autoResume) {
+    clearTimeout(_llResumeTimer);
+    if (hint) hint.style.display = 'inline';
+    let sec = Math.round(LL_RESUME_DELAY / 1000);
+    if (cd) cd.textContent = sec + 's';
+    const cdTimer = setInterval(() => { sec--; if (cd) cd.textContent = sec + 's'; if (sec <= 0) clearInterval(cdTimer); }, 1000);
+    _llResumeTimer = setTimeout(() => { if (hint) hint.style.display = 'none'; llResume(); }, LL_RESUME_DELAY);
+  } else {
+    if (hint) hint.style.display = 'none';
+  }
+}
+
+function llGoSlide(idx, userClick) {
   const slides = document.querySelectorAll('.ll-slide');
   const dots   = document.querySelectorAll('.ll-dot');
   if (!slides.length) return;
@@ -3897,22 +3947,29 @@ function llGoSlide(idx) {
   _llSlide = (idx + LL_TOTAL_SLIDES) % LL_TOTAL_SLIDES;
   slides[_llSlide].classList.add('active');
   dots[_llSlide]?.classList.add('active');
-  // Re-trigger cascade animation on slide 3
   if (_llSlide === 2) {
     const items = slides[2].querySelectorAll('.ll-cs-item');
     items.forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
   }
-  // Restart counters if back to slide 1
   if (_llSlide === 0) initLLCounters();
-  // Reset timer
-  clearTimeout(_llSlideTimer);
-  _llSlideTimer = setTimeout(() => llGoSlide(_llSlide + 1), LL_SLIDE_DURATION);
+  if (userClick) {
+    llPause(true);
+  } else if (!_llPaused) {
+    clearTimeout(_llSlideTimer);
+    _llSlideTimer = setTimeout(() => llGoSlide(_llSlide + 1), LL_SLIDE_DURATION);
+  }
 }
 
 function initLLCarousel() {
   _llSlide = 0;
+  _llPaused = false;
   clearTimeout(_llSlideTimer);
   _llSlideTimer = setTimeout(() => llGoSlide(1), LL_SLIDE_DURATION);
+
+  const wrap = document.getElementById('ll-slides-wrap');
+  if (!wrap) return;
+  wrap.addEventListener('mouseenter', () => llPause(false));
+  wrap.addEventListener('mouseleave', () => { if (_llPaused && !_llResumeTimer) llResume(); else if (_llPaused) { clearTimeout(_llResumeTimer); _llResumeTimer = null; llResume(); } });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
