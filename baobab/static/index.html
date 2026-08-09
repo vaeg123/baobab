@@ -92,15 +92,6 @@
       border-radius: 4px;
     }
 
-    .login-hero {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 2rem 0;
-      z-index: 1;
-    }
-
     .login-big {
       font-size: clamp(68px, 9vw, 110px);
       font-weight: 700;
@@ -348,6 +339,184 @@
       line-height: 1.4;
     }
     .ll-proof-text strong { color: rgba(255,240,200,0.90); }
+
+    /* ── Carousel slides ── */
+    .login-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 0 0;
+      z-index: 1;
+      min-height: 0;
+    }
+    .ll-slides-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .ll-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .55s ease, transform .55s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .ll-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .ll-slide-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,200,120,0.60);
+      margin-bottom: 0.6rem;
+    }
+    .ll-slide-title {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      color: #FDF8F3;
+      margin-bottom: 1.25rem;
+    }
+    .ll-slide-title em {
+      color: rgba(255,230,160,0.95);
+      font-style: normal;
+    }
+
+    /* Dots */
+    .ll-dots {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0.75rem 0 0.25rem;
+      z-index: 2;
+    }
+    .ll-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,220,190,0.25);
+      cursor: pointer;
+      padding: 0;
+      transition: background .3s, width .3s;
+    }
+    .ll-dot.active {
+      background: rgba(255,220,190,0.85);
+      width: 20px;
+      border-radius: 3px;
+    }
+
+    /* Progress bar on active dot */
+    .ll-dot.active::after {
+      content: none;
+    }
+
+    /* ── Slide 2 : modules grid ── */
+    .ll-modules {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      flex: 1;
+    }
+    .ll-mod {
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,220,190,0.14);
+      border-radius: 10px;
+      padding: 11px 13px;
+      transition: background .2s, border-color .2s;
+    }
+    .ll-mod:hover { background: rgba(0,0,0,0.28); border-color: rgba(255,220,190,0.28); }
+    .ll-mod-icon { font-size: 18px; margin-bottom: 5px; }
+    .ll-mod-name { font-size: 11px; font-weight: 700; color: #FDF8F3; margin-bottom: 3px; }
+    .ll-mod-desc { font-size: 10px; color: rgba(255,220,190,0.60); line-height: 1.45; }
+
+    /* ── Slide 3 : cascade demo ── */
+    .ll-cascade-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .ll-cs-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      background: rgba(0,0,0,0.16);
+      border: 1px solid rgba(255,220,190,0.12);
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateX(-12px);
+      animation: csIn .4s ease forwards;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes csIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .ll-cs-num {
+      font-size: 10px; font-weight: 800; color: rgba(255,200,120,0.50);
+      letter-spacing: 0.5px; width: 18px; flex-shrink: 0;
+    }
+    .ll-cs-body { flex: 1; min-width: 0; }
+    .ll-cs-name { font-size: 12px; font-weight: 700; color: #FDF8F3; }
+    .ll-cs-meta { font-size: 10px; color: rgba(255,220,190,0.55); margin-top: 1px; }
+    .ll-cs-tag {
+      font-size: 11px; font-weight: 700; flex-shrink: 0; padding: 2px 7px;
+      border-radius: 100px;
+    }
+    .ll-cs-done    { background: rgba(20,140,80,0.20); color: #40CC80; border: 1px solid rgba(40,160,90,0.30); }
+    .ll-cs-active  { background: rgba(220,160,20,0.20); color: #FFD060; border: 1px solid rgba(220,160,20,0.35); animation: llpulse 1.2s ease-in-out infinite; }
+    .ll-cs-pending { background: rgba(255,220,190,0.06); color: rgba(255,220,190,0.35); border: 1px solid rgba(255,220,190,0.10); }
+    .ll-cascade-footer { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .ll-cs-badge {
+      font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 100px;
+      background: rgba(255,220,190,0.08); border: 1px solid rgba(255,220,190,0.18);
+      color: rgba(255,220,190,0.70); letter-spacing: 0.3px;
+    }
+
+    /* ── Slide 4 : coverage ── */
+    .ll-coverage {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .ll-cov-block {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid;
+    }
+    .ll-cov-cima  { background: rgba(180,60,20,0.15); border-color: rgba(220,100,60,0.30); }
+    .ll-cov-ohada { background: rgba(30,100,160,0.15); border-color: rgba(80,160,220,0.25); }
+    .ll-cov-bceao { background: rgba(20,130,80,0.15); border-color: rgba(60,180,120,0.25); }
+    .ll-cov-n {
+      font-size: 28px; font-weight: 800; line-height: 1;
+      color: rgba(255,240,220,0.90); letter-spacing: -1px;
+      display: inline;
+    }
+    .ll-cov-corpus {
+      display: inline;
+      font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,220,190,0.65); margin-left: 8px;
+    }
+    .ll-cov-countries {
+      font-size: 10px; color: rgba(255,220,190,0.50); margin-top: 4px; line-height: 1.5;
+    }
+
+    /* Responsive: hide dots + timeline on very small */
+    @media (max-width: 480px) {
+      .ll-slide-title { font-size: 22px; }
+      .ll-modules { grid-template-columns: 1fr; }
+    }
 
     /* Right: form */
     .login-right {
@@ -2013,79 +2182,164 @@
     </div>
 
     <div class="login-hero">
-      <div class="login-big">Legal<em>OS.</em></div>
-      <p class="login-tagline">
-        Zéro amende. Zéro retard. Zéro surprise réglementaire.<br>
-        La plateforme qui pense comme un juriste, à la vitesse d'un serveur.
-      </p>
 
-      <!-- Live stats — animated counters -->
-      <div class="ll-stats">
-        <div class="ll-stat">
-          <span class="ll-stat-n" data-target="633">0</span>
-          <span class="ll-stat-lbl">décisions CRCA</span>
-        </div>
-        <div class="ll-stat">
-          <span class="ll-stat-n" data-target="1100" data-suffix="+">0</span>
-          <span class="ll-stat-lbl">textes intégrés</span>
-        </div>
-        <div class="ll-stat">
-          <span class="ll-stat-n" data-target="14">0</span>
-          <span class="ll-stat-lbl">pays CIMA</span>
-        </div>
-        <div class="ll-stat">
-          <span class="ll-stat-n" data-target="24">0</span>
-          <span class="ll-stat-lbl">cascades actives</span>
-        </div>
-      </div>
+      <!-- Slide wrapper -->
+      <div class="ll-slides-wrap" id="ll-slides-wrap">
 
-      <!-- Corpus pills -->
-      <div class="ll-corpus">
-        <div class="ll-pill ll-pill-cima">
-          <span class="ll-pill-dot"></span>CIMA <em>· 14 pays</em>
+        <!-- ── SLIDE 1 : Plateforme + stats live ── -->
+        <div class="ll-slide active" id="ll-slide-0">
+          <div class="ll-slide-label">La plateforme</div>
+          <div class="login-big">Legal<em>OS.</em></div>
+          <p class="login-tagline">
+            Zéro amende. Zéro retard. Zéro surprise réglementaire.<br>
+            Pense comme un juriste. Réagit comme un serveur.
+          </p>
+          <div class="ll-stats">
+            <div class="ll-stat"><span class="ll-stat-n" data-target="633">0</span><span class="ll-stat-lbl">décisions CRCA</span></div>
+            <div class="ll-stat"><span class="ll-stat-n" data-target="1100" data-suffix="+">0</span><span class="ll-stat-lbl">textes intégrés</span></div>
+            <div class="ll-stat"><span class="ll-stat-n" data-target="14">0</span><span class="ll-stat-lbl">pays CIMA</span></div>
+            <div class="ll-stat"><span class="ll-stat-n" data-target="24">0</span><span class="ll-stat-lbl">cascades</span></div>
+          </div>
+          <div class="ll-corpus">
+            <div class="ll-pill ll-pill-cima"><span class="ll-pill-dot"></span>CIMA <em>· 14 pays</em></div>
+            <div class="ll-pill ll-pill-ohada"><span class="ll-pill-dot"></span>OHADA <em>· 17 États</em></div>
+            <div class="ll-pill ll-pill-bceao"><span class="ll-pill-dot"></span>BCEAO <em>· 8 marchés</em></div>
+          </div>
+          <div class="ll-ticker-wrap">
+            <div class="ll-ticker-label">● LIVE</div>
+            <div class="ll-ticker-track" id="ll-ticker">Chargement…</div>
+          </div>
         </div>
-        <div class="ll-pill ll-pill-ohada">
-          <span class="ll-pill-dot"></span>OHADA <em>· 17 États</em>
-        </div>
-        <div class="ll-pill ll-pill-bceao">
-          <span class="ll-pill-dot"></span>BCEAO <em>· 8 marchés</em>
-        </div>
-      </div>
 
-      <!-- Live ticker -->
-      <div class="ll-ticker-wrap">
-        <div class="ll-ticker-label">● LIVE</div>
-        <div class="ll-ticker-track" id="ll-ticker">Chargement…</div>
-      </div>
+        <!-- ── SLIDE 2 : 6 modules produits ── -->
+        <div class="ll-slide" id="ll-slide-1">
+          <div class="ll-slide-label">Les modules</div>
+          <div class="ll-slide-title">Tout ce dont votre équipe<br><em>juridique a besoin.</em></div>
+          <div class="ll-modules">
+            <div class="ll-mod">
+              <div class="ll-mod-icon">💬</div>
+              <div class="ll-mod-name">Question juridique IA</div>
+              <div class="ll-mod-desc">Réponse sourcée en langage naturel, citant l'article exact.</div>
+            </div>
+            <div class="ll-mod">
+              <div class="ll-mod-icon">⚖️</div>
+              <div class="ll-mod-name">Cascade réglementaire</div>
+              <div class="ll-mod-desc">Toutes les obligations légales d'un événement, calculées en 0,4s.</div>
+            </div>
+            <div class="ll-mod">
+              <div class="ll-mod-icon">📡</div>
+              <div class="ll-mod-name">Veille juridique</div>
+              <div class="ll-mod-desc">CIMA · OHADA · BCEAO — suivi automatique dès publication.</div>
+            </div>
+            <div class="ll-mod">
+              <div class="ll-mod-icon">🚨</div>
+              <div class="ll-mod-name">Alertes & Échéances</div>
+              <div class="ll-mod-desc">J-15 · J-7 · J-0 sur chaque obligation réglementaire.</div>
+            </div>
+            <div class="ll-mod">
+              <div class="ll-mod-icon">📊</div>
+              <div class="ll-mod-name">Score de conformité</div>
+              <div class="ll-mod-desc">Tableau de bord CIMA · OHADA · BCEAO en temps réel.</div>
+            </div>
+            <div class="ll-mod">
+              <div class="ll-mod-icon">📚</div>
+              <div class="ll-mod-name">Bibliothèque corpus</div>
+              <div class="ll-mod-desc">1 100+ textes indexés, recherche sémantique plein texte.</div>
+            </div>
+          </div>
+        </div>
 
-      <!-- Mini timeline: passé → présent → futur -->
-      <div class="ll-timeline">
-        <div class="ll-tl-item ll-tl-past">
-          <div class="ll-tl-dot"></div>
-          <div class="ll-tl-text"><strong>Passé</strong> — 633 décisions CRCA · OHADA 2010–2023 · Code CIMA révisé</div>
+        <!-- ── SLIDE 3 : Cascade animée ── -->
+        <div class="ll-slide" id="ll-slide-2">
+          <div class="ll-slide-label">Cascade réglementaire</div>
+          <div class="ll-slide-title">Un sinistre déclaré.<br><em>Toutes les étapes calculées.</em></div>
+          <div class="ll-cascade-demo">
+            <div class="ll-cs-item" style="--d:0s">
+              <div class="ll-cs-num">01</div>
+              <div class="ll-cs-body">
+                <div class="ll-cs-name">Déclaration sinistre</div>
+                <div class="ll-cs-meta">Art. 12 Code CIMA · J+0 · obligatoire</div>
+              </div>
+              <div class="ll-cs-tag ll-cs-done">✓</div>
+            </div>
+            <div class="ll-cs-item" style="--d:.35s">
+              <div class="ll-cs-num">02</div>
+              <div class="ll-cs-body">
+                <div class="ll-cs-name">Vérification garanties</div>
+                <div class="ll-cs-meta">Police d'assurance · Art. 7 · J+2</div>
+              </div>
+              <div class="ll-cs-tag ll-cs-done">✓</div>
+            </div>
+            <div class="ll-cs-item" style="--d:.7s">
+              <div class="ll-cs-num">03</div>
+              <div class="ll-cs-body">
+                <div class="ll-cs-name">Expertise contradictoire</div>
+                <div class="ll-cs-meta">Art. 231 CIMA · J+15 · critique</div>
+              </div>
+              <div class="ll-cs-tag ll-cs-active">⏱</div>
+            </div>
+            <div class="ll-cs-item" style="--d:1.05s">
+              <div class="ll-cs-num">04</div>
+              <div class="ll-cs-body">
+                <div class="ll-cs-name">Proposition d'indemnité</div>
+                <div class="ll-cs-meta">Art. 240 CIMA · J+30</div>
+              </div>
+              <div class="ll-cs-tag ll-cs-pending">—</div>
+            </div>
+            <div class="ll-cs-item" style="--d:1.4s">
+              <div class="ll-cs-num">05</div>
+              <div class="ll-cs-body">
+                <div class="ll-cs-name">Paiement indemnisation</div>
+                <div class="ll-cs-meta">Art. 241 CIMA · J+45 · délai légal</div>
+              </div>
+              <div class="ll-cs-tag ll-cs-pending">—</div>
+            </div>
+          </div>
+          <div class="ll-cascade-footer">
+            <span class="ll-cs-badge">⚡ Calculé en 0,4 seconde</span>
+            <span class="ll-cs-badge">24 cascades disponibles</span>
+          </div>
         </div>
-        <div class="ll-tl-item ll-tl-now">
-          <div class="ll-tl-dot ll-tl-dot-now"></div>
-          <div class="ll-tl-text"><strong>Maintenant</strong> — Votre conformité calculée en temps réel</div>
-        </div>
-        <div class="ll-tl-item ll-tl-future">
-          <div class="ll-tl-dot"></div>
-          <div class="ll-tl-text"><strong>Futur</strong> — Alertes J-15 · J-7 · J-0 avant chaque échéance</div>
-        </div>
-      </div>
 
-      <!-- Social proof -->
-      <div class="ll-proof">
-        <div class="ll-proof-avatars">
-          <div class="ll-proof-av">CI</div>
-          <div class="ll-proof-av">SN</div>
-          <div class="ll-proof-av">CM</div>
-          <div class="ll-proof-av">BF</div>
-          <div class="ll-proof-av">+</div>
+        <!-- ── SLIDE 4 : Couverture Afrique ── -->
+        <div class="ll-slide" id="ll-slide-3">
+          <div class="ll-slide-label">Couverture</div>
+          <div class="ll-slide-title">Droit africain.<br><em>Couverture totale.</em></div>
+          <div class="ll-coverage">
+            <div class="ll-cov-block ll-cov-cima">
+              <div class="ll-cov-n">14</div>
+              <div class="ll-cov-corpus">CIMA</div>
+              <div class="ll-cov-countries">CI · SN · CM · BF · ML · BJ · NE · TG · GN · GA · CG · CD · CF · TD</div>
+            </div>
+            <div class="ll-cov-block ll-cov-ohada">
+              <div class="ll-cov-n">17</div>
+              <div class="ll-cov-corpus">OHADA</div>
+              <div class="ll-cov-countries">Bénin · Burkina · Cameroun · Centrafrique · Comores · Congo · Côte d'Ivoire · Gabon · Guinée · Guinée-Bissau · Guinée Éq. · Mali · Niger · RDC · Sénégal · Tchad · Togo</div>
+            </div>
+            <div class="ll-cov-block ll-cov-bceao">
+              <div class="ll-cov-n">8</div>
+              <div class="ll-cov-corpus">BCEAO / UEMOA</div>
+              <div class="ll-cov-countries">Bénin · Burkina Faso · Côte d'Ivoire · Guinée-Bissau · Mali · Niger · Sénégal · Togo</div>
+            </div>
+          </div>
+          <div class="ll-proof" style="margin-top:1rem">
+            <div class="ll-proof-avatars">
+              <div class="ll-proof-av">CI</div><div class="ll-proof-av">SN</div>
+              <div class="ll-proof-av">CM</div><div class="ll-proof-av">BF</div>
+              <div class="ll-proof-av">+</div>
+            </div>
+            <div class="ll-proof-text">Cabinets et assureurs dans <strong>14 pays</strong> utilisent BAOBAB chaque jour.</div>
+          </div>
         </div>
-        <div class="ll-proof-text">
-          Cabinets juridiques et assureurs dans <strong>14 pays</strong> font confiance à BAOBAB chaque jour.
-        </div>
+
+      </div><!-- /ll-slides-wrap -->
+
+      <!-- Dots navigation -->
+      <div class="ll-dots" id="ll-dots">
+        <button class="ll-dot active" onclick="llGoSlide(0)"></button>
+        <button class="ll-dot" onclick="llGoSlide(1)"></button>
+        <button class="ll-dot" onclick="llGoSlide(2)"></button>
+        <button class="ll-dot" onclick="llGoSlide(3)"></button>
       </div>
 
     </div>
@@ -3582,21 +3836,20 @@ function initTip() {
 document.addEventListener('DOMContentLoaded', initTip);
 
 /* ── Login-left: animated counters ── */
+/* ── Login-left: animated counters (slide 1) ── */
 function initLLCounters() {
   document.querySelectorAll('.ll-stat-n').forEach(el => {
     const target = parseInt(el.dataset.target, 10);
     const suffix = el.dataset.suffix || '';
-    const duration = 1600;
     const steps = 60;
     const increment = target / steps;
-    let current = 0;
     let count = 0;
     const timer = setInterval(() => {
       count++;
-      current = count >= steps ? target : Math.round(increment * count);
+      const current = count >= steps ? target : Math.round(increment * count);
       el.textContent = current.toLocaleString('fr-FR') + suffix;
       if (count >= steps) clearInterval(timer);
-    }, duration / steps);
+    }, 1600 / steps);
   });
 }
 
@@ -3628,9 +3881,44 @@ function initLLTicker() {
     }, 350);
   }, 3800);
 }
+
+/* ── Login-left: 4-slide carousel ── */
+const LL_SLIDE_DURATION = 5500;
+let _llSlide = 0;
+let _llSlideTimer = null;
+const LL_TOTAL_SLIDES = 4;
+
+function llGoSlide(idx) {
+  const slides = document.querySelectorAll('.ll-slide');
+  const dots   = document.querySelectorAll('.ll-dot');
+  if (!slides.length) return;
+  slides[_llSlide].classList.remove('active');
+  dots[_llSlide]?.classList.remove('active');
+  _llSlide = (idx + LL_TOTAL_SLIDES) % LL_TOTAL_SLIDES;
+  slides[_llSlide].classList.add('active');
+  dots[_llSlide]?.classList.add('active');
+  // Re-trigger cascade animation on slide 3
+  if (_llSlide === 2) {
+    const items = slides[2].querySelectorAll('.ll-cs-item');
+    items.forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
+  }
+  // Restart counters if back to slide 1
+  if (_llSlide === 0) initLLCounters();
+  // Reset timer
+  clearTimeout(_llSlideTimer);
+  _llSlideTimer = setTimeout(() => llGoSlide(_llSlide + 1), LL_SLIDE_DURATION);
+}
+
+function initLLCarousel() {
+  _llSlide = 0;
+  clearTimeout(_llSlideTimer);
+  _llSlideTimer = setTimeout(() => llGoSlide(1), LL_SLIDE_DURATION);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initLLCounters();
   initLLTicker();
+  initLLCarousel();
 });
 
 function renderClientWorkspace(workspace) {
