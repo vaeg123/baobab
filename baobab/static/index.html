@@ -2129,16 +2129,24 @@
   <div class="login-right">
     <div class="login-form-wrap">
       <div class="login-form-title">Connexion</div>
-      <div class="login-form-sub">Saisissez votre code d'accès — l'espace correspondant s'ouvre automatiquement.</div>
+      <div class="login-form-sub">Connectez-vous avec votre adresse email et votre mot de passe.</div>
 
       <div class="login-error" id="login-error"></div>
 
+      <div class="form-group" style="margin-bottom:1rem">
+        <label>Email</label>
+        <input type="email" id="login_email"
+          placeholder="votre@email.com"
+          onkeydown="if(event.key==='Enter') document.getElementById('login_password').focus()"
+          autocomplete="email"
+          style="font-size:15px;padding:14px 16px" />
+      </div>
       <div class="form-group" style="margin-bottom:1.25rem">
-        <label id="code-label">Code d'accès</label>
-        <input type="password" id="access_code"
-          placeholder="Votre code d'accès…"
+        <label>Mot de passe</label>
+        <input type="password" id="login_password"
+          placeholder="••••••••"
           onkeydown="if(event.key==='Enter') doLogin()"
-          autocomplete="off"
+          autocomplete="current-password"
           style="font-size:15px;padding:14px 16px" />
       </div>
       <button class="btn btn-primary" onclick="doLogin()" id="login-btn" style="padding:14px">Accéder à mon espace</button>
@@ -2419,6 +2427,22 @@
         <div id="client-workspace">
           <div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-text">Chargement…</div></div>
         </div>
+
+        <!-- Changer mot de passe client -->
+        <div class="card" style="margin-top:1.25rem;max-width:480px">
+          <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
+          <div class="card-body">
+            <div id="client-pwd-info" style="font-size:12px;color:var(--sub);margin-bottom:1rem;padding:10px 12px;background:rgba(60,20,5,0.04);border:1px solid var(--border);border-radius:8px">
+              Mot de passe actuel : votre <strong>code d'accès</strong> (commence par <code>usr_</code>) si vous n'avez pas encore défini de mot de passe.
+            </div>
+            <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="client_cur_pwd" placeholder="Mot de passe actuel ou code d'accès…" autocomplete="current-password" /></div>
+            <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="client_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
+            <div class="form-group"><label>Confirmer</label><input type="password" id="client_confirm_pwd" placeholder="Répétez le nouveau mot de passe" autocomplete="new-password" /></div>
+            <div id="client-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
+            <button class="btn btn-primary" onclick="doClientChangePwd()">Mettre à jour le mot de passe</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -2473,6 +2497,22 @@
             </div>
           </div>
         </div>
+
+        <!-- Changer mot de passe admin -->
+        <div class="card" style="margin-top:1.25rem;max-width:480px">
+          <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
+          <div class="card-body">
+            <div id="admin-pwd-info" style="font-size:12px;color:var(--sub);margin-bottom:1rem;padding:10px 12px;background:rgba(60,20,5,0.04);border:1px solid var(--border);border-radius:8px">
+              Mot de passe actuel : votre <strong>code d'accès admin</strong> (commence par <code>adm_</code>) si vous n'avez pas encore défini de mot de passe.
+            </div>
+            <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="admin_cur_pwd" placeholder="Mot de passe actuel ou code d'accès…" autocomplete="current-password" /></div>
+            <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="admin_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
+            <div class="form-group"><label>Confirmer</label><input type="password" id="admin_confirm_pwd" placeholder="Répétez le nouveau mot de passe" autocomplete="new-password" /></div>
+            <div id="admin-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
+            <button class="btn btn-primary" onclick="doAdminChangePwd()">Mettre à jour le mot de passe</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -2500,8 +2540,10 @@
                 <div class="sep"></div>
                 <div class="form-group"><label>Nom administrateur</label><input type="text" id="new_admin_name" placeholder="Admin Cabinet" /></div>
                 <div class="form-group"><label>Email administrateur</label><input type="email" id="new_admin_email" placeholder="admin@organisation.ci" /></div>
+                <div class="form-group"><label>Mot de passe admin</label><input type="password" id="new_admin_password" placeholder="Min. 8 caractères" /></div>
                 <div class="form-group"><label>Nom utilisateur</label><input type="text" id="new_user_name" placeholder="Utilisateur Cabinet" /></div>
                 <div class="form-group"><label>Email utilisateur</label><input type="email" id="new_user_email" placeholder="user@organisation.ci" /></div>
+                <div class="form-group"><label>Mot de passe utilisateur</label><input type="password" id="new_user_password" placeholder="Min. 8 caractères" /></div>
                 <div class="sep"></div>
                 <div class="form-group"><label>Nom affiché</label><input type="text" id="new_display_name" placeholder="Portail Cabinet Touré" /></div>
                 <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()">Créer avec accès illimité</button>
@@ -2524,6 +2566,30 @@
             </div>
           </div>
         </div>
+
+        <!-- Changer email / mot de passe superadmin -->
+        <div class="grid-2" style="margin-top:1.25rem">
+          <div class="card">
+            <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
+            <div class="card-body">
+              <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="sa_cur_pwd" placeholder="••••••••" autocomplete="current-password" /></div>
+              <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="sa_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
+              <div class="form-group"><label>Confirmer</label><input type="password" id="sa_confirm_pwd" placeholder="Répétez" autocomplete="new-password" /></div>
+              <div id="sa-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
+              <button class="btn btn-primary" onclick="doSAChangePwd()">Mettre à jour</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-icon">✉️</div><span class="card-title">Changer mon email</span></div>
+            <div class="card-body">
+              <div class="form-group"><label>Nouvel email</label><input type="email" id="sa_new_email" placeholder="nouveau@email.com" /></div>
+              <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="sa_email_pwd" placeholder="Votre mot de passe actuel" autocomplete="current-password" /></div>
+              <div id="sa-email-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
+              <button class="btn btn-primary" onclick="doSAChangeEmail()">Mettre à jour</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -3076,28 +3142,12 @@ document.getElementById('bceao_occurred_at').value = today;
 // ════════════════════════════════════════════════
 let selectedRole = 'client';
 
-function selectRole(role) {
-  selectedRole = role;
-  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('role-' + role).classList.add('active');
-
-  const helps = {
-    client:     '<strong>Code utilisateur</strong> — commence par <code>usr_</code><br>Reçu par email lors de la création de votre espace.',
-    admin:      '<strong>Code administrateur</strong> — commence par <code>adm_</code><br>Fourni lors de la création de votre espace par BAOBAB.',
-    superadmin: '<strong>Token superadmin</strong> — défini par votre équipe technique.<br>Accès réservé à l\'équipe BAOBAB.',
-  };
-  const placeholders = { client: 'usr_...', admin: 'adm_...', superadmin: 'Token superadmin' };
-  const labels = { client: 'Code utilisateur', admin: 'Code administrateur', superadmin: 'Token superadmin' };
-
-  document.getElementById('login-help').innerHTML = helps[role];
-  document.getElementById('access_code').placeholder = placeholders[role];
-  document.getElementById('code-label').textContent = labels[role];
-  document.getElementById('login-error').style.display = 'none';
-}
+function selectRole(role) { /* no-op — rôle détecté automatiquement via email */ }
 
 async function doLogin() {
-  const code = document.getElementById('access_code').value.trim();
-  if (!code) { showLoginError('Veuillez saisir votre code d\'accès.'); return; }
+  const email = (document.getElementById('login_email')?.value || '').trim();
+  const password = document.getElementById('login_password')?.value || '';
+  if (!email || !password) { showLoginError('Email et mot de passe requis.'); return; }
 
   const btn = document.getElementById('login-btn');
   btn.disabled = true;
@@ -3108,24 +3158,22 @@ async function doLogin() {
     const res = await fetch('/api/v1/accounts/access/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ access_code: code })
+      body: JSON.stringify({ email, password })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
 
     if (data.role === 'client') {
-      enterClient(data.workspace, code);
+      enterClient(data.workspace, data.token);
     } else if (data.role === 'admin') {
-      await enterAdmin(code);
-    } else if (data.role === 'superadmin') {
-      enterSuperadmin(code);
+      enterAdmin(data.token, data.workspace);
     } else {
       throw new Error('Rôle inconnu.');
     }
   } catch(e) {
     showLoginError(e.message);
     btn.disabled = false;
-    btn.innerHTML = 'Se connecter';
+    btn.innerHTML = 'Accéder à mon espace';
   }
 }
 
@@ -3215,6 +3263,98 @@ async function doSuperadminSetup() {
   }
 }
 
+/* ── Change-password helpers ── */
+function _showMsg(id, text, ok) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = '';
+  el.textContent = text;
+  el.style.background = ok ? 'rgba(20,140,80,0.10)' : 'rgba(180,40,20,0.10)';
+  el.style.border = `1px solid ${ok ? 'rgba(20,140,80,0.30)' : 'rgba(180,40,20,0.30)'}`;
+  el.style.color = ok ? '#1A7A40' : '#B03020';
+}
+
+async function doAdminChangePwd() {
+  const cur = document.getElementById('admin_cur_pwd').value;
+  const nw  = document.getElementById('admin_new_pwd').value;
+  const cf  = document.getElementById('admin_confirm_pwd').value;
+  if (!cur || !nw) return _showMsg('admin-pwd-msg', 'Renseignez tous les champs.', false);
+  if (nw.length < 8) return _showMsg('admin-pwd-msg', 'Nouveau mot de passe : minimum 8 caractères.', false);
+  if (nw !== cf) return _showMsg('admin-pwd-msg', 'Les mots de passe ne correspondent pas.', false);
+  try {
+    const res = await fetch('/api/v1/accounts/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': state.token },
+      body: JSON.stringify({ current_password: cur, new_password: nw })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    _showMsg('admin-pwd-msg', '✓ Mot de passe mis à jour. Utilisez-le à votre prochaine connexion.', true);
+    document.getElementById('admin-pwd-info').style.display = 'none';
+    ['admin_cur_pwd','admin_new_pwd','admin_confirm_pwd'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { _showMsg('admin-pwd-msg', e.message, false); }
+}
+
+async function doClientChangePwd() {
+  const cur = document.getElementById('client_cur_pwd').value;
+  const nw  = document.getElementById('client_new_pwd').value;
+  const cf  = document.getElementById('client_confirm_pwd').value;
+  if (!cur || !nw) return _showMsg('client-pwd-msg', 'Renseignez tous les champs.', false);
+  if (nw.length < 8) return _showMsg('client-pwd-msg', 'Nouveau mot de passe : minimum 8 caractères.', false);
+  if (nw !== cf) return _showMsg('client-pwd-msg', 'Les mots de passe ne correspondent pas.', false);
+  try {
+    const res = await fetch('/api/v1/accounts/client/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Access-Token': state.token },
+      body: JSON.stringify({ current_password: cur, new_password: nw })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    _showMsg('client-pwd-msg', '✓ Mot de passe mis à jour. Utilisez-le à votre prochaine connexion.', true);
+    document.getElementById('client-pwd-info').style.display = 'none';
+    ['client_cur_pwd','client_new_pwd','client_confirm_pwd'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { _showMsg('client-pwd-msg', e.message, false); }
+}
+
+async function doSAChangePwd() {
+  const cur = document.getElementById('sa_cur_pwd').value;
+  const nw  = document.getElementById('sa_new_pwd').value;
+  const cf  = document.getElementById('sa_confirm_pwd').value;
+  if (!cur || !nw) return _showMsg('sa-pwd-msg', 'Renseignez tous les champs.', false);
+  if (nw.length < 8) return _showMsg('sa-pwd-msg', 'Nouveau mot de passe : minimum 8 caractères.', false);
+  if (nw !== cf) return _showMsg('sa-pwd-msg', 'Les mots de passe ne correspondent pas.', false);
+  try {
+    const res = await fetch('/api/v1/superadmin/password', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.superadminToken}` },
+      body: JSON.stringify({ current_password: cur, new_password: nw })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    _showMsg('sa-pwd-msg', '✓ Mot de passe mis à jour.', true);
+    ['sa_cur_pwd','sa_new_pwd','sa_confirm_pwd'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { _showMsg('sa-pwd-msg', e.message, false); }
+}
+
+async function doSAChangeEmail() {
+  const newEmail = document.getElementById('sa_new_email').value.trim();
+  const pwd = document.getElementById('sa_email_pwd').value;
+  if (!newEmail || !pwd) return _showMsg('sa-email-msg', 'Renseignez tous les champs.', false);
+  try {
+    const res = await fetch('/api/v1/superadmin/email', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.superadminToken}` },
+      body: JSON.stringify({ new_email: newEmail, password: pwd })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    state.superadminToken = data.token;
+    _showMsg('sa-email-msg', `✓ Email mis à jour → ${data.email}`, true);
+    document.getElementById('sa_new_email').value = '';
+    document.getElementById('sa_email_pwd').value = '';
+  } catch(e) { _showMsg('sa-email-msg', e.message, false); }
+}
+
 function showRegister() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('active');
@@ -3251,18 +3391,9 @@ function enterClient(workspace, token) {
   renderClientWorkspace(workspace);
 }
 
-async function enterAdmin(adminToken) {
+function enterAdmin(adminToken, workspace) {
   state.role = 'admin';
   state.token = adminToken;
-
-  const loginRes = await fetch('/api/v1/accounts/admin/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ admin_token: adminToken })
-  });
-  const workspace = await loginRes.json();
-  if (!loginRes.ok) throw new Error(workspace.detail || `Erreur ${loginRes.status}`);
-
   state.adminWorkspace = workspace;
 
   document.getElementById('login-screen').style.display = 'none';
@@ -3298,9 +3429,12 @@ function logout() {
   document.getElementById('login-screen').style.display = '';
   document.getElementById('app-shell').classList.remove('active');
   document.getElementById('header-user').classList.add('hidden');
-  document.getElementById('access_code').value = '';
+  const emailEl = document.getElementById('login_email');
+  const pwdEl = document.getElementById('login_password');
+  if (emailEl) emailEl.value = '';
+  if (pwdEl) pwdEl.value = '';
   document.getElementById('login-btn').disabled = false;
-  document.getElementById('login-btn').innerHTML = 'Se connecter';
+  document.getElementById('login-btn').innerHTML = 'Accéder à mon espace';
   document.getElementById('login-error').style.display = 'none';
 }
 
@@ -3729,13 +3863,21 @@ async function loadSuperadminData() {
     };
 
     document.getElementById('sa-workspaces-list').innerHTML = workspaces.map(ws => `
-      <div class="workspace-row">
+      <div class="workspace-row" style="flex-wrap:wrap;row-gap:6px">
         <div class="ws-avatar">${(ws.organization_name || 'B')[0].toUpperCase()}</div>
-        <div class="ws-info">
+        <div class="ws-info" style="flex:1;min-width:0">
           <div class="ws-name">${escHtml(ws.organization_name)}</div>
-          <div class="ws-email">${escHtml(ws.admin_email || ws.email || '')} · ${ws.workspace_id}</div>
+          <div class="ws-email" style="margin-bottom:4px">${ws.workspace_id}</div>
+          <div style="font-size:10px;color:var(--sub);line-height:1.6">
+            <span style="color:var(--text);font-weight:600">Admin :</span> ${escHtml(ws.admin_email||'')}
+            ${ws.admin_password_hash ? '<span style="color:#1A7A40;margin-left:4px">· mdp défini</span>' : `<span style="color:#B06020;margin-left:4px">· mdp initial : <code style="font-size:10px">${escHtml(ws.admin_token||'')}</code></span>`}
+          </div>
+          <div style="font-size:10px;color:var(--sub);line-height:1.6">
+            <span style="color:var(--text);font-weight:600">Utilisateur :</span> ${escHtml(ws.user_email||'')}
+            ${ws.user_password_hash ? '<span style="color:#1A7A40;margin-left:4px">· mdp défini</span>' : `<span style="color:#B06020;margin-left:4px">· mdp initial : <code style="font-size:10px">${escHtml(ws.user_token||'')}</code></span>`}
+          </div>
         </div>
-        <div class="ws-badges">
+        <div class="ws-badges" style="align-self:flex-start">
           ${planPills[ws.plan] || `<span class="pill pill-gray">${ws.plan}</span>`}
           ${subPills[ws.subscription_status] || `<span class="pill pill-gray">${ws.subscription_status}</span>`}
         </div>
@@ -3754,14 +3896,21 @@ async function createNewWorkspace() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
   document.getElementById('sa-creation-result-card').style.display = 'none';
 
+  const adminPwd = document.getElementById('new_admin_password').value;
+  const userPwd  = document.getElementById('new_user_password').value;
+  if (adminPwd.length > 0 && adminPwd.length < 8) { alert('Mot de passe admin : minimum 8 caractères.'); btn.disabled = false; btn.innerHTML = 'Créer avec accès illimité'; return; }
+  if (userPwd.length > 0 && userPwd.length < 8)   { alert('Mot de passe utilisateur : minimum 8 caractères.'); btn.disabled = false; btn.innerHTML = 'Créer avec accès illimité'; return; }
+
   const payload = buildWorkspacePayload(
     document.getElementById('new_owner_name').value.trim(),
     document.getElementById('new_owner_email').value.trim(),
     document.getElementById('new_org_name').value.trim(),
     document.getElementById('new_admin_name').value.trim(),
     document.getElementById('new_admin_email').value.trim(),
+    adminPwd || null,
     document.getElementById('new_user_name').value.trim(),
     document.getElementById('new_user_email').value.trim(),
+    userPwd || null,
     document.getElementById('new_display_name').value.trim()
   );
 
@@ -3786,12 +3935,14 @@ async function createNewWorkspace() {
   }
 }
 
-function buildWorkspacePayload(ownerName, email, orgName, adminName, adminEmail, userName, userEmail, displayName) {
+function buildWorkspacePayload(ownerName, email, orgName, adminName, adminEmail, adminPassword, userName, userEmail, userPassword, displayName) {
   return {
     owner_name: ownerName, email, organization_name: orgName,
     territory: 'CI',
     admin_name: adminName, admin_email: adminEmail,
-    user_name: userName,   user_email: userEmail,
+    admin_password: adminPassword || `adm_temp_${Math.random().toString(36).slice(2,10)}`,
+    user_name: userName, user_email: userEmail,
+    user_password: userPassword || `usr_temp_${Math.random().toString(36).slice(2,10)}`,
     grant_unlimited_access: true,
     enabled_services: ['all_verticals', 'alerts', 'internal_requests', 'priority_support'],
     branding: {

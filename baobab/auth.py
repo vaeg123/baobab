@@ -2,11 +2,28 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import time
 
 from fastapi import HTTPException, status
 
 JWT_EXPIRY_HOURS = 8
+
+
+def hash_password(password: str) -> str:
+    salt = os.urandom(32)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 260_000)
+    return (salt + key).hex()
+
+
+def verify_password(password: str, stored: str) -> bool:
+    try:
+        data = bytes.fromhex(stored)
+        salt, key = data[:32], data[32:]
+        new_key = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 260_000)
+        return hmac.compare_digest(key, new_key)
+    except Exception:
+        return False
 
 
 def _b64url_encode(data: bytes) -> str:

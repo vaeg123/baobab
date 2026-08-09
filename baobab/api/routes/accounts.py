@@ -9,7 +9,7 @@ import asyncpg
 from fastapi import APIRouter, Header, HTTPException, status
 from pydantic import BaseModel, Field
 
-from baobab.auth import verify_superadmin_jwt
+from baobab.auth import hash_password, verify_password, verify_superadmin_jwt
 from baobab.config import settings
 from baobab import notifications
 
@@ -101,12 +101,14 @@ class InternalRequestUpdate(BaseModel):
     admin_note: str | None = Field(default=None, max_length=2000)
 
 
-class AdminLogin(BaseModel):
-    admin_token: str = Field(..., min_length=12, max_length=80)
+class EmailPasswordLogin(BaseModel):
+    email: str = Field(..., min_length=5, max_length=180)
+    password: str = Field(..., min_length=1, max_length=128)
 
 
-class AccessLogin(BaseModel):
-    access_code: str = Field(..., min_length=12, max_length=80)
+class ChangePassword(BaseModel):
+    current_password: str = Field(..., min_length=1, max_length=128)
+    new_password: str = Field(..., min_length=8, max_length=128)
 
 
 class WorkspaceBranding(BaseModel):
@@ -125,6 +127,8 @@ class SuperadminWorkspaceCreate(BaseModel):
     user_email: str | None = Field(default=None, min_length=5, max_length=180)
     admin_name: str = Field(..., min_length=2, max_length=120)
     admin_email: str = Field(..., min_length=5, max_length=180)
+    admin_password: str = Field(..., min_length=8, max_length=128)
+    user_password: str = Field(..., min_length=8, max_length=128)
     grant_unlimited_access: bool = True
     enabled_services: list[str] = Field(
         default_factory=lambda: ["all_verticals", "alerts", "internal_requests", "priority_support"]
@@ -433,6 +437,8 @@ def _create_workspace_record(
     user_email: str | None = None,
     admin_name: str | None = None,
     admin_email: str | None = None,
+    admin_password: str | None = None,
+    user_password: str | None = None,
     grant_unlimited_access: bool = False,
     enabled_services: list[str] | None = None,
     branding: WorkspaceBranding | None = None,
@@ -448,9 +454,11 @@ def _create_workspace_record(
         "user_name": user_name or owner_name,
         "user_email": (user_email or email).lower(),
         "user_token": f"usr_{uuid4().hex}",
+        "user_password_hash": hash_password(user_password) if user_password else None,
         "admin_name": admin_name or owner_name,
         "admin_email": (admin_email or email).lower(),
         "admin_token": f"adm_{uuid4().hex}",
+        "admin_password_hash": hash_password(admin_password) if admin_password else None,
         "plan": SubscriptionPlan.PREMIUM if grant_unlimited_access else SubscriptionPlan.FREE,
         "subscription_status": "unlimited_grant" if grant_unlimited_access else "free",
         "subscription_expires_at": None,
@@ -603,39 +611,74 @@ async def list_internal_requests(workspace_id: str):
     return {"requests": await _list_internal_requests(workspace_id)}
 
 
-@router.post("/admin/login")
-async def admin_login(request: AdminLogin):
-    for workspace in await _list_workspaces():
-        if workspace["admin_token"] == request.admin_token:
-            return await _admin_workspace(workspace)
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail="Invalid admin token",
-    )
-
-
 @router.post("/access/login")
-async def access_login(request: AccessLogin):
+async def access_login(request: EmailPasswordLogin):
+    email = request.email.strip().lower()
     for workspace in await _list_workspaces():
-        if workspace.get("user_token") == request.access_code:
-            return {
-                "role": "client",
-                "token": request.access_code,
-                "workspace": await _public_workspace(workspace),
-                "message": "Client workspace access granted",
-            }
-        if workspace["admin_token"] == request.access_code:
-            return {
-                "role": "admin",
-                "token": request.access_code,
-                "workspace": await _admin_workspace(workspace),
-                "message": "Workspace admin access granted",
-            }
+        if workspace.get("admin_email") == email:
+            stored = workspace.get("admin_password_hash")
+            # Migration: si pas de hash, le code d'accès sert de mot de passe initial
+            ok = verify_password(request.password, stored) if stored else (request.password == workspace.get("admin_token", ""))
+            if ok:
+                return {
+                    "role": "admin",
+                    "token": workspace["admin_token"],
+                    "workspace": await _admin_workspace(workspace),
+                    "message": "Workspace admin access granted",
+                }
+        if workspace.get("user_email") == email:
+            stored = workspace.get("user_password_hash")
+            ok = verify_password(request.password, stored) if stored else (request.password == workspace.get("user_token", ""))
+            if ok:
+                return {
+                    "role": "client",
+                    "token": workspace["user_token"],
+                    "workspace": await _public_workspace(workspace),
+                    "message": "Client workspace access granted",
+                }
 
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
-        detail="Invalid access code",
+        detail="Email ou mot de passe incorrect.",
     )
+
+
+@router.post("/admin/change-password")
+async def admin_change_password(
+    request: ChangePassword,
+    x_admin_token: str | None = Header(default=None),
+):
+    if not x_admin_token:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token admin requis.")
+    for workspace in await _list_workspaces():
+        if workspace.get("admin_token") == x_admin_token:
+            stored = workspace.get("admin_password_hash")
+            ok = verify_password(request.current_password, stored) if stored else (request.current_password == workspace.get("admin_token", ""))
+            if not ok:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
+            workspace["admin_password_hash"] = hash_password(request.new_password)
+            await _save_workspace(workspace)
+            return {"message": "Mot de passe modifié avec succès."}
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
+
+
+@router.post("/client/change-password")
+async def client_change_password(
+    request: ChangePassword,
+    x_access_token: str | None = Header(default=None),
+):
+    if not x_access_token:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token requis.")
+    workspace = await _find_workspace_by_token(x_access_token)
+    if not workspace:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
+    stored = workspace.get("user_password_hash")
+    ok = verify_password(request.current_password, stored) if stored else (request.current_password == workspace.get("user_token", ""))
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
+    workspace["user_password_hash"] = hash_password(request.new_password)
+    await _save_workspace(workspace)
+    return {"message": "Mot de passe modifié avec succès."}
 
 
 @router.get("/admin/workspaces/{workspace_id}")
@@ -734,6 +777,8 @@ async def create_superadmin_workspace(
         user_email=request.user_email,
         admin_name=request.admin_name,
         admin_email=request.admin_email,
+        admin_password=request.admin_password,
+        user_password=request.user_password,
         grant_unlimited_access=request.grant_unlimited_access,
         enabled_services=request.enabled_services,
         branding=request.branding,
