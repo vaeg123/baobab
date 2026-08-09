@@ -4277,14 +4277,50 @@ async function loadSuperadminData() {
             ${ws.user_password_hash ? '<span style="color:#1A7A40;margin-left:4px">· mdp défini</span>' : `<span style="color:#B06020;margin-left:4px">· mdp initial : <code style="font-size:10px">${escHtml(ws.user_token||'')}</code></span>`}
           </div>
         </div>
-        <div class="ws-badges" style="align-self:flex-start">
-          ${planPills[ws.plan] || `<span class="pill pill-gray">${ws.plan}</span>`}
-          ${subPills[ws.subscription_status] || `<span class="pill pill-gray">${ws.subscription_status}</span>`}
+        <div class="ws-badges" style="align-self:flex-start;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <div style="display:flex;gap:6px">
+            ${planPills[ws.plan] || `<span class="pill pill-gray">${ws.plan}</span>`}
+            ${subPills[ws.subscription_status] || `<span class="pill pill-gray">${ws.subscription_status}</span>`}
+          </div>
+          <div style="display:flex;gap:4px">
+            <select id="plan-sel-${ws.workspace_id}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text)">
+              <option value="free" ${ws.plan==='free'?'selected':''}>Gratuit</option>
+              <option value="basic" ${ws.plan==='basic'?'selected':''}>Basic</option>
+              <option value="premium" ${ws.plan==='premium'?'selected':''}>Premium</option>
+            </select>
+            <button onclick="activateWorkspacePlan('${ws.workspace_id}')" style="font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:var(--clay);color:#FDF8F3;cursor:pointer">Activer</button>
+          </div>
         </div>
       </div>`).join('');
   } catch(e) {
     document.getElementById('sa-workspaces-list').innerHTML =
       `<div class="empty-state" style="padding:2rem"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${escHtml(e.message)}</div></div>`;
+  }
+}
+
+async function activateWorkspacePlan(wsId) {
+  const token = state.superadminToken;
+  if (!token) { alert('Non authentifié superadmin.'); return; }
+  const plan = document.getElementById(`plan-sel-${wsId}`)?.value;
+  if (!plan) return;
+  const planNames = { free: 'Gratuit', basic: 'Basic', premium: 'Premium' };
+  if (!confirm(`Activer le plan ${planNames[plan]} pour ce workspace ?`)) return;
+
+  const subscription_status = plan === 'free' ? 'free' : 'active';
+  const subscription_expires_at = plan === 'free' ? null
+    : new Date(Date.now() + 30 * 86400000).toISOString();
+
+  const res = await fetch(`/api/v1/accounts/superadmin/workspaces/${wsId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ plan, subscription_status, subscription_expires_at }),
+  });
+  if (res.ok) {
+    alert(`✓ Plan ${planNames[plan]} activé avec succès.`);
+    loadSAWorkspaces();
+  } else {
+    const err = await res.json().catch(() => ({}));
+    alert(`Erreur : ${err.detail || res.status}`);
   }
 }
 
