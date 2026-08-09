@@ -2175,6 +2175,7 @@
       .plans-body { padding: 1.5rem 1rem 2rem; }
       .plans-grid { grid-template-columns: 1fr; }
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes tlpulse { 0%,100%{box-shadow:0 0 0 0 rgba(191,78,30,0.5)} 50%{box-shadow:0 0 0 6px rgba(191,78,30,0)}}
     .timeline-pulse { animation: tlpulse 1.8s infinite; }
   </style>
@@ -3992,6 +3993,43 @@ document.addEventListener('DOMContentLoaded', () => {
   initLLCarousel();
 });
 
+function _renderPaymentBadge(workspace) {
+  // Afficher facture si espace actif
+  const existing = document.getElementById('client-payment-badge');
+  if (existing) existing.remove();
+
+  const lastPayment = JSON.parse(sessionStorage.getItem('baobab_last_payment') || 'null');
+  const isActive = workspace.subscription_status === 'active' || workspace.subscription_status === 'unlimited_grant';
+  if (!isActive) return;
+
+  const planNames = { basic: 'Basic', premium: 'Premium', free: 'Gratuit' };
+  const planAmounts = { basic: '5 000', premium: '10 000', free: '0' };
+  const planName = planNames[workspace.plan] || workspace.plan;
+  const amount = lastPayment ? lastPayment.amount.toLocaleString('fr-FR') : (planAmounts[workspace.plan] || '—');
+  const dateStr = workspace.subscription_expires_at
+    ? `Expire le ${new Date(workspace.subscription_expires_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}`
+    : 'Accès illimité';
+
+  const badge = document.createElement('div');
+  badge.id = 'client-payment-badge';
+  badge.style.cssText = 'margin:0 0 1.25rem;padding:14px 18px;background:rgba(20,140,80,0.08);border:1px solid rgba(20,140,80,0.25);border-radius:10px;display:flex;align-items:center;gap:16px';
+  badge.innerHTML = `
+    <div style="width:36px;height:36px;background:rgba(20,140,80,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#1A7A40;font-size:16px;font-weight:700">✓</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">Abonnement ${planName} — actif</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:2px">${dateStr}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:16px;font-weight:700;color:var(--text)">${amount} XOF</div>
+      <div style="font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:0.5px">par mois</div>
+    </div>
+  `;
+
+  // Insérer au début du tab-client container
+  const container = document.querySelector('#tab-client .container');
+  if (container) container.insertBefore(badge, container.firstChild.nextSibling.nextSibling);
+}
+
 function renderClientWorkspace(workspace) {
   currentClientWorkspace = workspace;
   if (!workspace) return;
@@ -4038,6 +4076,7 @@ function renderClientWorkspace(workspace) {
 
   const planDetails = workspace.plan_details || {};
   updateQuotaBar(workspace.analyses_today || 0, planDetails.analyses_daily_limit !== undefined ? planDetails.analyses_daily_limit : null);
+  _renderPaymentBadge(workspace);
 }
 
 // ════════════════════════════════════════════════
@@ -4476,15 +4515,7 @@ function showPlansScreen(workspace) {
   const name = ws?.organization_name || 'votre organisation';
   document.getElementById('plans-welcome-name').textContent = `Bienvenue, ${name} 👋`;
 
-  // Afficher le code d'accès pour que l'utilisateur puisse revenir plus tard
-  const token = ws?.user_token;
-  const codeBox = document.getElementById('plans-access-code-box');
-  if (token) {
-    document.getElementById('plans-access-code').textContent = token;
-    codeBox.style.display = '';
-  } else {
-    codeBox.style.display = 'none';
-  }
+  document.getElementById('plans-access-code-box').style.display = 'none';
 
   ['basic','premium'].forEach(p => {
     document.getElementById(`plan-card-${p}`)?.classList.remove('selected');
@@ -4543,6 +4574,16 @@ async function submitPlansCheckout() {
     );
     const data = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(data.detail));
+
+    // Sauvegarder les infos avant redirection (l'état JS sera perdu)
+    sessionStorage.setItem('baobab_stripe_pending', JSON.stringify({
+      workspace_id: currentWorkspace.workspace_id,
+      user_token: state.token,
+      email: currentWorkspace.user_email || currentWorkspace.email,
+      plan: _plansSelectedPlan,
+      org: currentWorkspace.organization_name || '',
+      amount: _plansSelectedPlan === 'basic' ? 5000 : 10000,
+    }));
 
     // Redirection vers la page Stripe Checkout
     window.location.href = data.url;
@@ -6281,39 +6322,135 @@ document.addEventListener('keydown', e => {
 (function handleStripeReturn() {
   const params = new URLSearchParams(window.location.search);
   const payment = params.get('payment');
-  const workspaceId = params.get('workspace_id');
   if (!payment) return;
-
-  // Nettoyer l'URL sans recharger la page
   window.history.replaceState({}, '', window.location.pathname);
 
-  if (payment === 'success') {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('plans-screen').classList.add('active');
-    document.getElementById('plans-checkout-box').classList.remove('active');
-    document.getElementById('plans-grid').style.display = 'none';
-
-    document.getElementById('plans-welcome-name').textContent = 'Paiement reçu 🎉';
-    document.getElementById('plans-access-code-box').style.display = 'none';
-
-    const pendingBox = document.getElementById('plans-pending-box');
-    pendingBox.classList.add('active');
-    document.getElementById('pending-email').textContent = 'votre adresse email';
-    document.getElementById('pending-ref').textContent =
-      workspaceId ? `Espace : ${workspaceId}` : '';
-
-    // Surcharger le message pour le cas Stripe
-    pendingBox.querySelector('.pending-title').textContent = 'Paiement confirmé !';
-    pendingBox.querySelector('.pending-sub').innerHTML =
-      'Votre paiement Stripe a bien été reçu.<br>' +
-      'Votre espace BAOBAB va être activé sous quelques minutes.<br><br>' +
-      'Vous recevrez un email de confirmation avec votre code d\'accès.';
-  } else if (payment === 'cancelled') {
-    // Retour silencieux à la page d'accueil
-    document.getElementById('login-screen').style.display = '';
+  if (payment === 'cancelled') {
+    sessionStorage.removeItem('baobab_stripe_pending');
+    return;
   }
+
+  if (payment !== 'success') return;
+
+  const pending = JSON.parse(sessionStorage.getItem('baobab_stripe_pending') || 'null');
+  sessionStorage.removeItem('baobab_stripe_pending');
+
+  // Afficher l'overlay d'activation
+  const overlay = document.getElementById('stripe-activation-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  document.getElementById('login-screen').style.display = 'none';
+
+  if (!pending) {
+    // Pas de données session — retour au login avec message
+    if (overlay) overlay.style.display = 'none';
+    document.getElementById('login-screen').style.display = '';
+    showLoginError('Paiement reçu. Reconnectez-vous pour accéder à votre espace activé.');
+    return;
+  }
+
+  // Mettre à jour l'overlay avec les infos du plan
+  const planLabels = { basic: 'Basic — 5 000 XOF/mois', premium: 'Premium — 10 000 XOF/mois' };
+  const elPlan = document.getElementById('sao-plan');
+  const elOrg  = document.getElementById('sao-org');
+  if (elPlan) elPlan.textContent = planLabels[pending.plan] || pending.plan;
+  if (elOrg)  elOrg.textContent  = pending.org || pending.email;
+
+  let attempts = 0;
+  const MAX_ATTEMPTS = 15;
+
+  async function pollActivation() {
+    attempts++;
+    try {
+      const res = await fetch(`/api/v1/accounts/workspaces/${pending.workspace_id}`);
+      if (res.ok) {
+        const ws = await res.json();
+        if (ws.subscription_status === 'active' || ws.subscription_status === 'unlimited_grant') {
+          // Workspace activé — afficher succès puis entrer dans l'espace
+          const step1 = document.getElementById('sao-step-waiting');
+          const step2 = document.getElementById('sao-step-success');
+          if (step1) step1.style.display = 'none';
+          if (step2) step2.style.display = '';
+          // Attendre 2s pour que l'utilisateur lise le message, puis entrer
+          setTimeout(() => {
+            if (overlay) overlay.style.display = 'none';
+            // Stocker infos facture pour affichage dans le dashboard
+            sessionStorage.setItem('baobab_last_payment', JSON.stringify({
+              plan: pending.plan,
+              amount: pending.amount,
+              date: new Date().toISOString(),
+              org: pending.org,
+            }));
+            enterClient(ws, pending.user_token);
+          }, 2500);
+          return;
+        }
+      }
+    } catch(e) {}
+
+    const elAttempts = document.getElementById('sao-attempts');
+    if (elAttempts) elAttempts.textContent = `Vérification ${attempts}/${MAX_ATTEMPTS}…`;
+
+    if (attempts < MAX_ATTEMPTS) {
+      setTimeout(pollActivation, 2000);
+    } else {
+      // Timeout — demander à l'utilisateur de se reconnecter
+      const step1 = document.getElementById('sao-step-waiting');
+      const stepTimeout = document.getElementById('sao-step-timeout');
+      if (step1) step1.style.display = 'none';
+      if (stepTimeout) stepTimeout.style.display = '';
+      const elEmail = document.getElementById('sao-email');
+      if (elEmail) elEmail.textContent = pending.email;
+    }
+  }
+
+  // Démarrer le polling après 3s (laisser le temps au webhook Stripe)
+  setTimeout(pollActivation, 3000);
 })();
 </script>
+
+<!-- ═══════════════════════════════════
+  OVERLAY ACTIVATION STRIPE
+═══════════════════════════════════ -->
+<div id="stripe-activation-overlay" style="display:none;position:fixed;inset:0;background:#FDF8F3;z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:2rem">
+  <div style="max-width:480px;width:100%;text-align:center">
+    <img src="/static/vaeg-logo.png" alt="BAOBAB" style="height:36px;margin-bottom:2rem;opacity:0.7" />
+
+    <!-- Étape 1 : attente activation -->
+    <div id="sao-step-waiting">
+      <div style="width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--clay);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.5rem"></div>
+      <div style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px">Activation en cours…</div>
+      <div style="font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:1.5rem">
+        Votre paiement a été reçu.<br>
+        Nous activons votre espace <strong id="sao-org"></strong>.
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--clay);margin-bottom:6px" id="sao-plan"></div>
+      <div style="font-size:12px;color:var(--sub)" id="sao-attempts">Vérification en cours…</div>
+    </div>
+
+    <!-- Étape 2 : succès -->
+    <div id="sao-step-success" style="display:none">
+      <div style="width:56px;height:56px;background:rgba(20,140,80,0.12);border:2px solid rgba(20,140,80,0.30);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:24px">✓</div>
+      <div style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px">Espace activé !</div>
+      <div style="font-size:14px;color:var(--sub);line-height:1.6">
+        Votre abonnement <strong id="sao-plan-ok"></strong> est actif.<br>
+        Redirection vers votre espace…
+      </div>
+    </div>
+
+    <!-- Étape 3 : timeout -->
+    <div id="sao-step-timeout" style="display:none">
+      <div style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px">Paiement reçu</div>
+      <div style="font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:1.5rem">
+        L'activation prend un peu plus de temps que prévu.<br>
+        Reconnectez-vous avec votre email pour accéder à votre espace activé.<br><br>
+        <span style="font-size:12px">Email : <strong id="sao-email"></strong></span>
+      </div>
+      <button class="btn btn-primary" onclick="document.getElementById('stripe-activation-overlay').style.display='none';document.getElementById('login-screen').style.display=''" style="padding:12px 24px">
+        Se connecter à mon espace
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Modal lecteur de source -->
 <div id="source-modal" onclick="if(event.target===this)closeSourceModal()">
