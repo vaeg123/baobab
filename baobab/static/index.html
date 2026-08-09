@@ -4037,12 +4037,14 @@ function renderClientWorkspace(workspace) {
   const branding    = workspace.branding || {};
   const query       = (document.getElementById('client_search')?.value || '').toLowerCase();
   const enabled     = workspace.enabled_services || [];
-  const hasAll      = enabled.includes('all_verticals');
+  const planSvcs    = (workspace.plan_details || {}).services || [];
+  const hasAll      = enabled.includes('all_verticals') || planSvcs.includes('all_verticals');
 
   const services = serviceCatalog.filter(s => {
     const matchQuery = `${s.title} ${s.desc} ${s.key}`.toLowerCase().includes(query);
-    const isEnabled  = hasAll || enabled.includes(s.key) || enabled.includes(s.tab) ||
-                       (workspace.plan === 'free' && ['internal_requests', 'cima'].includes(s.key));
+    const isEnabled  = hasAll
+      || enabled.includes(s.key) || enabled.includes(s.tab)
+      || planSvcs.includes(s.key) || planSvcs.includes(s.tab);
     return matchQuery && isEnabled;
   });
 
