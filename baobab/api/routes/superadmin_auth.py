@@ -1,11 +1,19 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Header, HTTPException, status
+from fastapi import APIRouter, Header, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-from baobab.auth import JWT_EXPIRY_HOURS, create_superadmin_jwt, hash_password, verify_password, verify_superadmin_jwt
-from baobab.config import settings
 from baobab.api.routes.accounts import _connect_db, _use_database
+from baobab.auth import (
+    JWT_EXPIRY_HOURS,
+    constant_time_equals,
+    create_superadmin_jwt,
+    hash_password,
+    verify_password,
+    verify_superadmin_jwt,
+)
+from baobab.config import settings
+from baobab.rate_limit import client_ip, enforce_rate_limit
 
 router = APIRouter(tags=["superadmin-auth"])
 
@@ -56,10 +64,21 @@ class SuperadminChangeEmail(BaseModel):
 
 
 @router.post("/superadmin/setup", status_code=status.HTTP_201_CREATED)
-async def setup_superadmin(request: SuperadminSetup):
-    import os
-    bootstrap_token = os.getenv("BAOBAB_SUPERADMIN_TOKEN", "baobab-superadmin-dev")
-    if request.bootstrap_token != bootstrap_token:
+async def setup_superadmin(request: SuperadminSetup, http_request: Request):
+    await enforce_rate_limit(
+        key=f"superadmin-setup:{client_ip(http_request)}", limit=10, window_seconds=300
+    )
+    # Aucune valeur par défaut : si BAOBAB_SUPERADMIN_TOKEN n'est pas
+    # positionnée explicitement, l'endpoint refuse de fonctionner plutôt
+    # que d'accepter un jeton public connu (ancien comportement
+    # vulnérable — cf. audit sécurité).
+    bootstrap_token = settings.superadmin_bootstrap_token
+    if not bootstrap_token:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Bootstrap superadmin non configuré (BAOBAB_SUPERADMIN_TOKEN manquant).",
+        )
+    if not constant_time_equals(request.bootstrap_token, bootstrap_token):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token de bootstrap invalide.")
 
     if not _use_database():
@@ -85,7 +104,11 @@ async def setup_superadmin(request: SuperadminSetup):
 
 
 @router.post("/superadmin/login")
-async def login_superadmin(request: SuperadminLogin):
+async def login_superadmin(request: SuperadminLogin, http_request: Request):
+    # Le compte superadmin a un accès total : throttling agressif par IP.
+    await enforce_rate_limit(
+        key=f"superadmin-login:{client_ip(http_request)}", limit=10, window_seconds=300
+    )
     if not _use_database():
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Base de données requise.")
 

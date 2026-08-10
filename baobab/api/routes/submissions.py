@@ -16,13 +16,16 @@ from datetime import datetime, timezone
 from typing import Literal
 
 import asyncpg
-from fastapi import APIRouter, File, Form, Header, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, Header, HTTPException, Request, UploadFile
 from pydantic import BaseModel
+
+from baobab.auth import constant_time_equals
+from baobab.config import settings
+from baobab.rate_limit import client_ip, enforce_rate_limit
 
 router = APIRouter(tags=["submissions"])
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://baobab:baobab@localhost:5432/baobab")
-ADMIN_KEY = os.environ.get("BAOBAB_ADMIN_KEY", "")
 
 CORPUS_VALUES = {"cima", "ohada", "ci"}
 TYPE_VALUES = {
@@ -34,9 +37,9 @@ TYPE_VALUES = {
 # ─── Auth admin ───────────────────────────────────────────────────────────────
 
 def _require_admin(x_admin_key: str | None):
-    if not ADMIN_KEY:
+    if not settings.admin_key:
         raise HTTPException(503, "BAOBAB_ADMIN_KEY non configurée sur le serveur")
-    if x_admin_key != ADMIN_KEY:
+    if not constant_time_equals(x_admin_key, settings.admin_key):
         raise HTTPException(403, "Clé admin invalide")
 
 
@@ -139,6 +142,7 @@ class RejectRequest(BaseModel):
 
 @router.post("/submissions", status_code=201)
 async def submit_document(
+    http_request: Request,
     corpus: str = Form(..., description="cima | ohada | ci"),
     type: str = Form("autre"),
     titre_user: str = Form(""),
@@ -153,7 +157,15 @@ async def submit_document(
     Soumettre un document juridique pour intégration au corpus BAOBAB.
     Accepte un PDF (extraction automatique) ou un texte collé.
     Une analyse IA est lancée automatiquement. Statut initial : pending.
+
+    Endpoint volontairement public (contribution communautaire), mais
+    chaque soumission déclenche un appel payant à l'API Claude et une
+    écriture en base : throttling par IP obligatoire pour éviter tout
+    abus automatisé (cf. audit sécurité, ch. 14/32 du livre).
     """
+    await enforce_rate_limit(
+        key=f"submissions:{client_ip(http_request)}", limit=5, window_seconds=3600
+    )
     if corpus not in CORPUS_VALUES:
         raise HTTPException(422, f"corpus doit être : {', '.join(CORPUS_VALUES)}")
 

@@ -12,8 +12,10 @@ import os
 from typing import Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Header, HTTPException, Query
+from fastapi import APIRouter, Header, HTTPException, Query, Request
 from pydantic import BaseModel
+
+from baobab.rate_limit import client_ip, enforce_rate_limit
 
 router = APIRouter(tags=["legal"])
 
@@ -24,6 +26,33 @@ try:
     HAS_ASYNCPG = True
 except ImportError:
     HAS_ASYNCPG = False
+
+
+async def _require_active_workspace(x_user_token: str | None) -> dict:
+    """
+    Exige un token de workspace valide et actif (compte non suspendu).
+
+    Avant correctif, tout le corpus juridique (le produit payant de
+    BAOBAB) était lisible anonymement via /legal/search, /legal/corpus
+    et /legal/corpus/{id} — le système de quota par plan n'était en fait
+    appliqué qu'à /legal/analyze, et seulement quand le client daignait
+    envoyer son token (cf. audit sécurité). Toute lecture du corpus
+    nécessite désormais un compte, même gratuit.
+    """
+    if not x_user_token:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentification requise (en-tête X-User-Token). "
+            "Créez un espace gratuit via POST /api/v1/accounts/workspaces.",
+        )
+    from baobab.api.routes.accounts import _find_workspace_by_token
+
+    workspace = await _find_workspace_by_token(x_user_token)
+    if not workspace:
+        raise HTTPException(status_code=401, detail="Token utilisateur invalide.")
+    if workspace.get("suspended"):
+        raise HTTPException(status_code=403, detail="Ce compte est suspendu.")
+    return workspace
 
 
 # ─── Modèles ──────────────────────────────────────────────────────────────────
@@ -90,8 +119,13 @@ def _row_to_doc(row, score: float | None = None) -> dict:
 # ─── Endpoints ────────────────────────────────────────────────────────────────
 
 @router.post("/legal/search")
-async def search_corpus(req: SearchRequest):
-    """Recherche fulltext dans le corpus juridique BAOBAB."""
+async def search_corpus(req: SearchRequest, x_user_token: str | None = Header(default=None)):
+    """Recherche fulltext dans le corpus juridique BAOBAB. Nécessite un compte actif."""
+    await _require_active_workspace(x_user_token)
+    return await _search_corpus_impl(req)
+
+
+async def _search_corpus_impl(req: SearchRequest) -> dict:
     conn = await _conn()
     try:
         conditions = ["1=1"]
@@ -192,8 +226,10 @@ async def list_corpus(
     pays: str | None = Query(None),
     limit: int = Query(50, le=200),
     offset: int = Query(0),
+    x_user_token: str | None = Header(default=None),
 ):
-    """Liste paginée du corpus juridique."""
+    """Liste paginée du corpus juridique. Nécessite un compte actif."""
+    await _require_active_workspace(x_user_token)
     conn = await _conn()
     try:
         conditions = ["1=1"]
@@ -233,8 +269,9 @@ async def list_corpus(
 
 
 @router.get("/legal/corpus/{doc_id}")
-async def get_document(doc_id: str):
-    """Détail complet d'un document du corpus."""
+async def get_document(doc_id: str, x_user_token: str | None = Header(default=None)):
+    """Détail complet d'un document du corpus. Nécessite un compte actif."""
+    await _require_active_workspace(x_user_token)
     conn = await _conn()
     try:
         row = await conn.fetchrow(
@@ -271,13 +308,31 @@ async def get_document(doc_id: str):
 @router.post("/legal/analyze")
 async def analyze_question(
     req: AnalyzeRequest,
-    x_user_token: str | None = Header(None),
+    http_request: Request,
+    x_user_token: str = Header(...),
 ):
     """
     Analyse une question juridique :
     1. Recherche les documents pertinents dans le corpus
     2. Appelle Claude pour une réponse fondée sur le droit CIMA/OHADA/CI
+
+    Le token utilisateur est OBLIGATOIRE et le quota est TOUJOURS vérifié
+    et incrémenté avant tout appel IA. Avant correctif, ce contrôle était
+    ignoré lorsque le client omettait simplement l'en-tête X-User-Token,
+    ce qui permettait un accès anonyme et illimité à un appel Claude
+    payant (cf. audit sécurité — vulnérabilité de logique métier,
+    équivalent du contournement de paywall décrit au ch. 18 du livre).
     """
+    # IP throttling en complément du quota par compte : ralentit aussi un
+    # abus distribué sur plusieurs comptes gratuits créés en masse.
+    await enforce_rate_limit(
+        key=f"legal-analyze:{client_ip(http_request)}", limit=30, window_seconds=3600
+    )
+
+    from baobab.api.routes.accounts import check_and_increment_analyses_quota
+
+    quota_info = await check_and_increment_analyses_quota(x_user_token)
+
     # Étape 1 : récupérer le contexte documentaire
     search_req = SearchRequest(
         query=req.question,
@@ -285,14 +340,9 @@ async def analyze_question(
         limit=max(req.context_docs, 8),
         mode="fulltext",
     )
-    # Quota par utilisateur
-    quota_info: dict = {"allowed": True, "used": None, "limit": None, "remaining": None}
-    if x_user_token:
-        from baobab.api.routes.accounts import check_and_increment_analyses_quota
-        quota_info = await check_and_increment_analyses_quota(x_user_token)
 
     try:
-        search_result = await search_corpus(search_req)
+        search_result = await _search_corpus_impl(search_req)
         docs = search_result.get("results", [])
     except HTTPException:
         raise

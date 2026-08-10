@@ -6,20 +6,34 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions, legal_fr, stripe_routes, superadmin_auth
+from baobab.config import settings
+
+# La documentation Swagger/Redoc expose la carte complète de l'API
+# (endpoints, schémas, exemples) : un point de départ idéal pour la
+# reconnaissance d'un attaquant. Elle reste activée en développement,
+# mais masquée en production sauf activation explicite via
+# EXPOSE_API_DOCS=true (ex. API publique documentée volontairement).
+_show_docs = (not settings.is_production) or settings.expose_api_docs
 
 app = FastAPI(
     title="BAOBAB API",
     description="Legal Operating System for Africa",
     version="0.1.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
+    docs_url="/api/docs" if _show_docs else None,
+    redoc_url="/api/redoc" if _show_docs else None,
+    openapi_url="/api/openapi.json" if _show_docs else None,
 )
 
+# CORS : jamais de wildcard. Seules les origines explicitement listées
+# dans CORS_ALLOWED_ORIGINS (variable d'environnement, séparée par des
+# virgules) peuvent effectuer des requêtes cross-origin avec en-têtes
+# personnalisés (Authorization, X-Admin-Token, X-Access-Token...).
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=settings.cors_origins_list,
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    allow_credentials=False,
 )
 
 app.include_router(health.router, prefix="/api")

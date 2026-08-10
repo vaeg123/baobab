@@ -6,11 +6,12 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from uuid import uuid4
 
 import asyncpg
-from fastapi import APIRouter, Header, HTTPException, status
+from fastapi import APIRouter, Header, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-from baobab.auth import hash_password, verify_password, verify_superadmin_jwt
+from baobab.auth import constant_time_equals, hash_password, verify_password, verify_superadmin_jwt
 from baobab.config import settings
+from baobab.rate_limit import client_ip, enforce_rate_limit
 from baobab import notifications
 
 router = APIRouter(tags=["accounts"])
@@ -419,10 +420,30 @@ async def _list_payments() -> list[dict]:
 
 async def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> dict:
     workspace = await _get_workspace(workspace_id)
-    if x_admin_token != workspace.get("admin_token"):
+    if not constant_time_equals(x_admin_token, workspace.get("admin_token")):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Workspace admin token required",
+        )
+    return workspace
+
+
+async def _require_workspace_access(workspace_id: str, access_token: str | None) -> dict:
+    """
+    Autorise la lecture d'un workspace à quiconque présente son token
+    admin OU son token utilisateur (les deux donnent accès en lecture ;
+    seul le token admin donne des droits d'écriture, vérifiés ailleurs).
+
+    Sans ce contrôle, connaître/deviner un workspace_id suffisait à lire
+    les données personnelles du client (IDOR — cf. audit sécurité).
+    """
+    workspace = await _get_workspace(workspace_id)
+    is_admin = constant_time_equals(access_token, workspace.get("admin_token"))
+    is_user = constant_time_equals(access_token, workspace.get("user_token"))
+    if not (is_admin or is_user):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token d'accès au workspace requis.",
         )
     return workspace
 
@@ -518,10 +539,12 @@ async def _get_workspace(workspace_id: str) -> dict:
     return workspace
 
 
-async def _find_workspace_by_token(user_token: str) -> dict | None:
-    """Trouve un workspace par son user_token."""
+async def _find_workspace_by_token(user_token: str | None) -> dict | None:
+    """Trouve un workspace par son user_token (comparaison temps constant)."""
+    if not user_token:
+        return None
     for ws in await _list_workspaces():
-        if ws.get("user_token") == user_token:
+        if constant_time_equals(user_token, ws.get("user_token")):
             return ws
     return None
 
@@ -612,8 +635,21 @@ async def create_workspace(request: WorkspaceCreate):
 
 
 @router.get("/workspaces/{workspace_id}")
-async def get_workspace(workspace_id: str):
-    return await _public_workspace(await _get_workspace(workspace_id))
+async def get_workspace(
+    workspace_id: str,
+    x_access_token: str | None = Header(default=None),
+):
+    """
+    Renvoie les informations du workspace (sans les tokens).
+
+    Nécessite le token admin ou le token utilisateur du workspace : le
+    workspace_id seul (48 bits d'entropie, potentiellement visible dans
+    des logs, emails ou URLs partagées) ne suffit plus à consulter les
+    coordonnées et le statut d'abonnement du client (IDOR corrigé —
+    cf. audit sécurité).
+    """
+    workspace = await _require_workspace_access(workspace_id, x_access_token)
+    return await _public_workspace(workspace)
 
 
 @router.post(
@@ -644,28 +680,52 @@ async def create_internal_request(workspace_id: str, request: InternalRequestCre
 
 
 @router.get("/workspaces/{workspace_id}/internal-requests")
-async def list_internal_requests(workspace_id: str):
-    await _get_workspace(workspace_id)
+async def list_internal_requests(
+    workspace_id: str,
+    x_access_token: str | None = Header(default=None),
+):
+    """Nécessite un token du workspace (le contenu des demandes est privé)."""
+    await _require_workspace_access(workspace_id, x_access_token)
     return {"requests": await _list_internal_requests(workspace_id)}
 
 
+_GENERIC_LOGIN_ERROR = "Email ou mot de passe incorrect."
+
+
 @router.post("/access/login")
-async def access_login(request: EmailPasswordLogin):
+async def access_login(request: EmailPasswordLogin, http_request: Request):
+    # Anti brute-force / anti énumération : throttling par IP avant toute
+    # lecture en base. Cf. livre "Web Application Security", ch. 23 et 32.
+    await enforce_rate_limit(
+        key=f"login:{client_ip(http_request)}", limit=20, window_seconds=300
+    )
+
     email = request.email.strip().lower()
     for workspace in await _list_workspaces():
         is_admin = workspace.get("admin_email") == email
         is_user = workspace.get("user_email") == email
         if not is_admin and not is_user:
             continue
-        if workspace.get("suspended"):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Ce compte est suspendu. Contactez l'administrateur BAOBAB.",
-            )
+
+        # NB : aucun repli sur le token en guise de mot de passe. Un
+        # workspace créé via `_create_workspace_record` a toujours un
+        # hash de mot de passe ; un repli "password == token" mélangerait
+        # un identifiant porteur (renvoyé en clair par l'API) avec un
+        # secret d'authentification, ce qui est une faille en soi si les
+        # deux venaient à être confondus par un intégrateur.
+        #
+        # L'état "suspendu" n'est révélé qu'APRÈS validation du mot de
+        # passe : sinon, un attaquant sans le bon mot de passe pourrait
+        # déduire qu'un email existe et est suspendu (énumération de
+        # comptes, cf. ch. 23 du livre).
         if is_admin:
             stored = workspace.get("admin_password_hash")
-            ok = verify_password(request.password, stored) if stored else (request.password == workspace.get("admin_token", ""))
-            if ok:
+            if stored and verify_password(request.password, stored):
+                if workspace.get("suspended"):
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Ce compte est suspendu. Contactez l'administrateur BAOBAB.",
+                    )
                 return {
                     "role": "admin",
                     "token": workspace["admin_token"],
@@ -675,8 +735,12 @@ async def access_login(request: EmailPasswordLogin):
                 }
         if is_user:
             stored = workspace.get("user_password_hash")
-            ok = verify_password(request.password, stored) if stored else (request.password == workspace.get("user_token", ""))
-            if ok:
+            if stored and verify_password(request.password, stored):
+                if workspace.get("suspended"):
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail="Ce compte est suspendu. Contactez l'administrateur BAOBAB.",
+                    )
                 return {
                     "role": "client",
                     "token": workspace["user_token"],
@@ -687,7 +751,7 @@ async def access_login(request: EmailPasswordLogin):
 
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
-        detail="Email ou mot de passe incorrect.",
+        detail=_GENERIC_LOGIN_ERROR,
     )
 
 
@@ -699,10 +763,9 @@ async def admin_change_password(
     if not x_admin_token:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token admin requis.")
     for workspace in await _list_workspaces():
-        if workspace.get("admin_token") == x_admin_token:
+        if constant_time_equals(x_admin_token, workspace.get("admin_token")):
             stored = workspace.get("admin_password_hash")
-            ok = verify_password(request.current_password, stored) if stored else (request.current_password == workspace.get("admin_token", ""))
-            if not ok:
+            if not stored or not verify_password(request.current_password, stored):
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
             workspace["admin_password_hash"] = hash_password(request.new_password)
             workspace["password_is_temporary"] = False
@@ -722,8 +785,7 @@ async def client_change_password(
     if not workspace:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
     stored = workspace.get("user_password_hash")
-    ok = verify_password(request.current_password, stored) if stored else (request.current_password == workspace.get("user_token", ""))
-    if not ok:
+    if not stored or not verify_password(request.current_password, stored):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
     workspace["user_password_hash"] = hash_password(request.new_password)
     workspace["admin_password_hash"] = hash_password(request.new_password)

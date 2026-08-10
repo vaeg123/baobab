@@ -13,14 +13,29 @@ Sécurité : les credentials PISTE restent côté serveur.
 """
 
 import os
+import re
 import time
 from typing import Any
 
 import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Header, HTTPException, Query
 from pydantic import BaseModel
 
+from baobab.api.routes.legal import _require_active_workspace
+
 router = APIRouter(tags=["droit-français"])
+
+# Segment de ressource Légifrance : alphanumérique, tirets, underscores et
+# slashes uniquement. Bloque en particulier ".." et les caractères qui
+# permettraient de sortir du chemin `/consult/` prévu par l'API PISTE
+# (cf. audit sécurité — chemin non validé transmis à une API tierce).
+_RESOURCE_PATTERN = re.compile(r"^[A-Za-z0-9_\-/]{1,200}$")
+
+
+def _validate_resource(resource: str) -> str:
+    if not _RESOURCE_PATTERN.match(resource) or ".." in resource:
+        raise HTTPException(422, "Paramètre 'resource' invalide.")
+    return resource
 
 # ── Config PISTE ──────────────────────────────────────────────────────────────
 PISTE_TOKEN_URL    = os.environ.get("PISTE_TOKEN_URL", "https://sandbox-oauth.piste.gouv.fr/api/oauth/token")
@@ -136,10 +151,18 @@ async def status():
 
 
 # ─── Judilibre ───────────────────────────────────────────────────────────────
+#
+# Tous les endpoints ci-dessous consomment le quota de l'API PISTE, partagé
+# par l'ensemble des utilisateurs de BAOBAB via un unique compte OAuth
+# client_credentials. Un accès anonyme et non limité permettait à
+# n'importe qui d'épuiser ce quota partagé (déni de service applicatif
+# pour les clients légitimes — cf. audit sécurité, ch. 14/32 du livre).
+# Chaque appel exige donc désormais un compte BAOBAB actif.
 
 @router.post("/legal-fr/judilibre/search")
-async def judilibre_search(req: SearchRequest):
+async def judilibre_search(req: SearchRequest, x_user_token: str | None = Header(default=None)):
     """Recherche dans Judilibre (décisions Cour de Cassation + juridictions)."""
+    await _require_active_workspace(x_user_token)
     return await _piste_get(JUDILIBRE_BASE, "/search", {
         "query": req.query,
         "page": req.page,
@@ -151,28 +174,32 @@ async def judilibre_search(req: SearchRequest):
 
 
 @router.get("/legal-fr/judilibre/decision")
-async def judilibre_decision(id: str = Query(...)):
+async def judilibre_decision(id: str = Query(...), x_user_token: str | None = Header(default=None)):
     """Texte intégral d'une décision Judilibre."""
+    await _require_active_workspace(x_user_token)
     return await _piste_get(JUDILIBRE_BASE, "/decision", {"id": id})
 
 
 @router.get("/legal-fr/judilibre/taxonomy")
-async def judilibre_taxonomy():
+async def judilibre_taxonomy(x_user_token: str | None = Header(default=None)):
     """Taxonomie Judilibre (juridictions, types, chambres…)."""
+    await _require_active_workspace(x_user_token)
     return await _piste_get(JUDILIBRE_BASE, "/taxonomy")
 
 
 @router.get("/legal-fr/judilibre/stats")
-async def judilibre_stats():
+async def judilibre_stats(x_user_token: str | None = Header(default=None)):
     """Statistiques du corpus Judilibre."""
+    await _require_active_workspace(x_user_token)
     return await _piste_get(JUDILIBRE_BASE, "/stats")
 
 
 # ─── Légifrance ──────────────────────────────────────────────────────────────
 
 @router.post("/legal-fr/legifrance/search")
-async def legifrance_search(req: SearchRequest):
+async def legifrance_search(req: SearchRequest, x_user_token: str | None = Header(default=None)):
     """Recherche dans Légifrance (codes, lois, règlements, jurisprudence)."""
+    await _require_active_workspace(x_user_token)
     filtres = []
     if req.type:
         filtres.append({"facette": "NATURE", "valeurs": [req.type]})
@@ -196,6 +223,12 @@ async def legifrance_search(req: SearchRequest):
 
 
 @router.post("/legal-fr/legifrance/consult/{resource}")
-async def legifrance_consult(resource: str, body: dict):
+async def legifrance_consult(
+    resource: str,
+    body: dict,
+    x_user_token: str | None = Header(default=None),
+):
     """Consultation d'un texte Légifrance (loi, code, article…)."""
+    await _require_active_workspace(x_user_token)
+    resource = _validate_resource(resource)
     return await _piste_post(LEGIFRANCE_BASE, f"/consult/{resource}", body)
