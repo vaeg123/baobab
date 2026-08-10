@@ -3492,6 +3492,44 @@
                 <button class="btn btn-sm" style="width:100%;background:var(--clay);color:#FDF8F3;border:none;margin-top:auto;" onclick="selectFormeJuridique('SURL')">Voir la procédure</button>
               </div>
 
+              <!-- SAS -->
+              <div class="ohada-forme-card">
+                <div class="ohada-forme-header">
+                  <span class="pill pill-blue">SAS</span>
+                  <span class="ohada-forme-name">Société par Actions Simplifiée</span>
+                </div>
+                <div class="ohada-forme-body">
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">Libre (fixé par les statuts)</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Actionnaires</span><span class="ohada-forme-val">1 minimum (SASU si 1 seul)</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Limitée aux apports</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Startups, filiales de groupes, joint-ventures</span></div>
+                  <div class="ohada-forme-avantage">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Introduite en 2014 — liberté statutaire maximale, pas de CA obligatoire
+                  </div>
+                </div>
+                <button class="btn btn-sm" style="width:100%;background:var(--clay);color:#FDF8F3;border:none;margin-top:auto;" onclick="selectFormeJuridique('SAS')">Voir la procédure</button>
+              </div>
+
+              <!-- SCA -->
+              <div class="ohada-forme-card">
+                <div class="ohada-forme-header">
+                  <span class="pill pill-gold">SCA</span>
+                  <span class="ohada-forme-name">Société en Commandite par Actions</span>
+                </div>
+                <div class="ohada-forme-body">
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">10 000 000 FCFA (appel public) / 1 000 000 FCFA</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associés</span><span class="ohada-forme-val">Commandités (gérants, resp. illimitée) + commanditaires (actionnaires)</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Variable selon catégorie</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Holdings familiaux, fonds d'investissement</span></div>
+                  <div class="ohada-forme-avantage">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Séparation pouvoir de gestion / capital — protection contre OPA
+                  </div>
+                </div>
+                <button class="btn btn-sm" style="width:100%;background:var(--clay);color:#FDF8F3;border:none;margin-top:auto;" onclick="selectFormeJuridique('SCA')">Voir la procédure</button>
+              </div>
+
               <!-- GIE -->
               <div class="ohada-forme-card">
                 <div class="ohada-forme-header">
@@ -3523,8 +3561,10 @@
                 <option value="SARL">SARL — Société à Responsabilité Limitée</option>
                 <option value="SURL">SURL — Société Unipersonnelle à Responsabilité Limitée</option>
                 <option value="SA">SA — Société Anonyme</option>
+                <option value="SAS">SAS — Société par Actions Simplifiée</option>
                 <option value="SNC">SNC — Société en Nom Collectif</option>
                 <option value="SCS">SCS — Société en Commandite Simple</option>
+                <option value="SCA">SCA — Société en Commandite par Actions</option>
                 <option value="GIE">GIE — Groupement d'Intérêt Économique</option>
               </select>
             </div>
@@ -3541,8 +3581,10 @@
                   <option value="SARL">SARL</option>
                   <option value="SURL">SURL</option>
                   <option value="SA">SA</option>
+                  <option value="SAS">SAS</option>
                   <option value="SNC">SNC</option>
                   <option value="SCS">SCS</option>
+                  <option value="SCA">SCA</option>
                   <option value="GIE">GIE</option>
                 </select>
               </div>
@@ -3591,6 +3633,13 @@
                     <td><span class="pill pill-red">Complexe</span></td>
                   </tr>
                   <tr>
+                    <td><span class="pill pill-blue">SAS</span></td>
+                    <td>Libre (statuts)</td>
+                    <td>25 à 50 jours</td>
+                    <td>200 000 – 600 000</td>
+                    <td><span class="pill pill-orange">Modéré</span></td>
+                  </tr>
+                  <tr>
                     <td><span class="pill pill-green">SNC</span></td>
                     <td>Aucun</td>
                     <td>20 à 35 jours</td>
@@ -3603,6 +3652,13 @@
                     <td>25 à 40 jours</td>
                     <td>100 000 – 250 000</td>
                     <td><span class="pill pill-orange">Modéré</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="pill pill-gold">SCA</span></td>
+                    <td>1 000 000 – 10 000 000</td>
+                    <td>50 à 80 jours</td>
+                    <td>600 000 – 2 000 000</td>
+                    <td><span class="pill pill-red">Complexe</span></td>
                   </tr>
                   <tr>
                     <td><span class="pill pill-gray">GIE</span></td>
@@ -3655,7 +3711,9 @@
                 <select id="ohada-juris-theme" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;">
                   <option value="création société OHADA">Création de société</option>
                   <option value="SARL OHADA associés">SARL — droits des associés</option>
+                  <option value="SAS OHADA président actionnaires">SAS — gouvernance et actionnaires</option>
                   <option value="SA administrateurs OHADA">SA — responsabilité administrateurs</option>
+                  <option value="SCA commandités commanditaires OHADA">SCA — commandités et commanditaires</option>
                   <option value="dissolution liquidation OHADA">Dissolution & liquidation</option>
                   <option value="cession parts sociales OHADA">Cession de parts sociales</option>
                   <option value="RCCM immatriculation OHADA">RCCM & immatriculation</option>
@@ -5438,6 +5496,26 @@ const OHADA_STEPS = {
     { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J50 – J60', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation à la CNPS si des salariés sont employés.', delai: 'J60 – J90', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
+  SAS: [
+    { titre: 'Rédaction des statuts', desc: 'Les statuts de SAS offrent une liberté statutaire maximale : les fondateurs organisent librement la gouvernance (président, comité de direction, droits de vote différenciés). La forme notariée n\'est pas obligatoire sauf apports en nature ou en industrie.', delai: 'J1 – J5', organisme: 'Notaire ou sous seing privé', documents: 'Statuts signés par tous les actionnaires fondateurs' },
+    { titre: 'Nomination du Président', desc: 'La SAS est représentée à l\'égard des tiers par un Président (personne physique ou morale). Sa désignation doit figurer dans les statuts ou un acte séparé.', delai: 'J1 – J5', organisme: 'Actionnaires fondateurs', documents: 'Acte de nomination du Président' },
+    { titre: 'Libération du capital (si apports en numéraire)', desc: 'Contrairement à la SA, la SAS ne fixe pas de capital minimum légal. Les apports en numéraire doivent néanmoins être déposés sur un compte bloqué avant immatriculation.', delai: 'J3 – J7', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds (si applicable)' },
+    { titre: 'Rapport du commissaire aux apports (si apports en nature)', desc: 'Obligatoire si des apports en nature sont prévus. Le commissaire aux apports évalue la valeur des biens apportés avant souscription.', delai: 'J5 – J15', organisme: 'Commissaire aux apports désigné', documents: 'Rapport d\'évaluation des apports en nature' },
+    { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier au RCCM. La SAS acquiert la personnalité morale à compter de son immatriculation. Le dossier inclut statuts, acte de nomination du Président, justificatif de siège.', delai: 'J7 – J25', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
+    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un Journal d\'Annonces Légales agréé pour opposabilité aux tiers.', delai: 'J25 – J30', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable. La SAS est soumise à l\'impôt sur les sociétés.', delai: 'J30 – J38', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation obligatoire si des salariés sont employés.', delai: 'J38 – J50', organisme: 'CNPS', documents: 'Numéro employeur' }
+  ],
+  SCA: [
+    { titre: 'Rédaction des statuts', desc: 'Les statuts doivent distinguer clairement les commandités (gérants, responsabilité illimitée et solidaire) et les commanditaires (actionnaires, responsabilité limitée aux apports). L\'acte notarié est obligatoire.', delai: 'J1 – J7', organisme: 'Notaire (acte authentique obligatoire)', documents: 'Actes authentiques de société avec deux catégories d\'associés' },
+    { titre: 'Désignation du commissaire aux comptes', desc: 'Obligatoire dès la création comme pour toute société par actions. Le CAC contrôle les comptes et les apports en nature.', delai: 'J3 – J7', organisme: 'Fondateurs / Assemblée constitutive', documents: 'Attestation de désignation du CAC' },
+    { titre: 'Évaluation des apports en nature (si applicable)', desc: 'Si des commanditaires apportent des biens en nature, un rapport d\'évaluation du commissaire aux apports est requis avant souscription.', delai: 'J5 – J15', organisme: 'Commissaire aux apports désigné', documents: 'Rapport de vérification des apports' },
+    { titre: 'Dépôt du capital social', desc: 'Le capital minimum est de 1 000 000 FCFA (sans appel public) ou 10 000 000 FCFA (avec appel public). Les apports des commanditaires sont déposés sur un compte bloqué.', delai: 'J10 – J18', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds' },
+    { titre: 'Immatriculation au RCCM', desc: 'Le dossier doit lister séparément les commandités (avec qualité de commerçant) et les commanditaires (actionnaires). La SCA est une forme rare mais puissante pour les holdings.', delai: 'J18 – J45', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
+    { titre: 'Publication dans un JAL', desc: 'Publication obligatoire pour opposabilité aux tiers, incluant la liste des commandités.', delai: 'J45 – J55', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable. La SCA est soumise à l\'impôt sur les sociétés.', delai: 'J55 – J65', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation obligatoire si des salariés sont employés.', delai: 'J65 – J80', organisme: 'CNPS', documents: 'Numéro employeur' }
+  ],
   SNC: [
     { titre: 'Rédaction du contrat de société', desc: 'Les associés, qui doivent tous avoir la qualité de commerçant, rédigent les statuts. Aucun capital minimum n\'est requis. Tous les associés sont solidairement et indéfiniment responsables.', delai: 'J1 – J3', organisme: 'Notaire ou sous seing privé', documents: 'Contrat de société signé' },
     { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier au RCCM. La qualité de commerçant de chaque associé doit être établie (pièce d\'identité, extrait de casier judiciaire vierge).', delai: 'J3 – J20', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
@@ -5503,8 +5581,10 @@ const OHADA_DOCS = {
   SARL: ['Certificat de dépôt de capital (banque)', 'Déclaration de souscription et de versement (notaire)', 'Liste des souscripteurs'],
   SURL: ['Certificat de dépôt de capital (banque)', 'Déclaration de souscription et de versement (notaire)'],
   SA: ['Rapport de vérification des apports (commissaire aux comptes)', 'Liste des premiers administrateurs et DG', 'PV de l\'assemblée constitutive', 'Attestation de désignation du commissaire aux comptes'],
+  SAS: ['Acte de nomination du Président (si non prévu dans les statuts)', 'Certificat de dépôt de fonds (si apports en numéraire)', 'Rapport d\'évaluation des apports en nature (si applicable)', 'Liste des actionnaires fondateurs avec nombre d\'actions souscrites'],
   SNC: ['Justificatif de la qualité de commerçant des associés'],
   SCS: ['Justificatif de la qualité de commerçant des associés commandités', 'Liste distincte des commandités et commanditaires'],
+  SCA: ['Rapport de vérification des apports (commissaire aux comptes)', 'Liste distincte des commandités (gérants) et commanditaires (actionnaires)', 'Attestation de désignation du commissaire aux comptes', 'Certificat de dépôt de fonds'],
   GIE: ['Contrat constitutif du GIE', 'Liste des membres avec qualités et coordonnées']
 };
 
