@@ -3389,6 +3389,7 @@
             <button class="ohada-ctab-btn" id="ohada-ctab-guide" onclick="switchCreationTab('guide')">Guide pas-à-pas</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-docs" onclick="switchCreationTab('docs')">Documents requis</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-couts" onclick="switchCreationTab('couts')">Délais &amp; Coûts</button>
+            <button class="ohada-ctab-btn" id="ohada-ctab-juris" onclick="switchCreationTab('juris')">Jurisprudence</button>
           </div>
 
           <!-- A. Types de sociétés -->
@@ -3642,6 +3643,48 @@
                 <div style="font-size:11px;color:var(--sub);margin-top:0.5rem;padding:8px 12px;background:rgba(60,20,5,0.04);border-radius:6px;border-left:3px solid var(--gold);">
                   L'espace OHADA compte <strong style="color:var(--text);">17 États membres</strong>. Les délais et coûts indiqués sont des fourchettes estimatives. Consultez le guichet unique de l'État concerné pour les tarifs officiels en vigueur.
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- E. Jurisprudence -->
+          <div id="ohada-ctab-juris-panel" class="ohada-creation-panel" style="display:none;padding-top:1.5rem;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.25rem;">
+              <div style="flex:1;min-width:180px;">
+                <label style="font-size:12px;font-weight:600;color:var(--sub);display:block;margin-bottom:6px;">Thème</label>
+                <select id="ohada-juris-theme" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;">
+                  <option value="création société OHADA">Création de société</option>
+                  <option value="SARL OHADA associés">SARL — droits des associés</option>
+                  <option value="SA administrateurs OHADA">SA — responsabilité administrateurs</option>
+                  <option value="dissolution liquidation OHADA">Dissolution & liquidation</option>
+                  <option value="cession parts sociales OHADA">Cession de parts sociales</option>
+                  <option value="RCCM immatriculation OHADA">RCCM & immatriculation</option>
+                  <option value="AGO assemblée générale OHADA">Assemblées générales</option>
+                  <option value="fusion absorption OHADA">Fusion-absorption</option>
+                  <option value="GIE groupement OHADA">GIE</option>
+                  <option value="capital social libération OHADA">Capital social</option>
+                </select>
+              </div>
+              <div style="min-width:140px;">
+                <label style="font-size:12px;font-weight:600;color:var(--sub);display:block;margin-bottom:6px;">Pays</label>
+                <select id="ohada-juris-pays" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;">
+                  <option value="">Tous les États</option>
+                  <option value="CI">Côte d'Ivoire</option>
+                  <option value="SN">Sénégal</option>
+                  <option value="CM">Cameroun</option>
+                  <option value="BF">Burkina Faso</option>
+                  <option value="ML">Mali</option>
+                  <option value="TG">Togo</option>
+                  <option value="BJ">Bénin</option>
+                  <option value="GN">Guinée</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="searchOhadaJurisprudence()" style="padding:8px 20px;white-space:nowrap;">Rechercher</button>
+            </div>
+            <div id="ohada-juris-results">
+              <div class="empty-state" style="padding:2rem;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;opacity:.4"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <div class="empty-text">Sélectionnez un thème et lancez la recherche.</div>
               </div>
             </div>
           </div>
@@ -5300,10 +5343,60 @@ function switchOhadaView(view) {
 }
 
 function switchCreationTab(tab) {
-  ['types', 'guide', 'docs', 'couts'].forEach(t => {
+  ['types', 'guide', 'docs', 'couts', 'juris'].forEach(t => {
     document.getElementById('ohada-ctab-' + t + '-panel').style.display = t === tab ? '' : 'none';
     document.getElementById('ohada-ctab-' + t).classList.toggle('active', t === tab);
   });
+  if (tab === 'juris' && document.getElementById('ohada-juris-results').querySelector('.empty-state')) {
+    searchOhadaJurisprudence();
+  }
+}
+
+async function searchOhadaJurisprudence() {
+  const theme = document.getElementById('ohada-juris-theme').value;
+  const pays  = document.getElementById('ohada-juris-pays').value;
+  const container = document.getElementById('ohada-juris-results');
+  container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--sub);font-size:13px;"><span class="spinner" style="display:inline-block"></span> Recherche en cours…</div>';
+
+  try {
+    const body = { query: theme, corpus: 'OHADA', mode: 'fulltext', limit: 10, offset: 0 };
+    if (pays) body.pays = pays;
+    const res = await fetch('/api/v1/legal/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(`Erreur ${res.status}`);
+    const data = await res.json();
+    const results = data.results || [];
+
+    if (!results.length) {
+      container.innerHTML = '<div class="empty-state" style="padding:2rem;"><div class="empty-text">Aucune décision trouvée pour ce thème. Le corpus OHADA sera enrichi progressivement.</div></div>';
+      return;
+    }
+
+    container.innerHTML = `
+      <div style="font-size:12px;color:var(--sub);margin-bottom:1rem;">${data.total ?? results.length} décision(s) trouvée(s)</div>
+      ${results.map(d => `
+        <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:var(--surface);">
+          <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4;">${escHtml(d.titre || d.ref || 'Décision sans titre')}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                ${d.ref ? `<span style="font-size:11px;background:rgba(139,90,43,.1);color:#7B5020;padding:2px 8px;border-radius:20px;">${escHtml(d.ref)}</span>` : ''}
+                ${d.date_decision ? `<span style="font-size:11px;color:var(--sub);">${d.date_decision}</span>` : ''}
+                ${d.juridiction ? `<span style="font-size:11px;color:var(--sub);">${escHtml(d.juridiction)}</span>` : ''}
+                ${d.pays ? `<span style="font-size:11px;background:rgba(var(--clay-rgb),.08);color:var(--clay);padding:2px 8px;border-radius:20px;">${escHtml(d.pays)}</span>` : ''}
+              </div>
+              ${d.resume ? `<div style="font-size:12px;color:var(--sub);line-height:1.6;">${escHtml(d.resume)}</div>` : ''}
+              ${d.sanction ? `<div style="margin-top:8px;font-size:12px;font-weight:600;color:#1A7A40;">Sanction : ${escHtml(d.sanction)}</div>` : ''}
+            </div>
+            ${d.source_url ? `<a href="${escHtml(d.source_url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--clay);text-decoration:none;white-space:nowrap;padding:4px 10px;border:1px solid var(--clay);border-radius:6px;">Voir source</a>` : ''}
+          </div>
+        </div>`).join('')}`;
+  } catch(e) {
+    container.innerHTML = `<div class="empty-state" style="padding:2rem;"><div class="empty-text">Erreur : ${escHtml(e.message)}</div></div>`;
+  }
 }
 
 function selectFormeJuridique(forme) {
