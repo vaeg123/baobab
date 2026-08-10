@@ -2309,6 +2309,168 @@
     }
     .ohada-couts-table tr:last-child td { border-bottom: none; }
     .ohada-couts-table tr:hover td { background: rgba(60,20,5,0.03); }
+
+    /* ── OHADA WIZARD ─────────────────────────────────────── */
+    .ohada-wizard-trigger {
+      background: rgba(139,90,43,0.06); border: 1px solid rgba(139,90,43,0.3);
+      border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .ohada-wizard-trigger-text { flex: 1; min-width: 0; }
+    .ohada-wizard-trigger-title {
+      font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+    }
+    .ohada-wizard-trigger-sub {
+      font-size: 12px; color: var(--sub); line-height: 1.5;
+    }
+    .ohada-wizard-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.5); display: flex;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .ohada-wizard-card {
+      background: var(--surface); border-radius: 18px; width: 100%;
+      max-width: 560px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+      display: flex; flex-direction: column;
+    }
+    .ohada-wizard-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .ohada-wizard-header-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .ohada-wizard-header-step { font-size: 11px; color: var(--sub); font-weight: 600; }
+    .ohada-wizard-close {
+      background: none; border: none; cursor: pointer; color: var(--sub);
+      padding: 4px; border-radius: 6px; display: flex; align-items: center;
+      transition: color 0.15s, background 0.15s;
+    }
+    .ohada-wizard-close:hover { color: var(--text); background: rgba(60,20,5,0.07); }
+    .ohada-wizard-progress {
+      display: flex; gap: 4px; padding: 1rem 1.5rem 0;
+    }
+    .ohada-wizard-prog-seg {
+      height: 3px; flex: 1; border-radius: 2px;
+      background: var(--border); transition: background 0.25s;
+    }
+    .ohada-wizard-prog-seg.done { background: var(--clay); }
+    .ohada-wizard-body { padding: 1.25rem 1.5rem; flex: 1; }
+    .ohada-wizard-question {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      margin-bottom: 1rem; line-height: 1.4;
+    }
+    .ohada-wizard-options { display: flex; flex-direction: column; gap: 8px; }
+    .ohada-wizard-option {
+      padding: 11px 14px; border: 1.5px solid var(--border);
+      border-radius: 10px; cursor: pointer; font-size: 13px;
+      color: var(--text); background: var(--surface);
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left; font-family: inherit; line-height: 1.4;
+    }
+    .ohada-wizard-option:hover { border-color: rgba(139,90,43,0.4); background: rgba(139,90,43,0.04); }
+    .ohada-wizard-option.selected {
+      border-color: var(--clay); background: rgba(139,90,43,0.08);
+      font-weight: 600;
+    }
+    .ohada-wizard-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    .ohada-wizard-result { padding: 0 0 0.5rem; }
+    .ohada-wizard-result-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--sub); margin-bottom: 0.75rem;
+    }
+    .ohada-wizard-result-card {
+      border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+    }
+    .ohada-wizard-result-card.primary { border-color: var(--clay); background: rgba(139,90,43,0.04); }
+    .ohada-wizard-result-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .ohada-wizard-result-rank {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      color: var(--sub); letter-spacing: 0.5px;
+    }
+    .ohada-wizard-result-desc {
+      font-size: 12px; color: var(--sub); line-height: 1.55; margin-bottom: 10px;
+    }
+
+    /* ── CEPICI SECTION ──────────────────────────────────── */
+    .ohada-cepici-card {
+      background: rgba(20,140,80,0.05); border: 1px solid rgba(20,140,80,0.22);
+      border-radius: 14px; padding: 1.25rem 1.5rem; margin-top: 1.75rem;
+    }
+    .ohada-cepici-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;
+    }
+    .ohada-cepici-title {
+      font-size: 14px; font-weight: 700; color: var(--text);
+    }
+    .ohada-cepici-sub {
+      font-size: 12px; color: var(--sub); margin-top: 2px; line-height: 1.4;
+    }
+    .ohada-cepici-body {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    }
+    @media (max-width: 640px) { .ohada-cepici-body { grid-template-columns: 1fr; } }
+    .ohada-cepici-service-list { display: flex; flex-direction: column; gap: 7px; }
+    .ohada-cepici-service-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 12px; color: var(--text); line-height: 1.4;
+    }
+    .ohada-cepici-service-item svg { flex-shrink: 0; margin-top: 1px; color: #1A7A40; }
+    .ohada-cepici-contact-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+    .ohada-cepici-contact-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text);
+    }
+    .ohada-cepici-contact-item svg { color: var(--sub); flex-shrink: 0; }
+    .ohada-cepici-contact-item a { color: var(--clay); text-decoration: none; font-weight: 600; }
+    .ohada-cepici-contact-item a:hover { text-decoration: underline; }
+    .ohada-cepici-btns { display: flex; flex-direction: column; gap: 8px; }
+    .ohada-cepici-note {
+      margin-top: 1rem; padding: 8px 12px;
+      background: rgba(20,140,80,0.08); border-radius: 7px;
+      border-left: 3px solid #1A7A40;
+      font-size: 11px; color: var(--sub); line-height: 1.5;
+    }
+
+    /* ── OHADA APRÈS CRÉATION ─────────────────────────────── */
+    .ohada-apres-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    @media (max-width: 760px) { .ohada-apres-grid { grid-template-columns: 1fr; } }
+    .ohada-apres-bloc {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.125rem;
+    }
+    .ohada-apres-bloc-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 0.875rem; padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .ohada-apres-bloc-title {
+      font-size: 13px; font-weight: 700; color: var(--text); flex: 1;
+    }
+    .ohada-apres-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 6px 0; font-size: 12px; color: var(--text); line-height: 1.45;
+      border-bottom: 1px solid var(--border);
+    }
+    .ohada-apres-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .ohada-apres-item svg { flex-shrink: 0; margin-top: 2px; color: #1A7A40; }
+    .ohada-apres-warning {
+      padding: 10px 14px; background: rgba(217,119,6,0.07);
+      border: 1px solid rgba(217,119,6,0.25); border-radius: 9px;
+      font-size: 12px; color: var(--sub); line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 8px; margin-top: 0.5rem;
+    }
+    .ohada-apres-warning svg { flex-shrink: 0; margin-top: 1px; color: #B45309; }
   </style>
 </head>
 <body>
@@ -3390,10 +3552,48 @@
             <button class="ohada-ctab-btn" id="ohada-ctab-docs" onclick="switchCreationTab('docs')">Documents requis</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-couts" onclick="switchCreationTab('couts')">Délais &amp; Coûts</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-juris" onclick="switchCreationTab('juris')">Jurisprudence</button>
+            <button class="ohada-ctab-btn" id="ohada-ctab-apres" onclick="switchCreationTab('apres')">Après la création</button>
           </div>
 
           <!-- A. Types de sociétés -->
           <div id="ohada-ctab-types-panel" class="ohada-creation-panel" style="padding-top:1.5rem;">
+
+            <!-- Assistant interactif -->
+            <div class="ohada-wizard-trigger">
+              <div class="ohada-wizard-trigger-text">
+                <div class="ohada-wizard-trigger-title">Quel type de société vous convient ?</div>
+                <div class="ohada-wizard-trigger-sub">Répondez à 4 questions — nous identifions la forme juridique adaptée à votre projet.</div>
+              </div>
+              <button class="btn btn-primary" onclick="openOhadaWizard()" style="white-space:nowrap;flex-shrink:0;">
+                Lancer l'assistant →
+              </button>
+            </div>
+
+            <!-- Overlay wizard -->
+            <div id="ohada-wizard-overlay" class="ohada-wizard-overlay" style="display:none;" onclick="if(event.target===this)closeOhadaWizard()">
+              <div class="ohada-wizard-card" role="dialog" aria-modal="true" aria-label="Assistant choix de forme juridique">
+                <div class="ohada-wizard-header">
+                  <div>
+                    <div class="ohada-wizard-header-title" id="ohada-wiz-step-label">Étape 1 / 4</div>
+                  </div>
+                  <button class="ohada-wizard-close" onclick="closeOhadaWizard()" aria-label="Fermer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+                <div class="ohada-wizard-progress" id="ohada-wiz-progress">
+                  <div class="ohada-wizard-prog-seg done" id="ohada-wiz-seg-0"></div>
+                  <div class="ohada-wizard-prog-seg" id="ohada-wiz-seg-1"></div>
+                  <div class="ohada-wizard-prog-seg" id="ohada-wiz-seg-2"></div>
+                  <div class="ohada-wizard-prog-seg" id="ohada-wiz-seg-3"></div>
+                </div>
+                <div class="ohada-wizard-body" id="ohada-wiz-body"></div>
+                <div class="ohada-wizard-footer" id="ohada-wiz-footer">
+                  <button class="btn btn-sm" id="ohada-wiz-prev" onclick="ohadaWizardPrev()" style="visibility:hidden;">← Précédent</button>
+                  <button class="btn btn-primary" id="ohada-wiz-next" onclick="ohadaWizardNext()" disabled>Suivant →</button>
+                </div>
+              </div>
+            </div>
+
             <div class="section-title">Formes juridiques OHADA — Acte Uniforme révisé 2014</div>
             <div class="ohada-formes-grid">
 
@@ -3569,6 +3769,70 @@
               </select>
             </div>
             <div id="ohada-guide-timeline"></div>
+
+            <!-- Section CEPICI / 225invest.ci -->
+            <div class="ohada-cepici-card">
+              <div class="ohada-cepici-header">
+                <span style="font-size:22px;line-height:1;" aria-label="Drapeau Côte d'Ivoire">🇨🇮</span>
+                <div>
+                  <div class="ohada-cepici-title">Déposer votre dossier en ligne — CEPICI</div>
+                  <div class="ohada-cepici-sub">Le guichet unique de Côte d'Ivoire permet la création d'entreprise en 24h via le portail 225invest.ci</div>
+                </div>
+              </div>
+              <div class="ohada-cepici-body">
+                <!-- Colonne services -->
+                <div>
+                  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:10px;">Services en ligne disponibles</div>
+                  <div class="ohada-cepici-service-list">
+                    <div class="ohada-cepici-service-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span><strong>E-Entreprise</strong> — création, modification, radiation en ligne</span>
+                    </div>
+                    <div class="ohada-cepici-service-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span><strong>E-Impôts</strong> — Numéro fiscal et déclarations DGI</span>
+                    </div>
+                    <div class="ohada-cepici-service-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span><strong>E-CNPS</strong> — Affiliation employeur et déclarations sociales</span>
+                    </div>
+                    <div class="ohada-cepici-service-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span><strong>Certificat IDU</strong> — Identifiant unique de l'investissement</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Colonne contacts + boutons -->
+                <div>
+                  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sub);margin-bottom:10px;">Contacts officiels CEPICI</div>
+                  <div class="ohada-cepici-contact-list">
+                    <div class="ohada-cepici-contact-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.32 6.32l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.02z"/></svg>
+                      <a href="tel:+22525220179 01">+225 25 22 01 79 01</a>
+                    </div>
+                    <div class="ohada-cepici-contact-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <a href="https://wa.me/2250565397285" target="_blank" rel="noopener">+225 05 65 39 72 85 (WhatsApp)</a>
+                    </div>
+                    <div class="ohada-cepici-contact-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      <a href="mailto:relationclient@cepici.ci">relationclient@cepici.ci</a>
+                    </div>
+                  </div>
+                  <div class="ohada-cepici-btns">
+                    <a href="https://225invest.ci" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none;text-align:center;font-size:12px;display:block;">
+                      Accéder au portail 225invest.ci →
+                    </a>
+                    <a href="https://225invest.ci" target="_blank" rel="noopener" class="btn btn-sm" style="text-decoration:none;text-align:center;font-size:12px;display:block;border-color:rgba(20,140,80,0.35);color:#1A7A40;background:rgba(20,140,80,0.06);">
+                      E-Entreprise — création en ligne
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="ohada-cepici-note">
+                Ce guichet unique intègre <strong style="color:var(--text);">RCCM, DGI et CNPS</strong> en un seul dépôt. Délai officiel : <strong style="color:var(--text);">24h ouvrables</strong>.
+              </div>
+            </div>
           </div>
 
           <!-- C. Documents requis -->
@@ -3744,6 +4008,126 @@
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;opacity:.4"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 <div class="empty-text">Sélectionnez un thème et lancez la recherche.</div>
               </div>
+            </div>
+          </div>
+
+          <!-- F. Après la création -->
+          <div id="ohada-ctab-apres-panel" class="ohada-creation-panel" style="display:none;padding-top:1.5rem;">
+            <div class="section-title">Obligations post-création — OHADA</div>
+            <div style="font-size:12px;color:var(--sub);margin-bottom:1.5rem;line-height:1.5;">
+              Une fois immatriculée, votre société est soumise à des obligations récurrentes. Leur non-respect peut engager la responsabilité des dirigeants et exposer la société à des sanctions civiles et pénales.
+            </div>
+
+            <div class="ohada-apres-grid">
+
+              <!-- Bloc 1 — 30 premiers jours -->
+              <div class="ohada-apres-bloc">
+                <div class="ohada-apres-bloc-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <div class="ohada-apres-bloc-title">Dans les 30 premiers jours</div>
+                  <span class="pill pill-orange" style="font-size:10px;padding:2px 8px;">1 fois</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Ouverture du compte bancaire professionnel — obligatoire dès l'immatriculation</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Commande des registres légaux : registre PV d'AG, registre des associés/actionnaires, livre de paie (si salariés)</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Apposition de la dénomination sociale et du numéro RCCM sur tous les documents commerciaux</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Déclaration d'existence à la DGI — dans les <strong>10 jours</strong> suivant l'immatriculation</span>
+                </div>
+              </div>
+
+              <!-- Bloc 2 — Mensuel -->
+              <div class="ohada-apres-bloc">
+                <div class="ohada-apres-bloc-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <div class="ohada-apres-bloc-title">Obligations mensuelles</div>
+                  <span class="pill pill-blue" style="font-size:10px;padding:2px 8px;">Mensuel</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Déclaration et paiement de la <strong>TVA</strong> (si assujetti) — avant le 15 du mois suivant</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Déclaration et paiement des cotisations <strong>CNPS</strong> employeur — avant le 15 du mois suivant</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Retenue à la source <strong>IRPP</strong> sur salaires — même délai que TVA et CNPS</span>
+                </div>
+              </div>
+
+              <!-- Bloc 3 — Annuel -->
+              <div class="ohada-apres-bloc">
+                <div class="ohada-apres-bloc-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7A40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  <div class="ohada-apres-bloc-title">Obligations annuelles</div>
+                  <span class="pill pill-green" style="font-size:10px;padding:2px 8px;">Annuel</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Assemblée Générale Ordinaire (AGO) — dans les <strong>6 mois</strong> suivant la clôture de l'exercice</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Dépôt des comptes annuels au RCCM — dans les <strong>30 jours</strong> suivant l'approbation par l'AG</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Déclaration fiscale annuelle IS ou BNC — avant le <strong>30 avril</strong> de l'année suivante</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Renouvellement de la patente — avant le <strong>28 février</strong></span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Rapport du commissaire aux comptes (SA, SCA, SAS au-dessus des seuils légaux) — avant l'AGO</span>
+                </div>
+              </div>
+
+              <!-- Bloc 4 — Événementiel -->
+              <div class="ohada-apres-bloc">
+                <div class="ohada-apres-bloc-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B5A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <div class="ohada-apres-bloc-title">Obligations événementielles</div>
+                  <span class="pill pill-gold" style="font-size:10px;padding:2px 8px;">Ponctuel</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Modification statutaire — acte modificatif + publication JAL + dépôt RCCM dans les <strong>30 jours</strong></span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Cession de parts/actions — agrément des associés + enregistrement DGI + mise à jour registre</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Nomination ou révocation d'un dirigeant — publication JAL + dépôt RCCM</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Augmentation de capital — rapport CAC + publication + dépôt RCCM</span>
+                </div>
+                <div class="ohada-apres-item">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Dissolution — décision AG + nomination du liquidateur + publication JAL</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ohada-apres-warning">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>Ces obligations varient selon la forme juridique choisie et les législations locales des États OHADA. Les délais fiscaux indiqués sont indicatifs pour la Côte d'Ivoire. Consultez un juriste ou un expert-comptable qualifié pour votre situation spécifique.</span>
             </div>
           </div>
 
@@ -5401,13 +5785,267 @@ function switchOhadaView(view) {
 }
 
 function switchCreationTab(tab) {
-  ['types', 'guide', 'docs', 'couts', 'juris'].forEach(t => {
+  ['types', 'guide', 'docs', 'couts', 'juris', 'apres'].forEach(t => {
     document.getElementById('ohada-ctab-' + t + '-panel').style.display = t === tab ? '' : 'none';
     document.getElementById('ohada-ctab-' + t).classList.toggle('active', t === tab);
   });
   if (tab === 'juris' && document.getElementById('ohada-juris-results').querySelector('.empty-state')) {
     searchOhadaJurisprudence();
   }
+}
+
+/* ══════════════════════════════════════════════════════════
+   WIZARD — Trouver ma forme juridique
+══════════════════════════════════════════════════════════ */
+const OHADA_WIZ_QUESTIONS = [
+  {
+    label: 'Vous êtes…',
+    options: [
+      'Je suis seul (entrepreneur solo)',
+      'Nous sommes 2 à 50 associés',
+      'Nous sommes plus de 50 actionnaires',
+      'Des entreprises qui veulent se regrouper'
+    ]
+  },
+  {
+    label: 'Capital prévu pour la création ?',
+    options: [
+      'Moins de 100 000 FCFA',
+      'Entre 100 000 et 999 999 FCFA',
+      'Entre 1 000 000 et 9 999 999 FCFA',
+      '10 000 000 FCFA et plus'
+    ]
+  },
+  {
+    label: 'Votre priorité ?',
+    options: [
+      'Protéger mon patrimoine personnel (responsabilité limitée)',
+      'Flexibilité maximale dans l\'organisation',
+      'Crédibilité institutionnelle et accès aux marchés',
+      'Mutualiser des ressources entre entreprises'
+    ]
+  },
+  {
+    label: 'Votre secteur / objectif ?',
+    options: [
+      'Commerce, PME, négoce',
+      'Startup, tech, innovation',
+      'Grande entreprise, expansion internationale',
+      'Holding, investissement, protection anti-OPA',
+      'Cabinet, profession libérale, conseil',
+      'Coopérative, mutuelle, groupement'
+    ]
+  }
+];
+
+// Scores[forme][étape][réponse_index]
+const OHADA_WIZ_SCORES = {
+  SARL: [[-1,+2,0,0],   [0,+3,+1,0],  [+3,+1,0,0],  [+3,+2,0,0,0,0]],
+  SURL: [[+3,-1,0,0],   [0,+3,+1,0],  [+3,0,0,0],   [+2,+1,0,0,0,0]],
+  SA:   [[-1,0,+3,0],   [0,0,+2,+3],  [+2,0,+3,0],  [+1,+1,+3,+1,0,0]],
+  SAS:  [[-1,+2,+1,0],  [0,+2,+2,+1], [+2,+3,+1,0], [+1,+3,+2,+1,0,0]],
+  SNC:  [[-1,+2,0,0],   [+3,+1,0,0],  [0,0,0,0],    [+1,0,0,0,+3,+1]],
+  SCS:  [[-1,+2,0,0],   [+2,+1,0,0],  [0,0,0,0],    [+1,0,0,+1,+1,0]],
+  SCA:  [[-1,0,+2,0],   [0,0,+1,+3],  [0,0,0,+3],   [0,0,+1,+3,0,0]],
+  GIE:  [[-1,+1,0,+3],  [+3,+1,0,0],  [0,0,0,+1],   [+1,0,0,0,+1,+3]]
+};
+
+const OHADA_WIZ_META = {
+  SARL: { pill: 'pill-orange', label: 'SARL', full: 'Société à Responsabilité Limitée' },
+  SURL: { pill: 'pill-orange', label: 'SURL', full: 'Société Unipersonnelle à Responsabilité Limitée' },
+  SA:   { pill: 'pill-blue',   label: 'SA',   full: 'Société Anonyme' },
+  SAS:  { pill: 'pill-blue',   label: 'SAS',  full: 'Société par Actions Simplifiée' },
+  SNC:  { pill: 'pill-green',  label: 'SNC',  full: 'Société en Nom Collectif' },
+  SCS:  { pill: 'pill-gold',   label: 'SCS',  full: 'Société en Commandite Simple' },
+  SCA:  { pill: 'pill-gold',   label: 'SCA',  full: 'Société en Commandite par Actions' },
+  GIE:  { pill: 'pill-gray',   label: 'GIE',  full: 'Groupement d\'Intérêt Économique' }
+};
+
+// Explications personnalisées basées sur les réponses [étape][réponse_index]
+const OHADA_WIZ_EXPLAIN = {
+  SARL: [
+    ['Avec plusieurs associés, la SARL limite votre responsabilité aux apports et offre une gestion souple entre 2 et 50 personnes.', 'Forme la plus répandue pour 2 à 50 associés — gestion simple, responsabilité limitée, formalités allégées.', 'La SARL est mieux adaptée aux structures de 2 à 50 associés. Pour plus de 50 actionnaires, préférez une SA ou SAS.', 'La SARL reste possible en groupement mais le GIE est plus adapté à la mutualisation entre entreprises.'],
+    ['Avec moins de 100 000 FCFA, la SARL n\'est pas accessible — son capital minimum est de 100 000 FCFA.', 'Capital de 100 000 FCFA minimum — votre budget correspond parfaitement à la SARL.', 'Votre capital est largement suffisant pour une SARL. Vous pouvez aussi envisager une SAS.', 'Avec un tel capital, la SA ou SAS permettraient une gouvernance plus institutionnelle.'],
+    ['La SARL protège votre patrimoine personnel : vous n\'êtes responsable qu\'à hauteur de vos apports.', 'La SARL offre une gestion souple avec gérant et assemblée des associés sans conseil d\'administration.', 'La SA ou SAS offrent une meilleure crédibilité institutionnelle que la SARL.', 'La SARL ne mutualise pas les ressources entre entreprises — le GIE est plus adapté.'],
+    ['Structure idéale pour le commerce, la PME et le négoce en Afrique de l\'Ouest.', 'La SARL convient aux startups en phase early-stage avant une levée de fonds nécessitant une SAS.', 'Pour une grande entreprise ou l\'expansion internationale, la SA ou SAS sont plus adaptées.', '', '', '']
+  ],
+  SURL: [
+    ['Conçue pour l\'entrepreneur solo, la SURL est une SARL à associé unique — vous restez seul maître de votre structure.', '', '', ''],
+    ['', 'Capital minimum 100 000 FCFA — votre budget correspond à la SURL.', 'Capital suffisant — la SURL est accessible, mais envisagez aussi la SARL si vous souhaitez ouvrir à des associés plus tard.', ''],
+    ['La SURL protège votre patrimoine personnel — vous n\'êtes responsable qu\'à hauteur de vos apports.', '', '', ''],
+    ['Idéale pour l\'entrepreneur solo dans le commerce, la PME ou le négoce.', 'Bonne option pour lancer une activité tech seul, avant d\'ouvrir à des associés ou investisseurs.', '', '', '', '']
+  ],
+  SA: [
+    ['', '', 'La SA est conçue pour accueillir de nombreux actionnaires et structurer une gouvernance robuste (CA, DG).', ''],
+    ['', '', 'Capital de 1 000 000 FCFA minimum (sans appel public) — votre budget correspond à la SA.', 'Capital de 10 000 000 FCFA pour l\'appel public d\'épargne — parfaitement adapté à votre projet.'],
+    ['La SA limite la responsabilité aux apports tout en offrant une crédibilité institutionnelle forte.', '', 'La SA est le standard pour les grandes entreprises cherchant une crédibilité maximale et l\'accès aux marchés financiers.', ''],
+    ['', '', 'Structure de référence pour les grandes entreprises et l\'expansion internationale.', 'La SA est utilisée pour les holdings et les structures de taille significative.', '', '']
+  ],
+  SAS: [
+    ['', 'La SAS est flexible et peut accueillir 1 ou plusieurs actionnaires avec une organisation librement définie par les statuts.', 'La SAS peut accueillir de nombreux actionnaires sans les contraintes organisationnelles de la SA.', ''],
+    ['', 'Capital libre — la SAS est accessible sans contrainte de capital minimum.', 'Capital suffisant — la SAS offre une liberté statutaire totale.', 'Capital important — la SAS est parfaite pour structurer une entité institutionnelle.'],
+    ['La SAS protège votre patrimoine et offre la liberté statutaire maximale.', 'La SAS est la forme la plus flexible de l\'OHADA — statuts librement organisés, pas de CA obligatoire.', 'La SAS offre crédibilité et flexibilité pour attirer des investisseurs.', ''],
+    ['', 'La SAS est la forme de prédilection des startups et scale-ups en Afrique.', 'Excellente pour structurer une expansion internationale grâce à sa flexibilité.', 'La SAS est utilisée pour les holdings et les joint-ventures.', '', '']
+  ],
+  SNC: [
+    ['', 'La SNC convient à plusieurs associés qui se font mutuellement confiance et acceptent la responsabilité solidaire.', '', ''],
+    ['Aucun capital minimum pour la SNC — parfaitement adapté à votre situation.', 'Aucun capital minimum pour la SNC.', '', ''],
+    ['', 'La SNC offre une grande flexibilité mais la responsabilité est illimitée — attention à votre patrimoine.', '', ''],
+    ['', '', '', '', 'La SNC est souvent choisie par les cabinets et professions libérales en partenariat.', '']
+  ],
+  SCS: [
+    ['', 'La SCS distingue les commandités (gérants, resp. illimitée) des commanditaires (investisseurs, resp. limitée).', '', ''],
+    ['Aucun capital minimum pour la SCS.', 'Aucun capital minimum pour la SCS.', '', ''],
+    ['', '', '', ''],
+    ['', '', '', 'La SCS est utilisée en family office et investissement.', 'Possible pour les professions libérales avec un investisseur passif.', '']
+  ],
+  SCA: [
+    ['', '', 'La SCA convient à une structure avec de nombreux actionnaires tout en préservant le contrôle des commandités.', ''],
+    ['', '', 'Capital minimum 1 000 000 FCFA (ou 10 000 000 FCFA si appel public).', 'Capital idéal pour une SCA — structure pour grandes entités patrimoniales ou fonds.'],
+    ['', '', '', 'La SCA protège les commandités contre les OPA tout en ouvrant le capital aux commanditaires.'],
+    ['', '', 'Structure adaptée aux grands groupes ou fonds panafricains.', 'La SCA est la structure anti-OPA par excellence — idéale pour les holdings familiaux.', '', '']
+  ],
+  GIE: [
+    ['', '', '', 'Le GIE est conçu pour regrouper des entreprises existantes afin de mutualiser des ressources.'],
+    ['Aucun capital minimum obligatoire pour le GIE.', 'Aucun capital minimum obligatoire pour le GIE.', '', ''],
+    ['', '', '', 'Le GIE permet la mutualisation des ressources sans viser un bénéfice pour lui-même.'],
+    ['', '', '', '', '', 'Le GIE est idéal pour les coopératives, mutuelles et groupements professionnels.']
+  ]
+};
+
+let _wizStep = 0;
+let _wizAnswers = [null, null, null, null];
+
+function openOhadaWizard() {
+  _wizStep = 0;
+  _wizAnswers = [null, null, null, null];
+  document.getElementById('ohada-wizard-overlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  _renderWizStep();
+}
+
+function closeOhadaWizard() {
+  document.getElementById('ohada-wizard-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function _renderWizStep() {
+  const isResult = _wizStep === 4;
+  const stepLabel = document.getElementById('ohada-wiz-step-label');
+  const body      = document.getElementById('ohada-wiz-body');
+  const footer    = document.getElementById('ohada-wiz-footer');
+  const prevBtn   = document.getElementById('ohada-wiz-prev');
+  const nextBtn   = document.getElementById('ohada-wiz-next');
+
+  // Barre de progression
+  for (let i = 0; i < 4; i++) {
+    const seg = document.getElementById('ohada-wiz-seg-' + i);
+    seg.classList.toggle('done', i < (_wizStep === 4 ? 4 : _wizStep + 1));
+  }
+
+  if (isResult) {
+    stepLabel.textContent = 'Votre recommandation personnalisée';
+    body.innerHTML = _buildWizResult();
+    footer.innerHTML = '<button class="btn btn-sm" onclick="ohadaWizardPrev()">← Modifier mes réponses</button><button class="btn btn-primary" onclick="closeOhadaWizard()">Fermer</button>';
+    return;
+  }
+
+  stepLabel.textContent = 'Étape ' + (_wizStep + 1) + ' / 4';
+  const q = OHADA_WIZ_QUESTIONS[_wizStep];
+  const selected = _wizAnswers[_wizStep];
+
+  body.innerHTML = `
+    <div class="ohada-wizard-question">${q.label}</div>
+    <div class="ohada-wizard-options">
+      ${q.options.map((opt, i) => `
+        <button class="ohada-wizard-option${selected === i ? ' selected' : ''}"
+                onclick="_wizSelectOption(${i})">${opt}</button>
+      `).join('')}
+    </div>
+  `;
+
+  prevBtn.style.visibility = _wizStep === 0 ? 'hidden' : 'visible';
+  nextBtn.disabled = selected === null;
+  nextBtn.textContent = _wizStep === 3 ? 'Voir le résultat →' : 'Suivant →';
+  footer.innerHTML = '';
+  footer.appendChild(prevBtn);
+  footer.appendChild(nextBtn);
+}
+
+function _wizSelectOption(idx) {
+  _wizAnswers[_wizStep] = idx;
+  const btns = document.querySelectorAll('.ohada-wizard-option');
+  btns.forEach((b, i) => b.classList.toggle('selected', i === idx));
+  document.getElementById('ohada-wiz-next').disabled = false;
+}
+
+function ohadaWizardNext() {
+  if (_wizAnswers[_wizStep] === null) return;
+  _wizStep++;
+  _renderWizStep();
+}
+
+function ohadaWizardPrev() {
+  if (_wizStep > 0) { _wizStep--; _renderWizStep(); }
+}
+
+function _computeWizScores() {
+  const totals = {};
+  for (const [forme, matrix] of Object.entries(OHADA_WIZ_SCORES)) {
+    totals[forme] = 0;
+    for (let step = 0; step < 4; step++) {
+      const ans = _wizAnswers[step];
+      if (ans !== null && matrix[step] && matrix[step][ans] !== undefined) {
+        totals[forme] += matrix[step][ans];
+      }
+    }
+  }
+  return totals;
+}
+
+function _buildWizResult() {
+  const scores = _computeWizScores();
+  const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const top2   = ranked.slice(0, 2);
+
+  function buildExplain(forme) {
+    const lines = [];
+    for (let s = 0; s < 4; s++) {
+      const ans = _wizAnswers[s];
+      if (ans === null) continue;
+      const expl = (OHADA_WIZ_EXPLAIN[forme] || [])[s];
+      if (expl && expl[ans]) lines.push(expl[ans]);
+    }
+    return lines.filter(Boolean).slice(0, 2).join(' ') ||
+      'Cette forme correspond à votre profil selon les critères que vous avez sélectionnés.';
+  }
+
+  return `
+    <div class="ohada-wizard-result">
+      <div class="ohada-wizard-result-title">Formes juridiques recommandées</div>
+      ${top2.map(([forme, score], idx) => {
+        const meta = OHADA_WIZ_META[forme];
+        const isPrimary = idx === 0;
+        return `
+          <div class="ohada-wizard-result-card${isPrimary ? ' primary' : ''}">
+            <div class="ohada-wizard-result-header">
+              <span class="pill ${meta.pill}">${meta.label}</span>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:var(--text);">${meta.full}</div>
+                <div class="ohada-wizard-result-rank">${isPrimary ? '★ Recommandation principale' : 'Alternative à considérer'}</div>
+              </div>
+              <span style="font-size:11px;font-weight:700;color:var(--sub);">Score ${score > 0 ? '+' : ''}${score}</span>
+            </div>
+            <div class="ohada-wizard-result-desc">${buildExplain(forme)}</div>
+            <button class="btn btn-sm" style="background:var(--clay);color:#FDF8F3;border:none;"
+                    onclick="closeOhadaWizard();selectFormeJuridique('${forme}')">
+              Voir le guide de création →
+            </button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
 }
 
 async function searchOhadaJurisprudence() {
