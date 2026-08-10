@@ -2895,6 +2895,9 @@
     <div class="nav-bar" id="nav-bar"></div>
 
     <div class="sidebar-bottom">
+      <a href="#" id="nav-back-to-login" onclick="backFromRegister()" style="display:none;color:var(--sub);font-size:12px;text-decoration:none;padding:10px 16px;align-items:center;gap:6px" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--sub)'">
+        ← Retour à la connexion
+      </a>
       <div class="header-user hidden" id="header-user" onclick="logout()">
         <div class="dot"></div>
         <span id="header-user-label">Connecté</span>
@@ -3475,6 +3478,11 @@
     <!-- ── REGISTER ── -->
     <div id="tab-register" class="tab-panel">
       <div class="container" style="max-width:520px">
+        <div style="margin-bottom:1.5rem">
+          <a href="#" onclick="backFromRegister()" style="color:var(--sub);font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color .15s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--sub)'">
+            ← Retour à la connexion
+          </a>
+        </div>
         <div class="page-title">Créer un espace</div>
         <div class="page-sub">Votre espace inclut 1 demande interne et l'accès au dashboard CIMA.</div>
         <div class="card">
@@ -4713,6 +4721,11 @@ function showRegister() {
   switchTab('register');
 }
 
+function backFromRegister() {
+  document.getElementById('app-shell').classList.remove('active');
+  document.getElementById('login-screen').style.display = '';
+}
+
 // ════════════════════════════════════════════════
 // ENTER SPACES
 // ════════════════════════════════════════════════
@@ -4837,6 +4850,8 @@ function buildNav(role) {
   nav.innerHTML = items.map(item =>
     `<button class="nav-btn" id="nav-${item.id}" onclick="switchTab('${item.id}')">${item.label}</button>`
   ).join('');
+  const backBtn = document.getElementById('nav-back-to-login');
+  if (backBtn) backBtn.style.display = role === 'register' ? 'flex' : 'none';
 }
 
 function switchTab(name) {
