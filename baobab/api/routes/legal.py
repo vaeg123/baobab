@@ -9,6 +9,7 @@ POST /api/v1/legal/analyze  — analyse d'une question juridique (IA)
 
 import json
 import os
+import re as _re_cls
 from typing import Literal
 from uuid import UUID
 
@@ -18,6 +19,178 @@ from pydantic import BaseModel
 from baobab.rate_limit import client_ip, enforce_rate_limit
 
 router = APIRouter(tags=["legal"])
+
+
+# ─── Query classifier ─────────────────────────────────────────────────────────
+
+def _classify_query(question: str) -> str:
+    """Returns: 'arret' | 'loi' | 'question' | 'analyse'"""
+    q = question.lower()
+    # Court decision signals
+    if any(_re_cls.search(p, q) for p in [
+        r'\b(ccja|crca|tca|cour suprême|tribunal)\b',
+        r'\b(décision|arrêt|jugement|délibération)\b.*n[°o]',
+        r'\bn[°o]\s*[\d]{2,}[\s/]\d{4}',
+    ]):
+        return 'arret'
+    # Statute/text signals
+    if any(_re_cls.search(p, q) for p in [
+        r'\b(art\.?|article)\s+\d+',
+        r'\b(acte uniforme|code cima|code ohada|loi\s+n[°o]|décret|ordonnance|circulaire|instruction)\b',
+        r'\b(audcg|auscgie|ausc|aucap|syscohada|cima)\b',
+    ]):
+        return 'loi'
+    # Practical question signals
+    if any(w in q for w in [
+        'comment ', 'quelles sont les étapes', 'quels sont les délais', 'que faire',
+        'combien de temps', 'comment créer', 'comment déclarer', 'comment obtenir',
+        'quelle est la procédure', 'quelles formalités', 'comment calculer',
+        'est-ce que je peux', 'puis-je ', 'quels documents', 'quelles conditions',
+    ]):
+        return 'question'
+    return 'analyse'
+
+
+# ─── Prompt builders ──────────────────────────────────────────────────────────
+
+def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> str:
+    base = (
+        "Tu es BAOBAB, assistant juridique spécialisé en droit africain (CIMA, OHADA, droit ivoirien).\n"
+        "RÈGLE ABSOLUE : réponds UNIQUEMENT à partir des documents du corpus fournis.\n"
+        "FORMAT : retourne UNIQUEMENT un objet JSON valide, sans markdown, sans ``` ni texte autour.\n\n"
+    )
+
+    if query_type == 'arret':
+        schema = '''{
+  "type": "arret",
+  "identite": {
+    "numero": "Référence de la décision ou Analyse #001",
+    "date": "date en français",
+    "juridiction": "CCJA / CRCA / TCA / BAOBAB Analyse",
+    "formation": "Chambre ou formation concernée",
+    "numero_recueil": "Corpus BAOBAB · N documents analysés",
+    "domaine": "Domaine juridique précis"
+  },
+  "solidite": { "score": 4, "label": "ex: Jurisprudence établie — 3 citations recensées" },
+  "principe": "Principe juridique central en 1-2 phrases.",
+  "schema": {
+    "question": "Question juridique reformulée",
+    "reponse": "Réponse directe en 1 ligne",
+    "consequence": "Conséquence pratique principale"
+  },
+  "passe": [{ "date": "1992", "texte": "Événement législatif ou procédural historique" }],
+  "present": {
+    "faits": "Faits et contexte en 3-5 phrases.",
+    "pretentions": [
+      { "partie": "Demandeur", "arg": "Argument" },
+      { "partie": "Défendeur", "arg": "Argument" }
+    ],
+    "moyens": ["Moyen 1", "Moyen 2"],
+    "question_droit": "Question de droit précise.",
+    "raisonnement": "Analyse rigoureuse en markdown — **gras** pour termes clés, tirets pour listes.",
+    "visa": ["Art. 312 Code CIMA"],
+    "dispositif": "Conclusion en paragraphes ou liste à tirets."
+  },
+  "futur": {
+    "citations": 0, "decisions": 0,
+    "statut": "consacre", "statut_label": "Consacré en droit applicable",
+    "usages": [{ "annee": "2025", "texte": "Application pratique recommandée" }]
+  },
+  "juges": []
+}'''
+        return (
+            base
+            + f"TYPE : Analyse d'un arrêt ou décision juridique.\n\n"
+            + f"SCHÉMA JSON :\n{schema}\n\n"
+            + f"QUESTION : {question}\n\n"
+            + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
+            + "Retourne le JSON complété :"
+        )
+
+    elif query_type == 'loi':
+        schema = '''{
+  "type": "loi",
+  "reference": "Art. 260 Code CIMA — Délais sinistres",
+  "titre": "Titre court du texte ou article",
+  "domaine": "Droit des assurances · CIMA",
+  "texte_article": "Reproduction fidèle ou paraphrase du texte si disponible.",
+  "explication": "Explication juridique claire du texte en 3-5 phrases.",
+  "historique": [
+    { "annee": "1992", "texte": "Adoption ou modification historique" }
+  ],
+  "applicabilite": ["Côte d\'Ivoire", "Sénégal"],
+  "points_attention": ["Point important 1", "Point important 2"],
+  "sanctions": "Sanctions applicables si l\'article prévoit des sanctions, sinon null.",
+  "jurisprudence_associee": ["Décision CRCA 2023/045 — résumé bref"],
+  "textes_lies": ["Art. 261 Code CIMA", "Art. 312 Code CIMA"]
+}'''
+        return (
+            base
+            + f"TYPE : Analyse d'un texte de loi, article ou acte uniforme.\n\n"
+            + f"SCHÉMA JSON :\n{schema}\n\n"
+            + f"QUESTION : {question}\n\n"
+            + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
+            + "Retourne le JSON complété :"
+        )
+
+    elif query_type == 'question':
+        schema = '''{
+  "type": "question",
+  "titre": "Titre de la question reformulée de façon précise",
+  "domaine": "Droit des sociétés · OHADA · Côte d\'Ivoire",
+  "reponse_directe": "Réponse directe en 1-2 phrases percutantes.",
+  "etapes": [
+    { "numero": 1, "titre": "Titre de l\'étape", "detail": "Explication de l\'étape avec les exigences légales." }
+  ],
+  "points_cles": [
+    "Point juridique important 1",
+    "Point juridique important 2"
+  ],
+  "textes_applicables": ["Art. 5 AUSC", "Art. 27 AUDCG"],
+  "delais": "Délais légaux applicables si pertinents, sinon null.",
+  "cout_indicatif": "Coût indicatif si connu, sinon null.",
+  "organisme_competent": "CEPICI, tribunal, RCCM, etc. selon le cas.",
+  "avertissement": "Limite du corpus : ce que le corpus ne couvre pas et ce qu\'il faut vérifier.",
+  "corps": "Développement complet en markdown : paragraphes avec **gras** pour les obligations, tirets pour les listes. Doit être exhaustif."
+}'''
+        return (
+            base
+            + "TYPE : Question juridique pratique ou procédurale.\n"
+            + "IMPORTANT : Ne génère PAS de timeline procédurale ni de section Passé/Présent/Futur. "
+            + "Réponds de façon structurée, directe et pratique.\n\n"
+            + f"SCHÉMA JSON :\n{schema}\n\n"
+            + f"QUESTION : {question}\n\n"
+            + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
+            + "Retourne le JSON complété :"
+        )
+
+    else:  # analyse
+        schema = '''{
+  "type": "analyse",
+  "titre": "Titre de l\'analyse doctrinale",
+  "domaine": "Droit des sociétés · OHADA",
+  "principe": "Principe juridique central en 1-2 phrases.",
+  "introduction": "Mise en contexte de la question en 3-4 phrases.",
+  "developpement": "Analyse approfondie en markdown. **Gras** pour concepts clés. Tirets pour listes. Sauts de ligne entre paragraphes.",
+  "positions": [
+    { "titre": "Position A", "argument": "Développement de l\'argument" },
+    { "titre": "Position B", "argument": "Développement de l\'argument contraire" }
+  ],
+  "jurisprudence": [
+    { "ref": "CCJA n°045/2019", "apport": "Ce que cet arrêt apporte à la question" }
+  ],
+  "textes_applicables": ["Art. 5 AUSC"],
+  "conclusion": "Synthèse et prise de position doctrinale motivée.",
+  "limites": "Limites de l\'analyse au regard du corpus disponible."
+}'''
+        return (
+            base
+            + "TYPE : Analyse doctrinale ou question abstraite de droit.\n\n"
+            + f"SCHÉMA JSON :\n{schema}\n\n"
+            + f"QUESTION : {question}\n\n"
+            + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
+            + "Retourne le JSON complété :"
+        )
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://baobab:baobab@localhost:5432/baobab")
 
@@ -399,77 +572,17 @@ async def analyze_question(
     analysis = None
     ai_available = bool(api_key)
 
+    query_type = _classify_query(req.question)
+
     if ai_available:
         try:
             import anthropic
             client = anthropic.Anthropic(api_key=api_key)
+            prompt = _build_prompt(req.question, query_type, context, len(docs))
             message = client.messages.create(
                 model="claude-sonnet-4-6",
                 max_tokens=6000,
-                messages=[{
-                    "role": "user",
-                    "content": (
-                        "Tu es BAOBAB, un assistant juridique spécialisé en droit africain "
-                        "(CIMA, OHADA, droit ivoirien).\n\n"
-                        "RÈGLE ABSOLUE : Tu dois répondre UNIQUEMENT en te basant sur les documents "
-                        "du corpus ci-dessous. Ne complète JAMAIS avec ta connaissance générale.\n\n"
-                        "FORMAT DE RÉPONSE : Retourne UNIQUEMENT un objet JSON valide, sans bloc "
-                        "markdown, sans texte avant ou après, sans ``` ni ```json. "
-                        "La réponse doit commencer directement par { et finir par }.\n\n"
-                        "SCHÉMA JSON REQUIS :\n"
-                        "{\n"
-                        '  "identite": {\n'
-                        '    "numero": "Analyse #001",\n'
-                        '    "date": "date du jour en français ex: 9 juillet 2026",\n'
-                        '    "juridiction": "BAOBAB — Analyse Juridique CIMA/OHADA",\n'
-                        '    "formation": "corpus concerné ex: Droit CIMA — Zone CIMA",\n'
-                        '    "numero_recueil": "Corpus BAOBAB · [nombre] documents analysés",\n'
-                        '    "domaine": "ex: Contrôle prudentiel · Sanctions CRCA"\n'
-                        "  },\n"
-                        '  "solidite": { "score": 4, "label": "ex: Jurisprudence établie" },\n'
-                        '  "principe": "Le principe juridique central dégagé en 1-2 phrases.",\n'
-                        '  "schema": {\n'
-                        '    "question": "La question juridique reformulée précisément",\n'
-                        '    "reponse": "Réponse courte directe (1 ligne)",\n'
-                        '    "consequence": "Conséquence pratique principale"\n'
-                        "  },\n"
-                        '  "passe": [\n'
-                        '    { "date": "1992", "texte": "Événement législatif ou jurisprudentiel historique pertinent" }\n'
-                        "  ],\n"
-                        '  "present": {\n'
-                        '    "faits": "Contexte factuel et juridique de la question posée, 3-5 phrases.",\n'
-                        '    "pretentions": [\n'
-                        '      { "partie": "Demandeur (position favorable)", "arg": "Argument en faveur de la thèse A" },\n'
-                        '      { "partie": "Défendeur (position contraire)", "arg": "Argument en faveur de la thèse B" }\n'
-                        "    ],\n"
-                        '    "moyens": ["Point juridique clé 1 — formule courte", "Point juridique clé 2 — formule courte"],\n'
-                        '    "question_droit": "La question de droit précise à trancher — une seule phrase.",\n'
-                        '    "raisonnement": "Analyse juridique rigoureuse. Utilise **gras** pour les termes juridiques clés, des tirets (- point) pour les listes, et des sauts de ligne entre paragraphes. JAMAIS de numérotation (1)...(2)...",\n'
-                        '    "visa": ["Art. 312 Code CIMA", "Art. 325 Code CIMA"],\n'
-                        '    "dispositif": "Conclusion en paragraphes courts ou liste à tirets (- point). Gras pour les obligations/sanctions. JAMAIS de (1)...(2)..."\n'
-                        "  },\n"
-                        '  "futur": {\n'
-                        '    "citations": 0,\n'
-                        '    "decisions": 0,\n'
-                        '    "statut": "consacre",\n'
-                        '    "statut_label": "Consacré en droit CIMA",\n'
-                        '    "usages": [\n'
-                        '      { "annee": "2024", "texte": "Application pratique ou recommandation concrète" }\n'
-                        "    ]\n"
-                        "  },\n"
-                        '  "juges": []\n'
-                        "}\n\n"
-                        "NOTES :\n"
-                        "- passe = évolution législative/jurisprudentielle chronologique\n"
-                        "- futur.usages = recommandations pratiques concrètes\n"
-                        "- juges = [] si aucun juge identifié (c'est le cas par défaut pour les analyses thématiques)\n"
-                        "- Si le corpus ne permet pas de répondre, remplis quand même le JSON avec "
-                        "une réponse honnête indiquant le manque de sources dans les champs textuels.\n\n"
-                        f"QUESTION : {req.question}\n\n"
-                        f"CORPUS BAOBAB ({len(docs)} document(s)) :\n{context}\n\n"
-                        "Retourne le JSON ci-dessus complété, sans aucun texte autour :"
-                    ),
-                }],
+                messages=[{"role": "user", "content": prompt}],
             )
             analysis = message.content[0].text
         except Exception as exc:
@@ -499,6 +612,7 @@ async def analyze_question(
     return {
         "question": req.question,
         "corpus": req.corpus,
+        "response_type": query_type,
         "context_docs": docs,
         "analysis": analysis,
         "fiche": fiche,

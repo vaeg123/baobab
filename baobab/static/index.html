@@ -2586,6 +2586,41 @@
       .ws-actions { gap: 4px; }
       .ws-act { padding: 5px 8px; font-size: 10px; }
     }
+
+    /* ── RÉPONSE QUESTION & LOI ─────────────── */
+    .rq-reponse-directe {
+      background: rgba(46,94,58,0.08); border: 1px solid rgba(46,94,58,0.2);
+      border-left: 4px solid var(--green); border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+    }
+    .rq-reponse-label { font-size: 10px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .rq-reponse-text { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.5; }
+    .rq-section-label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+    .rq-etapes { display: flex; flex-direction: column; gap: 10px; }
+    .rq-etape { display: flex; gap: 14px; align-items: flex-start; }
+    .rq-etape-num {
+      width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%;
+      background: var(--clay); color: #FDF8F3;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; margin-top: 1px;
+    }
+    .rq-etape-titre { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .rq-etape-detail { font-size: 12px; color: var(--sub); line-height: 1.6; }
+    .rq-points { display: flex; flex-direction: column; gap: 6px; }
+    .rq-point { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .rq-meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+    .rq-meta-item {
+      background: rgba(60,20,5,0.04); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .rq-meta-label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.6px; }
+    .rq-avertissement {
+      font-size: 12px; color: var(--sub); line-height: 1.6;
+      background: rgba(191,78,30,0.05); border: 1px solid rgba(191,78,30,0.15);
+      border-radius: 8px; padding: 10px 14px;
+    }
+    .ppf-step-list { display: flex; flex-direction: column; }
   </style>
 </head>
 <body>
@@ -6947,8 +6982,8 @@ function analyserQuestion() {
          </div>`
       : '';
 
+    const rtype = data.response_type || 'analyse';
     if (data.fiche) {
-      // Rendu premium fiche structurée
       const sourcesSection = docs ? `
         <div class="baobab-sources-block">
           <div class="baobab-sources-title">
@@ -6958,13 +6993,29 @@ function analyserQuestion() {
           <div class="baobab-sources-grid">${docs}</div>
         </div>` : '';
 
+      let ficheHtml;
+      if (rtype === 'arret') {
+        ficheHtml = renderFicheArret(data.fiche);
+      } else if (rtype === 'loi') {
+        ficheHtml = renderFicheLoi(data.fiche);
+      } else if (rtype === 'question') {
+        ficheHtml = renderReponseQuestion(data.fiche);
+      } else {
+        ficheHtml = renderFicheAnalyse(data.fiche);
+      }
+
       result.innerHTML = `
         <div class="baobab-fiche-wrapper">
           <div class="baobab-fiche-header-band">
             <span class="baobab-logo-text">BAOBAB</span>
-            <span class="baobab-fiche-tag">Analyse Juridique</span>
+            <span class="baobab-fiche-tag">${
+              rtype === 'arret' ? 'Analyse Arrêt' :
+              rtype === 'loi' ? 'Texte de Loi' :
+              rtype === 'question' ? 'Réponse Juridique' :
+              'Analyse Doctrinale'
+            }</span>
           </div>
-          ${renderFicheArret(data.fiche)}
+          ${ficheHtml}
           ${sourcesSection}
           ${quotaBadge}
         </div>`;
@@ -7180,6 +7231,286 @@ function renderFicheArret(d) {
 
 function toggleFicheSection(el) {
   el.classList.toggle('open');
+}
+
+function renderReponseQuestion(d) {
+  const etapesHtml = (d.etapes || []).map(e => `
+    <div class="rq-etape">
+      <div class="rq-etape-num">${e.numero}</div>
+      <div class="rq-etape-body">
+        <div class="rq-etape-titre">${escHtml(e.titre)}</div>
+        <div class="rq-etape-detail">${escHtml(e.detail)}</div>
+      </div>
+    </div>`).join('');
+
+  const pointsHtml = (d.points_cles || []).map(p =>
+    `<div class="rq-point">· ${escHtml(p)}</div>`).join('');
+
+  const textesHtml = (d.textes_applicables || []).map(t =>
+    `<span class="visa-pill">${escHtml(t)}</span>`).join('');
+
+  const metaItems = [
+    d.delais && `<div class="rq-meta-item"><span class="rq-meta-label">Délais</span><span>${escHtml(d.delais)}</span></div>`,
+    d.cout_indicatif && `<div class="rq-meta-item"><span class="rq-meta-label">Coût indicatif</span><span>${escHtml(d.cout_indicatif)}</span></div>`,
+    d.organisme_competent && `<div class="rq-meta-item"><span class="rq-meta-label">Organisme</span><span>${escHtml(d.organisme_competent)}</span></div>`,
+  ].filter(Boolean).join('');
+
+  return `
+    <div class="fiche-arret">
+      <!-- En-tête -->
+      <div class="fiche-top">
+        <div>
+          <div class="fiche-badge-row">
+            <span class="fiche-badge">${escHtml(d.domaine || 'Droit')}</span>
+            <span class="fiche-type-badge">Réponse pratique</span>
+          </div>
+          <div class="fiche-titre">${escHtml(d.titre || 'Réponse juridique')}</div>
+        </div>
+      </div>
+
+      <!-- Réponse directe -->
+      <div style="padding:1rem 1.5rem">
+        <div class="rq-reponse-directe">
+          <div class="rq-reponse-label">Réponse directe</div>
+          <div class="rq-reponse-text">${escHtml(d.reponse_directe || '')}</div>
+        </div>
+      </div>
+
+      <!-- Étapes si présentes -->
+      ${etapesHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Étapes</div>
+        <div class="rq-etapes">${etapesHtml}</div>
+      </div>` : ''}
+
+      <!-- Développement complet -->
+      ${d.corps ? `
+      <div class="fiche-sections">
+        <div class="fiche-section open">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Développement complet</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body">${mdToHtml(d.corps)}</div>
+        </div>
+      </div>` : ''}
+
+      <!-- Points clés -->
+      ${pointsHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Points juridiques clés</div>
+        <div class="rq-points">${pointsHtml}</div>
+      </div>` : ''}
+
+      <!-- Méta infos -->
+      ${metaItems ? `<div class="rq-meta-grid" style="padding:0 1.5rem 1rem">${metaItems}</div>` : ''}
+
+      <!-- Textes applicables -->
+      ${textesHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Textes applicables</div>
+        <div class="visa-list">${textesHtml}</div>
+      </div>` : ''}
+
+      <!-- Avertissement -->
+      ${d.avertissement ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-avertissement">${escHtml(d.avertissement)}</div>
+      </div>` : ''}
+
+      <!-- Actions -->
+      <div class="fiche-actions">
+        <button class="fiche-action" onclick="copierCitation(${JSON.stringify(d.titre || '')})">📋 Copier</button>
+        <button class="fiche-action" style="margin-left:auto" onclick="document.getElementById('legal-result').classList.add('hidden')">✕ Fermer</button>
+      </div>
+    </div>`;
+}
+
+function renderFicheLoi(d) {
+  const historiqueHtml = (d.historique || []).map(h => `
+    <div class="ppf-step">
+      <div class="ppf-dot"></div>
+      <div><span class="ppf-date">${escHtml(String(h.annee))}</span><br><span class="ppf-text">${escHtml(h.texte)}</span></div>
+    </div>`).join('');
+
+  const paysHtml = (d.applicabilite || []).map(p =>
+    `<span class="visa-pill">${escHtml(p)}</span>`).join('');
+
+  const textesLiesHtml = (d.textes_lies || []).map(t =>
+    `<span class="visa-pill">${escHtml(t)}</span>`).join('');
+
+  const juriHtml = (d.jurisprudence_associee || []).map(j =>
+    `<div class="rq-point">· ${escHtml(j)}</div>`).join('');
+
+  const pointsHtml = (d.points_attention || []).map(p =>
+    `<div class="rq-point">⚠ ${escHtml(p)}</div>`).join('');
+
+  return `
+    <div class="fiche-arret">
+      <div class="fiche-top">
+        <div>
+          <div class="fiche-badge-row">
+            <span class="fiche-badge">${escHtml(d.domaine || 'Texte de loi')}</span>
+            <span class="fiche-type-badge">${escHtml(d.reference || 'Texte juridique')}</span>
+          </div>
+          <div class="fiche-titre">${escHtml(d.titre || d.reference || '')}</div>
+        </div>
+      </div>
+
+      ${d.texte_article ? `
+      <div style="padding:1rem 1.5rem">
+        <div class="rq-section-label">Texte</div>
+        <div class="fiche-principe" style="font-style:italic;white-space:pre-line">${escHtml(d.texte_article)}</div>
+      </div>` : ''}
+
+      ${d.explication ? `
+      <div class="fiche-sections">
+        <div class="fiche-section open">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Explication juridique</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body"><p>${escHtml(d.explication)}</p></div>
+        </div>
+        ${d.sanctions ? `
+        <div class="fiche-section">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Sanctions</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body"><p style="color:var(--red)">${escHtml(d.sanctions)}</p></div>
+        </div>` : ''}
+        ${juriHtml ? `
+        <div class="fiche-section">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Jurisprudence associée</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body">${juriHtml}</div>
+        </div>` : ''}
+      </div>` : ''}
+
+      ${historiqueHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Historique législatif</div>
+        <div class="ppf-step-list">${historiqueHtml}</div>
+      </div>` : ''}
+
+      ${pointsHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Points d'attention</div>
+        ${pointsHtml}
+      </div>` : ''}
+
+      ${paysHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Pays d'application</div>
+        <div class="visa-list">${paysHtml}</div>
+      </div>` : ''}
+
+      ${textesLiesHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Textes liés</div>
+        <div class="visa-list">${textesLiesHtml}</div>
+      </div>` : ''}
+
+      <div class="fiche-actions">
+        <button class="fiche-action" onclick="copierCitation(${JSON.stringify(d.reference || d.titre || '')})">📋 Copier la référence</button>
+        <button class="fiche-action" style="margin-left:auto" onclick="document.getElementById('legal-result').classList.add('hidden')">✕ Fermer</button>
+      </div>
+    </div>`;
+}
+
+function renderFicheAnalyse(d) {
+  const positionsHtml = (d.positions || []).map(p => `
+    <div class="fiche-section">
+      <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+        <span class="fiche-section-title">${escHtml(p.titre)}</span>
+        <span class="fiche-chevron">▼</span>
+      </div>
+      <div class="fiche-section-body"><p>${escHtml(p.argument)}</p></div>
+    </div>`).join('');
+
+  const juriHtml = (d.jurisprudence || []).map(j => `
+    <div class="rq-point">
+      <strong>${escHtml(j.ref)}</strong> — ${escHtml(j.apport)}
+    </div>`).join('');
+
+  const textesHtml = (d.textes_applicables || []).map(t =>
+    `<span class="visa-pill">${escHtml(t)}</span>`).join('');
+
+  return `
+    <div class="fiche-arret">
+      <div class="fiche-top">
+        <div>
+          <div class="fiche-badge-row">
+            <span class="fiche-badge">${escHtml(d.domaine || 'Analyse')}</span>
+            <span class="fiche-type-badge">Analyse doctrinale</span>
+          </div>
+          <div class="fiche-titre">${escHtml(d.titre || 'Analyse juridique')}</div>
+        </div>
+      </div>
+
+      ${d.principe ? `
+      <div style="padding:1rem 1.5rem 0">
+        <div class="fiche-principe">
+          <div class="fiche-principe-label">Principe dégagé</div>
+          ${escHtml(d.principe)}
+        </div>
+      </div>` : ''}
+
+      <div class="fiche-sections">
+        ${d.introduction ? `
+        <div class="fiche-section open">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Introduction</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body"><p>${escHtml(d.introduction)}</p></div>
+        </div>` : ''}
+        ${d.developpement ? `
+        <div class="fiche-section open">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Développement</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body">${mdToHtml(d.developpement)}</div>
+        </div>` : ''}
+        ${positionsHtml}
+        ${juriHtml ? `
+        <div class="fiche-section">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Jurisprudence pertinente</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body">${juriHtml}</div>
+        </div>` : ''}
+        ${d.conclusion ? `
+        <div class="fiche-section">
+          <div class="fiche-section-hdr" onclick="toggleFicheSection(this.parentElement)">
+            <span class="fiche-section-title">Conclusion</span>
+            <span class="fiche-chevron">▼</span>
+          </div>
+          <div class="fiche-section-body"><p style="font-weight:600">${escHtml(d.conclusion)}</p></div>
+        </div>` : ''}
+      </div>
+
+      ${textesHtml ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-section-label">Textes applicables</div>
+        <div class="visa-list">${textesHtml}</div>
+      </div>` : ''}
+
+      ${d.limites ? `
+      <div style="padding:0 1.5rem 1rem">
+        <div class="rq-avertissement">${escHtml(d.limites)}</div>
+      </div>` : ''}
+
+      <div class="fiche-actions">
+        <button class="fiche-action" onclick="copierCitation(${JSON.stringify(d.titre || '')})">📋 Copier</button>
+        <button class="fiche-action" style="margin-left:auto" onclick="document.getElementById('legal-result').classList.add('hidden')">✕ Fermer</button>
+      </div>
+    </div>`;
 }
 
 function copierCitation(texte) {
