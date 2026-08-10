@@ -2784,12 +2784,7 @@
     <div class="plans-welcome">
       <div class="plans-welcome-name" id="plans-welcome-name">Votre espace est créé 🎉</div>
       <div class="plans-welcome-sub">Choisissez la formule qui correspond à vos besoins pour accéder à BAOBAB.</div>
-      <div id="plans-access-code-box" style="display:none;margin-top:14px;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;max-width:480px;margin-left:auto;margin-right:auto;text-align:left">
-        <div style="font-size:11px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">
-          📧 Un email vous a été envoyé · Votre code d'accès (à conserver)
-        </div>
-        <div id="plans-access-code" style="font-family:monospace;font-size:13px;color:var(--clay);font-weight:700;word-break:break-all"></div>
-      </div>
+      <div id="plans-access-code-box" style="display:none" aria-hidden="true"></div>
     </div>
 
     <div class="plans-grid" id="plans-grid">
@@ -3111,19 +3106,69 @@
             <div class="card">
               <div class="card-header"><div class="card-icon">➕</div><span class="card-title">Nouveau client</span></div>
               <div class="card-body">
-                <div class="form-group"><label>Nom du responsable</label><input type="text" id="new_owner_name" placeholder="Awa Touré" /></div>
-                <div class="form-group"><label>Email responsable</label><input type="email" id="new_owner_email" placeholder="awa@organisation.ci" /></div>
-                <div class="form-group"><label>Organisation</label><input type="text" id="new_org_name" placeholder="Cabinet Touré & Associés" /></div>
-                <div class="sep"></div>
-                <div class="form-group"><label>Nom administrateur</label><input type="text" id="new_admin_name" placeholder="Admin Cabinet" /></div>
-                <div class="form-group"><label>Email administrateur</label><input type="email" id="new_admin_email" placeholder="admin@organisation.ci" /></div>
-                <div class="form-group"><label>Mot de passe admin</label><input type="password" id="new_admin_password" placeholder="Min. 8 caractères" /></div>
-                <div class="form-group"><label>Nom utilisateur</label><input type="text" id="new_user_name" placeholder="Utilisateur Cabinet" /></div>
-                <div class="form-group"><label>Email utilisateur</label><input type="email" id="new_user_email" placeholder="user@organisation.ci" /></div>
-                <div class="form-group"><label>Mot de passe utilisateur</label><input type="password" id="new_user_password" placeholder="Min. 8 caractères" /></div>
-                <div class="sep"></div>
-                <div class="form-group"><label>Nom affiché</label><input type="text" id="new_display_name" placeholder="Portail Cabinet Touré" /></div>
-                <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()">Créer avec accès illimité</button>
+                <!-- Mode rapide -->
+                <div class="form-group"><label>Organisation <span style="color:var(--clay)">*</span></label><input type="text" id="new_org_name" placeholder="Cabinet Touré & Associés" /></div>
+                <div class="form-group"><label>Email du responsable <span style="color:var(--clay)">*</span></label><input type="email" id="new_owner_email" placeholder="awa@organisation.ci" /></div>
+
+                <!-- Sélecteur de plan en pills -->
+                <div class="form-group">
+                  <label>Plan</label>
+                  <div id="sa-plan-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+                    <button type="button" class="sa-plan-pill" data-plan="free" onclick="_saSelectPlan('free')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(60,20,5,0.15);background:rgba(60,20,5,0.04);color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
+                      Gratuit
+                    </button>
+                    <button type="button" class="sa-plan-pill" data-plan="basic" onclick="_saSelectPlan('basic')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(160,80,16,0.2);background:rgba(191,78,30,0.05);color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
+                      Basic<br><span style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
+                    </button>
+                    <button type="button" class="sa-plan-pill" data-plan="premium" onclick="_saSelectPlan('premium')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(191,78,30,0.25);background:rgba(191,78,30,0.07);color:var(--clay);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;position:relative">
+                      <span style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--clay);color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap">Recommandé</span>
+                      Premium<br><span style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
+                    </button>
+                    <button type="button" class="sa-plan-pill" data-plan="unlimited" onclick="_saSelectPlan('unlimited')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(46,94,58,0.3);background:rgba(46,94,58,0.07);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
+                      Illimité<br><span style="font-size:10px;font-weight:400;opacity:.8">offert par BAOBAB</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Territoire -->
+                <div class="form-group">
+                  <label>Territoire</label>
+                  <select id="new_territory">
+                    <option value="CI">CI — Côte d'Ivoire</option>
+                    <option value="SN">SN — Sénégal</option>
+                    <option value="CM">CM — Cameroun</option>
+                    <option value="BF">BF — Burkina Faso</option>
+                    <option value="ML">ML — Mali</option>
+                    <option value="TG">TG — Togo</option>
+                    <option value="BJ">BJ — Bénin</option>
+                    <option value="GN">GN — Guinée</option>
+                    <option value="NE">NE — Niger</option>
+                    <option value="TD">TD — Tchad</option>
+                    <option value="CG">CG — Congo</option>
+                    <option value="GA">GA — Gabon</option>
+                    <option value="CD">CD — RD Congo</option>
+                    <option value="CF">CF — Centrafrique</option>
+                    <option value="GQ">GQ — Guinée Équatoriale</option>
+                    <option value="KM">KM — Comores</option>
+                    <option value="GW">GW — Guinée-Bissau</option>
+                  </select>
+                </div>
+
+                <!-- Lien options avancées -->
+                <button type="button" onclick="_saToggleAdvanced()" id="sa-advanced-toggle"
+                  style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;padding:0;margin-bottom:10px;text-decoration:underline;text-underline-offset:2px">
+                  Options avancées ↓
+                </button>
+
+                <!-- Options avancées (masquées par défaut) -->
+                <div id="sa-advanced-fields" style="display:none">
+                  <div class="sep"></div>
+                  <div class="form-group"><label>Nom du responsable <span style="color:var(--sub);font-weight:400;font-size:11px">(si différent de l'email)</span></label><input type="text" id="new_owner_name" placeholder="Awa Touré" /></div>
+                  <div class="form-group"><label>Nom d'affichage <span style="color:var(--sub);font-weight:400;font-size:11px">(branding)</span></label><input type="text" id="new_display_name" placeholder="Portail Cabinet Touré" /></div>
+                  <div class="form-group"><label>Mot de passe personnalisé <span style="color:var(--sub);font-weight:400;font-size:11px">(si vide, généré auto)</span></label><input type="password" id="new_password" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
+                </div>
+
+                <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()" style="margin-top:4px">Créer l'espace client</button>
               </div>
             </div>
           </div>
@@ -3445,7 +3490,27 @@
                 <option value="CM">Cameroun</option>
                 <option value="BF">Burkina Faso</option>
                 <option value="ML">Mali</option>
+                <option value="TG">Togo</option>
+                <option value="BJ">Bénin</option>
+                <option value="GN">Guinée</option>
+                <option value="NE">Niger</option>
+                <option value="TD">Tchad</option>
+                <option value="CG">Congo</option>
+                <option value="GA">Gabon</option>
+                <option value="CD">RD Congo</option>
+                <option value="CF">Centrafrique</option>
+                <option value="GQ">Guinée Équatoriale</option>
+                <option value="KM">Comores</option>
+                <option value="GW">Guinée-Bissau</option>
               </select>
+            </div>
+            <div class="form-group">
+              <label>Mot de passe</label>
+              <input type="password" id="reg_password" placeholder="Min. 8 caractères" autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label>Confirmer le mot de passe</label>
+              <input type="password" id="reg_password_confirm" placeholder="Répétez le mot de passe" autocomplete="new-password" />
             </div>
             <button class="btn btn-primary" id="reg-btn" onclick="registerWorkspace()">Créer mon espace</button>
             <div id="reg-result" class="hidden" style="margin-top:1rem"></div>
@@ -4358,7 +4423,9 @@ async function doLogin() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
 
-    if (data.role === 'client') {
+    if (data.password_is_temporary === true) {
+      showFirstAccessScreen(data.token, data.role, data.workspace);
+    } else if (data.role === 'client') {
       enterClient(data.workspace, data.token);
     } else if (data.role === 'admin') {
       enterAdmin(data.token, data.workspace);
@@ -4376,6 +4443,95 @@ function showLoginError(msg) {
   const el = document.getElementById('login-error');
   el.textContent = '⚠️  ' + msg;
   el.style.display = 'block';
+}
+
+// ════════════════════════════════════════════════
+// PREMIER ACCÈS — changement de mot de passe forcé
+// ════════════════════════════════════════════════
+
+function showFirstAccessScreen(token, role, workspace) {
+  const screen = document.getElementById('first-access-screen');
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('plans-screen').classList.remove('active');
+  screen.style.display = 'flex';
+
+  // Réinitialise les champs et l'erreur
+  ['fa_current_pwd', 'fa_new_pwd', 'fa_confirm_pwd'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  const errEl = document.getElementById('fa-error');
+  errEl.style.display = 'none';
+  errEl.textContent = '';
+
+  const submitBtn = document.getElementById('fa-submit-btn');
+  const skipBtn   = document.getElementById('fa-skip-btn');
+
+  // Remplace les listeners précédents en clonant les boutons
+  const newSubmit = submitBtn.cloneNode(true);
+  const newSkip   = skipBtn.cloneNode(true);
+  submitBtn.replaceWith(newSubmit);
+  skipBtn.replaceWith(newSkip);
+
+  newSubmit.addEventListener('click', () => submitFirstAccess(token, role, workspace));
+  newSkip.addEventListener('click', () => {
+    screen.style.display = 'none';
+    if (role === 'admin') {
+      enterAdmin(token, workspace);
+    } else {
+      enterClient(workspace, token);
+    }
+  });
+}
+
+async function submitFirstAccess(token, role, workspace) {
+  const current_password = document.getElementById('fa_current_pwd').value;
+  const new_password     = document.getElementById('fa_new_pwd').value;
+  const confirm_password = document.getElementById('fa_confirm_pwd').value;
+  const errEl            = document.getElementById('fa-error');
+  const btn              = document.getElementById('fa-submit-btn');
+
+  errEl.style.display = 'none';
+
+  if (!current_password || !new_password || !confirm_password) {
+    errEl.textContent = 'Tous les champs sont obligatoires.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (new_password.length < 8) {
+    errEl.textContent = 'Le nouveau mot de passe doit contenir au moins 8 caractères.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (new_password !== confirm_password) {
+    errEl.textContent = 'Les mots de passe ne correspondent pas.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Mise à jour…';
+
+  try {
+    const res = await fetch('/api/v1/accounts/client/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Access-Token': token },
+      body: JSON.stringify({ current_password, new_password })
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(data.detail));
+
+    document.getElementById('first-access-screen').style.display = 'none';
+    if (role === 'admin') {
+      enterAdmin(token, workspace);
+    } else {
+      enterClient(workspace, token);
+    }
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Définir mon mot de passe';
+  }
 }
 
 let _saClickCount = 0, _saClickTimer = null;
@@ -5292,31 +5448,61 @@ async function activateWorkspacePlan(wsId) {
   }
 }
 
+// ── Plan pills superadmin ──
+let _saNewPlan = 'unlimited';
+
+function _saSelectPlan(plan) {
+  _saNewPlan = plan;
+  document.querySelectorAll('#sa-plan-pills .sa-plan-pill').forEach(btn => {
+    const isSelected = btn.dataset.plan === plan;
+    btn.style.outline = isSelected ? '2px solid currentColor' : 'none';
+    btn.style.fontWeight = isSelected ? '700' : '600';
+    btn.style.opacity = isSelected ? '1' : '0.75';
+    btn.style.transform = isSelected ? 'scale(1.03)' : 'scale(1)';
+  });
+}
+
+function _saToggleAdvanced() {
+  const el = document.getElementById('sa-advanced-fields');
+  const btn = document.getElementById('sa-advanced-toggle');
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? '' : 'none';
+  btn.textContent = isHidden ? 'Options avancées ↑' : 'Options avancées ↓';
+}
+
+// Initialise la sélection du plan par défaut au chargement
+document.addEventListener('DOMContentLoaded', () => _saSelectPlan('unlimited'));
+
 async function createNewWorkspace() {
   const token = state.superadminToken;
   if (!token) { alert('Non authentifié superadmin.'); return; }
+
+  const org_name     = document.getElementById('new_org_name').value.trim();
+  const email        = document.getElementById('new_owner_email').value.trim();
+  const territory    = document.getElementById('new_territory').value;
+  const owner_name   = document.getElementById('new_owner_name')?.value.trim() || '';
+  const display_name = document.getElementById('new_display_name')?.value.trim() || '';
+  const password     = document.getElementById('new_password')?.value || '';
+
+  if (!org_name || !email) { alert('Organisation et email du responsable sont obligatoires.'); return; }
+  if (password && password.length < 8) { alert('Le mot de passe doit contenir au moins 8 caractères.'); return; }
 
   const btn = document.getElementById('new-client-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
   document.getElementById('sa-creation-result-card').style.display = 'none';
 
-  const adminPwd = document.getElementById('new_admin_password').value;
-  const userPwd  = document.getElementById('new_user_password').value;
-  if (adminPwd.length > 0 && adminPwd.length < 8) { alert('Mot de passe admin : minimum 8 caractères.'); btn.disabled = false; btn.innerHTML = 'Créer avec accès illimité'; return; }
-  if (userPwd.length > 0 && userPwd.length < 8)   { alert('Mot de passe utilisateur : minimum 8 caractères.'); btn.disabled = false; btn.innerHTML = 'Créer avec accès illimité'; return; }
+  // Si owner_name vide, utiliser la partie locale de l'email
+  const resolvedOwnerName = owner_name || email.split('@')[0];
 
-  const payload = buildWorkspacePayload(
-    document.getElementById('new_owner_name').value.trim(),
-    document.getElementById('new_owner_email').value.trim(),
-    document.getElementById('new_org_name').value.trim(),
-    document.getElementById('new_admin_name').value.trim(),
-    document.getElementById('new_admin_email').value.trim(),
-    adminPwd || null,
-    document.getElementById('new_user_name').value.trim(),
-    document.getElementById('new_user_email').value.trim(),
-    userPwd || null,
-    document.getElementById('new_display_name').value.trim()
-  );
+  const payload = {
+    owner_name: resolvedOwnerName,
+    email,
+    organization_name: org_name,
+    territory,
+    plan: _saNewPlan,
+    branding: { display_name: display_name || org_name }
+  };
+  if (password) payload.password = password;
 
   try {
     const res = await fetch('/api/v1/accounts/superadmin/workspaces', {
@@ -5328,60 +5514,51 @@ async function createNewWorkspace() {
     if (!res.ok) throw new Error(fmtError(ws.detail));
 
     document.getElementById('sa-creation-result-card').style.display = '';
-    document.getElementById('sa-creation-result').innerHTML = renderWorkspaceCreated(ws);
+    document.getElementById('sa-creation-result').innerHTML = renderWorkspaceCreated(ws, email);
     await loadSuperadminData();
   } catch(e) {
     document.getElementById('sa-creation-result-card').style.display = '';
     document.getElementById('sa-creation-result').innerHTML =
       `<div style="color:#B03020;font-size:13px;padding:0.5rem">❌ ${escHtml(e.message)}</div>`;
   } finally {
-    btn.disabled = false; btn.innerHTML = 'Créer avec accès illimité';
+    btn.disabled = false; btn.innerHTML = 'Créer l\'espace client';
   }
 }
 
-function buildWorkspacePayload(ownerName, email, orgName, adminName, adminEmail, adminPassword, userName, userEmail, userPassword, displayName) {
-  return {
-    owner_name: ownerName, email, organization_name: orgName,
-    territory: 'CI',
-    admin_name: adminName, admin_email: adminEmail,
-    admin_password: adminPassword || `adm_temp_${Math.random().toString(36).slice(2,10)}`,
-    user_name: userName, user_email: userEmail,
-    user_password: userPassword || `usr_temp_${Math.random().toString(36).slice(2,10)}`,
-    grant_unlimited_access: true,
-    enabled_services: ['all_verticals', 'alerts', 'internal_requests', 'priority_support'],
-    branding: {
-      display_name: displayName || orgName,
-      primary_color: '#D4A53A',
-      welcome_message: `Bienvenue dans votre espace BAOBAB — ${orgName}.`
-    }
-  };
-}
+function renderWorkspaceCreated(ws, contactEmail) {
+  const planLabels = { free: 'Gratuit', basic: 'Basic', premium: 'Premium', unlimited: 'Illimité' };
+  const planLabel = planLabels[ws.plan] || ws.plan || ws.subscription_status;
+  const email = contactEmail || ws.email || '—';
 
-function renderWorkspaceCreated(ws) {
+  const tempPwdHtml = ws._temp_password
+    ? `<div style="background:var(--red-bg);border:1px solid rgba(176,48,32,0.25);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px">
+        <div style="font-weight:700;color:var(--red);margin-bottom:4px">⚠ Mot de passe temporaire — affiché une seule fois</div>
+        <code style="font-size:14px;color:var(--red);font-weight:700;word-break:break-all">${escHtml(ws._temp_password)}</code>
+      </div>`
+    : '';
+
+  const copyText = [
+    `Organisation : ${ws.organization_name}`,
+    `Email        : ${email}`,
+    `Plan         : ${planLabel}`,
+    `Territoire   : ${ws.territory || '—'}`,
+    ws._temp_password ? `Mot de passe temporaire : ${ws._temp_password}` : null,
+    `ID espace    : ${ws.workspace_id}`
+  ].filter(Boolean).join('\n');
+
   return `
-    <div class="success-banner">
-      <div class="icon">✅</div>
-      <div>
-        <div class="title">Espace ${escHtml(ws.organization_name)} créé</div>
-        <div class="desc">Transmettez les codes ci-dessous aux personnes concernées.</div>
-      </div>
+    <div class="info-grid">
+      <div class="info-item">Organisation<strong>${escHtml(ws.organization_name)}</strong></div>
+      <div class="info-item">Email<strong>${escHtml(email)}</strong></div>
+      <div class="info-item">Plan<strong>${escHtml(planLabel)}</strong></div>
+      <div class="info-item">Territoire<strong>${escHtml(ws.territory || '—')}</strong></div>
     </div>
-    <div class="section-title" style="margin-bottom:8px">Codes d'accès à communiquer</div>
-    <div class="code-box">
-<span class="code-label">Utilisateur client</span>
-Nom    : ${escHtml(ws.user_name || '—')}
-Email  : ${escHtml(ws.user_email || '—')}
-Code   : <strong style="color:var(--gold)">${ws.user_token}</strong>
-
-<span class="code-label">Administrateur espace</span>
-Nom    : ${escHtml(ws.admin_name || '—')}
-Email  : ${escHtml(ws.admin_email || '—')}
-Code   : <strong style="color:var(--gold)">${ws.admin_token}</strong>
-
-<span class="code-label">Informations espace</span>
-ID     : ${ws.workspace_id}
-Offre  : ${ws.subscription_status}
-    </div>`;
+    ${tempPwdHtml}
+    <div style="margin-top:10px;font-size:13px;color:var(--green)">✅ Email de bienvenue envoyé à ${escHtml(email)}</div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:10px"
+      onclick="navigator.clipboard.writeText(${JSON.stringify(copyText)}).then(()=>{this.textContent='✅ Copié !';setTimeout(()=>{this.textContent='Copier les infos'},2000)})">
+      Copier les infos
+    </button>`;
 }
 
 // ════════════════════════════════════════════════
@@ -5390,31 +5567,43 @@ Offre  : ${ws.subscription_status}
 let currentWorkspace = null;
 
 async function registerWorkspace() {
-  const btn        = document.getElementById('reg-btn');
-  const owner_name = document.getElementById('reg_owner').value.trim();
-  const email      = document.getElementById('reg_email').value.trim();
-  const org        = document.getElementById('reg_org').value.trim();
-  const territory  = document.getElementById('reg_territory').value;
+  const btn             = document.getElementById('reg-btn');
+  const owner_name      = document.getElementById('reg_owner').value.trim();
+  const email           = document.getElementById('reg_email').value.trim();
+  const org             = document.getElementById('reg_org').value.trim();
+  const territory       = document.getElementById('reg_territory').value;
+  const password        = document.getElementById('reg_password').value;
+  const password_confirm = document.getElementById('reg_password_confirm').value;
 
-  if (!owner_name || !email || !org) { alert('Veuillez remplir tous les champs.'); return; }
+  if (!owner_name || !email || !org) { alert('Veuillez remplir tous les champs obligatoires.'); return; }
+
+  if (password) {
+    if (password.length < 8) { alert('Le mot de passe doit contenir au moins 8 caractères.'); return; }
+    if (password !== password_confirm) { alert('Les mots de passe ne correspondent pas.'); return; }
+  }
+
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Création…';
 
   try {
+    const body = { owner_name, email, organization_name: org, territory };
+    if (password) body.password = password;
+
     const res = await fetch('/api/v1/accounts/workspaces', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ owner_name, email, organization_name: org, territory })
+      body: JSON.stringify(body)
     });
     const ws = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(ws.detail));
+
     currentWorkspace = ws;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app-shell').classList.remove('active');
     showPlansScreen(ws);
   } catch(e) {
-    document.getElementById('reg-result').classList.remove('hidden');
-    document.getElementById('reg-result').innerHTML =
-      `<div style="color:#B03020;font-size:13px">❌ ${escHtml(e.message)}</div>`;
+    const errEl = document.getElementById('reg-result');
+    errEl.classList.remove('hidden');
+    errEl.innerHTML = `<div style="color:#B03020;font-size:13px">❌ ${escHtml(e.message)}</div>`;
   } finally {
     btn.disabled = false; btn.innerHTML = 'Créer mon espace';
   }
@@ -7964,6 +8153,28 @@ document.addEventListener('keydown', e => {
       <button class="btn btn-primary" onclick="document.getElementById('stripe-activation-overlay').style.display='none';document.getElementById('login-screen').style.display=''" style="padding:12px 24px">
         Se connecter à mon espace
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PREMIER ACCÈS — changement de mot de passe forcé ── -->
+<div id="first-access-screen" style="position:fixed;inset:0;background:var(--bg);z-index:8000;display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="width:100%;max-width:440px">
+    <div class="card">
+      <div class="card-body" style="padding:2rem">
+        <div style="text-align:center;margin-bottom:1.5rem">
+          <div style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px">Bienvenue — Définissez votre mot de passe</div>
+          <div style="font-size:13px;color:var(--sub);line-height:1.6">Votre compte a été créé avec un mot de passe temporaire. Choisissez un mot de passe permanent pour sécuriser votre accès.</div>
+        </div>
+        <div class="form-group"><label>Mot de passe temporaire reçu par email</label><input type="password" id="fa_current_pwd" placeholder="••••••••" autocomplete="current-password" /></div>
+        <div class="form-group"><label>Nouveau mot de passe <span style="color:var(--sub);font-size:11px;font-weight:400">(min. 8 caractères)</span></label><input type="password" id="fa_new_pwd" placeholder="••••••••" autocomplete="new-password" /></div>
+        <div class="form-group"><label>Confirmer</label><input type="password" id="fa_confirm_pwd" placeholder="••••••••" autocomplete="new-password" /></div>
+        <div id="fa-error" style="display:none;font-size:13px;color:var(--red);background:var(--red-bg);border-radius:6px;padding:8px 12px;margin-bottom:0.75rem"></div>
+        <button class="btn btn-primary" id="fa-submit-btn" style="width:100%;margin-bottom:0.75rem">Définir mon mot de passe</button>
+        <div style="text-align:center">
+          <button type="button" id="fa-skip-btn" style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:2px">Passer pour l'instant →</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

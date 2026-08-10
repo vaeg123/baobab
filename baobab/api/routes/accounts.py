@@ -83,6 +83,7 @@ class WorkspaceCreate(BaseModel):
     email: str = Field(..., min_length=5, max_length=180)
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
+    password: str | None = Field(default=None, min_length=8, max_length=128)
 
 
 class InternalRequestCreate(BaseModel):
@@ -123,13 +124,12 @@ class SuperadminWorkspaceCreate(BaseModel):
     email: str = Field(..., min_length=5, max_length=180)
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
+    plan: str = Field(default="unlimited")
     user_name: str | None = Field(default=None, min_length=2, max_length=120)
     user_email: str | None = Field(default=None, min_length=5, max_length=180)
-    admin_name: str = Field(..., min_length=2, max_length=120)
-    admin_email: str = Field(..., min_length=5, max_length=180)
-    admin_password: str = Field(..., min_length=8, max_length=128)
-    user_password: str = Field(..., min_length=8, max_length=128)
-    grant_unlimited_access: bool = True
+    admin_name: str | None = Field(default=None, min_length=2, max_length=120)
+    admin_email: str | None = Field(default=None, min_length=5, max_length=180)
+    password: str | None = Field(default=None, min_length=8, max_length=128)
     enabled_services: list[str] = Field(
         default_factory=lambda: ["all_verticals", "alerts", "internal_requests", "priority_support"]
     )
@@ -446,6 +446,13 @@ async def _admin_workspace(workspace: dict) -> dict:
     }
 
 
+def _generate_temp_password() -> str:
+    import secrets
+    import string
+    alphabet = string.ascii_letters + string.digits
+    return "".join(secrets.choice(alphabet) for _ in range(14))
+
+
 def _create_workspace_record(
     owner_name: str,
     email: str,
@@ -455,14 +462,25 @@ def _create_workspace_record(
     user_email: str | None = None,
     admin_name: str | None = None,
     admin_email: str | None = None,
-    admin_password: str | None = None,
-    user_password: str | None = None,
-    grant_unlimited_access: bool = False,
+    password: str | None = None,
+    plan: str = "free",
     enabled_services: list[str] | None = None,
     branding: WorkspaceBranding | None = None,
     provisioned_by: str = "self_service",
-) -> dict:
+) -> tuple[dict, str]:
+    """Returns (workspace_dict, clear_password). clear_password is None if the user chose their own."""
     now = datetime.now(UTC)
+    is_temporary = password is None
+    clear_password = _generate_temp_password() if is_temporary else None
+    effective_password = clear_password if is_temporary else password
+
+    grant_unlimited = plan == "unlimited"
+    effective_plan = SubscriptionPlan.PREMIUM if grant_unlimited else plan
+    sub_status = "unlimited_grant" if grant_unlimited else ("free" if plan == "free" else "active")
+    sub_expires = None if grant_unlimited or plan == "free" else (
+        datetime.now(UTC) + timedelta(days=30)
+    ).isoformat()
+
     workspace = {
         "workspace_id": f"ws_{uuid4().hex[:12]}",
         "owner_name": owner_name,
@@ -472,21 +490,22 @@ def _create_workspace_record(
         "user_name": user_name or owner_name,
         "user_email": (user_email or email).lower(),
         "user_token": f"usr_{uuid4().hex}",
-        "user_password_hash": hash_password(user_password) if user_password else None,
+        "user_password_hash": hash_password(effective_password),
         "admin_name": admin_name or owner_name,
         "admin_email": (admin_email or email).lower(),
         "admin_token": f"adm_{uuid4().hex}",
-        "admin_password_hash": hash_password(admin_password) if admin_password else None,
-        "plan": SubscriptionPlan.PREMIUM if grant_unlimited_access else SubscriptionPlan.FREE,
-        "subscription_status": "unlimited_grant" if grant_unlimited_access else "free",
-        "subscription_expires_at": None,
-        "billing_override": grant_unlimited_access,
+        "admin_password_hash": hash_password(effective_password),
+        "plan": effective_plan,
+        "subscription_status": sub_status,
+        "subscription_expires_at": sub_expires,
+        "billing_override": grant_unlimited,
         "enabled_services": enabled_services or [],
         "branding": (branding or WorkspaceBranding()).model_dump(),
         "provisioned_by": provisioned_by,
+        "password_is_temporary": is_temporary,
         "created_at": now.isoformat(),
     }
-    return workspace
+    return workspace, clear_password
 
 
 async def _get_workspace(workspace_id: str) -> dict:
@@ -579,14 +598,15 @@ async def list_plans():
 
 @router.post("/workspaces", status_code=status.HTTP_201_CREATED)
 async def create_workspace(request: WorkspaceCreate):
-    workspace = _create_workspace_record(
+    workspace, clear_password = _create_workspace_record(
         owner_name=request.owner_name,
         email=request.email,
         organization_name=request.organization_name,
         territory=request.territory,
+        password=request.password,
     )
     await _save_workspace(workspace)
-    await notifications.notify_user_workspace_created(workspace)
+    await notifications.notify_user_workspace_created(workspace, clear_password)
     await notifications.notify_admin_new_workspace(workspace)
     return await _admin_workspace(workspace)
 
@@ -650,6 +670,7 @@ async def access_login(request: EmailPasswordLogin):
                     "role": "admin",
                     "token": workspace["admin_token"],
                     "workspace": await _admin_workspace(workspace),
+                    "password_is_temporary": workspace.get("password_is_temporary", False),
                     "message": "Workspace admin access granted",
                 }
         if is_user:
@@ -660,6 +681,7 @@ async def access_login(request: EmailPasswordLogin):
                     "role": "client",
                     "token": workspace["user_token"],
                     "workspace": await _public_workspace(workspace),
+                    "password_is_temporary": workspace.get("password_is_temporary", False),
                     "message": "Client workspace access granted",
                 }
 
@@ -683,6 +705,7 @@ async def admin_change_password(
             if not ok:
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
             workspace["admin_password_hash"] = hash_password(request.new_password)
+            workspace["password_is_temporary"] = False
             await _save_workspace(workspace)
             return {"message": "Mot de passe modifié avec succès."}
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
@@ -703,6 +726,8 @@ async def client_change_password(
     if not ok:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
     workspace["user_password_hash"] = hash_password(request.new_password)
+    workspace["admin_password_hash"] = hash_password(request.new_password)
+    workspace["password_is_temporary"] = False
     await _save_workspace(workspace)
     return {"message": "Mot de passe modifié avec succès."}
 
@@ -794,7 +819,7 @@ async def create_superadmin_workspace(
     authorization: str | None = Header(default=None),
 ):
     _require_superadmin(authorization)
-    workspace = _create_workspace_record(
+    workspace, clear_password = _create_workspace_record(
         owner_name=request.owner_name,
         email=request.email,
         organization_name=request.organization_name,
@@ -803,15 +828,18 @@ async def create_superadmin_workspace(
         user_email=request.user_email,
         admin_name=request.admin_name,
         admin_email=request.admin_email,
-        admin_password=request.admin_password,
-        user_password=request.user_password,
-        grant_unlimited_access=request.grant_unlimited_access,
+        password=request.password,
+        plan=request.plan,
         enabled_services=request.enabled_services,
         branding=request.branding,
         provisioned_by="superadmin",
     )
     await _save_workspace(workspace)
-    return await _admin_workspace(workspace)
+    await notifications.notify_superadmin_workspace_created(workspace, clear_password)
+    await notifications.notify_admin_new_workspace(workspace)
+    result = await _admin_workspace(workspace)
+    result["_temp_password"] = clear_password
+    return result
 
 
 @router.patch("/superadmin/workspaces/{workspace_id}")
