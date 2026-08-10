@@ -26,6 +26,21 @@ def verify_password(password: str, stored: str) -> bool:
         return False
 
 
+def constant_time_equals(candidate: str | None, expected: str | None) -> bool:
+    """
+    Compare deux secrets (tokens, clés admin...) en temps constant.
+
+    Ne jamais comparer un secret avec `==`/`!=` : le temps de réponse
+    d'une comparaison naïve dépend de la position du premier octet
+    différent, ce qui peut permettre à un attaquant de reconstituer le
+    secret octet par octet (timing attack). `hmac.compare_digest` est
+    conçu pour être insensible à ce type d'analyse.
+    """
+    if not candidate or not expected:
+        return False
+    return hmac.compare_digest(candidate.encode(), expected.encode())
+
+
 def _b64url_encode(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
 

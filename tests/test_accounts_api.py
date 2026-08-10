@@ -1,10 +1,33 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from baobab.api.main import app
 from baobab.api.routes.accounts import _normalize_database_url
-
+from tests.conftest import postgres_available
 
 client = TestClient(app)
+
+
+def _bootstrap_and_login_superadmin(email: str, password: str = "SuperSecret123!") -> str:
+    """Crée (si besoin) le compte superadmin et renvoie un JWT valide."""
+    setup_response = client.post(
+        "/api/v1/superadmin/setup",
+        json={
+            "email": email,
+            "password": password,
+            "bootstrap_token": "test-superadmin-bootstrap-token-not-for-prod",
+        },
+    )
+    if setup_response.status_code == 201:
+        return setup_response.json()["token"]
+
+    # Compte déjà bootstrapé par un test précédent : on se connecte.
+    login_response = client.post(
+        "/api/v1/superadmin/login",
+        json={"email": email, "password": password},
+    )
+    assert login_response.status_code == 200, login_response.text
+    return login_response.json()["token"]
 
 
 def test_neon_database_url_normalization_removes_unsupported_channel_binding():
@@ -55,6 +78,7 @@ def test_free_workspace_can_submit_one_internal_request_then_must_upgrade():
     assert blocked_response.status_code == 402
 
 
+@pytest.mark.skipif(not postgres_available(), reason="PostgreSQL requis pour le compte superadmin")
 def test_paid_checkout_activates_monthly_subscription():
     workspace_response = client.post(
         "/api/v1/accounts/workspaces",
@@ -82,8 +106,12 @@ def test_paid_checkout_activates_monthly_subscription():
     assert payment["billing_period"] == "monthly"
     assert payment["status"] == "pending"
 
+    # La confirmation de paiement est une opération privilégiée : elle
+    # exige désormais un Bearer JWT superadmin (cf. audit sécurité).
+    token = _bootstrap_and_login_superadmin("super-checkout@example.com")
     confirm_response = client.post(
-        f"/api/v1/accounts/payments/{payment['payment_id']}/confirm"
+        f"/api/v1/accounts/payments/{payment['payment_id']}/confirm",
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert confirm_response.status_code == 200
@@ -91,6 +119,12 @@ def test_paid_checkout_activates_monthly_subscription():
     assert activated["plan"] == "premium"
     assert activated["subscription_status"] == "active"
     assert activated["subscription_expires_at"] is not None
+
+
+def test_confirm_payment_rejects_anonymous_caller():
+    """Sans le fix, cette route n'était protégée par aucune vérification cohérente à l'usage."""
+    response = client.post("/api/v1/accounts/payments/pay_doesnotexist/confirm")
+    assert response.status_code == 403
 
 
 def test_plan_catalog_contains_basic_premium_and_mobile_money_providers():
@@ -116,13 +150,6 @@ def test_workspace_admin_can_manage_own_internal_requests():
     )
     workspace = workspace_response.json()
     admin_token = workspace["admin_token"]
-
-    login_response = client.post(
-        "/api/v1/accounts/admin/login",
-        json={"admin_token": admin_token},
-    )
-    assert login_response.status_code == 200
-    assert login_response.json()["workspace_id"] == workspace["workspace_id"]
 
     request_response = client.post(
         f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
@@ -186,6 +213,202 @@ def test_workspace_admin_cannot_manage_another_workspace_request():
     assert forbidden_response.status_code == 403
 
 
+# ─── Correctifs de sécurité : IDOR sur GET /workspaces/{id} ──────────────────
+
+
+def test_get_workspace_requires_a_valid_access_token():
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Fanta Traore",
+            "email": "fanta@example.com",
+            "organization_name": "Traore & Associes",
+            "territory": "CI",
+        },
+    ).json()
+
+    # Sans token : avant le correctif, le simple workspace_id suffisait
+    # à lire nom, email et statut d'abonnement du client (IDOR).
+    anonymous_response = client.get(f"/api/v1/accounts/workspaces/{workspace['workspace_id']}")
+    assert anonymous_response.status_code == 401
+
+    wrong_token_response = client.get(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}",
+        headers={"X-Access-Token": "usr_not_the_right_token"},
+    )
+    assert wrong_token_response.status_code == 401
+
+    authorized_response = client.get(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}",
+        headers={"X-Access-Token": workspace["user_token"]},
+    )
+    assert authorized_response.status_code == 200
+    assert authorized_response.json()["organization_name"] == "Traore & Associes"
+
+    admin_response = client.get(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}",
+        headers={"X-Access-Token": workspace["admin_token"]},
+    )
+    assert admin_response.status_code == 200
+
+
+def test_internal_requests_listing_requires_access_token():
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Ibrahim Sow",
+            "email": "ibrahim@example.com",
+            "organization_name": "Sow Legal",
+            "territory": "CI",
+        },
+    ).json()
+    client.post(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        json={"subject": "Confidentiel", "message": "Contenu prive du client."},
+    )
+
+    anonymous_response = client.get(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests"
+    )
+    assert anonymous_response.status_code == 401
+
+    authorized_response = client.get(
+        f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        headers={"X-Access-Token": workspace["user_token"]},
+    )
+    assert authorized_response.status_code == 200
+    assert len(authorized_response.json()["requests"]) == 1
+
+
+# ─── Correctifs de sécurité : authentification email + mot de passe ─────────
+
+
+def test_login_with_email_and_password_returns_correct_role():
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Mariam Diallo",
+            "email": "mariam@example.com",
+            "organization_name": "Diallo Conseil",
+            "territory": "CI",
+            "password": "MotDePasseSolide42!",
+        },
+    ).json()
+
+    admin_login = client.post(
+        "/api/v1/accounts/access/login",
+        json={"email": "mariam@example.com", "password": "MotDePasseSolide42!"},
+    )
+    assert admin_login.status_code == 200
+    assert admin_login.json()["role"] == "admin"
+    assert admin_login.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
+
+    wrong_password = client.post(
+        "/api/v1/accounts/access/login",
+        json={"email": "mariam@example.com", "password": "mauvais-mot-de-passe"},
+    )
+    assert wrong_password.status_code == 403
+
+
+def test_login_rejects_token_used_as_password():
+    """
+    Avant le correctif, si le hash de mot de passe était absent, le
+    code acceptait `password == token` comme authentification valide.
+    Ce test garantit qu'un token connu (renvoyé en clair par l'API à la
+    création) ne permet plus de se connecter comme s'il s'agissait du
+    mot de passe.
+    """
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Yves Kone",
+            "email": "yves@example.com",
+            "organization_name": "Kone SARL",
+            "territory": "CI",
+        },
+    ).json()
+
+    response = client.post(
+        "/api/v1/accounts/access/login",
+        json={"email": "yves@example.com", "password": workspace["admin_token"]},
+    )
+    assert response.status_code == 403
+
+
+def test_login_does_not_leak_suspended_status_before_password_is_verified():
+    """
+    Avant le correctif, un compte suspendu renvoyait un message distinct
+    ("Ce compte est suspendu") avant même la vérification du mot de
+    passe, ce qui permettait d'énumérer les emails valides (ch. 23 du
+    livre). Avec un mauvais mot de passe, l'erreur doit rester générique.
+    """
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Compte Suspendu",
+            "email": "suspendu@example.com",
+            "organization_name": "Suspendu SARL",
+            "territory": "CI",
+            "password": "MotDePasseSolide42!",
+        },
+    ).json()
+
+    # On simule la suspension directement dans le stockage en mémoire
+    # utilisé par les tests (pas de DB Postgres disponible ici).
+    from baobab.api.routes import accounts as accounts_module
+
+    accounts_module.WORKSPACES[workspace["workspace_id"]]["suspended"] = True
+
+    wrong_password_response = client.post(
+        "/api/v1/accounts/access/login",
+        json={"email": "suspendu@example.com", "password": "mot-de-passe-invalide"},
+    )
+    assert wrong_password_response.status_code == 403
+    assert wrong_password_response.json()["detail"] == "Email ou mot de passe incorrect."
+
+    correct_password_response = client.post(
+        "/api/v1/accounts/access/login",
+        json={"email": "suspendu@example.com", "password": "MotDePasseSolide42!"},
+    )
+    assert correct_password_response.status_code == 403
+    assert "suspendu" in correct_password_response.json()["detail"].lower()
+
+
+# ─── Correctifs de sécurité : superadmin (JWT) ───────────────────────────────
+
+
+def test_superadmin_endpoints_reject_missing_or_malformed_authorization():
+    no_header = client.get("/api/v1/accounts/superadmin/overview")
+    assert no_header.status_code == 403
+
+    malformed = client.get(
+        "/api/v1/accounts/superadmin/overview",
+        headers={"Authorization": "NotBearer sometoken"},
+    )
+    assert malformed.status_code == 403
+
+    invalid_jwt = client.get(
+        "/api/v1/accounts/superadmin/overview",
+        headers={"Authorization": "Bearer invalid.jwt.token"},
+    )
+    assert invalid_jwt.status_code == 403
+
+
+def test_superadmin_setup_rejects_wrong_bootstrap_token():
+    response = client.post(
+        "/api/v1/superadmin/setup",
+        json={
+            "email": "attacker@example.com",
+            "password": "TryToBecomeAdmin123!",
+            "bootstrap_token": "baobab-superadmin-dev",  # ancienne valeur par défaut
+        },
+    )
+    # 403 (mauvais token) ou 409 (compte déjà créé par un autre test) :
+    # jamais 201, dans tous les cas.
+    assert response.status_code in (403, 409)
+
+
+@pytest.mark.skipif(not postgres_available(), reason="PostgreSQL requis pour le compte superadmin")
 def test_superadmin_can_see_platform_overview():
     workspace = client.post(
         "/api/v1/accounts/workspaces",
@@ -204,14 +427,16 @@ def test_superadmin_can_see_platform_overview():
             "phone_number": "+2250500000000",
         },
     ).json()
-    client.post(f"/api/v1/accounts/payments/{checkout['payment_id']}/confirm")
 
-    forbidden_response = client.get("/api/v1/accounts/superadmin/overview")
-    assert forbidden_response.status_code == 403
+    token = _bootstrap_and_login_superadmin("super-overview@example.com")
+    client.post(
+        f"/api/v1/accounts/payments/{checkout['payment_id']}/confirm",
+        headers={"Authorization": f"Bearer {token}"},
+    )
 
     overview_response = client.get(
         "/api/v1/accounts/superadmin/overview",
-        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert overview_response.status_code == 200
@@ -220,46 +445,13 @@ def test_superadmin_can_see_platform_overview():
     assert overview["confirmed_revenue_xof"] >= 5000
 
 
-def test_access_code_routes_to_admin_or_superadmin_space():
-    workspace = client.post(
-        "/api/v1/accounts/workspaces",
-        json={
-            "owner_name": "Code Admin",
-            "email": "code-admin@example.com",
-            "organization_name": "Code Admin SARL",
-            "territory": "CI",
-        },
-    ).json()
-
-    admin_access = client.post(
-        "/api/v1/accounts/access/login",
-        json={"access_code": workspace["admin_token"]},
-    )
-
-    assert admin_access.status_code == 200
-    assert admin_access.json()["role"] == "admin"
-    assert admin_access.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
-
-    superadmin_access = client.post(
-        "/api/v1/accounts/access/login",
-        json={"access_code": "baobab-superadmin-dev"},
-    )
-
-    assert superadmin_access.status_code == 200
-    assert superadmin_access.json()["role"] == "superadmin"
-
-    invalid_access = client.post(
-        "/api/v1/accounts/access/login",
-        json={"access_code": "invalid-access-code"},
-    )
-
-    assert invalid_access.status_code == 403
-
-
+@pytest.mark.skipif(not postgres_available(), reason="PostgreSQL requis pour le compte superadmin")
 def test_superadmin_can_provision_custom_workspace_with_unlimited_access():
+    token = _bootstrap_and_login_superadmin("super-provision@example.com")
+
     create_response = client.post(
         "/api/v1/accounts/superadmin/workspaces",
-        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        headers={"Authorization": f"Bearer {token}"},
         json={
             "owner_name": "Client VIP",
             "email": "client-vip@example.com",
@@ -289,22 +481,24 @@ def test_superadmin_can_provision_custom_workspace_with_unlimited_access():
     assert workspace["admin_token"].startswith("adm_")
     assert workspace["user_token"].startswith("usr_")
 
-    client_access = client.post(
-        "/api/v1/accounts/access/login",
-        json={"access_code": workspace["user_token"]},
-    )
-    assert client_access.status_code == 200
-    assert client_access.json()["role"] == "client"
-    assert client_access.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
-    assert client_access.json()["workspace"]["admin_token"] is None
-    assert client_access.json()["workspace"]["user_token"] is None
+    temp_password = workspace["_temp_password"]
 
-    admin_access = client.post(
+    client_login = client.post(
         "/api/v1/accounts/access/login",
-        json={"access_code": workspace["admin_token"]},
+        json={"email": "client-vip@example.com", "password": temp_password},
     )
-    assert admin_access.status_code == 200
-    assert admin_access.json()["role"] == "admin"
+    assert client_login.status_code == 200
+    assert client_login.json()["role"] == "client"
+    assert client_login.json()["workspace"]["workspace_id"] == workspace["workspace_id"]
+    assert client_login.json()["workspace"]["admin_token"] is None
+    assert client_login.json()["workspace"]["user_token"] is None
+
+    admin_login = client.post(
+        "/api/v1/accounts/access/login",
+        json={"email": "admin-vip@example.com", "password": temp_password},
+    )
+    assert admin_login.status_code == 200
+    assert admin_login.json()["role"] == "admin"
 
     first_request = client.post(
         f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
@@ -325,10 +519,13 @@ def test_superadmin_can_provision_custom_workspace_with_unlimited_access():
     assert second_request.status_code == 201
 
 
+@pytest.mark.skipif(not postgres_available(), reason="PostgreSQL requis pour le compte superadmin")
 def test_superadmin_can_customize_workspace_and_regenerate_admin_token():
+    token = _bootstrap_and_login_superadmin("super-customize@example.com")
+
     workspace = client.post(
         "/api/v1/accounts/superadmin/workspaces",
-        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        headers={"Authorization": f"Bearer {token}"},
         json={
             "owner_name": "Client Modifiable",
             "email": "modifiable@example.com",
@@ -342,7 +539,7 @@ def test_superadmin_can_customize_workspace_and_regenerate_admin_token():
 
     update_response = client.patch(
         f"/api/v1/accounts/superadmin/workspaces/{workspace['workspace_id']}",
-        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        headers={"Authorization": f"Bearer {token}"},
         json={
             "organization_name": "Client Personnalise SA",
             "admin_name": "Nouvel Admin",
@@ -365,7 +562,7 @@ def test_superadmin_can_customize_workspace_and_regenerate_admin_token():
 
     token_response = client.post(
         f"/api/v1/accounts/superadmin/workspaces/{workspace['workspace_id']}/admin-token",
-        headers={"X-Superadmin-Token": "baobab-superadmin-dev"},
+        headers={"Authorization": f"Bearer {token}"},
     )
 
     assert token_response.status_code == 200
