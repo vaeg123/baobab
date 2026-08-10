@@ -2471,6 +2471,121 @@
       display: flex; align-items: flex-start; gap: 8px; margin-top: 0.5rem;
     }
     .ohada-apres-warning svg { flex-shrink: 0; margin-top: 1px; color: #B45309; }
+
+    /* ══════════════════════════════════════════
+       SUPERADMIN CONSOLE — refactored
+    ══════════════════════════════════════════ */
+    .sa-console { max-width: 1200px; }
+
+    /* Internal tab bar */
+    .sa-tabs {
+      display: flex; gap: 4px; margin: 1.5rem 0 1.25rem;
+      background: rgba(60,20,5,0.05); border-radius: 10px; padding: 4px;
+      width: fit-content;
+    }
+    .sa-tab-btn {
+      padding: 8px 20px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; background: transparent;
+      color: var(--sub); transition: all .15s;
+    }
+    .sa-tab-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: 0 1px 4px rgba(60,20,5,0.12);
+    }
+    .sa-tab-btn:hover:not(.active) { color: var(--text); }
+
+    /* Desktop: sidebar layout */
+    .sa-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    .sa-form-aside { display: flex; flex-direction: column; gap: 1rem; }
+    .sa-list-main { min-width: 0; }
+
+    /* Search + filter bar */
+    .sa-list-toolbar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+    }
+    .sa-search-input {
+      flex: 1; min-width: 160px; padding: 8px 12px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 13px; background: var(--surface); color: var(--text);
+    }
+    .sa-search-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(191,78,30,0.09); }
+    .sa-filter-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+    .sa-fpill {
+      padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 600;
+      border: 1.5px solid var(--border); background: transparent;
+      color: var(--sub); cursor: pointer; transition: all .12s;
+    }
+    .sa-fpill:hover { color: var(--text); border-color: rgba(60,20,5,0.3); }
+    .sa-fpill.active {
+      background: var(--clay); color: #FDF8F3;
+      border-color: var(--clay); box-shadow: 0 2px 8px rgba(191,78,30,0.25);
+    }
+
+    /* New workspace rows */
+    .ws-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      transition: background .1s;
+    }
+    .ws-row:last-child { border-bottom: none; }
+    .ws-row:hover { background: rgba(60,20,5,0.03); }
+    .ws-av {
+      width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px;
+      background: var(--bgold); border: 1px solid rgba(191,78,30,0.20);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; color: var(--gold);
+    }
+    .ws-av.suspended { background: rgba(176,48,32,0.08); border-color: rgba(176,48,32,0.2); color: var(--red); }
+    .ws-body { flex: 1; min-width: 0; }
+    .ws-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
+    .ws-org { font-size: 13px; font-weight: 700; color: var(--text); }
+    .ws-meta { font-size: 11px; color: var(--sub); line-height: 1.7; }
+    .ws-meta code { font-size: 10px; background: rgba(60,20,5,0.07); padding: 1px 5px; border-radius: 4px; }
+    .ws-pwd-set { color: #1A7A40; font-size: 10px; }
+    .ws-pwd-unset { color: #B06020; font-size: 10px; }
+    .ws-actions {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; align-items: center;
+    }
+    .ws-act {
+      padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: 6px;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--text); cursor: pointer; transition: all .12s; white-space: nowrap;
+    }
+    .ws-act:hover { border-color: rgba(60,20,5,0.3); background: rgba(60,20,5,0.05); }
+    .ws-act.primary { background: var(--clay); color: #FDF8F3; border-color: var(--clay); }
+    .ws-act.primary:hover { background: #A03A10; }
+    .ws-act.danger { border-color: rgba(176,48,32,0.3); color: var(--red); background: var(--red-bg); }
+    .ws-act.danger:hover { background: rgba(176,48,32,0.15); }
+    .ws-plan-sel {
+      font-size: 11px; padding: 4px 8px; border: 1.5px solid var(--border);
+      border-radius: 6px; background: var(--surface); color: var(--text);
+      cursor: pointer; height: 28px;
+    }
+    .ws-count { font-size: 11px; color: var(--sub); padding: 4px 8px; }
+
+    /* Mon compte section */
+    .sa-compte-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    }
+
+    @media (max-width: 960px) {
+      .sa-layout { grid-template-columns: 1fr; }
+      .sa-form-aside { order: 2; }
+      .sa-list-main { order: 1; }
+    }
+    @media (max-width: 600px) {
+      .sa-tabs { width: 100%; }
+      .sa-tab-btn { flex: 1; text-align: center; }
+      .sa-compte-grid { grid-template-columns: 1fr; }
+      .ws-actions { gap: 4px; }
+      .ws-act { padding: 5px 8px; font-size: 10px; }
+    }
   </style>
 </head>
 <body>
@@ -3093,124 +3208,204 @@
 
     <!-- ── SUPERADMIN ── -->
     <div id="tab-superadmin" class="tab-panel">
-      <div class="container">
-        <div class="page-title">Console</div>
-        <div class="page-sub">Vue d'ensemble de toute la plateforme BAOBAB.</div>
+      <div class="container sa-console">
 
-        <div class="stats-row" id="sa-stats">
-          <div class="stat-card gold"><div class="stat-value" id="sa-stat-workspaces">—</div><div class="stat-label">Espaces clients</div></div>
-          <div class="stat-card green"><div class="stat-value" id="sa-stat-active">—</div><div class="stat-label">Abonnés actifs</div></div>
-          <div class="stat-card orange"><div class="stat-value" id="sa-stat-requests">—</div><div class="stat-label">Demandes ouvertes</div></div>
-          <div class="stat-card blue"><div class="stat-value" id="sa-stat-revenue">—</div><div class="stat-label">Revenu (FCFA)</div></div>
+        <!-- Header -->
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <div class="page-title">Console superadmin</div>
+            <div class="page-sub">Vue d'ensemble et pilotage de la plateforme BAOBAB.</div>
+          </div>
+          <div id="sa-user-badge" style="font-size:12px;color:var(--sub);text-align:right;line-height:1.6"></div>
         </div>
 
-        <div class="grid-2">
-          <div>
-            <div class="card">
-              <div class="card-header"><div class="card-icon">➕</div><span class="card-title">Nouveau client</span></div>
-              <div class="card-body">
-                <!-- Mode rapide -->
-                <div class="form-group"><label>Organisation <span style="color:var(--clay)">*</span></label><input type="text" id="new_org_name" placeholder="Cabinet Touré & Associés" /></div>
-                <div class="form-group"><label>Email du responsable <span style="color:var(--clay)">*</span></label><input type="email" id="new_owner_email" placeholder="awa@organisation.ci" /></div>
+        <!-- KPI row -->
+        <div class="stats-row" id="sa-stats" style="margin-top:1.25rem">
+          <div class="stat-card gold">
+            <div class="stat-value" id="sa-stat-workspaces">—</div>
+            <div class="stat-label">Espaces clients</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-value" id="sa-stat-active">—</div>
+            <div class="stat-label">Abonnés payants</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-value" id="sa-stat-suspended">—</div>
+            <div class="stat-label">Suspendus</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-value" id="sa-stat-free">—</div>
+            <div class="stat-label">Plan gratuit</div>
+          </div>
+        </div>
 
-                <!-- Sélecteur de plan en pills -->
-                <div class="form-group">
-                  <label>Plan</label>
-                  <div id="sa-plan-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
-                    <button type="button" class="sa-plan-pill" data-plan="free" onclick="_saSelectPlan('free')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(60,20,5,0.15);background:rgba(60,20,5,0.04);color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
-                      Gratuit
-                    </button>
-                    <button type="button" class="sa-plan-pill" data-plan="basic" onclick="_saSelectPlan('basic')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(160,80,16,0.2);background:rgba(191,78,30,0.05);color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
-                      Basic<br><span style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
-                    </button>
-                    <button type="button" class="sa-plan-pill" data-plan="premium" onclick="_saSelectPlan('premium')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(191,78,30,0.25);background:rgba(191,78,30,0.07);color:var(--clay);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;position:relative">
-                      <span style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--clay);color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap">Recommandé</span>
-                      Premium<br><span style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
-                    </button>
-                    <button type="button" class="sa-plan-pill" data-plan="unlimited" onclick="_saSelectPlan('unlimited')" style="flex:1;min-width:80px;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(46,94,58,0.3);background:rgba(46,94,58,0.07);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
-                      Illimité<br><span style="font-size:10px;font-weight:400;opacity:.8">offert par BAOBAB</span>
-                    </button>
+        <!-- Internal tab bar -->
+        <div class="sa-tabs">
+          <button class="sa-tab-btn active" id="sa-tab-clients" onclick="_saTab('clients')">Clients</button>
+          <button class="sa-tab-btn" id="sa-tab-compte" onclick="_saTab('compte')">Mon compte</button>
+        </div>
+
+        <!-- ── PANEL CLIENTS ── -->
+        <div id="sa-panel-clients">
+          <div class="sa-layout">
+
+            <!-- Sidebar: creation form -->
+            <aside class="sa-form-aside">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-icon">➕</div>
+                  <span class="card-title">Nouveau client</span>
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Organisation <span style="color:var(--clay)">*</span></label>
+                    <input type="text" id="new_org_name" placeholder="Cabinet Touré & Associés" />
+                  </div>
+                  <div class="form-group">
+                    <label>Email du responsable <span style="color:var(--clay)">*</span></label>
+                    <input type="email" id="new_owner_email" placeholder="awa@organisation.ci" />
+                  </div>
+
+                  <!-- Plan pills -->
+                  <div class="form-group">
+                    <label>Plan</label>
+                    <div id="sa-plan-pills" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+                      <button type="button" class="sa-plan-pill" data-plan="free" onclick="_saSelectPlan('free')"
+                        style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(60,20,5,0.15);background:rgba(60,20,5,0.04);color:var(--sub);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
+                        Gratuit
+                      </button>
+                      <button type="button" class="sa-plan-pill" data-plan="basic" onclick="_saSelectPlan('basic')"
+                        style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(160,80,16,0.2);background:rgba(191,78,30,0.05);color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
+                        Basic<br><span style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
+                      </button>
+                      <button type="button" class="sa-plan-pill" data-plan="premium" onclick="_saSelectPlan('premium')"
+                        style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(191,78,30,0.25);background:rgba(191,78,30,0.07);color:var(--clay);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;position:relative">
+                        <span style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--clay);color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap">★ Recommandé</span>
+                        Premium<br><span style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
+                      </button>
+                      <button type="button" class="sa-plan-pill" data-plan="unlimited" onclick="_saSelectPlan('unlimited')"
+                        style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(46,94,58,0.3);background:rgba(46,94,58,0.07);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
+                        Illimité<br><span style="font-size:10px;font-weight:400;opacity:.8">offert BAOBAB</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Territoire -->
+                  <div class="form-group">
+                    <label>Territoire</label>
+                    <select id="new_territory">
+                      <option value="CI">CI — Côte d'Ivoire</option>
+                      <option value="SN">SN — Sénégal</option>
+                      <option value="CM">CM — Cameroun</option>
+                      <option value="BF">BF — Burkina Faso</option>
+                      <option value="ML">ML — Mali</option>
+                      <option value="TG">TG — Togo</option>
+                      <option value="BJ">BJ — Bénin</option>
+                      <option value="GN">GN — Guinée</option>
+                      <option value="NE">NE — Niger</option>
+                      <option value="TD">TD — Tchad</option>
+                      <option value="CG">CG — Congo</option>
+                      <option value="GA">GA — Gabon</option>
+                      <option value="CD">CD — RD Congo</option>
+                      <option value="CF">CF — Centrafrique</option>
+                      <option value="GQ">GQ — Guinée Équatoriale</option>
+                      <option value="KM">KM — Comores</option>
+                      <option value="GW">GW — Guinée-Bissau</option>
+                    </select>
+                  </div>
+
+                  <!-- Options avancées -->
+                  <button type="button" onclick="_saToggleAdvanced()" id="sa-advanced-toggle"
+                    style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;padding:0;margin-bottom:10px;text-decoration:underline;text-underline-offset:2px">
+                    Options avancées ↓
+                  </button>
+                  <div id="sa-advanced-fields" style="display:none">
+                    <div class="sep"></div>
+                    <div class="form-group">
+                      <label>Nom du responsable <span style="color:var(--sub);font-weight:400;font-size:11px">(optionnel)</span></label>
+                      <input type="text" id="new_owner_name" placeholder="Awa Touré" />
+                    </div>
+                    <div class="form-group">
+                      <label>Nom d'affichage <span style="color:var(--sub);font-weight:400;font-size:11px">(branding)</span></label>
+                      <input type="text" id="new_display_name" placeholder="Portail Cabinet Touré" />
+                    </div>
+                    <div class="form-group">
+                      <label>Mot de passe <span style="color:var(--sub);font-weight:400;font-size:11px">(généré auto si vide)</span></label>
+                      <input type="password" id="new_password" placeholder="Min. 8 caractères" autocomplete="new-password" />
+                    </div>
+                  </div>
+
+                  <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()">
+                    Créer l'espace client
+                  </button>
+                </div>
+              </div>
+
+              <!-- Résultat création -->
+              <div class="card" id="sa-creation-result-card" style="display:none">
+                <div class="card-header"><div class="card-icon">✅</div><span class="card-title">Espace créé</span></div>
+                <div class="card-body" id="sa-creation-result"></div>
+              </div>
+            </aside>
+
+            <!-- Main: client list -->
+            <div class="sa-list-main">
+              <div class="card" style="overflow:hidden">
+                <div class="card-header" style="padding:14px 16px">
+                  <div class="card-icon">🗂️</div>
+                  <span class="card-title">Espaces clients</span>
+                  <span class="ws-count" id="sa-ws-count"></span>
+                  <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadSuperadminData()">↻ Actualiser</button>
+                </div>
+
+                <!-- Toolbar: search + filters -->
+                <div class="sa-list-toolbar">
+                  <input type="search" class="sa-search-input" id="sa-search"
+                    placeholder="Rechercher par nom, email ou ID…"
+                    oninput="_saFilter()" />
+                  <div class="sa-filter-pills" id="sa-filter-pills">
+                    <button class="sa-fpill active" data-f="" onclick="_saSetFilter(this,'')">Tous</button>
+                    <button class="sa-fpill" data-f="free" onclick="_saSetFilter(this,'free')">Gratuit</button>
+                    <button class="sa-fpill" data-f="basic" onclick="_saSetFilter(this,'basic')">Basic</button>
+                    <button class="sa-fpill" data-f="premium" onclick="_saSetFilter(this,'premium')">Premium</button>
+                    <button class="sa-fpill" data-f="unlimited" onclick="_saSetFilter(this,'unlimited')">Illimité</button>
+                    <button class="sa-fpill" data-f="suspended" onclick="_saSetFilter(this,'suspended')">Suspendus</button>
                   </div>
                 </div>
 
-                <!-- Territoire -->
-                <div class="form-group">
-                  <label>Territoire</label>
-                  <select id="new_territory">
-                    <option value="CI">CI — Côte d'Ivoire</option>
-                    <option value="SN">SN — Sénégal</option>
-                    <option value="CM">CM — Cameroun</option>
-                    <option value="BF">BF — Burkina Faso</option>
-                    <option value="ML">ML — Mali</option>
-                    <option value="TG">TG — Togo</option>
-                    <option value="BJ">BJ — Bénin</option>
-                    <option value="GN">GN — Guinée</option>
-                    <option value="NE">NE — Niger</option>
-                    <option value="TD">TD — Tchad</option>
-                    <option value="CG">CG — Congo</option>
-                    <option value="GA">GA — Gabon</option>
-                    <option value="CD">CD — RD Congo</option>
-                    <option value="CF">CF — Centrafrique</option>
-                    <option value="GQ">GQ — Guinée Équatoriale</option>
-                    <option value="KM">KM — Comores</option>
-                    <option value="GW">GW — Guinée-Bissau</option>
-                  </select>
+                <div id="sa-workspaces-list">
+                  <div class="empty-state" style="padding:2.5rem">
+                    <div class="empty-icon">🌍</div>
+                    <div class="empty-text">Chargement…</div>
+                  </div>
                 </div>
-
-                <!-- Lien options avancées -->
-                <button type="button" onclick="_saToggleAdvanced()" id="sa-advanced-toggle"
-                  style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;padding:0;margin-bottom:10px;text-decoration:underline;text-underline-offset:2px">
-                  Options avancées ↓
-                </button>
-
-                <!-- Options avancées (masquées par défaut) -->
-                <div id="sa-advanced-fields" style="display:none">
-                  <div class="sep"></div>
-                  <div class="form-group"><label>Nom du responsable <span style="color:var(--sub);font-weight:400;font-size:11px">(si différent de l'email)</span></label><input type="text" id="new_owner_name" placeholder="Awa Touré" /></div>
-                  <div class="form-group"><label>Nom d'affichage <span style="color:var(--sub);font-weight:400;font-size:11px">(branding)</span></label><input type="text" id="new_display_name" placeholder="Portail Cabinet Touré" /></div>
-                  <div class="form-group"><label>Mot de passe personnalisé <span style="color:var(--sub);font-weight:400;font-size:11px">(si vide, généré auto)</span></label><input type="password" id="new_password" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
-                </div>
-
-                <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()" style="margin-top:4px">Créer l'espace client</button>
               </div>
             </div>
-          </div>
-          <div>
-            <div class="card" id="sa-creation-result-card" style="display:none;margin-bottom:1.25rem">
-              <div class="card-header"><div class="card-icon">✅</div><span class="card-title">Espace créé</span></div>
-              <div class="card-body" id="sa-creation-result"></div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <div class="card-icon">🗂️</div><span class="card-title">Espaces clients</span>
-                <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadSuperadminData()">↻</button>
-              </div>
-              <div id="sa-workspaces-list">
-                <div class="empty-state" style="padding:2rem"><div class="empty-icon">🌍</div><div class="empty-text">Chargement…</div></div>
-              </div>
-            </div>
+
           </div>
         </div>
 
-        <!-- Changer email / mot de passe superadmin -->
-        <div class="grid-2" style="margin-top:1.25rem">
-          <div class="card">
-            <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
-            <div class="card-body">
-              <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="sa_cur_pwd" placeholder="••••••••" autocomplete="current-password" /></div>
-              <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="sa_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
-              <div class="form-group"><label>Confirmer</label><input type="password" id="sa_confirm_pwd" placeholder="Répétez" autocomplete="new-password" /></div>
-              <div id="sa-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
-              <button class="btn btn-primary" onclick="doSAChangePwd()">Mettre à jour</button>
+        <!-- ── PANEL MON COMPTE ── -->
+        <div id="sa-panel-compte" style="display:none">
+          <div class="sa-compte-grid">
+            <div class="card">
+              <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
+              <div class="card-body">
+                <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="sa_cur_pwd" placeholder="••••••••" autocomplete="current-password" /></div>
+                <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="sa_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
+                <div class="form-group"><label>Confirmer</label><input type="password" id="sa_confirm_pwd" placeholder="Répétez" autocomplete="new-password" /></div>
+                <div id="sa-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
+                <button class="btn btn-primary" onclick="doSAChangePwd()">Mettre à jour</button>
+              </div>
             </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-icon">✉️</div><span class="card-title">Changer mon email</span></div>
-            <div class="card-body">
-              <div class="form-group"><label>Nouvel email</label><input type="email" id="sa_new_email" placeholder="nouveau@email.com" /></div>
-              <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="sa_email_pwd" placeholder="Votre mot de passe actuel" autocomplete="current-password" /></div>
-              <div id="sa-email-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
-              <button class="btn btn-primary" onclick="doSAChangeEmail()">Mettre à jour</button>
+            <div class="card">
+              <div class="card-header"><div class="card-icon">✉️</div><span class="card-title">Changer mon email</span></div>
+              <div class="card-body">
+                <div class="form-group"><label>Nouvel email</label><input type="email" id="sa_new_email" placeholder="nouveau@email.com" /></div>
+                <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="sa_email_pwd" placeholder="Votre mot de passe actuel" autocomplete="current-password" /></div>
+                <div id="sa-email-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
+                <button class="btn btn-primary" onclick="doSAChangeEmail()">Mettre à jour</button>
+              </div>
             </div>
           </div>
         </div>
@@ -4398,6 +4593,7 @@ let state = {
   workspace: null,
   adminWorkspace: null,
   superadminToken: null,
+  superadminEmail: null,
 };
 
 const today = new Date().toISOString().split('T')[0];
@@ -4587,7 +4783,7 @@ async function doSuperadminLogin() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
-    enterSuperadmin(data.token);
+    enterSuperadmin(data.token, data.email);
   } catch(e) {
     showLoginError(e.message);
     btn.disabled = false;
@@ -4614,7 +4810,7 @@ async function doSuperadminSetup() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
-    enterSuperadmin(data.token);
+    enterSuperadmin(data.token, data.email);
   } catch(e) {
     showLoginError(e.message);
     btn.disabled = false;
@@ -4771,9 +4967,10 @@ function enterAdmin(adminToken, workspace) {
   renderAdminDashboard(workspace, adminToken);
 }
 
-function enterSuperadmin(token) {
+function enterSuperadmin(token, email = '') {
   state.role = 'superadmin';
   state.superadminToken = token;
+  state.superadminEmail = email;
 
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('active');
@@ -5307,6 +5504,115 @@ async function createClientWorkspace() {
 // ════════════════════════════════════════════════
 // SUPERADMIN
 // ════════════════════════════════════════════════
+let _saAllWorkspaces = [];
+let _saFilterPlan    = '';
+
+function _saTab(tab) {
+  document.getElementById('sa-panel-clients').style.display = tab === 'clients' ? '' : 'none';
+  document.getElementById('sa-panel-compte').style.display  = tab === 'compte'  ? '' : 'none';
+  document.getElementById('sa-tab-clients').classList.toggle('active', tab === 'clients');
+  document.getElementById('sa-tab-compte').classList.toggle('active',  tab === 'compte');
+}
+
+function _saSetFilter(btn, plan) {
+  _saFilterPlan = plan;
+  document.querySelectorAll('.sa-fpill').forEach(b => b.classList.toggle('active', b === btn));
+  _saRenderList();
+}
+
+function _saFilter() { _saRenderList(); }
+
+function _saRenderList() {
+  const search = (document.getElementById('sa-search')?.value || '').toLowerCase().trim();
+  let list = _saAllWorkspaces;
+
+  if (_saFilterPlan === 'suspended') {
+    list = list.filter(ws => ws.suspended);
+  } else if (_saFilterPlan) {
+    list = list.filter(ws => ws.plan === _saFilterPlan);
+  }
+  if (search) {
+    list = list.filter(ws =>
+      (ws.organization_name || '').toLowerCase().includes(search) ||
+      (ws.admin_email || '').toLowerCase().includes(search) ||
+      (ws.user_email || '').toLowerCase().includes(search) ||
+      (ws.workspace_id || '').toLowerCase().includes(search)
+    );
+  }
+
+  const countEl = document.getElementById('sa-ws-count');
+  if (countEl) countEl.textContent = list.length === _saAllWorkspaces.length
+    ? `${list.length} espace${list.length !== 1 ? 's' : ''}`
+    : `${list.length} / ${_saAllWorkspaces.length}`;
+
+  const planPills = {
+    free:      '<span class="pill pill-gray" style="font-size:10px">Gratuit</span>',
+    basic:     '<span class="pill pill-blue" style="font-size:10px">Basic</span>',
+    premium:   '<span class="pill pill-gold" style="font-size:10px">Premium</span>',
+    unlimited: '<span class="pill" style="background:rgba(46,94,58,0.12);color:#1A7A40;font-size:10px">Illimité</span>',
+  };
+
+  if (!list.length) {
+    document.getElementById('sa-workspaces-list').innerHTML =
+      `<div class="empty-state" style="padding:2.5rem"><div class="empty-icon">🔍</div><div class="empty-text">Aucun résultat pour cette recherche.</div></div>`;
+    return;
+  }
+
+  document.getElementById('sa-workspaces-list').innerHTML = list.map(ws => {
+    const initial   = (ws.organization_name || 'B')[0].toUpperCase();
+    const suspended = !!ws.suspended;
+    const pwdBadge  = ws.admin_password_hash
+      ? '<span class="ws-pwd-set">· mdp ✓</span>'
+      : `<span class="ws-pwd-unset">· mdp initial: <code>${escHtml(ws.admin_token || '')}</code></span>`;
+
+    return `
+    <div class="ws-row">
+      <div class="ws-av${suspended ? ' suspended' : ''}">${initial}</div>
+      <div class="ws-body">
+        <div class="ws-top">
+          <span class="ws-org">${escHtml(ws.organization_name)}</span>
+          ${planPills[ws.plan] || `<span class="pill pill-gray" style="font-size:10px">${escHtml(ws.plan)}</span>`}
+          ${suspended ? '<span class="pill" style="background:#FEE2E2;color:#991B1B;font-size:10px">Suspendu</span>' : ''}
+          ${ws.subscription_status === 'active' ? '<span class="pill pill-green" style="font-size:10px">Actif</span>' : ''}
+        </div>
+        <div class="ws-meta">
+          ${escHtml(ws.admin_email || '—')} ${pwdBadge}
+          &nbsp;·&nbsp; ${ws.territory || '—'}
+          &nbsp;·&nbsp; <code>${escHtml(ws.workspace_id)}</code>
+        </div>
+        <div class="ws-actions">
+          <select class="ws-plan-sel" id="plan-sel-${ws.workspace_id}">
+            <option value="free"      ${ws.plan === 'free'      ? 'selected' : ''}>Gratuit</option>
+            <option value="basic"     ${ws.plan === 'basic'     ? 'selected' : ''}>Basic</option>
+            <option value="premium"   ${ws.plan === 'premium'   ? 'selected' : ''}>Premium</option>
+            <option value="unlimited" ${ws.plan === 'unlimited' ? 'selected' : ''}>Illimité</option>
+          </select>
+          <button class="ws-act primary" onclick="activateWorkspacePlan('${ws.workspace_id}')">Activer</button>
+          <button class="ws-act" onclick="toggleSuspendWorkspace('${ws.workspace_id}',${suspended})">
+            ${suspended ? 'Réactiver' : 'Suspendre'}
+          </button>
+          <button class="ws-act" onclick="resetWorkspacePasswords('${ws.workspace_id}')">Rég. mdp</button>
+          <button class="ws-act danger" onclick="deleteWorkspace('${ws.workspace_id}','${escHtml(ws.organization_name)}')">Supprimer</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadSAWorkspaces() {
+  const token = state.superadminToken;
+  if (!token) return;
+  try {
+    const res    = await fetch('/api/v1/accounts/superadmin/workspaces', { headers: { 'Authorization': `Bearer ${token}` } });
+    const wsData = await parseJson(res);
+    _saAllWorkspaces = (wsData.workspaces || []).slice().reverse();
+    _saRenderList();
+  } catch(e) {
+    document.getElementById('sa-workspaces-list').innerHTML =
+      `<div class="empty-state" style="padding:2rem"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${escHtml(e.message)}</div></div>`;
+  }
+}
+
 async function loadSuperadminData() {
   const token = state.superadminToken;
   if (!token) return;
@@ -5320,68 +5626,19 @@ async function loadSuperadminData() {
     const wsData   = await parseJson(wsRes);
     if (!ovRes.ok) throw new Error(fmtError(overview.detail));
 
-    document.getElementById('sa-stat-workspaces').textContent = overview.workspaces_count;
-    document.getElementById('sa-stat-active').textContent     = overview.active_subscriptions_count;
-    document.getElementById('sa-stat-requests').textContent   = overview.pending_internal_requests_count;
-    document.getElementById('sa-stat-revenue').textContent    =
-      (overview.confirmed_revenue_xof || 0).toLocaleString('fr-FR');
+    const wsList = wsData.workspaces || [];
+    document.getElementById('sa-stat-workspaces').textContent = overview.workspaces_count ?? wsList.length;
+    document.getElementById('sa-stat-active').textContent     = overview.active_subscriptions_count ?? wsList.filter(w => w.subscription_status === 'active').length;
+    document.getElementById('sa-stat-suspended').textContent  = wsList.filter(w => w.suspended).length;
+    document.getElementById('sa-stat-free').textContent       = wsList.filter(w => w.plan === 'free' && !w.suspended).length;
 
-    const workspaces = (wsData.workspaces || []).slice().reverse();
-    if (!workspaces.length) {
-      document.getElementById('sa-workspaces-list').innerHTML =
-        `<div class="empty-state" style="padding:2rem"><div class="empty-icon">🌱</div><div class="empty-text">Aucun espace client pour le moment.</div></div>`;
-      return;
+    const badge = document.getElementById('sa-user-badge');
+    if (badge && state.superadminEmail) {
+      badge.innerHTML = `Connecté en tant que<br><strong style="color:var(--text)">${escHtml(state.superadminEmail)}</strong>`;
     }
 
-    const planPills = {
-      free:    '<span class="pill pill-gray">Gratuit</span>',
-      basic:   '<span class="pill pill-blue">Basic</span>',
-      premium: '<span class="pill pill-gold">Premium</span>',
-    };
-    const subPills = {
-      free:            '<span class="pill pill-gray">Gratuit</span>',
-      active:          '<span class="pill pill-green">Actif</span>',
-      unlimited_grant: '<span class="pill pill-gold">Illimité</span>',
-    };
-
-    document.getElementById('sa-workspaces-list').innerHTML = workspaces.map(ws => `
-      <div class="workspace-row" style="flex-wrap:wrap;row-gap:6px">
-        <div class="ws-avatar">${(ws.organization_name || 'B')[0].toUpperCase()}</div>
-        <div class="ws-info" style="flex:1;min-width:0">
-          <div class="ws-name">${escHtml(ws.organization_name)}</div>
-          <div class="ws-email" style="margin-bottom:4px">${ws.workspace_id}</div>
-          <div style="font-size:10px;color:var(--sub);line-height:1.6">
-            <span style="color:var(--text);font-weight:600">Admin :</span> ${escHtml(ws.admin_email||'')}
-            ${ws.admin_password_hash ? '<span style="color:#1A7A40;margin-left:4px">· mdp défini</span>' : `<span style="color:#B06020;margin-left:4px">· mdp initial : <code style="font-size:10px">${escHtml(ws.admin_token||'')}</code></span>`}
-          </div>
-          <div style="font-size:10px;color:var(--sub);line-height:1.6">
-            <span style="color:var(--text);font-weight:600">Utilisateur :</span> ${escHtml(ws.user_email||'')}
-            ${ws.user_password_hash ? '<span style="color:#1A7A40;margin-left:4px">· mdp défini</span>' : `<span style="color:#B06020;margin-left:4px">· mdp initial : <code style="font-size:10px">${escHtml(ws.user_token||'')}</code></span>`}
-          </div>
-        </div>
-        <div class="ws-badges" style="align-self:flex-start;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-            ${planPills[ws.plan] || `<span class="pill pill-gray">${ws.plan}</span>`}
-            ${subPills[ws.subscription_status] || `<span class="pill pill-gray">${ws.subscription_status}</span>`}
-            ${ws.suspended ? '<span class="pill" style="background:#FEE2E2;color:#991B1B">Suspendu</span>' : ''}
-          </div>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
-            <select id="plan-sel-${ws.workspace_id}" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text)">
-              <option value="free" ${ws.plan==='free'?'selected':''}>Gratuit</option>
-              <option value="basic" ${ws.plan==='basic'?'selected':''}>Basic</option>
-              <option value="premium" ${ws.plan==='premium'?'selected':''}>Premium</option>
-            </select>
-            <button onclick="activateWorkspacePlan('${ws.workspace_id}')" style="font-size:11px;padding:3px 8px;border:none;border-radius:6px;background:var(--clay);color:#FDF8F3;cursor:pointer">Activer</button>
-          </div>
-          <div style="display:flex;gap:4px">
-            <button onclick="toggleSuspendWorkspace('${ws.workspace_id}',${!!ws.suspended})" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer">
-              ${ws.suspended ? 'Réactiver' : 'Suspendre'}
-            </button>
-            <button onclick="resetWorkspacePasswords('${ws.workspace_id}')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer">Rég. mdp</button>
-            <button onclick="deleteWorkspace('${ws.workspace_id}','${escHtml(ws.organization_name)}')" style="font-size:11px;padding:3px 8px;border:none;border-radius:6px;background:#DC2626;color:#fff;cursor:pointer">Supprimer</button>
-          </div>
-        </div>
-      </div>`).join('');
+    _saAllWorkspaces = wsList.slice().reverse();
+    _saRenderList();
   } catch(e) {
     document.getElementById('sa-workspaces-list').innerHTML =
       `<div class="empty-state" style="padding:2rem"><div class="empty-icon">❌</div><div class="empty-text">Erreur : ${escHtml(e.message)}</div></div>`;
