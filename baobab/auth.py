@@ -1,9 +1,10 @@
+import base64
 import hashlib
 import hmac
+import json
 import os
 import time
 
-import jwt as pyjwt
 from fastapi import HTTPException, status
 
 JWT_EXPIRY_HOURS = 8
@@ -37,11 +38,9 @@ def verify_password(password: str, stored: str) -> bool:
     try:
         data = bytes.fromhex(stored)
         if len(data) == 64:
-            # Ancien format : 32 bytes salt + 32 bytes key, 260k iterations implicites
             salt, key = data[:32], data[32:]
             iterations = 260_000
         elif len(data) == 68:
-            # Nouveau format : 4 bytes iter (little-endian) + 32 bytes salt + 32 bytes key
             iterations = int.from_bytes(data[:4], "little")
             salt, key = data[4:36], data[36:]
         else:
@@ -53,42 +52,57 @@ def verify_password(password: str, stored: str) -> bool:
 
 
 def constant_time_equals(candidate: str | None, expected: str | None) -> bool:
-    """
-    Compare deux secrets (tokens, clés admin...) en temps constant.
-
-    Ne jamais comparer un secret avec `==`/`!=` : le temps de réponse
-    d'une comparaison naïve dépend de la position du premier octet
-    différent, ce qui peut permettre à un attaquant de reconstituer le
-    secret octet par octet (timing attack). `hmac.compare_digest` est
-    conçu pour être insensible à ce type d'analyse.
-    """
     if not candidate or not expected:
         return False
     return hmac.compare_digest(candidate.encode(), expected.encode())
 
 
+def _b64url_encode(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
+
+
+def _b64url_decode(s: str) -> bytes:
+    rem = len(s) % 4
+    if rem:
+        s += "=" * (4 - rem)
+    return base64.urlsafe_b64decode(s)
+
+
+def _sign(signing_input: str, secret: str) -> str:
+    return _b64url_encode(
+        hmac.new(secret.encode(), signing_input.encode(), hashlib.sha256).digest()
+    )
+
+
 def create_superadmin_jwt(email: str, secret: str) -> str:
-    payload = {
+    header = _b64url_encode(json.dumps({"alg": "HS256", "typ": "JWT"}).encode())
+    payload = _b64url_encode(json.dumps({
         "sub": "superadmin",
         "email": email,
         "iat": int(time.time()),
         "exp": int(time.time()) + JWT_EXPIRY_HOURS * 3600,
-    }
-    return pyjwt.encode(payload, secret, algorithm="HS256")
+    }).encode())
+    signing_input = f"{header}.{payload}"
+    return f"{signing_input}.{_sign(signing_input, secret)}"
 
 
 def verify_superadmin_jwt(token: str, secret: str) -> dict:
     try:
-        payload = pyjwt.decode(token, secret, algorithms=["HS256"])
+        parts = token.split(".")
+        if len(parts) != 3:
+            raise ValueError("bad token structure")
+        header_b64, payload_b64, sig_b64 = parts
+        signing_input = f"{header_b64}.{payload_b64}"
+        expected = _sign(signing_input, secret)
+        if not hmac.compare_digest(sig_b64, expected):
+            raise ValueError("invalid signature")
+        payload = json.loads(_b64url_decode(payload_b64))
         if payload.get("sub") != "superadmin":
             raise ValueError("wrong subject")
+        if payload.get("exp", 0) < time.time():
+            raise ValueError("token expired")
         return payload
-    except pyjwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Token superadmin expiré.",
-        )
-    except pyjwt.PyJWTError:
+    except (ValueError, KeyError, json.JSONDecodeError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Token superadmin invalide ou expiré.",
