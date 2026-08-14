@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
@@ -7,7 +8,9 @@ from uuid import uuid4
 
 import asyncpg
 from fastapi import APIRouter, Header, HTTPException, Request, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
+
+logger = logging.getLogger(__name__)
 
 from baobab.auth import constant_time_equals, hash_password, verify_password, verify_superadmin_jwt
 from baobab.config import settings
@@ -81,7 +84,7 @@ def _json_load(value) -> dict:
 
 class WorkspaceCreate(BaseModel):
     owner_name: str = Field(..., min_length=2, max_length=120)
-    email: str = Field(..., min_length=5, max_length=180)
+    email: EmailStr
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
     password: str | None = Field(default=None, min_length=8, max_length=128)
@@ -122,14 +125,14 @@ class WorkspaceBranding(BaseModel):
 
 class SuperadminWorkspaceCreate(BaseModel):
     owner_name: str = Field(..., min_length=2, max_length=120)
-    email: str = Field(..., min_length=5, max_length=180)
+    email: EmailStr
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
     plan: str = Field(default="unlimited")
     user_name: str | None = Field(default=None, min_length=2, max_length=120)
-    user_email: str | None = Field(default=None, min_length=5, max_length=180)
+    user_email: EmailStr | None = None
     admin_name: str | None = Field(default=None, min_length=2, max_length=120)
-    admin_email: str | None = Field(default=None, min_length=5, max_length=180)
+    admin_email: EmailStr | None = None
     password: str | None = Field(default=None, min_length=8, max_length=128)
     enabled_services: list[str] = Field(
         default_factory=lambda: ["all_verticals", "alerts", "internal_requests", "priority_support"]
@@ -622,7 +625,10 @@ async def list_plans():
 
 
 @router.post("/workspaces", status_code=status.HTTP_201_CREATED)
-async def create_workspace(request: WorkspaceCreate):
+async def create_workspace(request: WorkspaceCreate, http_request: Request):
+    await enforce_rate_limit(
+        key=f"create_workspace:{client_ip(http_request)}", limit=5, window_seconds=86400
+    )
     workspace, clear_password = _create_workspace_record(
         owner_name=request.owner_name,
         email=request.email,
@@ -658,8 +664,12 @@ async def get_workspace(
     "/workspaces/{workspace_id}/internal-requests",
     status_code=status.HTTP_201_CREATED,
 )
-async def create_internal_request(workspace_id: str, request: InternalRequestCreate):
-    workspace = await _get_workspace(workspace_id)
+async def create_internal_request(
+    workspace_id: str,
+    request: InternalRequestCreate,
+    x_access_token: str | None = Header(default=None),
+):
+    workspace = await _require_workspace_access(workspace_id, x_access_token)
     workspace_requests = await _list_internal_requests(workspace_id)
     quota = PLAN_CATALOG[workspace["plan"]]["internal_request_quota"]
     if quota is not None and len(workspace_requests) >= quota:
@@ -728,6 +738,7 @@ async def access_login(request: EmailPasswordLogin, http_request: Request):
                         status_code=status.HTTP_403_FORBIDDEN,
                         detail="Ce compte est suspendu. Contactez l'administrateur BAOBAB.",
                     )
+                logger.info("Login success: %s role=%s", email, "admin")
                 return {
                     "role": "admin",
                     "token": workspace["admin_token"],
@@ -743,6 +754,7 @@ async def access_login(request: EmailPasswordLogin, http_request: Request):
                         status_code=status.HTTP_403_FORBIDDEN,
                         detail="Ce compte est suspendu. Contactez l'administrateur BAOBAB.",
                     )
+                logger.info("Login success: %s role=%s", email, "client")
                 return {
                     "role": "client",
                     "token": workspace["user_token"],
@@ -751,6 +763,7 @@ async def access_login(request: EmailPasswordLogin, http_request: Request):
                     "message": "Client workspace access granted",
                 }
 
+    logger.warning("Login failed for email=%s from ip=%s", email, client_ip(http_request))
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
         detail=_GENERIC_LOGIN_ERROR,
@@ -772,6 +785,7 @@ async def admin_change_password(
             workspace["admin_password_hash"] = hash_password(request.new_password)
             workspace["password_is_temporary"] = False
             await _save_workspace(workspace)
+            logger.info("Password changed for workspace %s", workspace["workspace_id"])
             return {"message": "Mot de passe modifié avec succès."}
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
 
@@ -793,6 +807,7 @@ async def client_change_password(
     workspace["admin_password_hash"] = hash_password(request.new_password)
     workspace["password_is_temporary"] = False
     await _save_workspace(workspace)
+    logger.info("Password changed for workspace %s", workspace["workspace_id"])
     return {"message": "Mot de passe modifié avec succès."}
 
 
@@ -1014,8 +1029,16 @@ async def list_superadmin_payments(
 
 
 @router.post("/workspaces/{workspace_id}/checkout", status_code=status.HTTP_201_CREATED)
-async def create_checkout(workspace_id: str, request: SubscriptionCheckoutCreate):
-    workspace = await _get_workspace(workspace_id)
+async def create_checkout(
+    workspace_id: str,
+    request: SubscriptionCheckoutCreate,
+    http_request: Request,
+    x_access_token: str | None = Header(default=None),
+):
+    await enforce_rate_limit(
+        key=f"checkout:{client_ip(http_request)}", limit=10, window_seconds=3600
+    )
+    workspace = await _require_workspace_access(workspace_id, x_access_token)
     if request.plan == SubscriptionPlan.FREE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
