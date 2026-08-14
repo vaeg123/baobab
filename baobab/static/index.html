@@ -5601,8 +5601,8 @@ function _saRenderList() {
     const initial   = (ws.organization_name || 'B')[0].toUpperCase();
     const suspended = !!ws.suspended;
     const pwdBadge  = ws.admin_password_hash
-      ? '<span class="ws-pwd-set">· mdp ✓</span>'
-      : `<span class="ws-pwd-unset">· mdp initial: <code>${escHtml(ws.admin_token || '')}</code></span>`;
+      ? (ws.password_is_temporary ? '<span class="ws-pwd-unset">· mdp temporaire</span>' : '<span class="ws-pwd-set">· mdp ✓</span>')
+      : '<span class="ws-pwd-unset" style="color:#c0392b">· ⚠ aucun mdp — réinitialiser</span>';
 
     return `
     <div class="ws-row">
