@@ -450,11 +450,13 @@ async def _require_workspace_access(workspace_id: str, access_token: str | None)
 
 async def _public_workspace(workspace: dict) -> dict:
     requests = await _list_internal_requests(workspace["workspace_id"])
+    plan = workspace["plan"]
+    plan_details = PLAN_CATALOG.get(plan, PLAN_CATALOG[SubscriptionPlan.PREMIUM])
     return {
         **workspace,
         "admin_token": None,
         "user_token": None,
-        "plan_details": PLAN_CATALOG[workspace["plan"]],
+        "plan_details": plan_details,
         "internal_requests_used": len(requests),
     }
 
@@ -934,7 +936,8 @@ async def update_superadmin_workspace(
         workspace["subscription_status"] = "free"
         workspace["billing_override"] = False
     if updates.get("plan") is not None:
-        workspace["plan"] = updates["plan"]
+        raw_plan = updates["plan"]
+        workspace["plan"] = SubscriptionPlan.PREMIUM if raw_plan == "unlimited" else raw_plan
     if updates.get("subscription_status") is not None:
         workspace["subscription_status"] = updates["subscription_status"]
     if "subscription_expires_at" in updates:
