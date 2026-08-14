@@ -4751,9 +4751,13 @@ async function submitFirstAccess(token, role, workspace) {
   btn.innerHTML = '<span class="spinner"></span>Mise à jour…';
 
   try {
-    const res = await fetch('/api/v1/accounts/client/change-password', {
+    const endpoint = role === 'admin'
+      ? '/api/v1/accounts/admin/change-password'
+      : '/api/v1/accounts/client/change-password';
+    const tokenHeader = role === 'admin' ? 'X-Admin-Token' : 'X-Access-Token';
+    const res = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Access-Token': token },
+      headers: { 'Content-Type': 'application/json', [tokenHeader]: token },
       body: JSON.stringify({ current_password, new_password })
     });
     const data = await parseJson(res);
