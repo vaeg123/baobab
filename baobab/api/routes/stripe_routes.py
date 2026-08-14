@@ -17,10 +17,12 @@ from baobab.api.routes.accounts import (
     SubscriptionPlan,
     PLAN_CATALOG,
     _get_workspace,
+    _require_workspace_access,
     _save_workspace,
     _load_workspace,
     _save_payment,
 )
+from baobab.rate_limit import client_ip, enforce_rate_limit
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -47,14 +49,22 @@ class CheckoutRequest(BaseModel):
 
 
 @router.post("/stripe/checkout/{workspace_id}", status_code=status.HTTP_201_CREATED)
-async def create_stripe_checkout(workspace_id: str, request: CheckoutRequest):
+async def create_stripe_checkout(
+    workspace_id: str,
+    request: CheckoutRequest,
+    http_request: Request,
+    x_access_token: str | None = Header(default=None),
+):
+    await enforce_rate_limit(
+        key=f"stripe_checkout:{client_ip(http_request)}", limit=10, window_seconds=3600
+    )
     if request.plan == SubscriptionPlan.FREE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Le plan gratuit ne nécessite pas de paiement.",
         )
 
-    workspace = await _get_workspace(workspace_id)
+    workspace = await _require_workspace_access(workspace_id, x_access_token)
     client = _stripe_client()
 
     amount = PLAN_PRICES_XOF[request.plan]

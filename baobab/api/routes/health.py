@@ -1,11 +1,16 @@
-from fastapi import APIRouter
 from datetime import datetime
+
+from fastapi import APIRouter
+
+from baobab.config import settings
 
 router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
 async def health_check():
+    if settings.is_production:
+        return {"status": "ok"}
     return {
         "status": "ok",
         "system": "BAOBAB",
