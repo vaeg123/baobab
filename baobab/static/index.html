@@ -5968,13 +5968,16 @@ async function submitInternalRequest() {
   const message = document.getElementById('internal_message').value.trim();
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Envoi…';
   try {
+    const accessToken = state.token || currentWorkspace?.admin_token || currentWorkspace?.user_token;
     const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/internal-requests`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken || '' },
       body: JSON.stringify({ subject, message })
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(data.detail));
-    const refreshed = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}`);
+    const refreshed = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}`, {
+      headers: { 'X-Access-Token': accessToken || '' }
+    });
     renderWorkspaceBox(await parseJson(refreshed));
     alert('Demande envoyée avec succès.');
   } catch(e) { alert(`Erreur : ${e.message}`); }
@@ -5990,8 +5993,9 @@ async function startCheckout() {
   const phone  = document.getElementById('checkout_phone').value.trim();
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Paiement…';
   try {
+    const accessToken = state.token || currentWorkspace?.admin_token || currentWorkspace?.user_token;
     const res = await fetch(`/api/v1/accounts/workspaces/${currentWorkspace.workspace_id}/checkout`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Access-Token': accessToken || '' },
       body: JSON.stringify({ plan, provider: prov, phone_number: phone })
     });
     const payment = await parseJson(res);

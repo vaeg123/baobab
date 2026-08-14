@@ -8,7 +8,7 @@ from uuid import uuid4
 
 import asyncpg
 from fastapi import APIRouter, Header, HTTPException, Request, status
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ def _json_load(value) -> dict:
 
 class WorkspaceCreate(BaseModel):
     owner_name: str = Field(..., min_length=2, max_length=120)
-    email: EmailStr
+    email: str = Field(..., min_length=5, max_length=180)
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
     password: str | None = Field(default=None, min_length=8, max_length=128)
@@ -125,14 +125,14 @@ class WorkspaceBranding(BaseModel):
 
 class SuperadminWorkspaceCreate(BaseModel):
     owner_name: str = Field(..., min_length=2, max_length=120)
-    email: EmailStr
+    email: str = Field(..., min_length=5, max_length=180)
     organization_name: str = Field(..., min_length=2, max_length=180)
     territory: str = Field(default="CI", min_length=2, max_length=8)
     plan: str = Field(default="unlimited")
     user_name: str | None = Field(default=None, min_length=2, max_length=120)
-    user_email: EmailStr | None = None
+    user_email: str | None = Field(default=None, min_length=5, max_length=180)
     admin_name: str | None = Field(default=None, min_length=2, max_length=120)
-    admin_email: EmailStr | None = None
+    admin_email: str | None = Field(default=None, min_length=5, max_length=180)
     password: str | None = Field(default=None, min_length=8, max_length=128)
     enabled_services: list[str] = Field(
         default_factory=lambda: ["all_verticals", "alerts", "internal_requests", "priority_support"]
