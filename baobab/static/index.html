@@ -8722,6 +8722,28 @@ document.addEventListener('keydown', e => {
   // Démarrer le polling après 3s (laisser le temps au webhook Stripe)
   setTimeout(pollActivation, 3000);
 })();
+
+// Connexion fédérée depuis AvocAssist. Le ticket est à usage très court et
+// immédiatement retiré de l'URL afin qu'il ne reste pas dans l'historique.
+(async function exchangeAvocAssistTicket() {
+  const url = new URL(window.location.href);
+  const ticket = url.searchParams.get('sso_ticket');
+  if (!ticket) return;
+  url.searchParams.delete('sso_ticket');
+  window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+  try {
+    const response = await fetch('/api/v1/integrations/avocassist/session/exchange', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket }),
+    });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    enterClient(data.workspace, data.token);
+  } catch (error) {
+    showLoginError(error.message || 'Connexion AvocAssist impossible.');
+  }
+})();
 </script>
 
 <!-- ═══════════════════════════════════

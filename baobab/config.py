@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_currency: str = "xof"
     jwt_secret: str = "dev-jwt-secret-change-me"
+    avocassist_integration_secret: str = ""
 
     # Alias explicites : ces variables existent en production sous le
     # préfixe BAOBAB_ (cohérence avec .env.example et l'historique du
