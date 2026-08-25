@@ -613,6 +613,42 @@ async def check_and_increment_analyses_quota(user_token: str) -> dict:
     }
 
 
+async def require_workspace_service(user_token: str | None, service: str) -> dict:
+    """Contrôle côté serveur qu'un espace actif possède le service demandé."""
+    if not user_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Connexion requise pour utiliser ce service.",
+        )
+
+    workspace = await _find_workspace_by_token(user_token)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session utilisateur invalide ou expirée.",
+        )
+    if workspace.get("suspended"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cet espace est suspendu.",
+        )
+
+    plan = workspace.get("plan", SubscriptionPlan.FREE)
+    plan_details = PLAN_CATALOG.get(plan, PLAN_CATALOG[SubscriptionPlan.FREE])
+    entitled_services = set(plan_details["services"]) | set(workspace.get("enabled_services") or [])
+    if service not in entitled_services and "all_verticals" not in entitled_services:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "message": "Ce service n'est pas inclus dans votre abonnement.",
+                "service": service,
+                "current_plan": str(plan),
+                "upgrade_required": True,
+            },
+        )
+    return workspace
+
+
 @router.get("/plans")
 async def list_plans():
     return {

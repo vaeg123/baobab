@@ -2927,7 +2927,7 @@
           <li>5 analyses / jour</li>
           <li>Accès bibliothèque</li>
         </ul>
-        <button class="plan-cta outline" disabled>Formule actuelle</button>
+        <button class="plan-cta outline" onclick="continueWithFreePlan(event)">Continuer gratuitement</button>
       </div>
 
       <!-- Basic -->
@@ -4569,7 +4569,11 @@
     <div id="tab-veille" class="tab-panel">
       <div class="container">
         <div class="page-title">Veille juridique</div>
-        <div class="page-sub">Nouvelles lois, circulaires, actes uniformes OHADA, instructions CIMA et BCEAO — suivis et résumés dès leur publication.</div>
+        <div class="page-sub">Aperçu de la veille juridique BAOBAB — les éléments présentés ci-dessous sont des exemples de démonstration.</div>
+
+        <div style="margin-bottom:1rem;padding:10px 14px;border:1px solid rgba(191,78,30,.28);background:rgba(191,78,30,.07);border-radius:8px;font-size:12px;color:var(--text)">
+          <strong>Démonstration :</strong> ce flux n'est pas encore une veille en temps réel. Vérifiez toujours la date et la source officielle avant toute utilisation professionnelle.
+        </div>
 
         <div class="veille-filters" id="veille-filters">
           <button class="veille-filter-btn active" onclick="filterVeille('all', this)">Tout</button>
@@ -4589,7 +4593,7 @@
             <div class="veille-subscribe-title">Recevoir les alertes en temps réel</div>
             <div class="veille-subscribe-sub">Dès qu'un texte vous concerne, BAOBAB vous alerte et calcule l'impact sur votre conformité.</div>
           </div>
-          <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="alert('Fonctionnalité disponible avec un abonnement actif.')">Activer la veille →</button>
+          <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="alert('La veille automatisée est en cours de déploiement. Ce bouton ne crée pas encore de surveillance.')">Bientôt disponible</button>
         </div>
       </div>
     </div>
@@ -4950,7 +4954,8 @@ function enterClient(workspace, token) {
 
   // Compte gratuit non encore activé → afficher les formules
   const isActive = workspace.subscription_status === 'active'
-    || workspace.subscription_status === 'unlimited_grant';
+    || workspace.subscription_status === 'unlimited_grant'
+    || workspace.subscription_status === 'free';
 
   if (!isActive) {
     document.getElementById('login-screen').style.display = 'none';
@@ -5061,12 +5066,30 @@ const NAV_CONFIGS = {
 
 function buildNav(role) {
   const nav = document.getElementById('nav-bar');
-  const items = NAV_CONFIGS[role] || [];
+  let items = NAV_CONFIGS[role] || [];
+  if (role === 'client' && state.workspace) {
+    const enabled = new Set([
+      ...((state.workspace.plan_details || {}).services || []),
+      ...(state.workspace.enabled_services || []),
+    ]);
+    const allVerticals = enabled.has('all_verticals');
+    items = items.filter(item => !['cima', 'ohada', 'bceao'].includes(item.id)
+      || allVerticals || enabled.has(item.id));
+  }
   nav.innerHTML = items.map(item =>
     `<button class="nav-btn" id="nav-${item.id}" onclick="switchTab('${item.id}')">${item.label}</button>`
   ).join('');
   const backBtn = document.getElementById('nav-back-to-login');
   if (backBtn) backBtn.style.display = role === 'register' ? 'flex' : 'none';
+}
+
+function continueWithFreePlan(event) {
+  if (event) event.stopPropagation();
+  const workspace = currentWorkspace || state.workspace;
+  if (!workspace) return;
+  const token = workspace.user_token || state.token;
+  document.getElementById('plans-screen').classList.remove('active');
+  enterClient(workspace, token);
 }
 
 function switchTab(name) {
@@ -6240,10 +6263,13 @@ async function declareSinistre() {
     `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
   try {
     const res = await fetch('/api/v1/cima/sinistre', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-User-Token': state.token || '' },
       body: JSON.stringify({ entity_id, sinistre_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { adresse } })
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.detail?.message || error.detail || `Erreur HTTP ${res.status}`);
+    }
     renderResults(await res.json(), entity_id, sinistre_type.replace('SINISTRE_',''), occurred_at, 'cima-results-col', 'CIMA');
   } catch(e) {
     document.getElementById('cima-results-col').innerHTML =
@@ -6775,10 +6801,13 @@ async function declarerEvenement() {
     `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
   try {
     const res = await fetch('/api/v1/ohada/evenement', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-User-Token': state.token || '' },
       body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { raison_sociale: raison } })
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.detail?.message || error.detail || `Erreur HTTP ${res.status}`);
+    }
     renderResults(await res.json(), entity_id, ohadaLabels[event_type] || event_type, occurred_at, 'ohada-results-col', 'OHADA');
   } catch(e) {
     document.getElementById('ohada-results-col').innerHTML =
@@ -6800,10 +6829,13 @@ async function declarerEvenementBceao() {
     `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;border-width:3px"></span></div>`;
   try {
     const res = await fetch('/api/v1/bceao/evenement', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-User-Token': state.token || '' },
       body: JSON.stringify({ entity_id, event_type, occurred_at: occurred_at + 'T00:00:00Z', metadata: { etablissement: etabl } })
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.detail?.message || error.detail || `Erreur HTTP ${res.status}`);
+    }
     renderResults(await res.json(), entity_id, bceaoLabels[event_type] || event_type, occurred_at, 'bceao-results-col', 'BCEAO');
   } catch(e) {
     document.getElementById('bceao-results-col').innerHTML =

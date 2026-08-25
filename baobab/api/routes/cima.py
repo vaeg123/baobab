@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header
 from pydantic import BaseModel
 from datetime import datetime
 import uuid
@@ -8,7 +8,8 @@ from baobab.engines.compliance_engine.engine import ComplianceEngine
 from baobab.verticals.cima.events import CimaEventType
 from baobab.verticals.cima.cascades import SINISTRE_INCENDIE_CASCADE, SINISTRE_AUTO_CASCADE
 from baobab.verticals.cima.alerts import generate_alerts
-from baobab.core.models.legal_event import LegalEvent, EventStatus
+from baobab.core.models.legal_event import LegalEvent
+from baobab.api.routes.accounts import require_workspace_service
 
 router = APIRouter(tags=["CIMA"])
 
@@ -27,7 +28,8 @@ class SinistreRequest(BaseModel):
 
 
 @router.post("/sinistre")
-async def declare_sinistre(request: SinistreRequest):
+async def declare_sinistre(request: SinistreRequest, x_user_token: str | None = Header(default=None)):
+    await require_workspace_service(x_user_token, "cima")
     event = LegalEvent(
         event_id=str(uuid.uuid4()),
         event_type=request.sinistre_type,

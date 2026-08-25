@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Header
 from pydantic import BaseModel
 from datetime import datetime
 import uuid
@@ -18,6 +18,7 @@ from baobab.verticals.ohada.cascades import (
     IMMATRICULATION_RCCM_CASCADE,
 )
 from baobab.core.models.legal_event import LegalEvent
+from baobab.api.routes.accounts import require_workspace_service
 
 router = APIRouter(tags=["OHADA"])
 
@@ -45,7 +46,8 @@ class OhadaEvenementRequest(BaseModel):
 
 
 @router.post("/evenement")
-async def declarer_evenement(request: OhadaEvenementRequest):
+async def declarer_evenement(request: OhadaEvenementRequest, x_user_token: str | None = Header(default=None)):
+    await require_workspace_service(x_user_token, "ohada")
     event = LegalEvent(
         event_id=str(uuid.uuid4()),
         event_type=request.event_type,

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Header
 from pydantic import BaseModel
 from datetime import datetime
 import uuid
@@ -18,6 +18,7 @@ from baobab.verticals.bceao.cascades import (
     OUVERTURE_COMPTE_KYC_CASCADE,
 )
 from baobab.core.models.legal_event import LegalEvent
+from baobab.api.routes.accounts import require_workspace_service
 
 router = APIRouter(tags=["BCEAO"])
 
@@ -45,7 +46,8 @@ class BceaoEvenementRequest(BaseModel):
 
 
 @router.post("/evenement")
-async def declarer_evenement(request: BceaoEvenementRequest):
+async def declarer_evenement(request: BceaoEvenementRequest, x_user_token: str | None = Header(default=None)):
+    await require_workspace_service(x_user_token, "bceao")
     event = LegalEvent(
         event_id=str(uuid.uuid4()),
         event_type=request.event_type,
