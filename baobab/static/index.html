@@ -2921,7 +2921,7 @@
       <div class="plan-card current">
         <div class="plan-badge green">Actuel</div>
         <div class="plan-name">Gratuit</div>
-        <div class="plan-price">0 <span>XOF / mois</span></div>
+        <div class="plan-price" id="plans-price-free">0 <span>XOF / mois</span></div>
         <ul class="plan-features">
           <li>1 demande interne</li>
           <li>5 analyses / jour</li>
@@ -2933,7 +2933,7 @@
       <!-- Basic -->
       <div class="plan-card" id="plan-card-basic" onclick="selectPlan('basic')">
         <div class="plan-name">Professionnel</div>
-        <div class="plan-price">5 000 <span>XOF / mois</span></div>
+        <div class="plan-price" id="plans-price-basic">5 000 <span>XOF / mois</span></div>
         <ul class="plan-features">
           <li>Demandes internes illimitées</li>
           <li>30 analyses / jour</li>
@@ -2948,7 +2948,7 @@
       <div class="plan-card" id="plan-card-premium" onclick="selectPlan('premium')">
         <div class="plan-badge">Recommandé</div>
         <div class="plan-name">Cabinet & Équipe</div>
-        <div class="plan-price">10 000 <span>XOF / mois</span></div>
+        <div class="plan-price" id="plans-price-premium">10 000 <span>XOF / mois</span></div>
         <ul class="plan-features">
           <li>Tout le niveau Professionnel</li>
           <li>Analyses illimitées</li>
@@ -3291,12 +3291,12 @@
                       </button>
                       <button type="button" class="sa-plan-pill" data-plan="basic" onclick="_saSelectPlan('basic')"
                         style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(160,80,16,0.2);background:rgba(191,78,30,0.05);color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
-                        Professionnel<br><span style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
+                        Professionnel<br><span id="sa-price-basic" style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
                       </button>
                       <button type="button" class="sa-plan-pill" data-plan="premium" onclick="_saSelectPlan('premium')"
                         style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(191,78,30,0.25);background:rgba(191,78,30,0.07);color:var(--clay);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;position:relative">
                         <span style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--clay);color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap">★ Recommandé</span>
-                        Cabinet & Équipe<br><span style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
+                        Cabinet & Équipe<br><span id="sa-price-premium" style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
                       </button>
                       <button type="button" class="sa-plan-pill" data-plan="unlimited" onclick="_saSelectPlan('unlimited')"
                         style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(46,94,58,0.3);background:rgba(46,94,58,0.07);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
@@ -3308,7 +3308,25 @@
                   <!-- Territoire -->
                   <div class="form-group">
                     <label>Territoire</label>
-                    <select id="new_territory">
+                    <select id="new_territory" onchange="updateSuperadminPricing()">
+                      <option value="" selected disabled>Choisir le pays…</option>
+                      <optgroup label="Pays utilisant l'euro">
+                        <option value="FR">FR — France</option><option value="BE">BE — Belgique</option>
+                        <option value="DE">DE — Allemagne</option><option value="ES">ES — Espagne</option>
+                        <option value="IT">IT — Italie</option><option value="PT">PT — Portugal</option>
+                        <option value="NL">NL — Pays-Bas</option><option value="LU">LU — Luxembourg</option>
+                        <option value="IE">IE — Irlande</option><option value="AT">AT — Autriche</option>
+                        <option value="FI">FI — Finlande</option><option value="GR">GR — Grèce</option>
+                        <option value="CY">CY — Chypre</option><option value="MT">MT — Malte</option>
+                        <option value="EE">EE — Estonie</option><option value="LV">LV — Lettonie</option>
+                        <option value="LT">LT — Lituanie</option><option value="SK">SK — Slovaquie</option>
+                        <option value="SI">SI — Slovénie</option><option value="HR">HR — Croatie</option>
+                        <option value="BG">BG — Bulgarie</option><option value="AD">AD — Andorre</option>
+                        <option value="MC">MC — Monaco</option><option value="SM">SM — Saint-Marin</option>
+                        <option value="VA">VA — Vatican</option><option value="ME">ME — Monténégro</option>
+                        <option value="XK">XK — Kosovo</option>
+                      </optgroup>
+                      <optgroup label="Afrique — devise selon le pays">
                       <option value="CI">CI — Côte d'Ivoire</option>
                       <option value="SN">SN — Sénégal</option>
                       <option value="CM">CM — Cameroun</option>
@@ -3326,6 +3344,18 @@
                       <option value="GQ">GQ — Guinée Équatoriale</option>
                       <option value="KM">KM — Comores</option>
                       <option value="GW">GW — Guinée-Bissau</option>
+                      </optgroup>
+                      <optgroup label="Autres marchés internationaux — USD">
+                        <option value="US">US — États-Unis</option><option value="GB">GB — Royaume-Uni</option>
+                        <option value="CH">CH — Suisse</option><option value="CA">CA — Canada</option>
+                        <option value="MA">MA — Maroc</option><option value="DZ">DZ — Algérie</option>
+                        <option value="TN">TN — Tunisie</option><option value="NG">NG — Nigeria</option>
+                        <option value="GH">GH — Ghana</option><option value="ZA">ZA — Afrique du Sud</option>
+                        <option value="KE">KE — Kenya</option><option value="RW">RW — Rwanda</option>
+                        <option value="MU">MU — Maurice</option><option value="AE">AE — Émirats arabes unis</option>
+                        <option value="IN">IN — Inde</option><option value="BR">BR — Brésil</option>
+                        <option value="AU">AU — Australie</option><option value="JP">JP — Japon</option>
+                      </optgroup>
                     </select>
                   </div>
 
@@ -3628,12 +3658,12 @@
           </div>
           <div class="plan-card featured">
             <div class="plan-name">Professionnel ★</div>
-            <div class="plan-price">5 000 <span style="font-size:14px;font-weight:400;color:var(--sub)">FCFA/mois</span></div>
+            <div class="plan-price" id="account-price-basic">5 000 <span style="font-size:14px;font-weight:400;color:var(--sub)">XOF/mois</span></div>
             <div class="plan-detail">Demandes illimitées · Dashboards juridiques · Alertes</div>
           </div>
           <div class="plan-card">
             <div class="plan-name">Cabinet & Équipe</div>
-            <div class="plan-price">10 000 <span style="font-size:14px;font-weight:400;color:var(--sub)">FCFA/mois</span></div>
+            <div class="plan-price" id="account-price-premium">10 000 <span style="font-size:14px;font-weight:400;color:var(--sub)">XOF/mois</span></div>
             <div class="plan-detail">Accès complet + tous les verticaux + support prioritaire</div>
           </div>
         </div>
@@ -3669,14 +3699,14 @@
               </div>
             </div>
 
-            <div class="card">
+            <div class="card" id="mobile-money-card">
               <div class="card-header"><div class="card-icon">💳</div><span class="card-title">Paiement mobile money</span></div>
               <div class="card-body">
                 <div class="form-group">
                   <label>Offre</label>
                   <select id="checkout_plan">
-                    <option value="basic">Professionnel — 5 000 FCFA / mois</option>
-                    <option value="premium">Cabinet & Équipe — 10 000 FCFA / mois</option>
+                    <option value="basic">Professionnel</option>
+                    <option value="premium">Cabinet & Équipe</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -3715,6 +3745,24 @@
             <div class="form-group">
               <label>Pays</label>
               <select id="reg_territory">
+                <option value="" selected disabled>Choisir le pays…</option>
+                <optgroup label="Pays utilisant l'euro">
+                  <option value="FR">France</option><option value="BE">Belgique</option>
+                  <option value="DE">Allemagne</option><option value="ES">Espagne</option>
+                  <option value="IT">Italie</option><option value="PT">Portugal</option>
+                  <option value="NL">Pays-Bas</option><option value="LU">Luxembourg</option>
+                  <option value="IE">Irlande</option><option value="AT">Autriche</option>
+                  <option value="FI">Finlande</option><option value="GR">Grèce</option>
+                  <option value="CY">Chypre</option><option value="MT">Malte</option>
+                  <option value="EE">Estonie</option><option value="LV">Lettonie</option>
+                  <option value="LT">Lituanie</option><option value="SK">Slovaquie</option>
+                  <option value="SI">Slovénie</option><option value="HR">Croatie</option>
+                  <option value="BG">Bulgarie</option><option value="AD">Andorre</option>
+                  <option value="MC">Monaco</option><option value="SM">Saint-Marin</option>
+                  <option value="VA">Vatican</option><option value="ME">Monténégro</option>
+                  <option value="XK">Kosovo</option>
+                </optgroup>
+                <optgroup label="Afrique — devise selon le pays">
                 <option value="CI">Côte d'Ivoire</option>
                 <option value="SN">Sénégal</option>
                 <option value="CM">Cameroun</option>
@@ -3732,6 +3780,18 @@
                 <option value="GQ">Guinée Équatoriale</option>
                 <option value="KM">Comores</option>
                 <option value="GW">Guinée-Bissau</option>
+                </optgroup>
+                <optgroup label="Autres marchés internationaux — USD">
+                  <option value="US">États-Unis</option><option value="GB">Royaume-Uni</option>
+                  <option value="CH">Suisse</option><option value="CA">Canada</option>
+                  <option value="MA">Maroc</option><option value="DZ">Algérie</option>
+                  <option value="TN">Tunisie</option><option value="NG">Nigeria</option>
+                  <option value="GH">Ghana</option><option value="ZA">Afrique du Sud</option>
+                  <option value="KE">Kenya</option><option value="RW">Rwanda</option>
+                  <option value="MU">Maurice</option><option value="AE">Émirats arabes unis</option>
+                  <option value="IN">Inde</option><option value="BR">Brésil</option>
+                  <option value="AU">Australie</option><option value="JP">Japon</option>
+                </optgroup>
               </select>
             </div>
             <div class="form-group">
@@ -5238,6 +5298,58 @@ const legalPackCatalog = {
   bceao_uemoa:     { name: 'BCEAO & UEMOA', services: ['bceao'] },
   international:   { name: 'International', services: ['international'] },
 };
+
+const euroBillingCountries = new Set([
+  'AT','BE','BG','HR','CY','EE','FI','FR','DE','GR','IE','IT','LV','LT','LU','MT','NL','PT','SK','SI','ES',
+  'AD','MC','SM','VA','ME','XK','GP','MQ','GF','RE','YT','BL','MF','PM'
+]);
+const xofBillingCountries = new Set(['BJ','BF','CI','GW','ML','NE','SN','TG']);
+const xafBillingCountries = new Set(['CM','CF','TD','CG','GQ','GA']);
+const localizedPlanPrices = {
+  XOF: { free: 0, basic: 5000, premium: 10000 },
+  XAF: { free: 0, basic: 5000, premium: 10000 },
+  EUR: { free: 0, basic: 39, premium: 99 },
+  USD: { free: 0, basic: 45, premium: 109 },
+};
+
+function billingCurrencyForCountry(country) {
+  const code = (country || '').toUpperCase();
+  if (euroBillingCountries.has(code)) return 'EUR';
+  if (xofBillingCountries.has(code)) return 'XOF';
+  if (xafBillingCountries.has(code)) return 'XAF';
+  return 'USD';
+}
+
+function localizedPlanPrice(plan, country) {
+  const currency = billingCurrencyForCountry(country);
+  return { amount: localizedPlanPrices[currency][plan], currency };
+}
+
+function formatBillingPrice(amount, currency) {
+  return currency === 'EUR'
+    ? `${amount.toLocaleString('fr-FR')} €`
+    : currency === 'USD'
+    ? `${amount.toLocaleString('fr-FR')} $US`
+    : `${amount.toLocaleString('fr-FR')} ${currency}`;
+}
+
+function updatePlansPricing(workspace) {
+  const country = workspace?.territory || 'CI';
+  ['free', 'basic', 'premium'].forEach(plan => {
+    const price = localizedPlanPrice(plan, country);
+    const el = document.getElementById(`plans-price-${plan}`);
+    if (el) el.innerHTML = `${price.amount.toLocaleString('fr-FR')} <span>${price.currency} / mois</span>`;
+  });
+}
+
+function updateSuperadminPricing() {
+  const country = document.getElementById('new_territory')?.value || 'CI';
+  ['basic', 'premium'].forEach(plan => {
+    const price = localizedPlanPrice(plan, country);
+    const el = document.getElementById(`sa-price-${plan}`);
+    if (el) el.textContent = `${formatBillingPrice(price.amount, price.currency)}/mois`;
+  });
+}
 let _llTickerIndex = 0;
 function initLLTicker() {
   const el = document.getElementById('ll-ticker');
@@ -5343,9 +5455,10 @@ function _renderPaymentBadge(workspace) {
   if (!isActive) return;
 
   const planNames = { basic: 'Professionnel', premium: 'Cabinet & Équipe', free: 'Gratuit' };
-  const planAmounts = { basic: '5 000', premium: '10 000', free: '0' };
   const planName = planNames[workspace.plan] || workspace.plan;
-  const amount = lastPayment ? lastPayment.amount.toLocaleString('fr-FR') : (planAmounts[workspace.plan] || '—');
+  const planPrice = localizedPlanPrice(workspace.plan, workspace.territory);
+  const amount = lastPayment?.amount ?? workspace.plan_details?.monthly_price ?? planPrice.amount;
+  const currency = lastPayment?.currency || workspace.billing_currency || planPrice.currency;
   const dateStr = workspace.subscription_expires_at
     ? `Expire le ${new Date(workspace.subscription_expires_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}`
     : 'Accès illimité';
@@ -5360,7 +5473,7 @@ function _renderPaymentBadge(workspace) {
       <div style="font-size:12px;color:var(--sub);margin-top:2px">${dateStr}</div>
     </div>
     <div style="text-align:right;flex-shrink:0">
-      <div style="font-size:16px;font-weight:700;color:var(--text)">${amount} XOF</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text)">${formatBillingPrice(amount, currency)}</div>
       <div style="font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:0.5px">par mois</div>
     </div>
   `;
@@ -5392,6 +5505,19 @@ function renderClientWorkspace(workspace) {
     ? 'Accès illimité — offert par BAOBAB'
     : `${(workspace.plan_details || {}).name || workspace.plan} — ${workspace.subscription_status}`;
   const legalPacks = workspace.legal_packs || [];
+  ['basic', 'premium'].forEach(plan => {
+    const price = localizedPlanPrice(plan, workspace.territory);
+    const el = document.getElementById(`account-price-${plan}`);
+    if (el) el.innerHTML = `${price.amount.toLocaleString('fr-FR')} <span style="font-size:14px;font-weight:400;color:var(--sub)">${price.currency}/mois</span>`;
+    const checkoutOption = document.querySelector(`#checkout_plan option[value="${plan}"]`);
+    const planName = plan === 'basic' ? 'Professionnel' : 'Cabinet & Équipe';
+    if (checkoutOption) checkoutOption.textContent = `${planName} — ${formatBillingPrice(price.amount, price.currency)} / mois`;
+  });
+  const mobileMoneyCard = document.getElementById('mobile-money-card');
+  if (mobileMoneyCard) {
+    const mobileMoneyAvailable = ['XOF', 'XAF'].includes(workspace.billing_currency);
+    mobileMoneyCard.style.display = mobileMoneyAvailable ? '' : 'none';
+  }
 
   document.getElementById('client-title').textContent =
     branding.display_name || workspace.organization_name;
@@ -5852,7 +5978,10 @@ function _saToggleAdvanced() {
 }
 
 // Initialise la sélection du plan par défaut au chargement
-document.addEventListener('DOMContentLoaded', () => _saSelectPlan('unlimited'));
+document.addEventListener('DOMContentLoaded', () => {
+  _saSelectPlan('unlimited');
+  updateSuperadminPricing();
+});
 
 async function createNewWorkspace() {
   const token = state.superadminToken;
@@ -5865,7 +5994,7 @@ async function createNewWorkspace() {
   const display_name = document.getElementById('new_display_name')?.value.trim() || '';
   const password     = document.getElementById('new_password')?.value || '';
 
-  if (!org_name || !email) { alert('Organisation et email du responsable sont obligatoires.'); return; }
+  if (!org_name || !email || !territory) { alert('Organisation, email et pays sont obligatoires.'); return; }
   if (password && password.length < 8) { alert('Le mot de passe doit contenir au moins 8 caractères.'); return; }
 
   const btn = document.getElementById('new-client-btn');
@@ -5958,7 +6087,7 @@ async function registerWorkspace() {
   const password        = document.getElementById('reg_password').value;
   const password_confirm = document.getElementById('reg_password_confirm').value;
 
-  if (!owner_name || !email || !org) { alert('Veuillez remplir tous les champs obligatoires.'); return; }
+  if (!owner_name || !email || !org || !territory) { alert('Veuillez remplir tous les champs obligatoires, y compris le pays.'); return; }
 
   if (password) {
     if (password.length < 8) { alert('Le mot de passe doit contenir au moins 8 caractères.'); return; }
@@ -6073,7 +6202,7 @@ async function startCheckout() {
     const payment = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(payment.detail));
     result.classList.remove('hidden');
-    result.innerHTML = `payment_id: ${payment.payment_id}\nréférence: ${payment.provider_reference}\nmontant: ${(payment.amount_xof||0).toLocaleString('fr-FR')} FCFA\nstatut: ${payment.status}`;
+    result.innerHTML = `payment_id: ${payment.payment_id}\nréférence: ${payment.provider_reference}\nmontant: ${formatBillingPrice(payment.amount ?? payment.amount_xof ?? 0, payment.currency || 'XOF')}\nstatut: ${payment.status}`;
   } catch(e) {
     result.classList.remove('hidden');
     result.innerHTML = `Erreur : ${e.message}`;
@@ -6094,6 +6223,7 @@ function showPlansScreen(workspace) {
   _plansSelectedPlan = null;
 
   const ws = workspace || currentWorkspace;
+  updatePlansPricing(ws);
   const name = ws?.organization_name || 'votre organisation';
   document.getElementById('plans-welcome-name').textContent = `Bienvenue, ${name} 👋`;
 
@@ -6125,7 +6255,11 @@ function selectPlan(plan) {
   });
   document.getElementById(`plan-card-${plan}`)?.classList.add('selected');
 
-  const labels = { basic: 'Professionnel — 5 000 XOF/mois', premium: 'Cabinet & Équipe — 10 000 XOF/mois' };
+  const selectedPrice = localizedPlanPrice(plan, currentWorkspace?.territory);
+  const planNames = { basic: 'Professionnel', premium: 'Cabinet & Équipe' };
+  const labels = {
+    [plan]: `${planNames[plan] || plan} — ${formatBillingPrice(selectedPrice.amount, selectedPrice.currency)}/mois`
+  };
   document.getElementById('checkout-box-title').textContent =
     `Souscrire à la formule ${labels[plan] || plan}`;
   document.getElementById('plans-checkout-error').style.display = 'none';
@@ -6150,7 +6284,10 @@ async function submitPlansCheckout() {
       `/api/v1/stripe/checkout/${currentWorkspace.workspace_id}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Token': state.token || currentWorkspace.user_token || currentWorkspace.admin_token || '',
+        },
         body: JSON.stringify({ plan: _plansSelectedPlan }),
       }
     );
@@ -6158,13 +6295,15 @@ async function submitPlansCheckout() {
     if (!res.ok) throw new Error(fmtError(data.detail));
 
     // Sauvegarder les infos avant redirection (l'état JS sera perdu)
+    const selectedPrice = localizedPlanPrice(_plansSelectedPlan, currentWorkspace.territory);
     sessionStorage.setItem('baobab_stripe_pending', JSON.stringify({
       workspace_id: currentWorkspace.workspace_id,
-      user_token: state.token,
+      user_token: state.token || currentWorkspace.user_token || currentWorkspace.admin_token || '',
       email: currentWorkspace.user_email || currentWorkspace.email,
       plan: _plansSelectedPlan,
       org: currentWorkspace.organization_name || '',
-      amount: _plansSelectedPlan === 'basic' ? 5000 : 10000,
+      amount: selectedPrice.amount,
+      currency: selectedPrice.currency,
     }));
 
     // Redirection vers la page Stripe Checkout
@@ -7031,12 +7170,12 @@ function analyserQuestion() {
               <div style="flex:1;min-width:140px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px">
                 <div style="font-size:11px;color:var(--sub)">Professionnel</div>
                 <div style="font-size:13px;font-weight:600;color:var(--fg);margin:2px 0">30 analyses/jour</div>
-                <div style="font-size:12px;color:var(--gold)">5 000 FCFA/mois</div>
+                <div style="font-size:12px;color:var(--gold)">${formatBillingPrice(localizedPlanPrice('basic', state.workspace?.territory).amount, localizedPlanPrice('basic', state.workspace?.territory).currency)}/mois</div>
               </div>
               <div style="flex:1;min-width:140px;padding:10px;background:var(--card);border:1px solid var(--gold);border-radius:8px">
                 <div style="font-size:11px;color:var(--sub)">Cabinet & Équipe</div>
                 <div style="font-size:13px;font-weight:600;color:var(--fg);margin:2px 0">Illimité</div>
-                <div style="font-size:12px;color:var(--gold)">10 000 FCFA/mois</div>
+                <div style="font-size:12px;color:var(--gold)">${formatBillingPrice(localizedPlanPrice('premium', state.workspace?.territory).amount, localizedPlanPrice('premium', state.workspace?.territory).currency)}/mois</div>
               </div>
             </div>
             <div style="margin-top:12px;font-size:11px;color:var(--sub)">Contactez votre gestionnaire BAOBAB pour upgrader.</div>
@@ -8746,7 +8885,11 @@ document.addEventListener('keydown', e => {
   }
 
   // Mettre à jour l'overlay avec les infos du plan
-  const planLabels = { basic: 'Professionnel — 5 000 XOF/mois', premium: 'Cabinet & Équipe — 10 000 XOF/mois' };
+  const pendingPrice = formatBillingPrice(pending.amount, pending.currency || 'XOF');
+  const planLabels = {
+    basic: `Professionnel — ${pendingPrice}/mois`,
+    premium: `Cabinet & Équipe — ${pendingPrice}/mois`,
+  };
   const elPlan = document.getElementById('sao-plan');
   const elOrg  = document.getElementById('sao-org');
   if (elPlan) elPlan.textContent = planLabels[pending.plan] || pending.plan;
@@ -8758,7 +8901,9 @@ document.addEventListener('keydown', e => {
   async function pollActivation() {
     attempts++;
     try {
-      const res = await fetch(`/api/v1/accounts/workspaces/${pending.workspace_id}`);
+      const res = await fetch(`/api/v1/accounts/workspaces/${pending.workspace_id}`, {
+        headers: { 'X-Access-Token': pending.user_token || '' },
+      });
       if (res.ok) {
         const ws = await res.json();
         if (ws.subscription_status === 'active' || ws.subscription_status === 'unlimited_grant') {
@@ -8774,6 +8919,7 @@ document.addEventListener('keydown', e => {
             sessionStorage.setItem('baobab_last_payment', JSON.stringify({
               plan: pending.plan,
               amount: pending.amount,
+              currency: pending.currency,
               date: new Date().toISOString(),
               org: pending.org,
             }));

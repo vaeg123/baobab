@@ -16,24 +16,18 @@ from baobab import notifications
 from baobab.api.routes.accounts import (
     SubscriptionPlan,
     PLAN_CATALOG,
-    _get_workspace,
     _require_workspace_access,
     _save_workspace,
     _load_workspace,
     _save_payment,
 )
 from baobab.rate_limit import client_ip, enforce_rate_limit
+from baobab.billing import price_for_plan
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["stripe"])
-
-PLAN_PRICES_XOF = {
-    SubscriptionPlan.BASIC: 5_000,
-    SubscriptionPlan.PREMIUM: 10_000,
-}
-
 
 def _stripe_client() -> stripe.StripeClient:
     if not settings.stripe_secret_key:
@@ -67,9 +61,10 @@ async def create_stripe_checkout(
     workspace = await _require_workspace_access(workspace_id, x_access_token)
     client = _stripe_client()
 
-    amount = PLAN_PRICES_XOF[request.plan]
+    price = price_for_plan(request.plan, workspace.get("territory"))
+    amount = price["amount"]
     plan_name = PLAN_CATALOG[request.plan]["name"]
-    currency = settings.stripe_currency
+    currency = price["currency"].lower()
     app_url = settings.app_url
 
     try:
@@ -80,9 +75,9 @@ async def create_stripe_checkout(
                     "currency": currency,
                     "product_data": {
                         "name": f"BAOBAB {plan_name}",
-                        "description": f"Abonnement mensuel BAOBAB {plan_name} — Legal OS for Africa",
+                        "description": f"Abonnement mensuel BAOBAB {plan_name} — intelligence juridique internationale",
                     },
-                    "unit_amount": amount,
+                    "unit_amount": price["amount_minor"],
                     "recurring": {"interval": "month"},
                 },
                 "quantity": 1,
@@ -110,7 +105,9 @@ async def create_stripe_checkout(
         "plan": request.plan,
         "provider": "stripe",
         "phone_number": "",
-        "amount_xof": amount,
+        "amount": amount,
+        "amount_minor": price["amount_minor"],
+        "amount_xof": amount if price["currency"] == "XOF" else None,
         "currency": currency.upper(),
         "billing_period": "monthly",
         "status": "pending",
@@ -176,11 +173,14 @@ async def _handle_checkout_completed(session: dict) -> None:
     workspace["updated_at"] = datetime.now(UTC).isoformat()
     await _save_workspace(workspace)
 
+    price = price_for_plan(plan, workspace.get("territory"))
     payment_stub = {
         "payment_id": session.get("id", ""),
         "plan": plan,
         "provider_reference": session.get("id", ""),
-        "amount_xof": PLAN_PRICES_XOF.get(plan, 0),
+        "amount": price["amount"],
+        "currency": price["currency"],
+        "amount_xof": price["amount"] if price["currency"] == "XOF" else None,
     }
     await notifications.notify_user_payment_confirmed(payment_stub, workspace)
     logger.info("Workspace %s activé en plan %s via Stripe", workspace_id, plan)

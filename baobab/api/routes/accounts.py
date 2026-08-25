@@ -16,6 +16,7 @@ from baobab.auth import constant_time_equals, hash_password, verify_password, ve
 from baobab.config import settings
 from baobab.rate_limit import client_ip, enforce_rate_limit
 from baobab import notifications
+from baobab.billing import PLAN_PRICES, price_for_plan
 
 router = APIRouter(tags=["accounts"])
 
@@ -513,11 +514,18 @@ async def _public_workspace(workspace: dict) -> dict:
     requests = await _list_internal_requests(workspace["workspace_id"])
     plan = workspace["plan"]
     plan_details = PLAN_CATALOG.get(plan, PLAN_CATALOG[SubscriptionPlan.PREMIUM])
+    localized_price = price_for_plan(plan, workspace.get("territory"))
+    localized_plan_details = {
+        **plan_details,
+        "monthly_price": localized_price["amount"],
+        "billing_currency": localized_price["currency"],
+    }
     return {
         **workspace,
         "admin_token": None,
         "user_token": None,
-        "plan_details": plan_details,
+        "plan_details": localized_plan_details,
+        "billing_currency": localized_price["currency"],
         "legal_packs": _workspace_legal_packs(workspace),
         "internal_requests_used": len(requests),
     }
@@ -740,6 +748,7 @@ async def list_plans():
             {"code": code, **details}
             for code, details in LEGAL_PACK_CATALOG.items()
         ],
+        "prices": PLAN_PRICES,
     }
 
 
@@ -991,11 +1000,20 @@ async def get_superadmin_overview(
         for payment in payments
         if payment["status"] == "confirmed"
     ]
+    revenue_by_currency: dict[str, int] = {}
+    for payment in confirmed_payments:
+        currency = payment.get("currency", "XOF")
+        amount = payment.get("amount")
+        if amount is None:
+            amount = payment.get("amount_xof", 0)
+        revenue_by_currency[currency] = revenue_by_currency.get(currency, 0) + (amount or 0)
+
     return {
         "workspaces_count": len(workspaces),
         "active_subscriptions_count": len(active_subscriptions),
         "pending_internal_requests_count": len(pending_requests),
-        "confirmed_revenue_xof": sum(payment["amount_xof"] for payment in confirmed_payments),
+        "confirmed_revenue_xof": revenue_by_currency.get("XOF", 0),
+        "confirmed_revenue_by_currency": revenue_by_currency,
         "plans": {
             plan.value: sum(1 for workspace in workspaces if workspace["plan"] == plan)
             for plan in SubscriptionPlan
@@ -1164,6 +1182,13 @@ async def create_checkout(
             detail="Free plan does not require payment.",
         )
 
+    price = price_for_plan(request.plan, workspace.get("territory"))
+    if price["currency"] not in {"XOF", "XAF"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le Mobile Money est disponible pour les espaces facturés en XOF ou XAF. Pour un espace facturé en EUR ou USD, utilisez le paiement par carte Stripe.",
+        )
+
     payment_id = f"pay_{uuid4().hex[:12]}"
     payment = {
         "payment_id": payment_id,
@@ -1171,8 +1196,10 @@ async def create_checkout(
         "plan": request.plan,
         "provider": request.provider,
         "phone_number": request.phone_number,
-        "amount_xof": PLAN_CATALOG[request.plan]["monthly_price_xof"],
-        "currency": "XOF",
+        "amount": price["amount"],
+        "amount_minor": price["amount_minor"],
+        "amount_xof": price["amount"] if price["currency"] == "XOF" else None,
+        "currency": price["currency"],
         "billing_period": "monthly",
         "status": "pending",
         "created_at": datetime.now(UTC).isoformat(),

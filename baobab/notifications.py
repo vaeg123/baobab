@@ -8,6 +8,7 @@ import logging
 import os
 
 import httpx
+from baobab.billing import format_price
 
 logger = logging.getLogger(__name__)
 
@@ -255,8 +256,8 @@ async def notify_admin_new_workspace(workspace: dict) -> bool:
 
 async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
     """Alerte l'admin qu'un paiement est en attente d'approbation."""
-    plan_labels = {"basic": "Professionnel — 5 000 XOF/mois", "premium": "Cabinet & Équipe — 10 000 XOF/mois"}
-    provider_labels = {"orange_money": "Orange Money", "mtn_money": "MTN Mobile Money", "wave": "Wave"}
+    plan_labels = {"basic": "Professionnel", "premium": "Cabinet & Équipe"}
+    provider_labels = {"orange_money": "Orange Money", "mtn_money": "MTN Mobile Money", "wave": "Wave", "stripe": "Carte bancaire Stripe"}
 
     organization_name = esc(workspace["organization_name"])
     owner_name = esc(workspace["owner_name"])
@@ -266,6 +267,9 @@ async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
     phone_number = esc(payment["phone_number"])
     provider_reference = esc(payment["provider_reference"])
     payment_id = esc(payment["payment_id"])
+    payment_amount = payment.get("amount", payment.get("amount_xof", 0)) or 0
+    payment_currency = payment.get("currency", "XOF")
+    formatted_amount = esc(format_price(payment_amount, payment_currency))
     confirm_url = esc(f"{APP_URL}/api/v1/accounts/payments/{payment['payment_id']}/confirm")
 
     html = f"""
@@ -287,7 +291,7 @@ async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
           <tr><td style="padding:8px;color:#555">Numéro mobile</td>
               <td style="padding:8px">{phone_number}</td></tr>
           <tr style="background:#fff"><td style="padding:8px;color:#555">Montant</td>
-              <td style="padding:8px;font-weight:bold">{payment['amount_xof']:,} XOF</td></tr>
+              <td style="padding:8px;font-weight:bold">{formatted_amount}</td></tr>
           <tr><td style="padding:8px;color:#555">Référence BAOBAB</td>
               <td style="padding:8px;font-family:monospace">{provider_reference}</td></tr>
           <tr style="background:#fff"><td style="padding:8px;color:#555">ID Paiement</td>

@@ -92,3 +92,7 @@ async def test_plans_endpoint_exposes_legal_pack_catalog():
     response = await accounts.list_plans()
     packs = {pack["code"] for pack in response["legal_packs"]}
     assert packs == {"france", "europe", "ohada", "cima", "bceao_uemoa", "international"}
+    assert response["prices"]["EUR"]["basic"] == 39
+    assert response["prices"]["XOF"]["premium"] == 10_000
+    assert response["prices"]["XAF"]["basic"] == 5_000
+    assert response["prices"]["USD"]["premium"] == 109
