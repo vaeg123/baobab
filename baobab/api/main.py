@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions, legal_fr, stripe_routes, superadmin_auth, avocassist_integration
+from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions, legal_fr, jurisdictions, stripe_routes, superadmin_auth, avocassist_integration
 from baobab.config import settings
 
 # La documentation Swagger/Redoc expose la carte complète de l'API
@@ -18,8 +18,8 @@ _show_docs = (not settings.is_production) or settings.expose_api_docs
 
 app = FastAPI(
     title="BAOBAB API",
-    description="Legal Operating System for Africa",
-    version="0.1.0",
+    description="Plateforme internationale d'intelligence juridique — France, Europe, Afrique et droit international",
+    version="0.2.0",
     docs_url="/api/docs" if _show_docs else None,
     redoc_url="/api/redoc" if _show_docs else None,
     openapi_url="/api/openapi.json" if _show_docs else None,
@@ -61,6 +61,7 @@ app.include_router(accounts.router, prefix="/api/v1/accounts")
 app.include_router(legal.router, prefix="/api/v1")
 app.include_router(submissions.router, prefix="/api/v1")
 app.include_router(legal_fr.router, prefix="/api/v1")
+app.include_router(jurisdictions.router, prefix="/api/v1")
 app.include_router(stripe_routes.router, prefix="/api/v1")
 app.include_router(superadmin_auth.router, prefix="/api/v1")
 app.include_router(avocassist_integration.router, prefix="/api/v1")

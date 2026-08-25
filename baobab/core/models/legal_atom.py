@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
-import uuid
 
 
 @dataclass
@@ -19,6 +18,15 @@ class LegalAtom:
     version: str                     # V2022
     effective_date: datetime
     language: str = "fr"
+    jurisdiction_code: str | None = None
+    country_code: str | None = None
+    source_code: str | None = None
+    official_identifier: str | None = None
+    official_citation: str | None = None
+    effective_to: datetime | None = None
+    legal_status: str = "IN_FORCE"
+    source_license: str | None = None
+    content_checksum: str | None = None
     abrogated: bool = False
     abrogated_by: str | None = None
     relations: list[dict[str, Any]] = field(default_factory=list)
@@ -26,7 +34,8 @@ class LegalAtom:
 
     @property
     def atom_id(self) -> str:
-        return f"{self.territory}.{self.corpus}.{self.article_ref}.{self.version}"
+        prefix = self.jurisdiction_code or self.territory
+        return f"{prefix}.{self.corpus}.{self.article_ref}.{self.version}"
 
     def add_relation(self, relation_type: str, target_id: str) -> None:
         self.relations.append({"type": relation_type, "target": target_id})

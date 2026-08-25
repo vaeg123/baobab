@@ -1,8 +1,10 @@
 # BAOBAB
 
-**Le Legal Operating System de l'Afrique**
+**La plateforme internationale d'intelligence juridique**
 
-BAOBAB transforme le droit africain en intelligence opérationnelle.
+BAOBAB transforme le droit français, européen, africain et international en intelligence opérationnelle, sourcée et traçable.
+
+Son expertise historique en OHADA, CIMA, BCEAO et UEMOA reste un avantage central. La plateforme accueille désormais des packs juridictionnels indépendants, à commencer par la France, l'Union européenne et la CEDH.
 
 ---
 
@@ -18,9 +20,9 @@ BAOBAB répond à : **Que dois-je faire maintenant ?**
 
 | Niveau | Composant | Rôle |
 |--------|-----------|------|
-| Racines | Legal Knowledge Fabric | OHADA, CIMA, BCEAO, UEMOA — invisible, profond, permanent |
+| Racines | Legal Knowledge Fabric | France, UE, CEDH, OHADA, CIMA, BCEAO, UEMOA — invisible, profond, permanent |
 | Tronc | Core Engine | Legal Event Engine + Reasoning Engine |
-| Branches | Produits verticaux | BAOBAB CIMA, OHADA, BCEAO, Fiscalité, Travail, Banque |
+| Branches | Packs et produits verticaux | France, Europe, CEDH, CIMA, OHADA, BCEAO, Fiscalité, Travail, Banque |
 | Fruits | Outputs décisionnels | Alertes, scores, simulations, recommandations |
 | Feuilles | Legal Atoms | Unités minimales — `CI.OHADA.AUSCGIE.ART247.V2024` |
 
@@ -42,6 +44,28 @@ POST /api/v1/cima/sinistre
 Réponse : cascade complète calculée, délais CIMA, score de conformité, alertes.
 
 **Objectif mesurable** : réduction du délai moyen de traitement sinistre de 40 jours à 18 jours.
+
+## Pack France et socle international
+
+- **France** : connecteurs officiels Légifrance et Judilibre via PISTE.
+- **Union européenne** : registre EUR-Lex/CELLAR pour les textes et la jurisprudence.
+- **CEDH** : registre HUDOC pour les arrêts, décisions et avis consultatifs.
+- **International** : modèle commun de juridictions, sources, langues, citations et dates d'applicabilité.
+
+```bash
+GET  /api/v1/legal/jurisdictions
+GET  /api/v1/legal/sources
+POST /api/v1/legal/search
+{
+  "query": "responsabilité du fait des produits",
+  "jurisdiction_code": "FR",
+  "country_code": "FR",
+  "language_code": "fr",
+  "as_of": "2026-08-25"
+}
+```
+
+Une source étrangère n'est jamais présentée comme directement applicable sans indication de son autorité dans la juridiction demandée.
 
 ---
 
@@ -108,9 +132,9 @@ baobab/
 |---------|-------|
 | M1–M6 | MVP CIMA Sinistre — 3 pilotes Côte d'Ivoire |
 | M7–M12 | CIMA complet — 10 clients — Digital Twin |
-| M13–M18 | OHADA + Sénégal |
-| M19–M24 | API Economy — Tier 3 |
-| M25–M36 | BCEAO + institutionnel |
+| M13–M18 | Pack France : Légifrance, Judilibre, veille et citations |
+| M19–M24 | Union européenne + CEDH + relations France–Europe |
+| M25–M36 | Nouveaux packs nationaux et droit international |
 
 ---
 

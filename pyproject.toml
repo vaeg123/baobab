@@ -1,7 +1,7 @@
 [project]
 name = "baobab"
-version = "0.1.0"
-description = "Legal Operating System for Africa"
+version = "0.2.0"
+description = "Plateforme internationale d'intelligence juridique"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",

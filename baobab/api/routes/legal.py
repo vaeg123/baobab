@@ -11,7 +11,6 @@ import json
 import os
 import re as _re_cls
 from typing import Literal
-from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, Query, Request
 from pydantic import BaseModel
@@ -55,8 +54,11 @@ def _classify_query(question: str) -> str:
 
 def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> str:
     base = (
-        "Tu es BAOBAB, assistant juridique spécialisé en droit africain (CIMA, OHADA, droit ivoirien).\n"
+        "Tu es BAOBAB, assistant juridique multi-juridictionnel spécialisé en droit français, "
+        "européen, africain et international.\n"
         "RÈGLE ABSOLUE : réponds UNIQUEMENT à partir des documents du corpus fournis.\n"
+        "Ne présente jamais une source étrangère ou internationale comme directement applicable "
+        "sans expliquer son autorité dans la juridiction demandée.\n"
         "FORMAT : retourne UNIQUEMENT un objet JSON valide, sans markdown, sans ``` ni texte autour.\n\n"
     )
 
@@ -232,9 +234,14 @@ async def _require_active_workspace(x_user_token: str | None) -> dict:
 
 class SearchRequest(BaseModel):
     query: str
-    corpus: Literal["cima", "ohada", "ci", "all"] = "all"
+    corpus: str = "all"
     type: str | None = None        # decision_crca | arret_ccja | acte_uniforme | loi
     pays: str | None = None
+    country_code: str | None = None
+    jurisdiction_code: str | None = None
+    language_code: str | None = None
+    legal_status: str | None = None
+    as_of: str | None = None
     domaine: str | None = None
     limit: int = 20
     offset: int = 0
@@ -243,7 +250,10 @@ class SearchRequest(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     question: str
-    corpus: Literal["cima", "ohada", "ci", "all"] = "all"
+    corpus: str = "all"
+    country_code: str | None = None
+    jurisdiction_code: str | None = None
+    as_of: str | None = None
     context_docs: int = 5          # nombre de docs à récupérer pour le contexte
 
 
@@ -260,6 +270,12 @@ class DocResult(BaseModel):
     resume: str | None
     sanction: str | None
     source_url: str | None
+    country_code: str | None = None
+    jurisdiction_code: str | None = None
+    language_code: str | None = None
+    legal_status: str | None = None
+    official_citation: str | None = None
+    source_code: str | None = None
     score: float | None = None
 
 
@@ -285,6 +301,12 @@ def _row_to_doc(row, score: float | None = None) -> dict:
         "resume": (row["resume"] or "")[:500],
         "sanction": row["sanction"],
         "source_url": row["source_url"],
+        "country_code": row["country_code"],
+        "jurisdiction_code": row["jurisdiction_code"],
+        "language_code": row["language_code"],
+        "legal_status": row["legal_status"],
+        "official_citation": row["official_citation"],
+        "source_code": row["source_code"],
         "score": score,
     }
 
@@ -306,13 +328,44 @@ async def _search_corpus_impl(req: SearchRequest) -> dict:
         p = 1
 
         if req.corpus != "all":
-            conditions.append(f"corpus = ${p}"); params.append(req.corpus); p += 1
+            conditions.append(f"corpus = ${p}")
+            params.append(req.corpus)
+            p += 1
         if req.type:
-            conditions.append(f"type = ${p}"); params.append(req.type); p += 1
+            conditions.append(f"type = ${p}")
+            params.append(req.type)
+            p += 1
         if req.pays:
-            conditions.append(f"pays ILIKE ${p}"); params.append(f"%{req.pays}%"); p += 1
+            conditions.append(f"pays ILIKE ${p}")
+            params.append(f"%{req.pays}%")
+            p += 1
+        if req.country_code:
+            conditions.append(f"country_code = ${p}")
+            params.append(req.country_code.upper())
+            p += 1
+        if req.jurisdiction_code:
+            conditions.append(f"jurisdiction_code = ${p}")
+            params.append(req.jurisdiction_code.upper())
+            p += 1
+        if req.language_code:
+            conditions.append(f"language_code = ${p}")
+            params.append(req.language_code.lower())
+            p += 1
+        if req.legal_status:
+            conditions.append(f"legal_status = ${p}")
+            params.append(req.legal_status.upper())
+            p += 1
+        if req.as_of:
+            conditions.append(f"(effective_from IS NULL OR effective_from <= ${p}::date)")
+            params.append(req.as_of)
+            p += 1
+            conditions.append(f"(effective_to IS NULL OR effective_to >= ${p}::date)")
+            params.append(req.as_of)
+            p += 1
         if req.domaine:
-            conditions.append(f"domaine ILIKE ${p}"); params.append(f"%{req.domaine}%"); p += 1
+            conditions.append(f"domaine ILIKE ${p}")
+            params.append(f"%{req.domaine}%")
+            p += 1
 
         where = " AND ".join(conditions)
         # Snapshot des params filtres uniquement (pour la requête COUNT)
@@ -333,7 +386,8 @@ async def _search_corpus_impl(req: SearchRequest) -> dict:
             fts_p = p + 1  # after query param
             sql = f"""
                 SELECT id, ref, type, corpus, juridiction, titre, date_decision,
-                       pays, domaine, resume, sanction, source_url,
+                       pays, domaine, resume, sanction, source_url, country_code,
+                       jurisdiction_code, language_code, legal_status, official_citation, source_code,
                        {rank_expr}
                 FROM legal_corpus
                 WHERE {where} AND {fts_cond}
@@ -360,13 +414,15 @@ async def _search_corpus_impl(req: SearchRequest) -> dict:
                     f"(CASE WHEN titre ILIKE ${ip} OR resume ILIKE ${ip} THEN 3 ELSE 0 END)"
                     f" + (CASE WHEN texte_integral ILIKE ${ip} THEN 1 ELSE 0 END)"
                 )
-                ilike_params.append(f"%{kw}%"); ip += 1
+                ilike_params.append(f"%{kw}%")
+                ip += 1
             like_cond = " OR ".join(like_parts)
             relevance = " + ".join(score_parts) if score_parts else "1"
             ilike_params += [req.limit, req.offset]
             sql = f"""
                 SELECT id, ref, type, corpus, juridiction, titre, date_decision,
-                       pays, domaine, resume, sanction, source_url,
+                       pays, domaine, resume, sanction, source_url, country_code,
+                       jurisdiction_code, language_code, legal_status, official_citation, source_code,
                        ({relevance})::float AS rank
                 FROM legal_corpus
                 WHERE {where} AND ({like_cond})
@@ -397,6 +453,10 @@ async def list_corpus(
     corpus: str | None = Query(None),
     type: str | None = Query(None),
     pays: str | None = Query(None),
+    country_code: str | None = Query(None),
+    jurisdiction_code: str | None = Query(None),
+    language_code: str | None = Query(None),
+    legal_status: str | None = Query(None),
     limit: int = Query(50, le=200),
     offset: int = Query(0),
     x_user_token: str | None = Header(default=None),
@@ -410,17 +470,40 @@ async def list_corpus(
         p = 1
 
         if corpus:
-            conditions.append(f"corpus = ${p}"); params.append(corpus); p += 1
+            conditions.append(f"corpus = ${p}")
+            params.append(corpus)
+            p += 1
         if type:
-            conditions.append(f"type = ${p}"); params.append(type); p += 1
+            conditions.append(f"type = ${p}")
+            params.append(type)
+            p += 1
         if pays:
-            conditions.append(f"pays ILIKE ${p}"); params.append(f"%{pays}%"); p += 1
+            conditions.append(f"pays ILIKE ${p}")
+            params.append(f"%{pays}%")
+            p += 1
+        if country_code:
+            conditions.append(f"country_code = ${p}")
+            params.append(country_code.upper())
+            p += 1
+        if jurisdiction_code:
+            conditions.append(f"jurisdiction_code = ${p}")
+            params.append(jurisdiction_code.upper())
+            p += 1
+        if language_code:
+            conditions.append(f"language_code = ${p}")
+            params.append(language_code.lower())
+            p += 1
+        if legal_status:
+            conditions.append(f"legal_status = ${p}")
+            params.append(legal_status.upper())
+            p += 1
 
         where = " AND ".join(conditions)
 
         sql = f"""
             SELECT id, ref, type, corpus, juridiction, titre, date_decision,
-                   pays, domaine, resume, sanction, source_url
+                   pays, domaine, resume, sanction, source_url, country_code,
+                   jurisdiction_code, language_code, legal_status, official_citation, source_code
             FROM legal_corpus
             WHERE {where}
             ORDER BY date_decision DESC NULLS LAST
@@ -468,6 +551,18 @@ async def get_document(doc_id: str, x_user_token: str | None = Header(default=No
             "texte_integral": row["texte_integral"],
             "mots_cles": list(row["mots_cles"] or []),
             "source_url": row["source_url"],
+            "country_code": row["country_code"],
+            "jurisdiction_code": row["jurisdiction_code"],
+            "language_code": row["language_code"],
+            "legal_status": row["legal_status"],
+            "source_code": row["source_code"],
+            "official_identifier": row["official_identifier"],
+            "official_citation": row["official_citation"],
+            "publication_date": str(row["publication_date"]) if row["publication_date"] else None,
+            "effective_from": str(row["effective_from"]) if row["effective_from"] else None,
+            "effective_to": str(row["effective_to"]) if row["effective_to"] else None,
+            "source_license": row["source_license"],
+            "content_checksum": row["content_checksum"],
             "source_pdf_url": row["source_pdf_url"],
             "sanction": row["sanction"],
             "articles_cites": list(row["articles_cites"] or []),
@@ -487,7 +582,7 @@ async def analyze_question(
     """
     Analyse une question juridique :
     1. Recherche les documents pertinents dans le corpus
-    2. Appelle Claude pour une réponse fondée sur le droit CIMA/OHADA/CI
+    2. Appelle Claude pour une réponse fondée sur la juridiction et la date demandées
 
     Le token utilisateur est OBLIGATOIRE et le quota est TOUJOURS vérifié
     et incrémenté avant tout appel IA. Avant correctif, ce contrôle était
@@ -510,6 +605,9 @@ async def analyze_question(
     search_req = SearchRequest(
         query=req.question,
         corpus=req.corpus,
+        country_code=req.country_code,
+        jurisdiction_code=req.jurisdiction_code,
+        as_of=req.as_of,
         limit=max(req.context_docs, 8),
         mode="fulltext",
     )
