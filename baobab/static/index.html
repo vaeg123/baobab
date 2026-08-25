@@ -4642,10 +4642,10 @@
     <div id="tab-veille" class="tab-panel">
       <div class="container">
         <div class="page-title">Veille juridique</div>
-        <div class="page-sub">Aperçu de la veille juridique BAOBAB — les éléments présentés ci-dessous sont des exemples de démonstration.</div>
+        <div class="page-sub">Publications et décisions récemment intégrées au corpus BAOBAB, avec leur date et leur source.</div>
 
         <div style="margin-bottom:1rem;padding:10px 14px;border:1px solid rgba(191,78,30,.28);background:rgba(191,78,30,.07);border-radius:8px;font-size:12px;color:var(--text)">
-          <strong>Démonstration :</strong> ce flux n'est pas encore une veille en temps réel. Vérifiez toujours la date et la source officielle avant toute utilisation professionnelle.
+          <strong>Traçabilité :</strong> ce flux provient du corpus BAOBAB. Consultez la source officielle avant toute utilisation professionnelle. Les notifications automatiques par email ne sont pas encore activées.
         </div>
 
         <div class="veille-filters" id="veille-filters">
@@ -4653,7 +4653,7 @@
           <button class="veille-filter-btn" onclick="filterVeille('ohada', this)">OHADA</button>
           <button class="veille-filter-btn" onclick="filterVeille('cima', this)">CIMA</button>
           <button class="veille-filter-btn" onclick="filterVeille('bceao', this)">BCEAO</button>
-          <button class="veille-filter-btn" onclick="filterVeille('national', this)">Droit national</button>
+          <button class="veille-filter-btn" onclick="filterVeille('france', this)">France</button>
         </div>
 
         <div class="veille-feed" id="veille-feed">
@@ -4663,11 +4663,23 @@
 
         <div class="veille-subscribe">
           <div class="veille-subscribe-text">
-            <div class="veille-subscribe-title">Recevoir les alertes en temps réel</div>
-            <div class="veille-subscribe-sub">Dès qu'un texte vous concerne, BAOBAB vous alerte et calcule l'impact sur votre conformité.</div>
+            <div class="veille-subscribe-title">Créer une surveillance</div>
+            <div class="veille-subscribe-sub">Enregistrez un sujet et un corpus. Les nouvelles publications correspondantes seront regroupées dans votre espace.</div>
           </div>
-          <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="alert('La veille automatisée est en cours de déploiement. Ce bouton ne crée pas encore de surveillance.')">Bientôt disponible</button>
+          <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="toggleWatchForm()">Nouvelle surveillance</button>
         </div>
+        <div id="watch-form" class="card" style="display:none;margin-top:1rem">
+          <div class="card-body">
+            <div class="grid-2">
+              <div class="form-group"><label>Nom de la surveillance</label><input id="watch-name" placeholder="Ex. Réforme du droit des sociétés" /></div>
+              <div class="form-group"><label>Mots-clés</label><input id="watch-query" placeholder="Ex. gouvernance, SAS, fusion" /></div>
+            </div>
+            <div class="form-group"><label>Corpus</label><select id="watch-corpus"><option value="all">Tous mes packs</option><option value="france">France</option><option value="ohada">OHADA</option><option value="cima">CIMA</option><option value="bceao">BCEAO</option><option value="international">International</option></select></div>
+            <button class="btn btn-primary btn-sm" onclick="createLegalWatch()">Enregistrer</button>
+            <span id="watch-form-message" style="font-size:12px;margin-left:10px;color:var(--sub)"></span>
+          </div>
+        </div>
+        <div id="watch-subscriptions" style="margin-top:1rem"></div>
       </div>
     </div>
 
@@ -5146,8 +5158,14 @@ function buildNav(role) {
       ...(state.workspace.enabled_services || []),
     ]);
     const allVerticals = enabled.has('all_verticals');
-    items = items.filter(item => !['cima', 'ohada', 'bceao'].includes(item.id)
-      || allVerticals || enabled.has(item.id));
+    const requiredService = {
+      cima: 'cima', ohada: 'ohada', bceao: 'bceao',
+      veille: 'alerts', 'droit-fr': 'legal_fr', biblio: 'legal_search',
+    };
+    items = items.filter(item => {
+      const service = requiredService[item.id];
+      return !service || allVerticals || enabled.has(service);
+    });
   }
   nav.innerHTML = items.map(item =>
     `<button class="nav-btn" id="nav-${item.id}" onclick="switchTab('${item.id}')">${item.label}</button>`
@@ -5195,7 +5213,7 @@ const serviceCatalog = [
   { key: 'ohada',             icon: '',  title: 'OHADA — Droit des affaires', desc: 'Suivre les obligations sociétaires.',                       tab: 'ohada'  },
   { key: 'bceao',             icon: '',  title: 'BCEAO — Banque & Finance',   desc: 'Obligations bancaires, KYC, LCB/FT et reporting.',          tab: 'bceao'  },
   { key: 'internal_requests', icon: '',  title: 'Demandes internes',          desc: 'Envoyer une demande à votre équipe BAOBAB.',                tab: 'espace' },
-  { key: 'alerts',            icon: '',  title: 'Alertes & Échéances',        desc: 'Surveiller les risques de non-conformité.',                 tab: 'client' },
+  { key: 'alerts',            icon: '',  title: 'Veille juridique',           desc: 'Surveiller les publications de vos corpus juridiques.',    tab: 'veille' },
   { key: 'priority_support',  icon: '',  title: 'Support prioritaire',        desc: 'Canal de support dédié aux espaces Cabinet & Équipe.',      tab: 'espace' },
 ];
 
@@ -7816,40 +7834,54 @@ const DEMO_VEILLE = [
 
 let currentVeilleFilter = 'all';
 
-function renderVeille(filter) {
+async function renderVeille(filter) {
   filter = filter || currentVeilleFilter;
-  const items = filter === 'all' ? DEMO_VEILLE : DEMO_VEILLE.filter(v => v.corpus === filter);
   const feed = document.getElementById('veille-feed');
+  feed.innerHTML = '<div class="empty-state"><span class="spinner" style="width:22px;height:22px;border-width:3px"></span></div>';
+  try {
+    const res = await fetch(`/api/v1/legal/watch/feed?corpus=${encodeURIComponent(filter)}`, {
+      headers: { 'X-User-Token': state.token || '' },
+    });
+    const data = await parseJson(res);
+    if (!res.ok) throw new Error(fmtError(data.detail));
+    const items = data.results || [];
 
-  const typePills = { 'Acte Uniforme': 'pill-blue', 'Circulaire': 'pill-gold', 'Instruction': 'pill-orange', 'Décret': 'pill-gray', 'Avis CCJA': 'pill-green', 'Rapport': 'pill-gray' };
-  const corpusPills = { ohada: 'pill-blue', cima: 'pill-gold', bceao: 'pill-orange', national: 'pill-gray' };
-  const corpusLabels = { ohada: 'OHADA', cima: 'CIMA', bceao: 'BCEAO', national: 'Droit national' };
+    if (!items.length) {
+      feed.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><div class="empty-text">Aucune publication correspondant à ce filtre dans vos packs.</div></div>`;
+      return;
+    }
 
-  if (!items.length) {
-    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><div class="empty-text">Aucun texte pour ce filtre.</div></div>`;
-    return;
-  }
-
-  feed.innerHTML = items.map(v => `
-    <div class="veille-item" data-corpus="${v.corpus}">
-      <div class="veille-item-top">
-        <div class="veille-item-title">${escHtml(v.titre)}</div>
-        <div class="veille-item-date">${escHtml(v.date)}</div>
-      </div>
-      <div class="veille-item-meta">
-        <span class="pill ${typePills[v.type] || 'pill-gray'}">${escHtml(v.type)}</span>
-        <span class="pill ${corpusPills[v.corpus] || 'pill-gray'}">${corpusLabels[v.corpus] || v.corpus}</span>
-        <span class="veille-source">${escHtml(v.source)}</span>
-      </div>
-      <div class="veille-item-summary">${escHtml(v.resume)}</div>
-      <div class="veille-item-actions">
-        <button class="btn btn-ghost btn-sm" onclick="chargerTexteVeille('${escHtml(v.id)}')">Voir le texte →</button>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;flex:1">
-          ${v.tags.map(t => `<span style="font-size:10px;color:var(--sub);background:rgba(60,20,5,0.05);border:1px solid var(--border);padding:2px 8px;border-radius:6px">${escHtml(t)}</span>`).join('')}
+    feed.innerHTML = items.map(v => `
+      <div class="veille-item" data-corpus="${escHtml(v.corpus || '')}">
+        <div class="veille-item-top">
+          <div class="veille-item-title">${escHtml(v.titre || v.ref || 'Publication juridique')}</div>
+          <div class="veille-item-date">${escHtml(v.date || '—')}</div>
         </div>
-        <span class="veille-impact impact-${v.impact}">${escHtml(v.impact_label)}</span>
-      </div>
-    </div>`).join('');
+        <div class="veille-item-meta">
+          <span class="pill pill-gray">${escHtml(v.type || 'Document')}</span>
+          <span class="pill pill-gold">${escHtml((v.corpus || '').toUpperCase())}</span>
+          <span class="veille-source">${escHtml(v.source_code || v.juridiction || 'Corpus BAOBAB')}</span>
+        </div>
+        <div class="veille-item-summary">${escHtml(v.resume || 'Résumé non disponible.')}</div>
+        <div class="veille-item-actions">
+          ${safeExternalUrl(v.source_url)
+            ? `<a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(v.source_url))}" target="_blank" rel="noopener noreferrer">Source officielle →</a>`
+            : '<span style="font-size:11px;color:var(--sub)">Source externe non renseignée</span>'}
+          <span style="font-size:10px;color:var(--sub);margin-left:auto">${escHtml(v.official_citation || v.ref || '')}</span>
+        </div>
+      </div>`).join('');
+  } catch (error) {
+    feed.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">${escHtml(error.message)}</div></div>`;
+  }
+}
+
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(value, window.location.origin);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch (_) {
+    return '';
+  }
 }
 
 function filterVeille(corpus, btn) {
@@ -7859,10 +7891,53 @@ function filterVeille(corpus, btn) {
   renderVeille(corpus);
 }
 
-function chargerTexteVeille(id) {
-  const item = DEMO_VEILLE.find(v => v.id === id);
-  if (!item) return;
-  alert(`"${item.titre}"\n\nTexte intégral disponible avec un abonnement actif.\n\nSource : ${item.source}`);
+function toggleWatchForm() {
+  const form = document.getElementById('watch-form');
+  form.style.display = form.style.display === 'none' ? '' : 'none';
+}
+
+async function createLegalWatch() {
+  const name = document.getElementById('watch-name').value.trim();
+  const query = document.getElementById('watch-query').value.trim();
+  const corpus = document.getElementById('watch-corpus').value;
+  const message = document.getElementById('watch-form-message');
+  if (!name) { message.textContent = 'Donnez un nom à la surveillance.'; return; }
+  const res = await fetch('/api/v1/legal/watch/subscriptions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-User-Token': state.token || '' },
+    body: JSON.stringify({ name, query: query || null, corpus, email_enabled: false }),
+  });
+  const data = await parseJson(res);
+  if (!res.ok) { message.textContent = fmtError(data.detail); return; }
+  message.textContent = '✓ Surveillance enregistrée.';
+  document.getElementById('watch-name').value = '';
+  document.getElementById('watch-query').value = '';
+  await loadLegalWatches();
+}
+
+async function loadLegalWatches() {
+  const container = document.getElementById('watch-subscriptions');
+  const res = await fetch('/api/v1/legal/watch/subscriptions', {
+    headers: { 'X-User-Token': state.token || '' },
+  });
+  const data = await parseJson(res);
+  if (!res.ok) { container.innerHTML = ''; return; }
+  const watches = data.subscriptions || [];
+  container.innerHTML = watches.length ? `
+    <div class="section-title">Mes surveillances</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${watches.map(w => `
+      <span class="pill pill-blue" style="display:inline-flex;align-items:center;gap:7px">
+        ${escHtml(w.name)} · ${escHtml((w.corpus || 'all').toUpperCase())}
+        <button onclick="deleteLegalWatch('${escHtml(w.watch_id)}')" style="border:0;background:none;cursor:pointer;color:inherit">×</button>
+      </span>`).join('')}
+    </div>` : '';
+}
+
+async function deleteLegalWatch(watchId) {
+  const res = await fetch(`/api/v1/legal/watch/subscriptions/${encodeURIComponent(watchId)}`, {
+    method: 'DELETE', headers: { 'X-User-Token': state.token || '' },
+  });
+  if (res.ok) await loadLegalWatches();
 }
 
 // Init veille quand l'onglet est ouvert
@@ -7870,7 +7945,7 @@ function chargerTexteVeille(id) {
   const orig = switchTab;
   window.switchTab = function(name) {
     orig(name);
-    if (name === 'veille') renderVeille();
+    if (name === 'veille') { renderVeille(); loadLegalWatches(); }
   };
 })();
 

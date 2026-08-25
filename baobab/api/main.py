@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions, legal_fr, jurisdictions, stripe_routes, superadmin_auth, avocassist_integration
+from baobab.api.routes import accounts, health, events, cima, compliance, ohada, bceao, legal, submissions, legal_fr, jurisdictions, stripe_routes, superadmin_auth, avocassist_integration, watch
 from baobab.config import settings
 
 # La documentation Swagger/Redoc expose la carte complète de l'API
@@ -65,6 +65,7 @@ app.include_router(jurisdictions.router, prefix="/api/v1")
 app.include_router(stripe_routes.router, prefix="/api/v1")
 app.include_router(superadmin_auth.router, prefix="/api/v1")
 app.include_router(avocassist_integration.router, prefix="/api/v1")
+app.include_router(watch.router, prefix="/api/v1")
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
