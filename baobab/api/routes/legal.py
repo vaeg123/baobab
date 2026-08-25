@@ -102,7 +102,7 @@ def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> 
 }'''
         return (
             base
-            + f"TYPE : Analyse d'un arrêt ou décision juridique.\n\n"
+            + "TYPE : Analyse d'un arrêt ou décision juridique.\n\n"
             + f"SCHÉMA JSON :\n{schema}\n\n"
             + f"QUESTION : {question}\n\n"
             + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
@@ -128,7 +128,7 @@ def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> 
 }'''
         return (
             base
-            + f"TYPE : Analyse d'un texte de loi, article ou acte uniforme.\n\n"
+            + "TYPE : Analyse d'un texte de loi, article ou acte uniforme.\n\n"
             + f"SCHÉMA JSON :\n{schema}\n\n"
             + f"QUESTION : {question}\n\n"
             + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
@@ -214,20 +214,9 @@ async def _require_active_workspace(x_user_token: str | None) -> dict:
     envoyer son token (cf. audit sécurité). Toute lecture du corpus
     nécessite désormais un compte, même gratuit.
     """
-    if not x_user_token:
-        raise HTTPException(
-            status_code=401,
-            detail="Authentification requise (en-tête X-User-Token). "
-            "Créez un espace gratuit via POST /api/v1/accounts/workspaces.",
-        )
-    from baobab.api.routes.accounts import _find_workspace_by_token
+    from baobab.api.routes.accounts import require_workspace_service
 
-    workspace = await _find_workspace_by_token(x_user_token)
-    if not workspace:
-        raise HTTPException(status_code=401, detail="Token utilisateur invalide.")
-    if workspace.get("suspended"):
-        raise HTTPException(status_code=403, detail="Ce compte est suspendu.")
-    return workspace
+    return await require_workspace_service(x_user_token, "legal_search")
 
 
 # ─── Modèles ──────────────────────────────────────────────────────────────────
@@ -644,7 +633,7 @@ async def analyze_question(
             conn2 = await _conn()
             try:
                 rows = await conn2.fetch(
-                    f"SELECT id, texte_integral FROM legal_corpus WHERE id = ANY($1::uuid[])",
+                    "SELECT id, texte_integral FROM legal_corpus WHERE id = ANY($1::uuid[])",
                     [__import__("uuid").UUID(i) for i in doc_ids],
                 )
                 for r in rows:

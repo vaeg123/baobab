@@ -54,3 +54,41 @@ async def test_suspended_workspace_is_rejected(monkeypatch):
     with pytest.raises(HTTPException) as exc:
         await accounts.require_workspace_service("usr_valid", "cima")
     assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_expired_subscription_is_rejected(monkeypatch):
+    async def find_workspace(_token):
+        return {
+            "plan": accounts.SubscriptionPlan.PREMIUM,
+            "subscription_status": "active",
+            "subscription_expires_at": "2020-01-01T00:00:00+00:00",
+            "suspended": False,
+        }
+
+    monkeypatch.setattr(accounts, "_find_workspace_by_token", find_workspace)
+    with pytest.raises(HTTPException) as exc:
+        await accounts.require_workspace_service("usr_valid", "cima")
+    assert exc.value.status_code == 403
+    assert "expiré" in exc.value.detail
+
+
+def test_plan_catalog_separates_usage_level_and_legal_packs():
+    assert accounts.PLAN_CATALOG[accounts.SubscriptionPlan.FREE]["included_packs"] == ["discovery"]
+    assert accounts.PLAN_CATALOG[accounts.SubscriptionPlan.BASIC]["included_packs"] == ["france", "europe"]
+    assert "cima" in accounts.PLAN_CATALOG[accounts.SubscriptionPlan.PREMIUM]["included_packs"]
+
+
+def test_workspace_pack_resolution_combines_plan_and_explicit_grants():
+    workspace = {
+        "plan": accounts.SubscriptionPlan.BASIC,
+        "enabled_services": ["ohada"],
+    }
+    assert accounts._workspace_legal_packs(workspace) == ["france", "europe", "ohada"]
+
+
+@pytest.mark.asyncio
+async def test_plans_endpoint_exposes_legal_pack_catalog():
+    response = await accounts.list_plans()
+    packs = {pack["code"] for pack in response["legal_packs"]}
+    assert packs == {"france", "europe", "ohada", "cima", "bceao_uemoa", "international"}

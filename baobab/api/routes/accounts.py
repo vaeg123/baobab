@@ -39,18 +39,23 @@ PLAN_CATALOG = {
         "currency": "XOF",
         "internal_request_quota": 1,
         "analyses_daily_limit": 5,
-        "services": ["workspace", "one_internal_request"],
+        "services": ["workspace", "one_internal_request", "legal_search"],
+        "included_packs": ["discovery"],
     },
     SubscriptionPlan.BASIC: {
-        "name": "Basic",
+        "name": "Professionnel",
         "monthly_price_xof": 5000,
         "currency": "XOF",
         "internal_request_quota": None,
         "analyses_daily_limit": 30,
-        "services": ["workspace", "internal_requests", "legal_dashboards", "alerts"],
+        "services": [
+            "workspace", "internal_requests", "legal_dashboards", "alerts",
+            "legal_search", "legal_fr", "eu", "echr",
+        ],
+        "included_packs": ["france", "europe"],
     },
     SubscriptionPlan.PREMIUM: {
-        "name": "Premium",
+        "name": "Cabinet & Équipe",
         "monthly_price_xof": 10000,
         "currency": "XOF",
         "internal_request_quota": None,
@@ -63,8 +68,61 @@ PLAN_CATALOG = {
             "all_verticals",
             "priority_support",
         ],
+        "included_packs": ["france", "europe", "ohada", "cima", "bceao_uemoa", "international"],
     },
 }
+
+
+LEGAL_PACK_CATALOG = {
+    "france": {
+        "name": "France",
+        "description": "Législation et jurisprudence françaises via Légifrance et Judilibre.",
+        "services": ["legal_fr"],
+        "jurisdictions": ["FR"],
+    },
+    "europe": {
+        "name": "Europe & CEDH",
+        "description": "Droit de l'Union européenne et jurisprudence de la CEDH.",
+        "services": ["eu", "echr"],
+        "jurisdictions": ["EU", "ECHR"],
+    },
+    "ohada": {
+        "name": "OHADA",
+        "description": "Droit des affaires OHADA, actes uniformes et jurisprudence CCJA.",
+        "services": ["ohada"],
+        "jurisdictions": ["OHADA", "CCJA"],
+    },
+    "cima": {
+        "name": "CIMA",
+        "description": "Droit des assurances CIMA et cascades de gestion des sinistres.",
+        "services": ["cima"],
+        "jurisdictions": ["CIMA", "CRCA"],
+    },
+    "bceao_uemoa": {
+        "name": "BCEAO & UEMOA",
+        "description": "Banque, finance, KYC, LCB/FT et conformité prudentielle.",
+        "services": ["bceao"],
+        "jurisdictions": ["BCEAO", "UEMOA"],
+    },
+    "international": {
+        "name": "Droit international",
+        "description": "Sources et juridictions internationales, séparées des droits nationaux.",
+        "services": ["international"],
+        "jurisdictions": ["ICJ", "ICC"],
+    },
+}
+
+
+def _workspace_legal_packs(workspace: dict) -> list[str]:
+    plan = workspace.get("plan", SubscriptionPlan.FREE)
+    plan_details = PLAN_CATALOG.get(plan, PLAN_CATALOG[SubscriptionPlan.FREE])
+    services = set(plan_details["services"]) | set(workspace.get("enabled_services") or [])
+    if "all_verticals" in services:
+        return list(LEGAL_PACK_CATALOG)
+    return [
+        code for code, pack in LEGAL_PACK_CATALOG.items()
+        if services.intersection(pack["services"])
+    ]
 
 WORKSPACES: dict[str, dict] = {}
 INTERNAL_REQUESTS: dict[str, dict] = {}
@@ -135,7 +193,7 @@ class SuperadminWorkspaceCreate(BaseModel):
     admin_email: str | None = Field(default=None, min_length=5, max_length=180)
     password: str | None = Field(default=None, min_length=8, max_length=128)
     enabled_services: list[str] = Field(
-        default_factory=lambda: ["all_verticals", "alerts", "internal_requests", "priority_support"]
+        default_factory=list
     )
     branding: WorkspaceBranding = Field(default_factory=WorkspaceBranding)
 
@@ -460,6 +518,7 @@ async def _public_workspace(workspace: dict) -> dict:
         "admin_token": None,
         "user_token": None,
         "plan_details": plan_details,
+        "legal_packs": _workspace_legal_packs(workspace),
         "internal_requests_used": len(requests),
     }
 
@@ -560,9 +619,7 @@ async def check_and_increment_analyses_quota(user_token: str) -> dict:
     Retourne {"allowed": bool, "used": int, "limit": int|None, "remaining": int|None}.
     Lève HTTPException 429 si quota dépassé.
     """
-    workspace = await _find_workspace_by_token(user_token)
-    if not workspace:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Token utilisateur invalide.")
+    workspace = await require_workspace_service(user_token, "legal_search")
 
     plan = workspace.get("plan", SubscriptionPlan.FREE)
     limit = PLAN_CATALOG[plan]["analyses_daily_limit"]
@@ -591,8 +648,8 @@ async def check_and_increment_analyses_quota(user_token: str) -> dict:
                 "limit": limit,
                 "plan": plan,
                 "upgrade_plans": {
-                    "basic": {"name": "Basic", "price_xof": 5000, "limit_daily": 30},
-                    "premium": {"name": "Premium", "price_xof": 10000, "limit_daily": "illimité"},
+                    "basic": {"name": "Professionnel", "price_xof": 5000, "limit_daily": 30},
+                    "premium": {"name": "Cabinet & Équipe", "price_xof": 10000, "limit_daily": "illimité"},
                 },
             },
         )
@@ -633,6 +690,28 @@ async def require_workspace_service(user_token: str | None, service: str) -> dic
             detail="Cet espace est suspendu.",
         )
 
+    subscription_status = workspace.get("subscription_status", "free")
+    if subscription_status not in {"free", "active", "unlimited_grant"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cet abonnement n'est pas actif.",
+        )
+    expires_at = workspace.get("subscription_expires_at")
+    if subscription_status == "active" and expires_at:
+        try:
+            expiration = datetime.fromisoformat(str(expires_at).replace("Z", "+00:00"))
+        except ValueError:
+            logger.warning("Invalid subscription expiry for workspace %s", workspace.get("workspace_id"))
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="La date d'expiration de cet abonnement est invalide.",
+            )
+        if expiration <= datetime.now(UTC):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cet abonnement a expiré. Renouvelez-le pour continuer.",
+            )
+
     plan = workspace.get("plan", SubscriptionPlan.FREE)
     plan_details = PLAN_CATALOG.get(plan, PLAN_CATALOG[SubscriptionPlan.FREE])
     entitled_services = set(plan_details["services"]) | set(workspace.get("enabled_services") or [])
@@ -657,6 +736,10 @@ async def list_plans():
             for plan, details in PLAN_CATALOG.items()
         ],
         "payment_providers": [provider.value for provider in PaymentProvider],
+        "legal_packs": [
+            {"code": code, **details}
+            for code, details in LEGAL_PACK_CATALOG.items()
+        ],
     }
 
 
@@ -711,7 +794,7 @@ async def create_internal_request(
     if quota is not None and len(workspace_requests) >= quota:
         raise HTTPException(
             status_code=status.HTTP_402_PAYMENT_REQUIRED,
-            detail="Free workspace quota reached. Upgrade to Basic or Premium.",
+            detail="Quota gratuit atteint. Passez à Professionnel ou Cabinet & Équipe.",
         )
 
     request_id = f"req_{uuid4().hex[:12]}"

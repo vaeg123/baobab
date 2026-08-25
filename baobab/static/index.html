@@ -2932,29 +2932,30 @@
 
       <!-- Basic -->
       <div class="plan-card" id="plan-card-basic" onclick="selectPlan('basic')">
-        <div class="plan-name">Basic</div>
+        <div class="plan-name">Professionnel</div>
         <div class="plan-price">5 000 <span>XOF / mois</span></div>
         <ul class="plan-features">
           <li>Demandes internes illimitées</li>
           <li>30 analyses / jour</li>
           <li>Tableaux de bord juridiques</li>
           <li>Alertes réglementaires</li>
+          <li>Packs France + Europe & CEDH</li>
         </ul>
-        <button class="plan-cta clay" onclick="selectPlan('basic')">Choisir Basic</button>
+        <button class="plan-cta clay" onclick="selectPlan('basic')">Choisir Professionnel</button>
       </div>
 
       <!-- Premium -->
       <div class="plan-card" id="plan-card-premium" onclick="selectPlan('premium')">
         <div class="plan-badge">Recommandé</div>
-        <div class="plan-name">Premium</div>
+        <div class="plan-name">Cabinet & Équipe</div>
         <div class="plan-price">10 000 <span>XOF / mois</span></div>
         <ul class="plan-features">
-          <li>Tout le Basic</li>
+          <li>Tout le niveau Professionnel</li>
           <li>Analyses illimitées</li>
-          <li>Tous les verticals (CIMA, OHADA, BCEAO, Fiscal)</li>
+          <li>Tous les packs juridiques disponibles</li>
           <li>Support prioritaire</li>
         </ul>
-        <button class="plan-cta clay" onclick="selectPlan('premium')">Choisir Premium</button>
+        <button class="plan-cta clay" onclick="selectPlan('premium')">Choisir Cabinet & Équipe</button>
       </div>
     </div>
 
@@ -3290,12 +3291,12 @@
                       </button>
                       <button type="button" class="sa-plan-pill" data-plan="basic" onclick="_saSelectPlan('basic')"
                         style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(160,80,16,0.2);background:rgba(191,78,30,0.05);color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
-                        Basic<br><span style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
+                        Professionnel<br><span style="font-size:10px;font-weight:400;opacity:.8">5 000 XOF/mois</span>
                       </button>
                       <button type="button" class="sa-plan-pill" data-plan="premium" onclick="_saSelectPlan('premium')"
                         style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(191,78,30,0.25);background:rgba(191,78,30,0.07);color:var(--clay);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;position:relative">
                         <span style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--clay);color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap">★ Recommandé</span>
-                        Premium<br><span style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
+                        Cabinet & Équipe<br><span style="font-size:10px;font-weight:400;opacity:.8">10 000 XOF/mois</span>
                       </button>
                       <button type="button" class="sa-plan-pill" data-plan="unlimited" onclick="_saSelectPlan('unlimited')"
                         style="padding:8px 10px;border-radius:8px;border:1.5px solid rgba(46,94,58,0.3);background:rgba(46,94,58,0.07);color:var(--green);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center">
@@ -3347,6 +3348,18 @@
                       <label>Mot de passe <span style="color:var(--sub);font-weight:400;font-size:11px">(généré auto si vide)</span></label>
                       <input type="password" id="new_password" placeholder="Min. 8 caractères" autocomplete="new-password" />
                     </div>
+                    <div class="form-group">
+                      <label>Packs juridiques additionnels</label>
+                      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;font-size:11px;color:var(--sub)">
+                        <label><input type="checkbox" class="new-pack-check" value="france" /> France</label>
+                        <label><input type="checkbox" class="new-pack-check" value="europe" /> Europe & CEDH</label>
+                        <label><input type="checkbox" class="new-pack-check" value="ohada" /> OHADA</label>
+                        <label><input type="checkbox" class="new-pack-check" value="cima" /> CIMA</label>
+                        <label><input type="checkbox" class="new-pack-check" value="bceao_uemoa" /> BCEAO & UEMOA</label>
+                        <label><input type="checkbox" class="new-pack-check" value="international" /> International</label>
+                      </div>
+                      <div style="font-size:10px;color:var(--sub);margin-top:6px">Ces packs complètent ceux déjà inclus dans le niveau choisi.</div>
+                    </div>
                   </div>
 
                   <button class="btn btn-primary" id="new-client-btn" onclick="createNewWorkspace()">
@@ -3380,8 +3393,8 @@
                   <div class="sa-filter-pills" id="sa-filter-pills">
                     <button class="sa-fpill active" data-f="" onclick="_saSetFilter(this,'')">Tous</button>
                     <button class="sa-fpill" data-f="free" onclick="_saSetFilter(this,'free')">Gratuit</button>
-                    <button class="sa-fpill" data-f="basic" onclick="_saSetFilter(this,'basic')">Basic</button>
-                    <button class="sa-fpill" data-f="premium" onclick="_saSetFilter(this,'premium')">Premium</button>
+                    <button class="sa-fpill" data-f="basic" onclick="_saSetFilter(this,'basic')">Professionnel</button>
+                    <button class="sa-fpill" data-f="premium" onclick="_saSetFilter(this,'premium')">Cabinet & Équipe</button>
                     <button class="sa-fpill" data-f="unlimited" onclick="_saSetFilter(this,'unlimited')">Illimité</button>
                     <button class="sa-fpill" data-f="suspended" onclick="_saSetFilter(this,'suspended')">Suspendus</button>
                   </div>
@@ -3614,12 +3627,12 @@
             <div class="plan-detail">Espace personnel · 1 demande interne incluse</div>
           </div>
           <div class="plan-card featured">
-            <div class="plan-name">Basic ★</div>
+            <div class="plan-name">Professionnel ★</div>
             <div class="plan-price">5 000 <span style="font-size:14px;font-weight:400;color:var(--sub)">FCFA/mois</span></div>
             <div class="plan-detail">Demandes illimitées · Dashboards juridiques · Alertes</div>
           </div>
           <div class="plan-card">
-            <div class="plan-name">Premium</div>
+            <div class="plan-name">Cabinet & Équipe</div>
             <div class="plan-price">10 000 <span style="font-size:14px;font-weight:400;color:var(--sub)">FCFA/mois</span></div>
             <div class="plan-detail">Accès complet + tous les verticaux + support prioritaire</div>
           </div>
@@ -3662,8 +3675,8 @@
                 <div class="form-group">
                   <label>Offre</label>
                   <select id="checkout_plan">
-                    <option value="basic">Basic — 5 000 FCFA / mois</option>
-                    <option value="premium">Premium — 10 000 FCFA / mois</option>
+                    <option value="basic">Professionnel — 5 000 FCFA / mois</option>
+                    <option value="premium">Cabinet & Équipe — 10 000 FCFA / mois</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -5123,7 +5136,7 @@ const serviceCatalog = [
   { key: 'bceao',             icon: '',  title: 'BCEAO — Banque & Finance',   desc: 'Obligations bancaires, KYC, LCB/FT et reporting.',          tab: 'bceao'  },
   { key: 'internal_requests', icon: '',  title: 'Demandes internes',          desc: 'Envoyer une demande à votre équipe BAOBAB.',                tab: 'espace' },
   { key: 'alerts',            icon: '',  title: 'Alertes & Échéances',        desc: 'Surveiller les risques de non-conformité.',                 tab: 'client' },
-  { key: 'priority_support',  icon: '',  title: 'Support prioritaire',        desc: 'Canal de support dédié pour les espaces Premium.',          tab: 'espace' },
+  { key: 'priority_support',  icon: '',  title: 'Support prioritaire',        desc: 'Canal de support dédié aux espaces Cabinet & Équipe.',      tab: 'espace' },
 ];
 
 let currentClientWorkspace = null;
@@ -5216,6 +5229,15 @@ const _llTickerItems = [
   "Droit international · sources séparées des droits nationaux",
   "Recherche juridique · pays, juridiction, langue et date d'applicabilité",
 ];
+
+const legalPackCatalog = {
+  france:          { name: 'France', services: ['legal_fr'] },
+  europe:          { name: 'Europe & CEDH', services: ['eu', 'echr'] },
+  ohada:           { name: 'OHADA', services: ['ohada'] },
+  cima:            { name: 'CIMA', services: ['cima'] },
+  bceao_uemoa:     { name: 'BCEAO & UEMOA', services: ['bceao'] },
+  international:   { name: 'International', services: ['international'] },
+};
 let _llTickerIndex = 0;
 function initLLTicker() {
   const el = document.getElementById('ll-ticker');
@@ -5320,7 +5342,7 @@ function _renderPaymentBadge(workspace) {
   const isActive = workspace.subscription_status === 'active' || workspace.subscription_status === 'unlimited_grant';
   if (!isActive) return;
 
-  const planNames = { basic: 'Basic', premium: 'Premium', free: 'Gratuit' };
+  const planNames = { basic: 'Professionnel', premium: 'Cabinet & Équipe', free: 'Gratuit' };
   const planAmounts = { basic: '5 000', premium: '10 000', free: '0' };
   const planName = planNames[workspace.plan] || workspace.plan;
   const amount = lastPayment ? lastPayment.amount.toLocaleString('fr-FR') : (planAmounts[workspace.plan] || '—');
@@ -5369,6 +5391,7 @@ function renderClientWorkspace(workspace) {
   const planLabel = workspace.subscription_status === 'unlimited_grant'
     ? 'Accès illimité — offert par BAOBAB'
     : `${(workspace.plan_details || {}).name || workspace.plan} — ${workspace.subscription_status}`;
+  const legalPacks = workspace.legal_packs || [];
 
   document.getElementById('client-title').textContent =
     branding.display_name || workspace.organization_name;
@@ -5381,6 +5404,14 @@ function renderClientWorkspace(workspace) {
       <div class="info-item">Utilisateur<strong>${workspace.user_name || workspace.owner_name}</strong></div>
       <div class="info-item">Offre<strong>${planLabel}</strong></div>
       <div class="info-item">Demandes internes<strong>${workspace.internal_requests_used || 0}</strong></div>
+    </div>
+    <div style="margin-bottom:1.5rem">
+      <div class="section-title">Packs juridiques actifs</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        ${legalPacks.length
+          ? legalPacks.map(code => `<span class="pill pill-gold">${escHtml(legalPackCatalog[code]?.name || code)}</span>`).join('')
+          : '<span style="font-size:12px;color:var(--sub)">Aucun pack spécialisé — accès découverte uniquement.</span>'}
+      </div>
     </div>
     <div class="section-title">Services disponibles</div>
     <div class="service-grid">
@@ -5586,8 +5617,8 @@ function _saRenderList() {
 
   const planPills = {
     free:      '<span class="pill pill-gray" style="font-size:10px">Gratuit</span>',
-    basic:     '<span class="pill pill-blue" style="font-size:10px">Basic</span>',
-    premium:   '<span class="pill pill-gold" style="font-size:10px">Premium</span>',
+    basic:     '<span class="pill pill-blue" style="font-size:10px">Professionnel</span>',
+    premium:   '<span class="pill pill-gold" style="font-size:10px">Cabinet & Équipe</span>',
     unlimited: '<span class="pill" style="background:rgba(46,94,58,0.12);color:#1A7A40;font-size:10px">Illimité</span>',
   };
 
@@ -5603,6 +5634,14 @@ function _saRenderList() {
     const pwdBadge  = ws.admin_password_hash
       ? (ws.password_is_temporary ? '<span class="ws-pwd-unset">· mdp temporaire</span>' : '<span class="ws-pwd-set">· mdp ✓</span>')
       : '<span class="ws-pwd-unset" style="color:#c0392b">· ⚠ aucun mdp — réinitialiser</span>';
+    const activePacks = new Set(ws.legal_packs || []);
+    const includedPacks = new Set((ws.plan_details || {}).included_packs || []);
+    const packControls = Object.entries(legalPackCatalog).map(([code, pack]) => `
+      <label style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--sub);cursor:pointer">
+        <input type="checkbox" class="pack-check-${ws.workspace_id}" value="${code}"
+          ${activePacks.has(code) ? 'checked' : ''} ${includedPacks.has(code) ? 'disabled' : ''} />
+        ${escHtml(pack.name)}${includedPacks.has(code) ? ' · inclus' : ''}
+      </label>`).join('');
 
     return `
     <div class="ws-row">
@@ -5619,11 +5658,16 @@ function _saRenderList() {
           &nbsp;·&nbsp; ${ws.territory || '—'}
           &nbsp;·&nbsp; <code>${escHtml(ws.workspace_id)}</code>
         </div>
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:8px 0 2px;padding:8px 10px;background:rgba(60,20,5,.035);border-radius:7px">
+          <strong style="font-size:10px;color:var(--text);text-transform:uppercase;letter-spacing:.5px">Packs</strong>
+          ${packControls}
+          <button class="ws-act primary" style="margin-left:auto" onclick="saveWorkspacePacks('${ws.workspace_id}')">Enregistrer les packs</button>
+        </div>
         <div class="ws-actions">
           <select class="ws-plan-sel" id="plan-sel-${ws.workspace_id}">
             <option value="free"      ${ws.plan === 'free'      ? 'selected' : ''}>Gratuit</option>
-            <option value="basic"     ${ws.plan === 'basic'     ? 'selected' : ''}>Basic</option>
-            <option value="premium"   ${ws.plan === 'premium'   ? 'selected' : ''}>Premium</option>
+            <option value="basic"     ${ws.plan === 'basic'     ? 'selected' : ''}>Professionnel</option>
+            <option value="premium"   ${ws.plan === 'premium'   ? 'selected' : ''}>Cabinet & Équipe</option>
             <option value="unlimited" ${ws.plan === 'unlimited' ? 'selected' : ''}>Illimité</option>
           </select>
           <button class="ws-act primary" onclick="activateWorkspacePlan('${ws.workspace_id}')">Activer</button>
@@ -5636,6 +5680,32 @@ function _saRenderList() {
       </div>
     </div>`;
   }).join('');
+}
+
+async function saveWorkspacePacks(wsId) {
+  const token = state.superadminToken;
+  if (!token) return;
+  const workspace = _saAllWorkspaces.find(ws => ws.workspace_id === wsId);
+  if (!workspace) return;
+
+  const selectedPacks = [...document.querySelectorAll(`.pack-check-${wsId}:checked:not(:disabled)`)].map(input => input.value);
+  const packServiceKeys = new Set(Object.values(legalPackCatalog).flatMap(pack => pack.services));
+  const retainedServices = (workspace.enabled_services || []).filter(service => !packServiceKeys.has(service));
+  const selectedServices = selectedPacks.flatMap(code => legalPackCatalog[code]?.services || []);
+  const enabled_services = [...new Set([...retainedServices, ...selectedServices])];
+
+  const res = await fetch(`/api/v1/accounts/superadmin/workspaces/${wsId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ enabled_services }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    alert(`Erreur : ${fmtError(error.detail)}`);
+    return;
+  }
+  alert('✓ Packs juridiques mis à jour.');
+  await loadSAWorkspaces();
 }
 
 async function loadSAWorkspaces() {
@@ -5738,7 +5808,7 @@ async function activateWorkspacePlan(wsId) {
   if (!token) { alert('Non authentifié superadmin.'); return; }
   const plan = document.getElementById(`plan-sel-${wsId}`)?.value;
   if (!plan) return;
-  const planNames = { free: 'Gratuit', basic: 'Basic', premium: 'Premium' };
+  const planNames = { free: 'Gratuit', basic: 'Professionnel', premium: 'Cabinet & Équipe' };
   if (!confirm(`Activer le plan ${planNames[plan]} pour ce workspace ?`)) return;
 
   const subscription_status = plan === 'free' ? 'free' : 'active';
@@ -5811,7 +5881,9 @@ async function createNewWorkspace() {
     organization_name: org_name,
     territory,
     plan: _saNewPlan,
-    branding: { display_name: display_name || org_name }
+    branding: { display_name: display_name || org_name },
+    enabled_services: [...document.querySelectorAll('.new-pack-check:checked')]
+      .flatMap(input => legalPackCatalog[input.value]?.services || [])
   };
   if (password) payload.password = password;
 
@@ -5837,7 +5909,7 @@ async function createNewWorkspace() {
 }
 
 function renderWorkspaceCreated(ws, contactEmail) {
-  const planLabels = { free: 'Gratuit', basic: 'Basic', premium: 'Premium', unlimited: 'Illimité' };
+  const planLabels = { free: 'Gratuit', basic: 'Professionnel', premium: 'Cabinet & Équipe', unlimited: 'Illimité' };
   const planLabel = planLabels[ws.plan] || ws.plan || ws.subscription_status;
   const email = contactEmail || ws.email || '—';
 
@@ -6053,7 +6125,7 @@ function selectPlan(plan) {
   });
   document.getElementById(`plan-card-${plan}`)?.classList.add('selected');
 
-  const labels = { basic: 'Basic — 5 000 XOF/mois', premium: 'Premium — 10 000 XOF/mois' };
+  const labels = { basic: 'Professionnel — 5 000 XOF/mois', premium: 'Cabinet & Équipe — 10 000 XOF/mois' };
   document.getElementById('checkout-box-title').textContent =
     `Souscrire à la formule ${labels[plan] || plan}`;
   document.getElementById('plans-checkout-error').style.display = 'none';
@@ -6957,12 +7029,12 @@ function analyserQuestion() {
             <div style="font-size:13px;color:var(--fg);margin-bottom:12px">${escHtml(d.message)}</div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
               <div style="flex:1;min-width:140px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px">
-                <div style="font-size:11px;color:var(--sub)">Basic</div>
+                <div style="font-size:11px;color:var(--sub)">Professionnel</div>
                 <div style="font-size:13px;font-weight:600;color:var(--fg);margin:2px 0">30 analyses/jour</div>
                 <div style="font-size:12px;color:var(--gold)">5 000 FCFA/mois</div>
               </div>
               <div style="flex:1;min-width:140px;padding:10px;background:var(--card);border:1px solid var(--gold);border-radius:8px">
-                <div style="font-size:11px;color:var(--sub)">Premium</div>
+                <div style="font-size:11px;color:var(--sub)">Cabinet & Équipe</div>
                 <div style="font-size:13px;font-weight:600;color:var(--fg);margin:2px 0">Illimité</div>
                 <div style="font-size:12px;color:var(--gold)">10 000 FCFA/mois</div>
               </div>
@@ -8674,7 +8746,7 @@ document.addEventListener('keydown', e => {
   }
 
   // Mettre à jour l'overlay avec les infos du plan
-  const planLabels = { basic: 'Basic — 5 000 XOF/mois', premium: 'Premium — 10 000 XOF/mois' };
+  const planLabels = { basic: 'Professionnel — 5 000 XOF/mois', premium: 'Cabinet & Équipe — 10 000 XOF/mois' };
   const elPlan = document.getElementById('sao-plan');
   const elOrg  = document.getElementById('sao-org');
   if (elPlan) elPlan.textContent = planLabels[pending.plan] || pending.plan;

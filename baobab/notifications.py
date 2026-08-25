@@ -255,7 +255,7 @@ async def notify_admin_new_workspace(workspace: dict) -> bool:
 
 async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
     """Alerte l'admin qu'un paiement est en attente d'approbation."""
-    plan_labels = {"basic": "Basic — 5 000 XOF/mois", "premium": "Premium — 10 000 XOF/mois"}
+    plan_labels = {"basic": "Professionnel — 5 000 XOF/mois", "premium": "Cabinet & Équipe — 10 000 XOF/mois"}
     provider_labels = {"orange_money": "Orange Money", "mtn_money": "MTN Mobile Money", "wave": "Wave"}
 
     organization_name = esc(workspace["organization_name"])
@@ -314,7 +314,7 @@ async def notify_admin_payment_pending(payment: dict, workspace: dict) -> bool:
 
 async def notify_user_payment_confirmed(payment: dict, workspace: dict) -> bool:
     """Notifie l'utilisateur que son paiement a été validé et lui donne son accès."""
-    plan_labels = {"basic": "Basic", "premium": "Premium"}
+    plan_labels = {"basic": "Professionnel", "premium": "Cabinet & Équipe"}
 
     owner_name = esc(workspace["owner_name"])
     organization_name = esc(workspace["organization_name"])

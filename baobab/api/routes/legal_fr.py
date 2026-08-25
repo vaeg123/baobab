@@ -21,7 +21,7 @@ import httpx
 from fastapi import APIRouter, Header, HTTPException, Query
 from pydantic import BaseModel
 
-from baobab.api.routes.legal import _require_active_workspace
+from baobab.api.routes.accounts import require_workspace_service
 
 router = APIRouter(tags=["droit-français"])
 
@@ -162,7 +162,7 @@ async def status():
 @router.post("/legal-fr/judilibre/search")
 async def judilibre_search(req: SearchRequest, x_user_token: str | None = Header(default=None)):
     """Recherche dans Judilibre (décisions Cour de Cassation + juridictions)."""
-    await _require_active_workspace(x_user_token)
+    await require_workspace_service(x_user_token, "legal_fr")
     return await _piste_get(JUDILIBRE_BASE, "/search", {
         "query": req.query,
         "page": req.page,
@@ -176,21 +176,21 @@ async def judilibre_search(req: SearchRequest, x_user_token: str | None = Header
 @router.get("/legal-fr/judilibre/decision")
 async def judilibre_decision(id: str = Query(...), x_user_token: str | None = Header(default=None)):
     """Texte intégral d'une décision Judilibre."""
-    await _require_active_workspace(x_user_token)
+    await require_workspace_service(x_user_token, "legal_fr")
     return await _piste_get(JUDILIBRE_BASE, "/decision", {"id": id})
 
 
 @router.get("/legal-fr/judilibre/taxonomy")
 async def judilibre_taxonomy(x_user_token: str | None = Header(default=None)):
     """Taxonomie Judilibre (juridictions, types, chambres…)."""
-    await _require_active_workspace(x_user_token)
+    await require_workspace_service(x_user_token, "legal_fr")
     return await _piste_get(JUDILIBRE_BASE, "/taxonomy")
 
 
 @router.get("/legal-fr/judilibre/stats")
 async def judilibre_stats(x_user_token: str | None = Header(default=None)):
     """Statistiques du corpus Judilibre."""
-    await _require_active_workspace(x_user_token)
+    await require_workspace_service(x_user_token, "legal_fr")
     return await _piste_get(JUDILIBRE_BASE, "/stats")
 
 
@@ -199,7 +199,7 @@ async def judilibre_stats(x_user_token: str | None = Header(default=None)):
 @router.post("/legal-fr/legifrance/search")
 async def legifrance_search(req: SearchRequest, x_user_token: str | None = Header(default=None)):
     """Recherche dans Légifrance (codes, lois, règlements, jurisprudence)."""
-    await _require_active_workspace(x_user_token)
+    await require_workspace_service(x_user_token, "legal_fr")
     filtres = []
     if req.type:
         filtres.append({"facette": "NATURE", "valeurs": [req.type]})
@@ -229,6 +229,6 @@ async def legifrance_consult(
     x_user_token: str | None = Header(default=None),
 ):
     """Consultation d'un texte Légifrance (loi, code, article…)."""
-    await _require_active_workspace(x_user_token)
+    await require_workspace_service(x_user_token, "legal_fr")
     resource = _validate_resource(resource)
     return await _piste_post(LEGIFRANCE_BASE, f"/consult/{resource}", body)
