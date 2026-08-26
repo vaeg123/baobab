@@ -7,7 +7,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from urllib.parse import urljoin
 from uuid import uuid4
 
@@ -15,6 +15,8 @@ import httpx
 from bs4 import BeautifulSoup
 
 from baobab.api.routes.legal import _conn
+from baobab.config import settings
+from baobab.notifications import notify_legal_watch_alert
 
 
 @dataclass(frozen=True)
@@ -24,6 +26,7 @@ class WatchSource:
     corpus: str
     discovery_url: str
     parser: str
+    fallback_urls: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -58,6 +61,7 @@ WATCH_SOURCES = (
         corpus="cima",
         discovery_url="https://www.cima-afrique.org/decisions-de-la-crca/",
         parser="cima_crca",
+        fallback_urls=("https://cima-afrique.org/document-category/decisions-de-la-crca/",),
     ),
 )
 
@@ -124,6 +128,20 @@ def parse_cima_crca(html: str, source: WatchSource) -> list[Artifact]:
         artifacts[url] = Artifact(
             source.code, source.corpus, url, title or row_text[:180], legal_date, precision
         )
+    # Le site CIMA expose aussi les décisions sous forme de cartes menant à
+    # une fiche officielle, notamment lorsque la page historique est lente.
+    for link in soup.select("a[href]"):
+        title = " ".join(link.get_text(" ", strip=True).split())
+        if not re.search(r"\bd[ée]cision\b", title, re.IGNORECASE):
+            continue
+        url = urljoin(source.discovery_url, str(link.get("href") or ""))
+        if "cima-afrique.org" not in url.lower():
+            continue
+        legal_date, precision = _parse_french_date(title)
+        if url not in artifacts:
+            artifacts[url] = Artifact(
+                source.code, source.corpus, url, title[:500], legal_date, precision
+            )
     return sorted(artifacts.values(), key=lambda item: item.url)
 
 
@@ -148,17 +166,59 @@ def watch_matches_artifact(watch: dict, artifact: Artifact) -> bool:
     return any(term in haystack for term in terms)
 
 
-async def _fetch_source(client: httpx.AsyncClient, source: WatchSource) -> tuple[WatchSource, str]:
-    response = await client.get(
-        source.discovery_url,
-        headers={
-            "User-Agent": "BAOBAB-Legal-Watch/1.0 (+https://vaegbaobab.com)",
-            "Accept": "text/html,application/xhtml+xml",
-            "Accept-Language": "fr-FR,fr;q=0.9",
-        },
-    )
-    response.raise_for_status()
-    return source, response.text
+def score_artifact_validation(
+    artifact: Artifact, consecutive_observations: int, *, official_source: bool = True
+) -> tuple[int, list[str]]:
+    """Calcule un score déterministe de fiabilité documentaire, jamais juridique."""
+    score = 0
+    reasons: list[str] = []
+    if official_source:
+        score += 40
+        reasons.append("SOURCE_OFFICIELLE_ENREGISTREE:+40")
+    if consecutive_observations >= 2:
+        score += 20
+        reasons.append("DOCUMENT_STABLE_SUR_2_CYCLES:+20")
+    else:
+        reasons.append("SECONDE_OBSERVATION_REQUISE:+0")
+    generic = {"document", "publication", "décision", "decision", "voir la notice"}
+    if len(artifact.title.strip()) >= 15 and artifact.title.strip().lower() not in generic:
+        score += 15
+        reasons.append("TITRE_DOCUMENTAIRE_EXPLOITABLE:+15")
+    if re.search(r"\b(arr[êe]t|d[ée]cision)\s*(?:n[°o]|no|num[ée]ro)?\s*\d", artifact.title, re.I):
+        score += 15
+        reasons.append("REFERENCE_JURIDIQUE_RECONNUE:+15")
+    if artifact.legal_date and artifact.legal_date <= date.today() + timedelta(days=2):
+        score += 10
+        reasons.append("DATE_JURIDIQUE_PLAUSIBLE:+10")
+    else:
+        reasons.append("DATE_JURIDIQUE_ABSENTE_OU_INCOHERENTE:+0")
+    return score, reasons
+
+
+async def _fetch_source(
+    client: httpx.AsyncClient, source: WatchSource
+) -> tuple[WatchSource, str, str, list[str]]:
+    errors: list[str] = []
+    urls = (source.discovery_url, *source.fallback_urls)
+    for url_index, url in enumerate(urls):
+        attempts = 2 if url_index == 0 else 1
+        for attempt in range(attempts):
+            try:
+                response = await client.get(
+                    url,
+                    headers={
+                        "User-Agent": "BAOBAB-Legal-Watch/1.1 (+https://vaegbaobab.com)",
+                        "Accept": "text/html,application/xhtml+xml",
+                        "Accept-Language": "fr-FR,fr;q=0.9",
+                    },
+                )
+                response.raise_for_status()
+                return source, response.text, str(response.url), errors
+            except (httpx.TimeoutException, httpx.HTTPError) as exc:
+                errors.append(f"{url} [{attempt + 1}/{attempts}]: {type(exc).__name__}")
+                if attempt + 1 < attempts:
+                    await asyncio.sleep(0.5 * (2**attempt))
+    raise RuntimeError("; ".join(errors))
 
 
 async def run_watch_cycle(trigger: str = "manual") -> dict:
@@ -170,7 +230,8 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
         "run_id": run_id, "trigger": trigger, "status": "RUNNING",
         "sources_checked": len(WATCH_SOURCES), "sources_succeeded": 0,
         "sources_failed": 0, "artifacts_seen": 0, "events_created": 0,
-        "matches_created": 0, "sources": [],
+        "events_auto_validated": 0, "matches_created": 0, "emails_sent": 0,
+        "sources": [],
     }
     try:
         lock_acquired = bool(await conn.fetchval("SELECT pg_try_advisory_lock($1)", 7240202601))
@@ -180,7 +241,7 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
             "INSERT INTO legal_watch_runs (run_id, trigger, status, sources_checked) VALUES ($1,$2,'RUNNING',$3)",
             run_id, trigger, len(WATCH_SOURCES),
         )
-        timeout = httpx.Timeout(15.0, connect=8.0)
+        timeout = httpx.Timeout(12.0, connect=6.0)
         async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
             fetched = await asyncio.gather(
                 *(_fetch_source(client, source) for source in WATCH_SOURCES),
@@ -205,7 +266,7 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                 )
                 continue
 
-            _, html = result
+            _, html, effective_url, fetch_warnings = result
             try:
                 artifacts = parse_source(html, source)
                 if not artifacts:
@@ -238,7 +299,10 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
             async with conn.transaction():
                 for artifact in artifacts:
                     existing = await conn.fetchrow(
-                        "SELECT artifact_id, content_checksum FROM legal_source_artifacts WHERE source_code=$1 AND artifact_url=$2",
+                        """SELECT artifact_id, content_checksum, observation_count,
+                                  consecutive_observation_count, auto_validated_at
+                           FROM legal_source_artifacts
+                           WHERE source_code=$1 AND artifact_url=$2""",
                         source.code, artifact.url,
                     )
                     corpus_id = await conn.fetchval(
@@ -254,24 +318,36 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                         state = "CHANGED"
 
                     artifact_id = existing["artifact_id"] if existing else f"artifact_{uuid4().hex[:18]}"
-                    await conn.execute(
+                    observed = await conn.fetchrow(
                         """INSERT INTO legal_source_artifacts
                            (artifact_id,source_code,artifact_url,title,corpus,legal_date,date_precision,
-                            content_checksum,state,linked_corpus_id,last_changed_at)
-                           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::varchar,$10,CASE WHEN $9::varchar='CHANGED' THEN NOW() ELSE NULL END)
+                            content_checksum,state,linked_corpus_id,last_changed_at,last_observed_run_id)
+                           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::varchar,$10,
+                                   CASE WHEN $9::varchar='CHANGED' THEN NOW() ELSE NULL END,$11)
                            ON CONFLICT (source_code,artifact_url) DO UPDATE SET
                            title=EXCLUDED.title, legal_date=EXCLUDED.legal_date,
                            date_precision=EXCLUDED.date_precision, content_checksum=EXCLUDED.content_checksum,
                            state=EXCLUDED.state, linked_corpus_id=COALESCE(EXCLUDED.linked_corpus_id,legal_source_artifacts.linked_corpus_id),
-                           last_seen_at=NOW(), last_changed_at=CASE WHEN legal_source_artifacts.content_checksum<>EXCLUDED.content_checksum THEN NOW() ELSE legal_source_artifacts.last_changed_at END""",
+                           observation_count=CASE WHEN legal_source_artifacts.last_observed_run_id IS DISTINCT FROM $11::varchar
+                                                  THEN legal_source_artifacts.observation_count+1 ELSE legal_source_artifacts.observation_count END,
+                           consecutive_observation_count=CASE
+                               WHEN legal_source_artifacts.content_checksum<>EXCLUDED.content_checksum THEN 1
+                               WHEN legal_source_artifacts.last_observed_run_id IS DISTINCT FROM $11::varchar
+                                   THEN legal_source_artifacts.consecutive_observation_count+1
+                               ELSE legal_source_artifacts.consecutive_observation_count END,
+                           last_observed_run_id=$11::varchar, last_seen_at=NOW(),
+                           auto_validated_at=CASE WHEN legal_source_artifacts.content_checksum<>EXCLUDED.content_checksum THEN NULL ELSE legal_source_artifacts.auto_validated_at END,
+                           last_changed_at=CASE WHEN legal_source_artifacts.content_checksum<>EXCLUDED.content_checksum THEN NOW() ELSE legal_source_artifacts.last_changed_at END
+                           RETURNING observation_count,consecutive_observation_count,auto_validated_at""",
                         artifact_id, source.code, artifact.url, artifact.title, artifact.corpus,
                         artifact.legal_date, artifact.date_precision, artifact.checksum, state, corpus_id,
+                        run_id,
                     )
-                    if not event_type:
-                        continue
-                    event_id = f"event_{uuid4().hex[:20]}"
-                    inserted = await conn.fetchval(
-                        """INSERT INTO legal_watch_events
+                    inserted = None
+                    if event_type:
+                        event_id = f"event_{uuid4().hex[:20]}"
+                        inserted = await conn.fetchval(
+                            """INSERT INTO legal_watch_events
                            (event_id,run_id,source_code,event_type,artifact_url,title,corpus,
                             legal_date,content_checksum,linked_corpus_id,payload)
                            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb)
@@ -280,30 +356,84 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                         event_id, run_id, source.code, event_type, artifact.url, artifact.title,
                         artifact.corpus, artifact.legal_date, artifact.checksum, corpus_id,
                         json.dumps({"date_precision": artifact.date_precision}),
-                    )
-                    if not inserted:
-                        continue
-                    source_events += 1
-                    stats["events_created"] += 1
-                    for watch in watches:
-                        if not watch_matches_artifact(watch, artifact):
-                            continue
-                        matched = await conn.fetchval(
-                            """INSERT INTO legal_watch_matches
-                               (match_id,watch_id,event_id,workspace_id,delivery_status)
-                               VALUES ($1,$2,$3,$4,'DISABLED')
-                               ON CONFLICT (watch_id,event_id) DO NOTHING RETURNING match_id""",
-                            f"match_{uuid4().hex[:20]}", watch["watch_id"], inserted,
-                            watch["workspace_id"],
                         )
-                        if matched:
-                            stats["matches_created"] += 1
-                            await conn.execute(
-                                """UPDATE legal_watch_subscriptions SET last_match_at=NOW(),
-                                   last_match_count=last_match_count+1, last_evaluated_at=NOW(),
-                                   delivery_status='DISABLED', updated_at=NOW() WHERE watch_id=$1""",
-                                watch["watch_id"],
+                        if inserted:
+                            source_events += 1
+                            stats["events_created"] += 1
+
+                    score, reasons = score_artifact_validation(
+                        artifact, int(observed["consecutive_observation_count"])
+                    )
+                    await conn.execute(
+                        """UPDATE legal_source_artifacts SET validation_score=$3,
+                           validation_reasons=$4::jsonb WHERE source_code=$1 AND artifact_url=$2""",
+                        source.code, artifact.url, score, json.dumps(reasons),
+                    )
+                    if score < 85 or observed["auto_validated_at"]:
+                        continue
+                    pending_events = await conn.fetch(
+                        """SELECT event_id FROM legal_watch_events
+                           WHERE source_code=$1 AND artifact_url=$2 AND content_checksum=$3::char(64)
+                             AND review_status='PENDING'""",
+                        source.code, artifact.url, artifact.checksum,
+                    )
+                    if not pending_events:
+                        continue
+                    if not corpus_id:
+                        document_type = "decision_crca" if artifact.corpus == "cima" else "arret_ccja"
+                        corpus_id = await conn.fetchval(
+                            """INSERT INTO legal_corpus
+                               (ref,type,corpus,juridiction,titre,date_decision,source_url,
+                                source_code,source_tier,source_verified_at,editorial_status,
+                                impact_level,detected_at,metadata)
+                               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'OFFICIAL',NOW(),
+                                       'SOURCE_VERIFIED','TO_QUALIFY',NOW(),$9::jsonb)
+                               RETURNING id""",
+                            artifact.title[:200], document_type, artifact.corpus,
+                            "CRCA" if artifact.corpus == "cima" else "CCJA",
+                            artifact.title, artifact.legal_date, artifact.url, source.code,
+                            json.dumps({
+                                "automated_validation": True,
+                                "validation_score": score,
+                                "validation_reasons": reasons,
+                                "date_precision": artifact.date_precision,
+                            }),
+                        )
+                    await conn.execute(
+                        """UPDATE legal_source_artifacts SET state='AUTO_VALIDATED',
+                           linked_corpus_id=$3,validation_score=$4,validation_reasons=$5::jsonb,
+                           auto_validated_at=NOW() WHERE source_code=$1 AND artifact_url=$2""",
+                        source.code, artifact.url, corpus_id, score, json.dumps(reasons),
+                    )
+                    for pending_event in pending_events:
+                        event_id = pending_event["event_id"]
+                        await conn.execute(
+                            """UPDATE legal_watch_events SET review_status='AUTO_VALIDATED',
+                               reviewed_at=NOW(),auto_validated_at=NOW(),linked_corpus_id=$2,
+                               validation_score=$3,validation_reasons=$4::jsonb WHERE event_id=$1""",
+                            event_id, corpus_id, score, json.dumps(reasons),
+                        )
+                        stats["events_auto_validated"] += 1
+                        for watch in watches:
+                            if not watch_matches_artifact(watch, artifact):
+                                continue
+                            delivery_status = "PENDING" if watch.get("email_enabled") else "DISABLED"
+                            matched = await conn.fetchval(
+                                """INSERT INTO legal_watch_matches
+                                   (match_id,watch_id,event_id,workspace_id,delivery_status)
+                                   VALUES ($1,$2,$3,$4,$5)
+                                   ON CONFLICT (watch_id,event_id) DO NOTHING RETURNING match_id""",
+                                f"match_{uuid4().hex[:20]}", watch["watch_id"], event_id,
+                                watch["workspace_id"], delivery_status,
                             )
+                            if matched:
+                                stats["matches_created"] += 1
+                                await conn.execute(
+                                    """UPDATE legal_watch_subscriptions SET last_match_at=NOW(),
+                                       last_match_count=last_match_count+1,last_evaluated_at=NOW(),
+                                       delivery_status=$2,updated_at=NOW() WHERE watch_id=$1""",
+                                    watch["watch_id"], delivery_status,
+                                )
 
                 await conn.execute(
                     """INSERT INTO legal_source_snapshots
@@ -315,18 +445,56 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                        content_checksum=EXCLUDED.content_checksum,last_checked_at=NOW(),
                        last_changed_at=CASE WHEN legal_source_snapshots.content_checksum IS DISTINCT FROM EXCLUDED.content_checksum THEN NOW() ELSE legal_source_snapshots.last_changed_at END,
                        last_status='SUCCESS',last_error=NULL,artifact_count=EXCLUDED.artifact_count,updated_at=NOW()""",
-                    source.code, source.discovery_url, snapshot_checksum, previous_snapshot, len(artifacts),
+                    source.code, effective_url, snapshot_checksum, previous_snapshot, len(artifacts),
                 )
-            stats["sources"].append({"code": source.code, "status": "SUCCESS", "artifacts": len(artifacts), "events": source_events})
+            stats["sources"].append({"code": source.code, "status": "SUCCESS", "url": effective_url,
+                                     "fallback_used": effective_url.rstrip("/") != source.discovery_url.rstrip("/"),
+                                     "fetch_warnings": fetch_warnings, "artifacts": len(artifacts), "events": source_events})
 
         await conn.execute("UPDATE legal_watch_subscriptions SET last_evaluated_at=NOW() WHERE active=TRUE")
+        if settings.watch_email_delivery_enabled:
+            deliveries = await conn.fetch(
+                """SELECT m.match_id,s.name AS watch_name,w.data->>'email' AS recipient,
+                          e.title,e.source_code,e.artifact_url,e.validation_score
+                   FROM legal_watch_matches m
+                   JOIN legal_watch_subscriptions s ON s.watch_id=m.watch_id
+                   JOIN legal_watch_events e ON e.event_id=m.event_id
+                   LEFT JOIN account_workspaces w ON w.workspace_id=m.workspace_id
+                   WHERE m.delivery_status='PENDING' AND s.active=TRUE
+                     AND s.email_enabled=TRUE AND e.review_status='AUTO_VALIDATED'
+                   ORDER BY m.matched_at LIMIT 100"""
+            )
+            for delivery in deliveries:
+                claimed = await conn.fetchval(
+                    """UPDATE legal_watch_matches SET delivery_status='SENDING'
+                       WHERE match_id=$1 AND delivery_status='PENDING' RETURNING match_id""",
+                    delivery["match_id"],
+                )
+                if not claimed:
+                    continue
+                recipient = str(delivery["recipient"] or "").strip()
+                sent = await notify_legal_watch_alert(
+                    recipient, delivery["watch_name"], dict(delivery)
+                ) if recipient else False
+                await conn.execute(
+                    """UPDATE legal_watch_matches SET delivery_status=$2,
+                       delivered_at=CASE WHEN $2::varchar='SENT' THEN NOW() ELSE NULL END,
+                       delivery_error=CASE WHEN $2::varchar='FAILED' THEN $3 ELSE NULL END
+                       WHERE match_id=$1""",
+                    delivery["match_id"], "SENT" if sent else "FAILED",
+                    None if sent else "Envoi indisponible ou destinataire absent",
+                )
+                if sent:
+                    stats["emails_sent"] += 1
         stats["status"] = "PARTIAL" if stats["sources_failed"] else "SUCCESS"
         await conn.execute(
             """UPDATE legal_watch_runs SET status=$2,finished_at=NOW(),sources_succeeded=$3,
-               sources_failed=$4,artifacts_seen=$5,events_created=$6,matches_created=$7,details=$8::jsonb
+               sources_failed=$4,artifacts_seen=$5,events_created=$6,matches_created=$7,
+               events_auto_validated=$8,emails_sent=$9,details=$10::jsonb
                WHERE run_id=$1""",
             run_id, stats["status"], stats["sources_succeeded"], stats["sources_failed"],
             stats["artifacts_seen"], stats["events_created"], stats["matches_created"],
+            stats["events_auto_validated"], stats["emails_sent"],
             json.dumps({"sources": stats["sources"]}),
         )
         return stats

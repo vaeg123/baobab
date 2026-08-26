@@ -10,6 +10,7 @@ from baobab.watch_engine import (
     _parse_french_date,
     parse_cima_crca,
     parse_ohada_biblio,
+    score_artifact_validation,
     watch_matches_artifact,
 )
 
@@ -43,6 +44,33 @@ def test_parse_cima_crca_extracts_pdf_and_precise_date():
     assert artifacts[0].legal_date == date(2025, 12, 13)
     assert artifacts[0].date_precision == "DAY"
     assert artifacts[0].url == "https://www.cima-afrique.org/docs/decision-17.pdf"
+
+
+def test_parse_cima_official_fallback_cards():
+    html = '<article><a href="/document/decision-n-12-2025/">Décision N° 12/2025 de la CRCA</a></article>'
+    artifacts = parse_cima_crca(html, _source("CIMA.OFFICIAL"))
+    assert len(artifacts) == 1
+    assert artifacts[0].url == "https://www.cima-afrique.org/document/decision-n-12-2025/"
+    assert artifacts[0].legal_date == date(2025, 1, 1)
+
+
+def test_validation_requires_two_stable_observations_and_quality_signals():
+    artifact = Artifact(
+        "CIMA.OFFICIAL", "cima", "https://cima-afrique.org/d/12",
+        "Décision N° 12/2025 de la CRCA", date(2025, 1, 1), "YEAR",
+    )
+    first_score, first_reasons = score_artifact_validation(artifact, 1)
+    stable_score, stable_reasons = score_artifact_validation(artifact, 2)
+    assert first_score == 80
+    assert "SECONDE_OBSERVATION_REQUISE:+0" in first_reasons
+    assert stable_score == 100
+    assert "DOCUMENT_STABLE_SUR_2_CYCLES:+20" in stable_reasons
+
+
+def test_validation_rejects_generic_undated_artifact():
+    artifact = Artifact("CIMA.OFFICIAL", "cima", "https://cima-afrique.org/document", "Document")
+    score, _ = score_artifact_validation(artifact, 3)
+    assert score < 85
 
 
 @pytest.mark.parametrize(

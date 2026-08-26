@@ -4684,7 +4684,7 @@
         <div class="veille-subscribe">
           <div class="veille-subscribe-text">
             <div class="veille-subscribe-title">Créer une surveillance</div>
-            <div class="veille-subscribe-sub">Enregistrez un critère de recherche pour retrouver immédiatement les publications correspondantes. Les alertes email restent désactivées tant que le moteur de collecte continue n'est pas certifié.</div>
+            <div class="veille-subscribe-sub">Enregistrez un critère de recherche. BAOBAB ne déclenche une alerte qu'après deux observations identiques et une validation automatique explicable de la source.</div>
           </div>
           <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="toggleWatchForm()">Nouvelle surveillance</button>
         </div>
@@ -4695,6 +4695,7 @@
               <div class="form-group"><label>Mots-clés</label><input id="watch-query" placeholder="Ex. gouvernance, SAS, fusion" /></div>
             </div>
             <div class="form-group"><label>Corpus</label><select id="watch-corpus"><option value="all">Tous mes packs</option><option value="france">France</option><option value="ohada">OHADA</option><option value="cima">CIMA</option><option value="bceao">BCEAO</option><option value="international">International</option></select></div>
+            <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--sub);margin:8px 0 14px"><input id="watch-email-enabled" type="checkbox" style="margin-top:2px"> Recevoir par email uniquement les publications automatiquement validées correspondant à ce critère.</label>
             <button class="btn btn-primary btn-sm" onclick="createLegalWatch()">Enregistrer</button>
             <span id="watch-form-message" style="font-size:12px;margin-left:10px;color:var(--sub)"></span>
           </div>
@@ -8005,18 +8006,20 @@ async function createLegalWatch() {
   const name = document.getElementById('watch-name').value.trim();
   const query = document.getElementById('watch-query').value.trim();
   const corpus = document.getElementById('watch-corpus').value;
+  const emailEnabled = document.getElementById('watch-email-enabled').checked;
   const message = document.getElementById('watch-form-message');
   if (!name) { message.textContent = 'Donnez un nom à la surveillance.'; return; }
   const res = await fetch('/api/v1/legal/watch/subscriptions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-User-Token': state.token || '' },
-    body: JSON.stringify({ name, query: query || null, corpus, email_enabled: false }),
+    body: JSON.stringify({ name, query: query || null, corpus, email_enabled: emailEnabled }),
   });
   const data = await parseJson(res);
   if (!res.ok) { message.textContent = fmtError(data.detail); return; }
   message.textContent = '✓ Surveillance enregistrée.';
   document.getElementById('watch-name').value = '';
   document.getElementById('watch-query').value = '';
+  document.getElementById('watch-email-enabled').checked = false;
   await loadLegalWatches();
 }
 

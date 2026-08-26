@@ -65,6 +65,31 @@ async def _send(to: str, subject: str, html: str, *, bcc: list[str] | None = Non
         return False
 
 
+async def notify_legal_watch_alert(to: str, watch_name: str, event: dict) -> bool:
+    """Alerte documentaire envoyée après validation automatique et consentement."""
+    title = esc(event.get("title", "Publication juridique"))
+    source = esc(event.get("source_code", "Source officielle"))
+    watch = esc(watch_name)
+    url = esc(event.get("artifact_url", ""))
+    score = esc(event.get("validation_score", ""))
+    body = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1a1a1a">
+      <div style="background:#1B3A2D;padding:24px;border-radius:8px 8px 0 0">
+        <h1 style="color:#fff;margin:0;font-size:20px">BAOBAB — Veille juridique</h1>
+      </div>
+      <div style="padding:24px;border:1px solid #ddd;border-radius:0 0 8px 8px">
+        <p style="font-size:12px;color:#666">Surveillance : <strong>{watch}</strong></p>
+        <h2 style="font-size:18px">{title}</h2>
+        <p style="font-size:13px;color:#555">Source : {source} · Score documentaire : {score}/100</p>
+        <p style="font-size:12px;color:#777">La provenance et la stabilité du document ont été
+        validées automatiquement. Son impact juridique reste à qualifier.</p>
+        <a href="{url}" style="display:inline-block;background:#BF4E1E;color:#fff;padding:11px 18px;
+           border-radius:6px;text-decoration:none;font-weight:bold">Consulter la source officielle</a>
+      </div>
+    </div>"""
+    return await _send(to, f"[BAOBAB] {event.get('title', 'Nouvelle publication juridique')}", body)
+
+
 async def notify_user_workspace_created(workspace: dict, clear_password: str | None = None) -> bool:
     """Email de bienvenue self-service : identifiants de connexion + lien vers les formules."""
     owner_name = esc(workspace["owner_name"])
