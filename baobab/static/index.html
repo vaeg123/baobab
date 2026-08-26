@@ -3138,9 +3138,9 @@
           <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
           <div class="card-body">
             <div id="client-pwd-info" style="font-size:12px;color:var(--sub);margin-bottom:1rem;padding:10px 12px;background:rgba(60,20,5,0.04);border:1px solid var(--border);border-radius:8px">
-              Mot de passe actuel : votre <strong>code d'accès</strong> (commence par <code>usr_</code>) si vous n'avez pas encore défini de mot de passe.
+              Utilisez votre mot de passe actuel. Si vous l'avez oublié, demandez sa réinitialisation à votre administrateur.
             </div>
-            <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="client_cur_pwd" placeholder="Mot de passe actuel ou code d'accès…" autocomplete="current-password" /></div>
+            <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="client_cur_pwd" placeholder="Votre mot de passe actuel" autocomplete="current-password" /></div>
             <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="client_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
             <div class="form-group"><label>Confirmer</label><input type="password" id="client_confirm_pwd" placeholder="Répétez le nouveau mot de passe" autocomplete="new-password" /></div>
             <div id="client-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
@@ -3178,7 +3178,7 @@
               <div class="card-body">
                 <div class="form-group"><label>Nom du responsable</label><input type="text" id="sa_owner_name" placeholder="Kouamé Diallo" /></div>
                 <div class="form-group"><label>Email responsable</label><input type="email" id="sa_owner_email" placeholder="responsable@organisation.ci" /></div>
-                <div class="form-group"><label>Organisation</label><input type="text" id="sa_org_name" placeholder="Cabinet Juridique Atlas" /></div>
+                <div class="form-group"><label>Nom de la structure</label><input type="text" id="sa_org_name" placeholder="VG, Juris Conseil, Groupe Atlas…" /></div>
                 <div class="form-group"><label>Nom administrateur</label><input type="text" id="sa_admin_name" placeholder="Admin Atlas" /></div>
                 <div class="form-group"><label>Email administrateur</label><input type="email" id="sa_admin_email" placeholder="admin@organisation.ci" /></div>
                 <div class="form-group"><label>Nom utilisateur</label><input type="text" id="sa_user_name" placeholder="Utilisateur Atlas" /></div>
@@ -3208,9 +3208,9 @@
           <div class="card-header"><div class="card-icon">🔑</div><span class="card-title">Changer mon mot de passe</span></div>
           <div class="card-body">
             <div id="admin-pwd-info" style="font-size:12px;color:var(--sub);margin-bottom:1rem;padding:10px 12px;background:rgba(60,20,5,0.04);border:1px solid var(--border);border-radius:8px">
-              Mot de passe actuel : votre <strong>code d'accès admin</strong> (commence par <code>adm_</code>) si vous n'avez pas encore défini de mot de passe.
+              Utilisez votre mot de passe actuel. Le code d'accès administrateur n'est pas un mot de passe.
             </div>
-            <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="admin_cur_pwd" placeholder="Mot de passe actuel ou code d'accès…" autocomplete="current-password" /></div>
+            <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="admin_cur_pwd" placeholder="Votre mot de passe actuel" autocomplete="current-password" /></div>
             <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="admin_new_pwd" placeholder="Min. 8 caractères" autocomplete="new-password" /></div>
             <div class="form-group"><label>Confirmer</label><input type="password" id="admin_confirm_pwd" placeholder="Répétez le nouveau mot de passe" autocomplete="new-password" /></div>
             <div id="admin-pwd-msg" style="display:none;font-size:13px;margin-bottom:0.75rem;padding:8px 12px;border-radius:6px"></div>
@@ -3273,7 +3273,7 @@
                 </div>
                 <div class="card-body">
                   <div class="form-group">
-                    <label>Organisation <span style="color:var(--clay)">*</span></label>
+                    <label>Nom de la structure <span style="color:var(--clay)">*</span></label>
                     <input type="text" id="new_org_name" placeholder="Cabinet Touré & Associés" />
                   </div>
                   <div class="form-group">
@@ -3675,7 +3675,7 @@
               <div class="card-body">
                 <div class="form-group"><label>Nom du responsable</label><input type="text" id="workspace_owner" placeholder="Awa Kouassi" /></div>
                 <div class="form-group"><label>Email</label><input type="email" id="workspace_email" placeholder="awa@cabinet.ci" /></div>
-                <div class="form-group"><label>Organisation</label><input type="text" id="workspace_org" placeholder="Cabinet Awa" /></div>
+                <div class="form-group"><label>Nom de la structure</label><input type="text" id="workspace_org" placeholder="VG, Juris Conseil, Groupe Atlas…" /></div>
                 <div class="form-group"><label>Pays</label><input type="text" id="workspace_territory" value="CI" /></div>
                 <button class="btn btn-primary" id="workspace-create-btn" onclick="createWorkspace()">Créer mon espace gratuit</button>
               </div>
@@ -3741,7 +3741,7 @@
           <div class="card-body">
             <div class="form-group"><label>Nom du responsable</label><input type="text" id="reg_owner" placeholder="Kouamé Diallo" /></div>
             <div class="form-group"><label>Email</label><input type="email" id="reg_email" placeholder="kouame@cabinet.ci" /></div>
-            <div class="form-group"><label>Organisation</label><input type="text" id="reg_org" placeholder="Cabinet Diallo" /></div>
+            <div class="form-group"><label>Nom de la structure</label><input type="text" id="reg_org" placeholder="VG, Juris Conseil, Groupe Atlas…" /></div>
             <div class="form-group">
               <label>Pays</label>
               <select id="reg_territory">
@@ -5544,7 +5544,7 @@ function renderClientWorkspace(workspace) {
 
   document.getElementById('client-workspace').innerHTML = `
     <div class="info-grid" style="margin-bottom:1.5rem">
-      <div class="info-item">Organisation<strong>${workspace.organization_name}</strong></div>
+      <div class="info-item">Nom de la structure<strong>${escHtml(workspace.organization_name)}</strong></div>
       <div class="info-item">Utilisateur<strong>${workspace.user_name || workspace.owner_name}</strong></div>
       <div class="info-item">Offre<strong>${planLabel}</strong></div>
       <div class="info-item">Demandes internes<strong>${workspace.internal_requests_used || 0}</strong></div>
@@ -5581,29 +5581,79 @@ async function renderAdminDashboard(workspace, adminToken) {
   const plan   = (workspace.plan_details || {}).name || workspace.plan || '—';
   const org    = workspace.organization_name || '—';
   const status = workspace.subscription_status || '—';
+  const statusLabels = {
+    free: 'Accès gratuit',
+    active: 'Abonnement actif',
+    unlimited_grant: 'Accès illimité',
+    pending: 'Activation en attente',
+    expired: 'Abonnement expiré',
+    suspended: 'Compte suspendu',
+  };
+  const statusLabel = statusLabels[status] || 'Statut à vérifier';
+  const safeOrg = escHtml(org);
 
   document.getElementById('admin-subtitle').textContent =
     `Espace : ${workspace.workspace_id} · ${org}`;
 
   document.getElementById('admin-workspace-info').innerHTML = `
     <div class="info-grid">
-      <div class="info-item">Organisation<strong>${org}</strong></div>
-      <div class="info-item">Admin<strong>${workspace.admin_name || '—'}</strong></div>
-      <div class="info-item">Email admin<strong>${workspace.admin_email || '—'}</strong></div>
-      <div class="info-item">Offre<strong>${plan}</strong></div>
-      <div class="info-item">Statut<strong>${status}</strong></div>
-      <div class="info-item">ID espace<strong style="font-family:monospace;font-size:12px">${workspace.workspace_id}</strong></div>
+      <div class="info-item">Nom de la structure<strong>${safeOrg}</strong></div>
+      <div class="info-item">Administrateur<strong>${escHtml(workspace.admin_name || '—')}</strong></div>
+      <div class="info-item">Email administrateur<strong>${escHtml(workspace.admin_email || '—')}</strong></div>
+      <div class="info-item">Offre souscrite<strong>${escHtml(plan)}</strong></div>
+      <div class="info-item">Statut de l'abonnement<strong>${escHtml(statusLabel)}</strong></div>
+      <div class="info-item">Identifiant de l'espace<strong style="font-family:monospace;font-size:12px">${escHtml(workspace.workspace_id)}</strong></div>
     </div>
     <div class="sep"></div>
-    <div class="section-title">Code admin (à conserver)</div>
-    <div class="code-box" style="font-size:12px">${adminToken}</div>`;
+    <div class="section-title">Identité de la structure</div>
+    <div class="form-group">
+      <label for="admin_org_name">Nom de la structure abonnée</label>
+      <input type="text" id="admin_org_name" value="${safeOrg}" maxlength="180" autocomplete="organization" />
+    </div>
+    <div id="admin-org-msg" style="display:none;font-size:13px;margin-bottom:.75rem;padding:8px 12px;border-radius:6px"></div>
+    <button class="btn btn-primary btn-sm" id="admin-org-save" onclick="saveAdminOrganization()">Enregistrer</button>
+    <div style="font-size:11px;color:var(--sub);margin-top:10px">Le code d'accès administrateur est confidentiel et n'est jamais affiché ici.</div>`;
 
   await refreshAdminRequests(workspace.workspace_id, adminToken);
 
-  document.getElementById('admin-stat-org').textContent = org.split(' ')[0];
+  document.getElementById('admin-stat-org').textContent = org;
   document.getElementById('admin-stat-plan').textContent = plan;
-  document.getElementById('admin-stat-status').textContent = status;
+  document.getElementById('admin-stat-status').textContent = statusLabel;
   document.getElementById('admin-stats').style.display = '';
+}
+
+async function saveAdminOrganization() {
+  const workspace = state.adminWorkspace;
+  const input = document.getElementById('admin_org_name');
+  const button = document.getElementById('admin-org-save');
+  const message = document.getElementById('admin-org-msg');
+  const organizationName = (input?.value || '').trim();
+  if (organizationName.length < 2) {
+    message.textContent = 'Le nom de la structure doit contenir au moins 2 caractères.';
+    message.style.cssText = 'display:block;font-size:13px;margin-bottom:.75rem;padding:8px 12px;border-radius:6px;background:#FDECEA;color:#9B1C1C';
+    return;
+  }
+  button.disabled = true;
+  try {
+    const response = await fetch(`/api/v1/accounts/admin/workspaces/${workspace.workspace_id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': state.token },
+      body: JSON.stringify({ organization_name: organizationName }),
+    });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    state.adminWorkspace = data;
+    await renderAdminDashboard(data, state.token);
+    const updatedMessage = document.getElementById('admin-org-msg');
+    updatedMessage.textContent = 'Nom de la structure mis à jour.';
+    updatedMessage.style.cssText = 'display:block;font-size:13px;margin-bottom:.75rem;padding:8px 12px;border-radius:6px;background:#EAF7EF;color:#1A6B3C';
+  } catch (error) {
+    message.textContent = error.message || 'Mise à jour impossible.';
+    message.style.cssText = 'display:block;font-size:13px;margin-bottom:.75rem;padding:8px 12px;border-radius:6px;background:#FDECEA;color:#9B1C1C';
+  } finally {
+    const currentButton = document.getElementById('admin-org-save');
+    if (currentButton) currentButton.disabled = false;
+  }
 }
 
 async function refreshAdminRequests(workspaceId, adminToken) {
@@ -6078,7 +6128,7 @@ function renderWorkspaceCreated(ws, contactEmail) {
 
   return `
     <div class="info-grid">
-      <div class="info-item">Organisation<strong>${escHtml(ws.organization_name)}</strong></div>
+      <div class="info-item">Nom de la structure<strong>${escHtml(ws.organization_name)}</strong></div>
       <div class="info-item">Email<strong>${escHtml(email)}</strong></div>
       <div class="info-item">Plan<strong>${escHtml(planLabel)}</strong></div>
       <div class="info-item">Territoire<strong>${escHtml(ws.territory || '—')}</strong></div>
@@ -6169,7 +6219,7 @@ function renderWorkspaceBox(ws) {
   const plan = (ws.plan_details || {});
   document.getElementById('workspace-results').innerHTML = `
     <div class="info-grid">
-      <div class="info-item">Organisation<strong>${escHtml(ws.organization_name)}</strong></div>
+      <div class="info-item">Nom de la structure<strong>${escHtml(ws.organization_name)}</strong></div>
       <div class="info-item">Offre<strong>${plan.name || ws.plan}</strong></div>
       <div class="info-item">Statut<strong>${ws.subscription_status}</strong></div>
       <div class="info-item">Demandes<strong>${ws.internal_requests_used || 0}</strong></div>

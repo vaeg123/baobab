@@ -175,6 +175,10 @@ class ChangePassword(BaseModel):
     new_password: str = Field(..., min_length=8, max_length=128)
 
 
+class WorkspaceAdminUpdate(BaseModel):
+    organization_name: str = Field(..., min_length=2, max_length=180)
+
+
 class WorkspaceBranding(BaseModel):
     display_name: str | None = Field(default=None, max_length=180)
     primary_color: str | None = Field(default=None, max_length=32)
@@ -947,6 +951,26 @@ async def get_admin_workspace(
     x_admin_token: str | None = Header(default=None),
 ):
     workspace = await _require_workspace_admin(workspace_id, x_admin_token)
+    return await _admin_workspace(workspace)
+
+
+@router.patch("/admin/workspaces/{workspace_id}")
+async def update_admin_workspace(
+    workspace_id: str,
+    request: WorkspaceAdminUpdate,
+    x_admin_token: str | None = Header(default=None),
+):
+    """Permet à l'administrateur de tenir à jour l'identité de sa structure."""
+    workspace = await _require_workspace_admin(workspace_id, x_admin_token)
+    organization_name = request.organization_name.strip()
+    if len(organization_name) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Le nom de la structure doit contenir au moins 2 caractères.",
+        )
+    workspace["organization_name"] = organization_name
+    workspace["updated_at"] = datetime.now(UTC).isoformat()
+    await _save_workspace(workspace)
     return await _admin_workspace(workspace)
 
 

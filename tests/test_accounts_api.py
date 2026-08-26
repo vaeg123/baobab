@@ -271,6 +271,40 @@ def test_get_workspace_requires_a_valid_access_token():
     assert admin_response.status_code == 200
 
 
+def test_workspace_admin_can_update_organization_name():
+    workspace = client.post(
+        "/api/v1/accounts/workspaces",
+        json={
+            "owner_name": "Administrateur VG",
+            "email": "admin-vg@example.com",
+            "organization_name": "VG",
+            "territory": "CI",
+        },
+    ).json()
+
+    unauthorized = client.patch(
+        f"/api/v1/accounts/admin/workspaces/{workspace['workspace_id']}",
+        headers={"X-Admin-Token": "adm_invalide"},
+        json={"organization_name": "VG Conseil"},
+    )
+    assert unauthorized.status_code == 403
+
+    response = client.patch(
+        f"/api/v1/accounts/admin/workspaces/{workspace['workspace_id']}",
+        headers={"X-Admin-Token": workspace["admin_token"]},
+        json={"organization_name": "VG Conseil"},
+    )
+    assert response.status_code == 200
+    assert response.json()["organization_name"] == "VG Conseil"
+
+    blank_name = client.patch(
+        f"/api/v1/accounts/admin/workspaces/{workspace['workspace_id']}",
+        headers={"X-Admin-Token": workspace["admin_token"]},
+        json={"organization_name": "  "},
+    )
+    assert blank_name.status_code == 422
+
+
 def test_internal_requests_listing_requires_access_token():
     workspace = client.post(
         "/api/v1/accounts/workspaces",
