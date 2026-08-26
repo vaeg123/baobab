@@ -4642,10 +4642,10 @@
     <div id="tab-veille" class="tab-panel">
       <div class="container">
         <div class="page-title">Veille juridique</div>
-        <div class="page-sub">Publications et décisions récemment intégrées au corpus BAOBAB, avec leur date et leur source.</div>
+        <div class="page-sub">Surveillez les publications juridiques par autorité, territoire et matière, avec une provenance explicitement qualifiée.</div>
 
-        <div style="margin-bottom:1rem;padding:10px 14px;border:1px solid rgba(191,78,30,.28);background:rgba(191,78,30,.07);border-radius:8px;font-size:12px;color:var(--text)">
-          <strong>Traçabilité :</strong> ce flux provient du corpus BAOBAB. Consultez la source officielle avant toute utilisation professionnelle. Les notifications automatiques par email ne sont pas encore activées.
+        <div id="veille-methodology" style="margin-bottom:1rem;padding:12px 14px;border:1px solid rgba(191,78,30,.28);background:rgba(191,78,30,.07);border-radius:8px;font-size:12px;color:var(--text)">
+          <strong>Méthode :</strong> chargement de la politique de qualification des sources…
         </div>
 
         <div class="veille-filters" id="veille-filters">
@@ -4656,6 +4656,26 @@
           <button class="veille-filter-btn" onclick="filterVeille('france', this)">France</button>
         </div>
 
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:0 0 1rem">
+          <div class="form-group" style="margin:0;min-width:220px">
+            <label for="veille-source-scope">Niveau de source</label>
+            <select id="veille-source-scope" onchange="renderVeille()">
+              <option value="official">Sources officielles uniquement</option>
+              <option value="trusted">Officielles + agrégateurs institutionnels</option>
+              <option value="all">Toutes les sources qualifiées</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;min-width:180px">
+            <label for="veille-period">Période juridique</label>
+            <select id="veille-period" onchange="renderVeille()">
+              <option value="">Tout l'historique collecté</option>
+              <option value="90">90 derniers jours</option>
+              <option value="365">12 derniers mois</option>
+              <option value="1095">3 dernières années</option>
+            </select>
+          </div>
+        </div>
+
         <div class="veille-feed" id="veille-feed">
           <!-- Populated by renderVeille() -->
           <div class="empty-state"><span class="spinner" style="width:22px;height:22px;border-width:3px"></span></div>
@@ -4664,7 +4684,7 @@
         <div class="veille-subscribe">
           <div class="veille-subscribe-text">
             <div class="veille-subscribe-title">Créer une surveillance</div>
-            <div class="veille-subscribe-sub">Enregistrez un sujet et un corpus. Les nouvelles publications correspondantes seront regroupées dans votre espace.</div>
+            <div class="veille-subscribe-sub">Enregistrez un critère de recherche pour retrouver immédiatement les publications correspondantes. Les alertes email restent désactivées tant que le moteur de collecte continue n'est pas certifié.</div>
           </div>
           <button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="toggleWatchForm()">Nouvelle surveillance</button>
         </div>
@@ -7883,43 +7903,73 @@ const DEMO_VEILLE = [
 ];
 
 let currentVeilleFilter = 'all';
+let currentVeilleQuery = '';
+let currentLegalWatches = [];
 
 async function renderVeille(filter) {
   filter = filter || currentVeilleFilter;
   const feed = document.getElementById('veille-feed');
+  const sourceScope = document.getElementById('veille-source-scope')?.value || 'official';
+  const sinceDays = document.getElementById('veille-period')?.value || '';
+  const params = new URLSearchParams({ corpus: filter, source_scope: sourceScope });
+  if (sinceDays) params.set('since_days', sinceDays);
+  if (currentVeilleQuery) params.set('query', currentVeilleQuery);
   feed.innerHTML = '<div class="empty-state"><span class="spinner" style="width:22px;height:22px;border-width:3px"></span></div>';
   try {
-    const res = await fetch(`/api/v1/legal/watch/feed?corpus=${encodeURIComponent(filter)}`, {
+    const res = await fetch(`/api/v1/legal/watch/feed?${params.toString()}`, {
       headers: { 'X-User-Token': state.token || '' },
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(data.detail));
     const items = data.results || [];
+    const methodology = data.methodology || {};
+    document.getElementById('veille-methodology').innerHTML = `
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <strong>${escHtml(methodology.label || 'Veille sourcée BAOBAB')}</strong>
+        <span class="pill pill-gold">${Number(data.filtered_total || 0).toLocaleString('fr-FR')} publication(s)</span>
+        <span class="pill pill-gray">${sourceScope === 'official' ? 'Sources officielles' : sourceScope === 'trusted' ? 'Sources officielles et institutionnelles' : 'Toutes les sources'}</span>
+      </div>
+      <div style="margin-top:7px;color:var(--sub)">${escHtml(methodology.coverage_notice || '')}</div>
+      ${methodology.latest_matching_legal_date ? `<div style="margin-top:4px;color:var(--sub)">Dernière date juridique correspondante : ${escHtml(methodology.latest_matching_legal_date)}.</div>` : ''}
+      <div style="margin-top:4px;color:var(--sub)">${methodology.automatic_email_notifications ? 'Alertes email actives.' : 'Alertes email non activées : les surveillances sont actuellement des critères enregistrés.'}</div>`;
 
     if (!items.length) {
-      feed.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><div class="empty-text">Aucune publication correspondant à ce filtre dans vos packs.</div></div>`;
+      feed.innerHTML = `<div class="empty-state"><div class="empty-icon">📡</div><div class="empty-text">Aucune publication sourcée ne correspond à ces critères dans la couverture actuelle.</div></div>`;
       return;
     }
 
-    feed.innerHTML = items.map(v => `
+    feed.innerHTML = items.map(v => {
+      const source = v.source || {};
+      const qualification = v.qualification || {};
+      const isOfficial = source.tier === 'OFFICIAL';
+      const sourceColor = isOfficial ? 'pill-green' : source.tier === 'INSTITUTIONAL_AGGREGATOR' ? 'pill-blue' : 'pill-gray';
+      const dateLabel = qualification.date_precision === 'YEAR' ? 'Année' : qualification.date_kind === 'publication' ? 'Publié le' : qualification.date_kind === 'decision' ? 'Décidé le' : 'Intégré le';
+      return `
       <div class="veille-item" data-corpus="${escHtml(v.corpus || '')}">
         <div class="veille-item-top">
           <div class="veille-item-title">${escHtml(v.titre || v.ref || 'Publication juridique')}</div>
-          <div class="veille-item-date">${escHtml(v.date || '—')}</div>
+          <div class="veille-item-date">${dateLabel} ${escHtml(qualification.display_date || v.date || '—')}</div>
         </div>
         <div class="veille-item-meta">
-          <span class="pill pill-gray">${escHtml(v.type || 'Document')}</span>
+          <span class="pill pill-gray">${escHtml(qualification.event_label || v.type || 'Document')}</span>
           <span class="pill pill-gold">${escHtml((v.corpus || '').toUpperCase())}</span>
-          <span class="veille-source">${escHtml(v.source_code || v.juridiction || 'Corpus BAOBAB')}</span>
+          <span class="pill ${sourceColor}">${escHtml(source.tier_label || 'Source non qualifiée')}</span>
+          <span class="veille-source">${escHtml(source.name || v.juridiction || 'Source inconnue')}</span>
         </div>
         <div class="veille-item-summary">${escHtml(v.resume || 'Résumé non disponible.')}</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;font-size:11px;color:var(--sub)">
+          <span>${escHtml(qualification.impact_label || 'Impact à qualifier')}</span>
+          ${v.effective_from ? `<span>· Entrée en vigueur : ${escHtml(v.effective_from)}</span>` : ''}
+          ${v.legal_status && v.legal_status !== 'UNKNOWN' ? `<span>· Statut : ${escHtml(v.legal_status)}</span>` : '<span>· Statut juridique non qualifié</span>'}
+        </div>
         <div class="veille-item-actions">
           ${safeExternalUrl(v.source_url)
-            ? `<a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(v.source_url))}" target="_blank" rel="noopener noreferrer">Source officielle →</a>`
+            ? `<a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(v.source_url))}" target="_blank" rel="noopener noreferrer">${isOfficial ? 'Consulter la source officielle' : 'Consulter la source'} →</a>`
             : '<span style="font-size:11px;color:var(--sub)">Source externe non renseignée</span>'}
           <span style="font-size:10px;color:var(--sub);margin-left:auto">${escHtml(v.official_citation || v.ref || '')}</span>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } catch (error) {
     feed.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">${escHtml(error.message)}</div></div>`;
   }
@@ -7936,6 +7986,7 @@ function safeExternalUrl(value) {
 
 function filterVeille(corpus, btn) {
   currentVeilleFilter = corpus;
+  currentVeilleQuery = '';
   document.querySelectorAll('.veille-filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderVeille(corpus);
@@ -7973,14 +8024,25 @@ async function loadLegalWatches() {
   const data = await parseJson(res);
   if (!res.ok) { container.innerHTML = ''; return; }
   const watches = data.subscriptions || [];
+  currentLegalWatches = watches;
   container.innerHTML = watches.length ? `
-    <div class="section-title">Mes surveillances</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${watches.map(w => `
-      <span class="pill pill-blue" style="display:inline-flex;align-items:center;gap:7px">
-        ${escHtml(w.name)} · ${escHtml((w.corpus || 'all').toUpperCase())}
-        <button onclick="deleteLegalWatch('${escHtml(w.watch_id)}')" style="border:0;background:none;cursor:pointer;color:inherit">×</button>
-      </span>`).join('')}
+    <div class="section-title">Mes critères de surveillance</div>
+    <div style="display:flex;flex-direction:column;gap:8px">${watches.map((w, index) => `
+      <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--card)">
+        <button class="btn btn-ghost btn-sm" onclick="openLegalWatch(${index})">Ouvrir</button>
+        <div style="flex:1"><strong style="font-size:12px">${escHtml(w.name)}</strong><div style="font-size:10px;color:var(--sub)">${escHtml((w.corpus || 'all').toUpperCase())}${w.query ? ` · ${escHtml(w.query)}` : ''} · Notifications désactivées</div></div>
+        <button aria-label="Supprimer ce critère" onclick="deleteLegalWatch('${escHtml(w.watch_id)}')" style="border:0;background:none;cursor:pointer;color:var(--sub);font-size:18px">×</button>
+      </div>`).join('')}
     </div>` : '';
+}
+
+function openLegalWatch(index) {
+  const watch = currentLegalWatches[index];
+  if (!watch) return;
+  currentVeilleFilter = watch.corpus || 'all';
+  currentVeilleQuery = watch.query || '';
+  document.querySelectorAll('.veille-filter-btn').forEach(b => b.classList.remove('active'));
+  renderVeille(currentVeilleFilter);
 }
 
 async function deleteLegalWatch(watchId) {

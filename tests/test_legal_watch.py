@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 from fastapi import HTTPException
 
@@ -67,9 +69,75 @@ async def test_watch_feed_only_queries_verified_non_quarantined_sources(monkeypa
     monkeypatch.setattr(watch, "_conn", fake_conn)
 
     result = await watch.watch_feed(
-        corpus="all", query=None, limit=30, x_user_token="valid"
+        corpus="all",
+        query=None,
+        source_scope="official",
+        since_days=None,
+        limit=30,
+        x_user_token="valid",
     )
 
     assert result["results"] == []
     assert "COALESCE(source_url, '') ~* '^https?://'" in conn.sql
+    assert "COALESCE(publication_date, date_decision) IS NOT NULL" in conn.sql
     assert "watch_quarantined" in conn.sql
+    assert "biblio.ohada.org" in conn.sql
+    assert result["methodology"]["automatic_email_notifications"] is False
+
+
+@pytest.mark.parametrize(
+    ("url", "tier", "code"),
+    [
+        ("https://www.ohada.org/journal-officiel/", "OFFICIAL", "OHADA.OFFICIAL"),
+        ("https://biblio.ohada.org/notice/42", "OFFICIAL", "OHADA.BIBLIO"),
+        ("https://cima-afrique.org/reglement/1", "OFFICIAL", "CIMA.OFFICIAL"),
+        ("https://juricaf.org/arret/1", "INSTITUTIONAL_AGGREGATOR", "AGG.JURICAF"),
+        ("https://ohadalegis.com/article/1", "SECONDARY", "PUB.OHADALEGIS"),
+        ("https://example.com/document", "UNVERIFIED", None),
+    ],
+)
+def test_source_classification_is_explicit(url, tier, code):
+    source = watch.classify_source(url)
+    assert source["tier"] == tier
+    assert source["code"] == code
+    assert source["verified"] is (tier == "OFFICIAL")
+
+
+def test_source_classification_rejects_deceptive_subdomains():
+    source = watch.classify_source("https://ohada.org.example.com/faux-document")
+    assert source["tier"] == "UNVERIFIED"
+    assert source["verified"] is False
+
+
+def test_france_filter_includes_database_alias():
+    assert watch.CORPUS_FILTERS["france"] == {"fr", "france"}
+
+
+def test_inferred_january_first_date_is_presented_as_year_only():
+    row = {
+        "publication_date": None,
+        "date_decision": date(2025, 1, 1),
+        "legal_status": "UNKNOWN",
+        "impact_level": "TO_QUALIFY",
+        "impact_summary": None,
+        "change_type": None,
+        "editorial_status": "SOURCE_VERIFIED",
+    }
+    qualification = watch._document_qualification(row, {"verified": True})
+    assert qualification["date_precision"] == "YEAR"
+    assert qualification["display_date"] == "2025"
+
+
+def test_precise_decision_date_keeps_day_precision():
+    row = {
+        "publication_date": None,
+        "date_decision": date(2025, 3, 24),
+        "legal_status": "UNKNOWN",
+        "impact_level": "TO_QUALIFY",
+        "impact_summary": None,
+        "change_type": None,
+        "editorial_status": "SOURCE_VERIFIED",
+    }
+    qualification = watch._document_qualification(row, {"verified": True})
+    assert qualification["date_precision"] == "DAY"
+    assert qualification["display_date"] == "2025-03-24"
