@@ -91,6 +91,14 @@ WATCH_SOURCES = (
         parser="cameroon_minjustice", document_type="decision_juridictionnelle",
         country_code="CM", jurisdiction_code="CM.SUPREME",
     ),
+    WatchSource(
+        code="CM.JURICAF.SEARCH", name="JURICAF — jurisprudence camerounaise", corpus="cm",
+        discovery_url="https://juricaf.org/recherche/pays:cameroun",
+        parser="juricaf_cm", document_type="arret", country_code="CM",
+        jurisdiction_code="CM.SUPREME",
+        fallback_urls=("https://juricaf.org/recherche/cameroun",),
+        pagination_starts=(10, 20),
+    ),
 )
 
 _MONTHS = {
@@ -109,7 +117,7 @@ def _parse_french_date(value: str) -> tuple[date | None, str]:
             return date(int(iso[1]), int(iso[2]), int(iso[3])), "DAY"
         except ValueError:
             return None, "UNKNOWN"
-    written = re.search(r"\b(\d{1,2})\s+([a-zéûôîàèùç]+)\s+(20\d{2})\b", normalized)
+    written = re.search(r"\b(\d{1,2})(?:er|ème|eme|re)?\s+([a-zéûôîàèùç]+)\s+(20\d{2})\b", normalized)
     if written and written[2] in _MONTHS:
         try:
             return date(int(written[3]), _MONTHS[written[2]], int(written[1])), "DAY"
@@ -190,6 +198,41 @@ def parse_cameroon_prc(html: str, source: WatchSource) -> list[Artifact]:
     return sorted(artifacts.values(), key=lambda item: item.url)
 
 
+def parse_juricaf_cm(html: str, source: WatchSource) -> list[Artifact]:
+    """Extrait les arrêts camerounais de JURICAF.
+
+    JURICAF expose les décisions sous deux structures HTML selon la page :
+    - Résultats de recherche : liens /arret/CAMEROUN-… dans des conteneurs
+      .resultat, li, ou td — le titre est dans le texte du lien.
+    - Page d'accueil pays : cartes similaires avec /arret/CAMEROUN-…
+    Seuls les liens dont l'URL contient /arret/ et CAMEROUN (majuscules ou non)
+    sont retenus ; les liens de navigation internes sont rejetés.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    artifacts: dict[str, Artifact] = {}
+    for link in soup.select("a[href*='/arret/']"):
+        href = str(link.get("href") or "")
+        if "cameroun" not in href.lower():
+            continue
+        url = urljoin("https://juricaf.org", href).split("?")[0].rstrip("/")
+        if not re.search(r"/arret/[A-Z]", url, re.IGNORECASE):
+            continue
+        title = " ".join(link.get_text(" ", strip=True).split())
+        if len(title) < 10:
+            # Le texte du lien est trop court — on tente le parent immédiat
+            parent_text = " ".join((link.parent or link).get_text(" ", strip=True).split())
+            if len(parent_text) >= 10:
+                title = parent_text[:500]
+        if len(title) < 10:
+            continue
+        legal_date, precision = _parse_french_date(title)
+        if url not in artifacts:
+            artifacts[url] = Artifact(
+                source.code, source.corpus, url, title[:500], legal_date, precision
+            )
+    return sorted(artifacts.values(), key=lambda item: item.url)
+
+
 def parse_cameroon_minjustice(html: str, source: WatchSource) -> list[Artifact]:
     """Parseur restrictif : seules les fiches/PDF explicitement juridictionnels passent."""
     soup = BeautifulSoup(html, "html.parser")
@@ -216,6 +259,7 @@ def parse_source(html: str, source: WatchSource) -> list[Artifact]:
         "cima_crca": parse_cima_crca,
         "cameroon_prc": parse_cameroon_prc,
         "cameroon_minjustice": parse_cameroon_minjustice,
+        "juricaf_cm": parse_juricaf_cm,
     }
     return parsers[source.parser](html, source)
 

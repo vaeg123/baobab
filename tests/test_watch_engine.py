@@ -13,6 +13,7 @@ from baobab.watch_engine import (
     parse_cima_crca,
     parse_cameroon_minjustice,
     parse_cameroon_prc,
+    parse_juricaf_cm,
     parse_ohada_biblio,
     score_artifact_validation,
     watch_matches_artifact,
@@ -154,6 +155,85 @@ def test_watch_matching_respects_corpus_and_keywords():
     assert watch_matches_artifact({"corpus": "cima", "query": "agrément; solvabilité"}, artifact)
     assert not watch_matches_artifact({"corpus": "ohada", "query": "agrément"}, artifact)
     assert not watch_matches_artifact({"corpus": "cima", "query": "fusion, arbitrage"}, artifact)
+
+
+def test_parse_juricaf_cm_extracts_cameroon_arrets():
+    source = _source("CM.JURICAF.SEARCH")
+    html = """
+    <html><body>
+      <a href="/arret/CAMEROUN-COURSUPREMEDUCAMEROUN-20230315-AB12345">
+        Arrêt N°AB/12345 du 15 mars 2023 — Cour Suprême du Cameroun
+      </a>
+      <a href="/arret/CAMEROUN-COURSUPREMEDUCAMEROUN-20210610-CD67890">
+        Arrêt N°CD/67890 du 10 juin 2021 — Chambre civile et commerciale
+      </a>
+      <a href="/arret/SENEGAL-COURSUPREMEDUSENEGAL-20220101-XY999">
+        Arrêt Sénégal — ne doit pas être inclus
+      </a>
+      <a href="/recherche/pays:cameroun">Navigation — à ignorer</a>
+      <a href="https://juricaf.org/arret/CAMEROUN-TRIBUNAL-20240101-ZZ001">Arrêt TGI 2024</a>
+    </body></html>
+    """
+    artifacts = parse_juricaf_cm(html, source)
+    assert len(artifacts) == 3
+    urls = [a.url for a in artifacts]
+    assert all("cameroun" in url.lower() for url in urls)
+    assert not any("senegal" in url.lower() for url in urls)
+    assert all(a.corpus == "cm" for a in artifacts)
+    # Les dates sont extraites du titre
+    dated = [a for a in artifacts if a.legal_date is not None]
+    assert len(dated) >= 2
+
+
+def test_parse_juricaf_cm_rejects_navigation_links():
+    source = _source("CM.JURICAF.SEARCH")
+    html = """
+    <html><body>
+      <nav>
+        <a href="/recherche/pays:cameroun">Retour aux résultats</a>
+        <a href="/">Accueil</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <a href="/arret/CAMEROUN-CS-20251201-RR001">
+        Arrêt N°RR/001 du 1er décembre 2025 — Cour Suprême
+      </a>
+    </body></html>
+    """
+    artifacts = parse_juricaf_cm(html, source)
+    assert len(artifacts) == 1
+    assert artifacts[0].legal_date == date(2025, 12, 1)
+
+
+def test_parse_juricaf_cm_deduplicates_same_url():
+    source = _source("CM.JURICAF.SEARCH")
+    html = """
+    <a href="/arret/CAMEROUN-CS-20240301-AA001">Arrêt N°AA/001 du 1 mars 2024</a>
+    <a href="/arret/CAMEROUN-CS-20240301-AA001">Même arrêt — doublon à ignorer</a>
+    """
+    artifacts = parse_juricaf_cm(html, source)
+    assert len(artifacts) == 1
+
+
+def test_juricaf_source_registered_in_watch_sources():
+    """CM.JURICAF.SEARCH doit être présent dans WATCH_SOURCES avec le bon parseur."""
+    juricaf = _source("CM.JURICAF.SEARCH")
+    assert juricaf.corpus == "cm"
+    assert juricaf.country_code == "CM"
+    assert juricaf.parser == "juricaf_cm"
+    assert "juricaf.org" in juricaf.discovery_url
+
+
+def test_juricaf_matches_cameroon_corpus_in_watch():
+    """Un artefact JURICAF doit matcher les alertes veille 'cameroun' et 'cm'."""
+    artifact = Artifact(
+        "CM.JURICAF.SEARCH", "cm",
+        "https://juricaf.org/arret/CAMEROUN-CS-20240301-AA001",
+        "Arrêt Cour Suprême du Cameroun — licenciement abusif",
+        date(2024, 3, 1), "DAY",
+    )
+    assert watch_matches_artifact({"corpus": "cameroun", "query": ""}, artifact)
+    assert watch_matches_artifact({"corpus": "cm", "query": "licenciement"}, artifact)
+    assert not watch_matches_artifact({"corpus": "ohada", "query": ""}, artifact)
 
 
 @pytest.mark.asyncio
