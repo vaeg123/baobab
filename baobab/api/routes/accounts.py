@@ -612,11 +612,13 @@ async def _get_workspace(workspace_id: str) -> dict:
 
 
 async def _find_workspace_by_token(user_token: str | None) -> dict | None:
-    """Trouve un workspace par son user_token (comparaison temps constant)."""
+    """Trouve un workspace par un token utilisateur ou administrateur."""
     if not user_token:
         return None
     for ws in await _list_workspaces():
-        if constant_time_equals(user_token, ws.get("user_token")):
+        if constant_time_equals(user_token, ws.get("user_token")) or constant_time_equals(
+            user_token, ws.get("admin_token")
+        ):
             return ws
     return None
 

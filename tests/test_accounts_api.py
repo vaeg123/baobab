@@ -3,9 +3,28 @@ from fastapi.testclient import TestClient
 
 from baobab.api.main import app
 from baobab.api.routes.accounts import _normalize_database_url
+from baobab.api.routes import accounts
 from tests.conftest import postgres_available
 
 client = TestClient(app)
+
+
+@pytest.mark.asyncio
+async def test_workspace_lookup_accepts_admin_token(monkeypatch):
+    workspace = {
+        "workspace_id": "ws_admin_service_access",
+        "user_token": "usr_service_access",
+        "admin_token": "adm_service_access",
+    }
+
+    async def list_workspaces():
+        return [workspace]
+
+    monkeypatch.setattr(accounts, "_list_workspaces", list_workspaces)
+
+    assert await accounts._find_workspace_by_token("adm_service_access") == workspace
+    assert await accounts._find_workspace_by_token("usr_service_access") == workspace
+    assert await accounts._find_workspace_by_token("adm_wrong") is None
 
 
 def _bootstrap_and_login_superadmin(email: str, password: str = "SuperSecret123!") -> str:
