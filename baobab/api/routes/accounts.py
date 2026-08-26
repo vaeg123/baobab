@@ -67,6 +67,7 @@ PLAN_CATALOG = {
             "legal_dashboards",
             "alerts",
             "all_verticals",
+            "legal_cm",
             "priority_support",
         ],
         "included_packs": ["france", "europe", "ohada", "cima", "bceao_uemoa", "international"],
@@ -75,6 +76,12 @@ PLAN_CATALOG = {
 
 
 LEGAL_PACK_CATALOG = {
+    "cameroun": {
+        "name": "Cameroun",
+        "description": "Textes, jurisprudence et évolution du droit camerounais sourcé.",
+        "services": ["legal_cm"],
+        "jurisdictions": ["CM"],
+    },
     "france": {
         "name": "France",
         "description": "Législation et jurisprudence françaises via Légifrance et Judilibre.",

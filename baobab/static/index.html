@@ -4580,6 +4580,35 @@
       </div>
     </div>
 
+    <!-- ── DROIT CAMEROUNAIS ── -->
+    <div id="tab-droit-cm" class="tab-panel">
+      <div class="container">
+        <div style="display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap">
+          <div><div class="page-title">Droit camerounais</div>
+            <div class="page-sub">Textes, jurisprudence et droit communautaire applicable — structurés par provenance, date et évolution.</div></div>
+          <span class="pill pill-gold">Espace Legal Intelligence</span>
+        </div>
+        <div id="cm-principles" style="margin:18px 0;padding:14px;border:1px solid rgba(191,78,30,.28);border-radius:9px;background:rgba(191,78,30,.06);font-size:12px;color:var(--sub)">
+          Chargement de la couverture juridique vérifiée…
+        </div>
+        <div id="cm-stats" class="biblio-corpus-stat" style="margin-bottom:18px"></div>
+        <div class="card" style="margin-bottom:18px"><div class="card-body">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px">Explorer le droit camerounais</div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <input id="cm-query" style="flex:1;min-width:240px" placeholder="Texte, article, juridiction, notion…" onkeydown="if(event.key==='Enter')cmLoadTimeline()">
+            <select id="cm-view" onchange="cmRenderCurrent()"><option value="timeline">Chronologie</option><option value="evolution">Évolution juridique</option><option value="authority">Par autorité</option></select>
+            <select id="cm-type"><option value="">Tous les documents</option><option value="loi">Lois</option><option value="decret">Décrets</option><option value="ordonnance">Ordonnances</option><option value="arret">Arrêts</option><option value="decision">Décisions</option></select>
+            <button class="btn btn-primary btn-sm" onclick="cmLoadTimeline()">Rechercher</button>
+          </div>
+          <div style="font-size:11px;color:var(--sub);margin-top:9px">La chronologie distingue date juridique et date de collecte. Une absence de résultat signifie que le document n’est pas encore disponible dans le corpus vérifié.</div>
+        </div></div>
+        <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:18px;align-items:start">
+          <div id="cm-results"><div class="empty-state"><span class="spinner" style="width:22px;height:22px;border-width:3px"></span></div></div>
+          <div class="card"><div class="card-body"><div style="font-size:14px;font-weight:700;margin-bottom:10px">Registre des sources</div><div id="cm-sources" style="display:flex;flex-direction:column;gap:9px"></div></div></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── DROIT FRANÇAIS ── -->
     <div id="tab-droit-fr" class="tab-panel">
       <div class="container">
@@ -5147,6 +5176,7 @@ const NAV_CONFIGS = {
     { id: 'cima',      label: 'CIMA — Sinistre' },
     { id: 'ohada',     label: 'OHADA' },
     { id: 'bceao',     label: 'BCEAO' },
+    { id: 'droit-cm',  label: 'CM  Droit camerounais' },
     { id: 'droit-fr',  label: 'FR  Droit français' },
     { id: 'espace',    label: 'Abonnement' },
   ],
@@ -5157,6 +5187,7 @@ const NAV_CONFIGS = {
     { id: 'cima',     label: 'CIMA' },
     { id: 'ohada',    label: 'OHADA' },
     { id: 'bceao',    label: 'BCEAO' },
+    { id: 'droit-cm', label: 'CM  Droit camerounais' },
     { id: 'droit-fr', label: 'FR  Droit français' },
   ],
   superadmin: [
@@ -5167,6 +5198,7 @@ const NAV_CONFIGS = {
     { id: 'cima',        label: 'CIMA' },
     { id: 'ohada',       label: 'OHADA' },
     { id: 'bceao',       label: 'BCEAO' },
+    { id: 'droit-cm',    label: 'CM  Droit camerounais' },
     { id: 'droit-fr',    label: 'FR  Droit français' },
   ],
   register: [
@@ -5185,7 +5217,7 @@ function buildNav(role) {
     const allVerticals = enabled.has('all_verticals');
     const requiredService = {
       cima: 'cima', ohada: 'ohada', bceao: 'bceao',
-      veille: 'alerts', 'droit-fr': 'legal_fr', biblio: 'legal_search',
+      veille: 'alerts', 'droit-fr': 'legal_fr', 'droit-cm': 'legal_cm', biblio: 'legal_search',
     };
     items = items.filter(item => {
       const service = requiredService[item.id];
@@ -9022,12 +9054,84 @@ function frRenderResults(data) {
   document.getElementById('fr-next').disabled = items.length < 10;
 }
 
-// Patch switchTab pour charger le statut PISTE à l'ouverture
+let cmTimeline = [];
+
+async function cmLoadSpace() {
+  const headers = { 'X-User-Token': state.token || '' };
+  try {
+    const response = await fetch('/api/v1/legal-cm/overview', { headers });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    const coverage = data.coverage || {};
+    document.getElementById('cm-stats').innerHTML = [
+      ['Documents vérifiés', coverage.total || 0],
+      ['Sources officielles', coverage.official || 0],
+      ['Textes normatifs', coverage.legislation || 0],
+      ['Jurisprudences', coverage.case_law || 0],
+    ].map(([label,value]) => `<div class="stat-card"><div class="stat-value">${Number(value).toLocaleString('fr-FR')}</div><div class="stat-label">${label}</div></div>`).join('');
+    document.getElementById('cm-principles').innerHTML = `<strong>Politique de preuve :</strong> ${(data.principles || []).map(escHtml).join(' · ')}`;
+    document.getElementById('cm-sources').innerHTML = (data.sources || []).map(source => `
+      <div style="padding:10px;border:1px solid var(--border);border-radius:7px">
+        <div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:12px">${escHtml(source.name)}</strong><span class="pill ${source.access_mode?.startsWith('OFFICIAL') ? 'pill-green' : 'pill-blue'}">${source.document_count || 0}</span></div>
+        <div style="font-size:10px;color:var(--sub);margin-top:4px">${escHtml(source.source_type)} · ${escHtml(source.access_mode)}</div>
+        ${safeExternalUrl(source.base_url) ? `<a href="${escHtml(safeExternalUrl(source.base_url))}" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:var(--gold)">Source originale →</a>` : ''}
+      </div>`).join('') || '<div style="font-size:12px;color:var(--sub)">Registre non initialisé.</div>';
+    await cmLoadTimeline();
+  } catch (error) {
+    document.getElementById('cm-principles').textContent = error.message;
+  }
+}
+
+async function cmLoadTimeline() {
+  const box = document.getElementById('cm-results');
+  const params = new URLSearchParams({ limit: '80' });
+  const query = document.getElementById('cm-query')?.value.trim();
+  const type = document.getElementById('cm-type')?.value;
+  if (query) params.set('query', query);
+  if (type) params.set('document_type', type);
+  box.innerHTML = '<div class="empty-state"><span class="spinner" style="width:22px;height:22px;border-width:3px"></span></div>';
+  try {
+    const response = await fetch(`/api/v1/legal-cm/timeline?${params}`, { headers: { 'X-User-Token': state.token || '' } });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    cmTimeline = data.results || [];
+    cmRenderCurrent();
+  } catch (error) {
+    box.innerHTML = `<div class="empty-state"><div class="empty-text">${escHtml(error.message)}</div></div>`;
+  }
+}
+
+function cmRenderCurrent() {
+  const box = document.getElementById('cm-results');
+  const view = document.getElementById('cm-view')?.value || 'timeline';
+  if (!cmTimeline.length) {
+    box.innerHTML = '<div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-text">Aucun document camerounais vérifié ne correspond encore à cette recherche. Le registre des sources indique les collecteurs à alimenter.</div></div>';
+    return;
+  }
+  let items = [...cmTimeline];
+  if (view === 'evolution') items.sort((a,b) => String(a.legal_date).localeCompare(String(b.legal_date)));
+  if (view === 'authority') items.sort((a,b) => String(a.juridiction || '').localeCompare(String(b.juridiction || ''), 'fr'));
+  let previousGroup = '';
+  box.innerHTML = items.map(item => {
+    const group = view === 'authority' ? (item.juridiction || 'Autorité non qualifiée') : String(item.legal_date || '').slice(0,4);
+    const heading = group !== previousGroup ? `<div style="font-size:12px;font-weight:800;color:var(--gold);margin:16px 0 7px;text-transform:uppercase">${escHtml(group || 'Date non qualifiée')}</div>` : '';
+    previousGroup = group;
+    return `${heading}<div class="veille-item">
+      <div class="veille-item-top"><div class="veille-item-title">${escHtml(item.titre || item.ref || 'Document juridique')}</div><div class="veille-item-date">${escHtml(item.legal_date || '—')}</div></div>
+      <div class="veille-item-meta"><span class="pill pill-gold">${escHtml((item.type || 'document').replaceAll('_',' '))}</span><span class="pill pill-green">${escHtml(item.source_tier || 'NON QUALIFIÉ')}</span><span class="veille-source">${escHtml(item.juridiction || item.source_code || '')}</span></div>
+      <div style="font-size:11px;color:var(--sub)">${escHtml(item.change_type || (view === 'evolution' ? 'Point de la chronologie juridique' : 'Document du corpus'))}</div>
+      <div class="veille-item-actions">${safeExternalUrl(item.source_url) ? `<a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(item.source_url))}" target="_blank" rel="noopener noreferrer">Voir la source →</a>` : ''}<span style="margin-left:auto;font-size:10px;color:var(--sub)">${escHtml(item.official_citation || item.ref || '')}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// Patch switchTab pour charger les espaces nationaux à l'ouverture
 (function() {
   const _prev = window.switchTab;
   window.switchTab = function(name) {
     _prev(name);
     if (name === 'droit-fr') frLoadStatus();
+    if (name === 'droit-cm') cmLoadSpace();
   };
 })();
 
