@@ -21,6 +21,7 @@ PACK_CORPORA = {
     "cima": {"cima", "crca"},
     "bceao_uemoa": {"bceao", "uemoa"},
     "international": {"international", "icj", "icc"},
+    "cameroun": {"cm", "cameroun"},
 }
 
 CORPUS_FILTERS = {
@@ -31,12 +32,15 @@ CORPUS_FILTERS = {
     "bceao": {"bceao", "uemoa"},
     "bceao_uemoa": {"bceao", "uemoa"},
     "international": {"international", "icj", "icc"},
+    "cameroun": {"cm", "cameroun"},
 }
 
 # Registre éditorial minimal. Une URL n'est qualifiée d'officielle que si son
 # hôte appartient explicitement à ce registre. Le classement est exposé dans
 # l'API pour que l'interface n'assimile jamais agrégateur et autorité émettrice.
 SOURCE_REGISTRY = (
+    {"host": "prc.cm", "code": "CM.PRC.ACTES", "name": "Présidence du Cameroun", "tier": "OFFICIAL"},
+    {"host": "minjustice.gov.cm", "code": "CM.MINJUSTICE", "name": "Ministère de la Justice du Cameroun", "tier": "OFFICIAL"},
     {"host": "biblio.ohada.org", "code": "OHADA.BIBLIO", "name": "Bibliothèque OHADA", "tier": "OFFICIAL"},
     {"host": "ohada.org", "code": "OHADA.OFFICIAL", "name": "OHADA", "tier": "OFFICIAL"},
     {"host": "cima-afrique.org", "code": "CIMA.OFFICIAL", "name": "CIMA", "tier": "OFFICIAL"},

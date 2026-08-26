@@ -8,7 +8,11 @@ from baobab.watch_engine import (
     Artifact,
     WATCH_SOURCES,
     _parse_french_date,
+    extract_official_reference,
+    infer_change_type,
     parse_cima_crca,
+    parse_cameroon_minjustice,
+    parse_cameroon_prc,
     parse_ohada_biblio,
     score_artifact_validation,
     watch_matches_artifact,
@@ -71,6 +75,60 @@ def test_validation_rejects_generic_undated_artifact():
     artifact = Artifact("CIMA.OFFICIAL", "cima", "https://cima-afrique.org/document", "Document")
     score, _ = score_artifact_validation(artifact, 3)
     assert score < 85
+
+
+def test_parse_cameroon_prc_extracts_only_official_act_cards():
+    source = _source("CM.PRC.LOIS")
+    html = """
+      <nav><a href="/fr/actualites/actes/lois">Lois</a></nav>
+      <h4><a href="/fr/actualites/actes/lois/8246-loi-2026-004">
+        Loi N°2026/004 du 14 avril 2026 portant organisation
+      </a></h4>
+      <h4><a href="https://example.com/faux">Loi N°2026/999 du 14 avril 2026</a></h4>
+    """
+    artifacts = parse_cameroon_prc(html, source)
+    assert len(artifacts) == 1
+    assert artifacts[0].legal_date == date(2026, 4, 14)
+    assert artifacts[0].url.startswith("https://www.prc.cm/fr/actualites/actes/lois/")
+
+
+def test_parse_cameroon_minjustice_rejects_navigation_and_keeps_decision():
+    source = _source("CM.MINJUSTICE.CASELAW")
+    html = """
+      <a href="/index.php/fr/e-justice/decisions-de-justice">Décisions de justice</a>
+      <a href="/documents/jugement-commercial-2025-12.pdf">
+        Jugement N°12 du 24 mars 2025 — Tribunal de grande instance
+      </a>
+    """
+    artifacts = parse_cameroon_minjustice(html, source)
+    assert len(artifacts) == 1
+    assert artifacts[0].legal_date == date(2025, 3, 24)
+
+
+def test_cameroon_official_law_reaches_validation_threshold_when_stable():
+    artifact = Artifact(
+        "CM.PRC.LOIS", "cm", "https://www.prc.cm/fr/actualites/actes/lois/8246",
+        "Loi N°2026/004 du 14 avril 2026 portant organisation", date(2026, 4, 14), "DAY",
+    )
+    score, reasons = score_artifact_validation(artifact, 2)
+    assert score == 100
+    assert "REFERENCE_JURIDIQUE_RECONNUE:+15" in reasons
+
+
+@pytest.mark.parametrize(
+    ("title", "reference", "change_type"),
+    [
+        ("Loi N°2026/004 du 14 avril 2026 modifiant le Conseil constitutionnel",
+         "Loi N°2026/004", "AMENDS"),
+        ("Ordonnance n°2025/002 fixant les incitations à l'investissement",
+         "Ordonnance n°2025/002", None),
+        ("Loi N°2025/015 portant ratification de l'ordonnance n°2025/002",
+         "Loi N°2025/015", "RATIFIES"),
+    ],
+)
+def test_cameroon_reference_and_change_extraction(title, reference, change_type):
+    assert extract_official_reference(title) == reference
+    assert infer_change_type(title) == change_type
 
 
 @pytest.mark.parametrize(

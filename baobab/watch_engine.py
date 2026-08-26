@@ -27,6 +27,10 @@ class WatchSource:
     discovery_url: str
     parser: str
     fallback_urls: tuple[str, ...] = ()
+    document_type: str | None = None
+    country_code: str | None = None
+    jurisdiction_code: str | None = None
+    pagination_starts: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -62,6 +66,30 @@ WATCH_SOURCES = (
         discovery_url="https://www.cima-afrique.org/decisions-de-la-crca/",
         parser="cima_crca",
         fallback_urls=("https://cima-afrique.org/document-category/decisions-de-la-crca/",),
+    ),
+    WatchSource(
+        code="CM.PRC.LOIS", name="Présidence du Cameroun — Lois", corpus="cm",
+        discovery_url="https://www.prc.cm/fr/actualites/actes/lois", parser="cameroon_prc",
+        document_type="loi", country_code="CM", jurisdiction_code="CM",
+        pagination_starts=(8, 16),
+    ),
+    WatchSource(
+        code="CM.PRC.ORDONNANCES", name="Présidence du Cameroun — Ordonnances", corpus="cm",
+        discovery_url="https://www.prc.cm/fr/actualites/actes/ordonnances", parser="cameroon_prc",
+        document_type="ordonnance", country_code="CM", jurisdiction_code="CM",
+        pagination_starts=(8, 16),
+    ),
+    WatchSource(
+        code="CM.PRC.DECRETS", name="Présidence du Cameroun — Décrets", corpus="cm",
+        discovery_url="https://www.prc.cm/fr/actualites/actes/decrets", parser="cameroon_prc",
+        document_type="decret", country_code="CM", jurisdiction_code="CM",
+        pagination_starts=(8, 16),
+    ),
+    WatchSource(
+        code="CM.MINJUSTICE.CASELAW", name="MINJUSTICE Cameroun — Décisions", corpus="cm",
+        discovery_url="https://www.minjustice.gov.cm/index.php/fr/e-justice/decisions-de-justice",
+        parser="cameroon_minjustice", document_type="decision_juridictionnelle",
+        country_code="CM", jurisdiction_code="CM.SUPREME",
     ),
 )
 
@@ -145,8 +173,50 @@ def parse_cima_crca(html: str, source: WatchSource) -> list[Artifact]:
     return sorted(artifacts.values(), key=lambda item: item.url)
 
 
+def parse_cameroon_prc(html: str, source: WatchSource) -> list[Artifact]:
+    """Extrait uniquement les fiches d'actes de la liste officielle PRC."""
+    soup = BeautifulSoup(html, "html.parser")
+    artifacts: dict[str, Artifact] = {}
+    expected_path = f"/fr/actualites/actes/{source.discovery_url.rstrip('/').split('/')[-1]}/"
+    for link in soup.select("h3 a[href], h4 a[href], .item-title a[href]"):
+        title = " ".join(link.get_text(" ", strip=True).split())
+        url = urljoin(source.discovery_url, str(link.get("href") or ""))
+        if expected_path not in url or len(title) < 12:
+            continue
+        legal_date, precision = _parse_french_date(title)
+        artifacts[url] = Artifact(
+            source.code, source.corpus, url, title[:500], legal_date, precision
+        )
+    return sorted(artifacts.values(), key=lambda item: item.url)
+
+
+def parse_cameroon_minjustice(html: str, source: WatchSource) -> list[Artifact]:
+    """Parseur restrictif : seules les fiches/PDF explicitement juridictionnels passent."""
+    soup = BeautifulSoup(html, "html.parser")
+    artifacts: dict[str, Artifact] = {}
+    for link in soup.select("a[href]"):
+        title = " ".join(link.get_text(" ", strip=True).split())
+        if not re.search(r"\b(arr[êe]t|jugement|ordonnance|d[ée]cision)\b", title, re.I):
+            continue
+        url = urljoin(source.discovery_url, str(link.get("href") or ""))
+        if ("minjustice.gov.cm" not in url.lower() or len(title) < 12
+                or title.lower() in {"décisions de justice", "decisions de justice"}
+                or url.rstrip("/") == source.discovery_url.rstrip("/")):
+            continue
+        legal_date, precision = _parse_french_date(title)
+        artifacts[url] = Artifact(
+            source.code, source.corpus, url, title[:500], legal_date, precision
+        )
+    return sorted(artifacts.values(), key=lambda item: item.url)
+
+
 def parse_source(html: str, source: WatchSource) -> list[Artifact]:
-    parsers = {"ohada_biblio": parse_ohada_biblio, "cima_crca": parse_cima_crca}
+    parsers = {
+        "ohada_biblio": parse_ohada_biblio,
+        "cima_crca": parse_cima_crca,
+        "cameroon_prc": parse_cameroon_prc,
+        "cameroon_minjustice": parse_cameroon_minjustice,
+    }
     return parsers[source.parser](html, source)
 
 
@@ -155,6 +225,7 @@ def watch_matches_artifact(watch: dict, artifact: Artifact) -> bool:
     corpus_aliases = {
         "ohada": {"ohada", "ccja"}, "cima": {"cima", "crca"},
         "bceao": {"bceao", "uemoa"}, "bceao_uemoa": {"bceao", "uemoa"},
+        "cameroun": {"cm", "cameroun"}, "cm": {"cm", "cameroun"},
     }
     if corpus != "all" and artifact.corpus not in corpus_aliases.get(corpus, {corpus}):
         return False
@@ -184,7 +255,11 @@ def score_artifact_validation(
     if len(artifact.title.strip()) >= 15 and artifact.title.strip().lower() not in generic:
         score += 15
         reasons.append("TITRE_DOCUMENTAIRE_EXPLOITABLE:+15")
-    if re.search(r"\b(arr[êe]t|d[ée]cision)\s*(?:n[°o]|no|num[ée]ro)?\s*\d", artifact.title, re.I):
+    if re.search(
+        r"\b(arr[êe]t|jugement|loi|ordonnance|d[ée]cret|arr[êe]t[ée]|d[ée]cision|circulaire)"
+        r"\s*(?:n[°o]|no|num[ée]ro)?\s*\d",
+        artifact.title, re.I,
+    ):
         score += 15
         reasons.append("REFERENCE_JURIDIQUE_RECONNUE:+15")
     if artifact.legal_date and artifact.legal_date <= date.today() + timedelta(days=2):
@@ -193,6 +268,25 @@ def score_artifact_validation(
     else:
         reasons.append("DATE_JURIDIQUE_ABSENTE_OU_INCOHERENTE:+0")
     return score, reasons
+
+
+def extract_official_reference(title: str) -> str | None:
+    match = re.search(
+        r"\b(?:loi|ordonnance|d[ée]cret|arr[êe]t[ée]|d[ée]cision|circulaire|arr[êe]t|jugement)"
+        r"\s*(?:n[°o]|no|num[ée]ro)?\s*([0-9]{1,4}(?:[/\-][0-9A-Za-z]{1,6})+)",
+        title, re.I,
+    )
+    return match.group(0).strip() if match else None
+
+
+def infer_change_type(title: str) -> str | None:
+    normalized = title.lower()
+    rules = (
+        ("abrog", "REPEALS"), ("modifi", "AMENDS"), ("complét", "SUPPLEMENTS"),
+        ("ratifi", "RATIFIES"), ("application", "IMPLEMENTS"),
+        ("portant", "ENACTS"),
+    )
+    return next((label for needle, label in rules if needle in normalized), None)
 
 
 async def _fetch_source(
@@ -213,7 +307,21 @@ async def _fetch_source(
                     },
                 )
                 response.raise_for_status()
-                return source, response.text, str(response.url), errors
+                pages = [response.text]
+                for start in source.pagination_starts:
+                    separator = "&" if "?" in url else "?"
+                    page_url = f"{url}{separator}start={start}"
+                    try:
+                        page_response = await client.get(page_url, headers={
+                            "User-Agent": "BAOBAB-Legal-Watch/1.1 (+https://vaegbaobab.com)",
+                            "Accept": "text/html,application/xhtml+xml",
+                            "Accept-Language": "fr-FR,fr;q=0.9",
+                        })
+                        page_response.raise_for_status()
+                        pages.append(page_response.text)
+                    except (httpx.TimeoutException, httpx.HTTPError) as page_exc:
+                        errors.append(f"{page_url}: {type(page_exc).__name__}")
+                return source, "\n".join(pages), str(response.url), errors
             except (httpx.TimeoutException, httpx.HTTPError) as exc:
                 errors.append(f"{url} [{attempt + 1}/{attempts}]: {type(exc).__name__}")
                 if attempt + 1 < attempts:
@@ -380,18 +488,25 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                     if not pending_events:
                         continue
                     if not corpus_id:
-                        document_type = "decision_crca" if artifact.corpus == "cima" else "arret_ccja"
+                        document_type = source.document_type or (
+                            "decision_crca" if artifact.corpus == "cima" else "arret_ccja"
+                        )
+                        official_reference = extract_official_reference(artifact.title)
+                        change_type = infer_change_type(artifact.title)
                         corpus_id = await conn.fetchval(
                             """INSERT INTO legal_corpus
                                (ref,type,corpus,juridiction,titre,date_decision,source_url,
                                 source_code,source_tier,source_verified_at,editorial_status,
-                                impact_level,detected_at,metadata)
+                                impact_level,detected_at,official_identifier,official_citation,
+                                change_type,metadata)
                                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'OFFICIAL',NOW(),
-                                       'SOURCE_VERIFIED','TO_QUALIFY',NOW(),$9::jsonb)
+                                       'SOURCE_VERIFIED','TO_QUALIFY',NOW(),$9,$10,$11,$12::jsonb)
                                RETURNING id""",
-                            artifact.title[:200], document_type, artifact.corpus,
-                            "CRCA" if artifact.corpus == "cima" else "CCJA",
+                            official_reference or artifact.title[:200], document_type, artifact.corpus,
+                            ("CRCA" if artifact.corpus == "cima" else
+                             "CCJA" if artifact.corpus == "ohada" else source.name),
                             artifact.title, artifact.legal_date, artifact.url, source.code,
+                            official_reference, official_reference, change_type,
                             json.dumps({
                                 "automated_validation": True,
                                 "validation_score": score,
@@ -399,6 +514,12 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                                 "date_precision": artifact.date_precision,
                             }),
                         )
+                        if source.country_code or source.jurisdiction_code:
+                            await conn.execute(
+                                """UPDATE legal_corpus SET country_code=$2,
+                                   jurisdiction_code=$3 WHERE id=$1""",
+                                corpus_id, source.country_code, source.jurisdiction_code,
+                            )
                     await conn.execute(
                         """UPDATE legal_source_artifacts SET state='AUTO_VALIDATED',
                            linked_corpus_id=$3,validation_score=$4,validation_reasons=$5::jsonb,
