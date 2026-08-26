@@ -216,9 +216,20 @@ async def watch_feed(
     # contenir que des publications dont la provenance peut être vérifiée.
     # Les imports locaux mis en quarantaine restent dans le corpus pour audit,
     # mais ne sont jamais exposés par ce flux.
+    # Pour une date connue seulement à l'année (stockée techniquement au
+    # 1er janvier), la fraîcheur de veille se mesure à la détection BAOBAB.
+    # Sinon un arrêt 2026 détecté aujourd'hui disparaît à tort d'un filtre
+    # « 90 jours » dès le 2 avril.
+    activity_date_sql = """CASE
+        WHEN publication_date IS NOT NULL THEN publication_date
+        WHEN date_decision IS NOT NULL
+             AND NOT (EXTRACT(MONTH FROM date_decision)=1 AND EXTRACT(DAY FROM date_decision)=1)
+            THEN date_decision
+        ELSE COALESCE(detected_at::date, created_at::date, date_decision)
+    END"""
     conditions = [
         "COALESCE(source_url, '') ~* '^https?://'",
-        "COALESCE(publication_date, date_decision) IS NOT NULL",
+        f"({activity_date_sql}) IS NOT NULL",
         "COALESCE(metadata->>'watch_quarantined', 'false') <> 'true'",
         _source_scope_condition(source_scope),
     ]
@@ -243,8 +254,7 @@ async def watch_feed(
         position += 1
     if since_days:
         conditions.append(
-            f"COALESCE(publication_date, date_decision) >= "
-            f"CURRENT_DATE - ${position}::int"
+            f"({activity_date_sql}) >= CURRENT_DATE - ${position}::int"
         )
         params.append(since_days)
         position += 1
@@ -264,7 +274,7 @@ async def watch_feed(
                    COUNT(*) OVER() AS filtered_total
             FROM legal_corpus
             WHERE {' AND '.join(conditions)}
-            ORDER BY COALESCE(publication_date, date_decision) DESC,
+            ORDER BY ({activity_date_sql}) DESC,
                      created_at DESC
             LIMIT ${position}
             """,
@@ -312,7 +322,7 @@ async def watch_feed(
             "source_policy": "Une source n'est dite officielle que si son domaine figure dans le registre éditorial BAOBAB.",
             "impact_policy": "L'impact reste à qualifier tant qu'aucune analyse éditoriale n'a été validée.",
             "coverage_notice": "Le flux reflète les documents collectés et datés par BAOBAB. Les documents sans date juridique restent consultables dans le corpus mais sont exclus de la veille.",
-            "automatic_email_notifications": False,
+            "automatic_email_notifications": settings.watch_email_delivery_enabled,
             "latest_matching_legal_date": results[0]["date"] if results else None,
         },
     }
@@ -353,7 +363,7 @@ async def watch_engine_status(x_user_token: str | None = Header(default=None)):
         latest_run = await conn.fetchrow(
             """SELECT run_id,status,trigger,started_at,finished_at,sources_checked,
                       sources_succeeded,sources_failed,artifacts_seen,events_created,
-                      matches_created,error_summary
+                      matches_created,events_auto_validated,emails_sent,error_summary
                FROM legal_watch_runs ORDER BY started_at DESC LIMIT 1"""
         )
         sources = await conn.fetch(
@@ -371,7 +381,7 @@ async def watch_engine_status(x_user_token: str | None = Header(default=None)):
             "sources": [dict(row) for row in sources],
             "pending_matches": int(pending_matches or 0),
             "schedule": "Tous les jours à 05:15 UTC",
-            "email_delivery_enabled": False,
+            "email_delivery_enabled": settings.watch_email_delivery_enabled,
         }
     finally:
         await conn.close()

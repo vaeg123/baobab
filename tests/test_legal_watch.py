@@ -79,10 +79,43 @@ async def test_watch_feed_only_queries_verified_non_quarantined_sources(monkeypa
 
     assert result["results"] == []
     assert "COALESCE(source_url, '') ~* '^https?://'" in conn.sql
-    assert "COALESCE(publication_date, date_decision) IS NOT NULL" in conn.sql
+    assert "COALESCE(detected_at::date, created_at::date, date_decision)" in conn.sql
     assert "watch_quarantined" in conn.sql
     assert "biblio.ohada.org" in conn.sql
-    assert result["methodology"]["automatic_email_notifications"] is False
+    assert result["methodology"]["automatic_email_notifications"] is watch.settings.watch_email_delivery_enabled
+
+
+@pytest.mark.asyncio
+async def test_year_precision_uses_detection_date_for_recent_period(monkeypatch):
+    class FakeConnection:
+        def __init__(self):
+            self.sql = ""
+
+        async def fetch(self, sql, *_params):
+            self.sql = sql
+            return []
+
+        async def close(self):
+            pass
+
+    conn = FakeConnection()
+
+    async def fake_workspace(_token, _service):
+        return {"plan": accounts.SubscriptionPlan.PREMIUM, "enabled_services": []}
+
+    async def fake_conn():
+        return conn
+
+    monkeypatch.setattr(watch, "require_workspace_service", fake_workspace)
+    monkeypatch.setattr(watch, "_conn", fake_conn)
+    await watch.watch_feed(
+        corpus="all", query=None, source_scope="official", since_days=90,
+        limit=30, x_user_token="valid",
+    )
+    assert "EXTRACT(MONTH FROM date_decision)=1" in conn.sql
+    assert "detected_at::date" in conn.sql
+    assert "CURRENT_DATE - $" in conn.sql
+    assert "::int" in conn.sql
 
 
 @pytest.mark.parametrize(
