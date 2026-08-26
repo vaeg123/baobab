@@ -22,7 +22,7 @@ import asyncpg
 log = logging.getLogger("ingest_lumiere")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-SOURCE_DIR = Path("C:/Users/yboul/Desktop/lumierejuridiqueabidjan")
+SOURCE_DIR = Path(os.environ.get("BAOBAB_IMPORT_SOURCE_DIR", ""))
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://baobab:baobab@localhost:5432/baobab")
 
 # Mappage dossier → (type, corpus)
@@ -164,6 +164,13 @@ def parse_date(s):
 
 
 async def run():
+    if os.environ.get("BAOBAB_ALLOW_LOCAL_IMPORT") != "yes":
+        raise RuntimeError(
+            "Import local désactivé. Définissez explicitement "
+            "BAOBAB_ALLOW_LOCAL_IMPORT=yes et BAOBAB_IMPORT_SOURCE_DIR."
+        )
+    if not os.environ.get("BAOBAB_IMPORT_SOURCE_DIR") or not SOURCE_DIR.is_dir():
+        raise RuntimeError("BAOBAB_IMPORT_SOURCE_DIR doit désigner un dossier existant.")
     md_files = list(SOURCE_DIR.rglob("*.md"))
     log.info(f"Fichiers MD trouvés : {len(md_files)}")
 

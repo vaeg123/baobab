@@ -6,7 +6,7 @@ from datetime import date as ddate
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 DB = os.environ["DATABASE_URL"]
-ROOT = pathlib.Path("C:/Users/yboul/Desktop/lumierejuridiqueabidjan")
+ROOT = pathlib.Path(os.environ.get("BAOBAB_IMPORT_SOURCE_DIR", ""))
 
 SKIP_NAMES = {"SERENITY", "Modele_", "Modèle_", "modele_", "__pycache__"}
 SKIP_EXTS  = {".epub", ".csv", ".py", ".pyc", ".json"}
@@ -198,6 +198,13 @@ async def ingest_pdf(conn, path: pathlib.Path):
 
 
 async def run():
+    if os.environ.get("BAOBAB_ALLOW_LOCAL_IMPORT") != "yes":
+        raise RuntimeError(
+            "Import local désactivé. Définissez explicitement "
+            "BAOBAB_ALLOW_LOCAL_IMPORT=yes et BAOBAB_IMPORT_SOURCE_DIR."
+        )
+    if not os.environ.get("BAOBAB_IMPORT_SOURCE_DIR") or not ROOT.is_dir():
+        raise RuntimeError("BAOBAB_IMPORT_SOURCE_DIR doit désigner un dossier existant.")
     conn = await asyncpg.connect(DB)
     inserted = skipped = errors = 0
 

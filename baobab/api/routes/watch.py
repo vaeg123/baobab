@@ -93,7 +93,14 @@ async def watch_feed(
     _validate_requested_corpus(workspace, corpus)
     allowed = _allowed_corpora(workspace)
 
-    conditions = ["1=1"]
+    # La veille est publique pour les utilisateurs du service : elle ne doit
+    # contenir que des publications dont la provenance peut être vérifiée.
+    # Les imports locaux mis en quarantaine restent dans le corpus pour audit,
+    # mais ne sont jamais exposés par ce flux.
+    conditions = [
+        "COALESCE(source_url, '') ~* '^https?://'",
+        "COALESCE(metadata->>'watch_quarantined', 'false') <> 'true'",
+    ]
     params: list = []
     position = 1
     if corpus != "all":

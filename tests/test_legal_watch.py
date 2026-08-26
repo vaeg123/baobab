@@ -37,3 +37,39 @@ async def test_watch_feed_rejects_anonymous_access():
     with pytest.raises(HTTPException) as exc:
         await watch.watch_feed(x_user_token=None)
     assert exc.value.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_watch_feed_only_queries_verified_non_quarantined_sources(monkeypatch):
+    class FakeConnection:
+        def __init__(self):
+            self.sql = ""
+
+        async def fetch(self, sql, *_params):
+            self.sql = sql
+            return []
+
+        async def close(self):
+            pass
+
+    conn = FakeConnection()
+
+    async def fake_workspace(_token, _service):
+        return {
+            "plan": accounts.SubscriptionPlan.BASIC,
+            "enabled_services": [],
+        }
+
+    async def fake_conn():
+        return conn
+
+    monkeypatch.setattr(watch, "require_workspace_service", fake_workspace)
+    monkeypatch.setattr(watch, "_conn", fake_conn)
+
+    result = await watch.watch_feed(
+        corpus="all", query=None, limit=30, x_user_token="valid"
+    )
+
+    assert result["results"] == []
+    assert "COALESCE(source_url, '') ~* '^https?://'" in conn.sql
+    assert "watch_quarantined" in conn.sql
