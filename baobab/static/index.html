@@ -4700,6 +4700,10 @@
           </div>
         </div>
         <div id="watch-subscriptions" style="margin-top:1rem"></div>
+        <div id="watch-matches" style="margin-top:1rem"></div>
+        <div id="watch-engine-status" class="card" style="margin-top:1rem">
+          <div class="card-body" style="font-size:12px;color:var(--sub)">État du moteur de veille : chargement…</div>
+        </div>
       </div>
     </div>
 
@@ -8036,6 +8040,63 @@ async function loadLegalWatches() {
     </div>` : '';
 }
 
+async function loadWatchEngineStatus() {
+  const container = document.getElementById('watch-engine-status');
+  if (!container) return;
+  try {
+    const response = await fetch('/api/v1/legal/watch/engine/status', {
+      headers: { 'X-User-Token': state.token || '' },
+    });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    const run = data.latest_run;
+    const sourceRows = data.sources || [];
+    const statusLabels = { SUCCESS: 'Opérationnel', PARTIAL: 'Partiellement disponible', FAILED: 'En erreur' };
+    container.innerHTML = `<div class="card-body">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div><div class="section-title" style="margin:0">Moteur de collecte</div><div style="font-size:11px;color:var(--sub);margin-top:3px">${escHtml(data.schedule || '')}</div></div>
+        <span class="pill ${run?.status === 'SUCCESS' ? 'pill-green' : run?.status === 'PARTIAL' ? 'pill-orange' : 'pill-gray'}">${escHtml(statusLabels[run?.status] || (run ? run.status : 'Premier cycle en attente'))}</span>
+      </div>
+      ${run ? `<div class="info-grid" style="margin-top:12px">
+        <div class="info-item">Dernier contrôle<strong>${fmtDate(run.finished_at || run.started_at)}</strong></div>
+        <div class="info-item">Sources contrôlées<strong>${Number(run.sources_succeeded || 0)} / ${Number(run.sources_checked || 0)}</strong></div>
+        <div class="info-item">Éléments examinés<strong>${Number(run.artifacts_seen || 0).toLocaleString('fr-FR')}</strong></div>
+        <div class="info-item">Nouveaux événements<strong>${Number(run.events_created || 0)}</strong></div>
+        <div class="info-item">Correspondances<strong>${Number(data.pending_matches || 0)}</strong></div>
+        <div class="info-item">Notifications email<strong>${data.email_delivery_enabled ? 'Actives' : 'Désactivées'}</strong></div>
+      </div>` : '<div style="font-size:12px;color:var(--sub);margin-top:12px">Le premier contrôle automatique sera exécuté au prochain cycle planifié.</div>'}
+      ${sourceRows.length ? `<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">${sourceRows.map(source => `<span class="pill ${source.last_status === 'SUCCESS' ? 'pill-green' : 'pill-red'}">${escHtml(source.source_code)} · ${escHtml(source.last_status)}</span>`).join('')}</div>` : ''}
+    </div>`;
+  } catch (error) {
+    container.innerHTML = `<div class="card-body" style="font-size:12px;color:var(--red)">État du moteur indisponible : ${escHtml(error.message)}</div>`;
+  }
+}
+
+async function loadWatchMatches() {
+  const container = document.getElementById('watch-matches');
+  if (!container) return;
+  try {
+    const response = await fetch('/api/v1/legal/watch/matches?limit=20', {
+      headers: { 'X-User-Token': state.token || '' },
+    });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    const matches = data.matches || [];
+    container.innerHTML = matches.length ? `
+      <div class="section-title">Nouveautés correspondant à mes critères</div>
+      <div style="display:flex;flex-direction:column;gap:8px">${matches.map(match => `
+        <div style="padding:11px 13px;border:1px solid var(--border);border-radius:8px;background:var(--card)">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:start">
+            <div><div style="font-size:13px;font-weight:700">${escHtml(match.title)}</div><div style="font-size:10px;color:var(--sub);margin-top:3px">${escHtml(match.watch_name)} · ${escHtml(match.source_code)} · Détecté le ${fmtDate(match.discovered_at)}</div></div>
+            <span class="pill pill-orange">À vérifier</span>
+          </div>
+          <div style="margin-top:8px"><a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(match.artifact_url))}" target="_blank" rel="noopener noreferrer">Consulter la source officielle →</a></div>
+        </div>`).join('')}</div>` : '';
+  } catch (_) {
+    container.innerHTML = '';
+  }
+}
+
 function openLegalWatch(index) {
   const watch = currentLegalWatches[index];
   if (!watch) return;
@@ -8057,7 +8118,7 @@ async function deleteLegalWatch(watchId) {
   const orig = switchTab;
   window.switchTab = function(name) {
     orig(name);
-    if (name === 'veille') { renderVeille(); loadLegalWatches(); }
+    if (name === 'veille') { renderVeille(); loadLegalWatches(); loadWatchMatches(); loadWatchEngineStatus(); }
   };
 })();
 

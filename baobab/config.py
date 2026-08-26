@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     stripe_currency: str = "xof"
     jwt_secret: str = "dev-jwt-secret-change-me"
     avocassist_integration_secret: str = ""
+    cron_secret: str = Field(default="", validation_alias="CRON_SECRET")
 
     # Alias explicites : ces variables existent en production sous le
     # préfixe BAOBAB_ (cohérence avec .env.example et l'historique du

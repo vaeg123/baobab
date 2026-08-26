@@ -9,6 +9,8 @@ from pydantic import BaseModel, Field
 
 from baobab.api.routes.accounts import require_workspace_service
 from baobab.api.routes.legal import _conn
+from baobab.auth import constant_time_equals
+from baobab.config import settings
 
 router = APIRouter(tags=["veille-juridique"])
 
@@ -326,6 +328,78 @@ async def watch_sources(x_user_token: str | None = Header(default=None)):
         ],
         "tiers": SOURCE_TIER_LABELS,
     }
+
+
+@router.get("/legal/watch/engine/run", include_in_schema=False)
+async def run_watch_engine(authorization: str | None = Header(default=None)):
+    if not settings.cron_secret:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Moteur planifié non configuré.",
+        )
+    expected = f"Bearer {settings.cron_secret}"
+    if not constant_time_equals(authorization, expected):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Non autorisé.")
+    from baobab.watch_engine import run_watch_cycle
+
+    return await run_watch_cycle(trigger="vercel_cron")
+
+
+@router.get("/legal/watch/engine/status")
+async def watch_engine_status(x_user_token: str | None = Header(default=None)):
+    workspace = await require_workspace_service(x_user_token, "alerts")
+    conn = await _conn()
+    try:
+        latest_run = await conn.fetchrow(
+            """SELECT run_id,status,trigger,started_at,finished_at,sources_checked,
+                      sources_succeeded,sources_failed,artifacts_seen,events_created,
+                      matches_created,error_summary
+               FROM legal_watch_runs ORDER BY started_at DESC LIMIT 1"""
+        )
+        sources = await conn.fetch(
+            """SELECT source_code,discovery_url,last_checked_at,last_changed_at,
+                      last_status,last_error,artifact_count
+               FROM legal_source_snapshots ORDER BY source_code"""
+        )
+        pending_matches = await conn.fetchval(
+            """SELECT COUNT(*) FROM legal_watch_matches
+               WHERE workspace_id=$1 AND delivery_status IN ('DISABLED','PENDING')""",
+            workspace["workspace_id"],
+        )
+        return {
+            "latest_run": dict(latest_run) if latest_run else None,
+            "sources": [dict(row) for row in sources],
+            "pending_matches": int(pending_matches or 0),
+            "schedule": "Tous les jours à 05:15 UTC",
+            "email_delivery_enabled": False,
+        }
+    finally:
+        await conn.close()
+
+
+@router.get("/legal/watch/matches")
+async def watch_matches(
+    limit: int = Query(30, ge=1, le=100),
+    x_user_token: str | None = Header(default=None),
+):
+    workspace = await require_workspace_service(x_user_token, "alerts")
+    conn = await _conn()
+    try:
+        rows = await conn.fetch(
+            """SELECT m.match_id,m.watch_id,m.matched_at,m.delivery_status,
+                      e.event_id,e.event_type,e.source_code,e.artifact_url,e.title,
+                      e.corpus,e.legal_date,e.review_status,e.discovered_at,
+                      s.name AS watch_name
+               FROM legal_watch_matches m
+               JOIN legal_watch_events e ON e.event_id=m.event_id
+               JOIN legal_watch_subscriptions s ON s.watch_id=m.watch_id
+               WHERE m.workspace_id=$1
+               ORDER BY m.matched_at DESC LIMIT $2""",
+            workspace["workspace_id"], limit,
+        )
+        return {"matches": [dict(row) for row in rows], "total": len(rows)}
+    finally:
+        await conn.close()
 
 
 @router.get("/legal/watch/subscriptions")
