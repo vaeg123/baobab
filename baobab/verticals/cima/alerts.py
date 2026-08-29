@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 
-from baobab.core.models.legal_process import LegalProcess, ProcessStep, StepStatus
+from baobab.core.models.legal_process import LegalProcess, StepStatus
 
 
 class AlertLevel(str, Enum):

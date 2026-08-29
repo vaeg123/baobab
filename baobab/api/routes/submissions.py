@@ -236,9 +236,13 @@ async def list_submissions(
         p = 1
 
         if statut != "all":
-            conditions.append(f"statut = ${p}"); params.append(statut); p += 1
+            conditions.append(f"statut = ${p}")
+            params.append(statut)
+            p += 1
         if corpus:
-            conditions.append(f"corpus = ${p}"); params.append(corpus); p += 1
+            conditions.append(f"corpus = ${p}")
+            params.append(corpus)
+            p += 1
 
         where = " AND ".join(conditions)
         rows = await conn.fetch(

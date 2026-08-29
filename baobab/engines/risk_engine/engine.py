@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -41,5 +41,5 @@ class RiskEngine:
             regulatory_impact=regulatory_impact,
             reputational_impact=reputational_impact,
             composite_score=round(composite, 4),
-            generated_at=datetime.utcnow(),
+            generated_at=datetime.now(UTC),
         )

@@ -1,21 +1,19 @@
 from datetime import datetime, timezone
 from baobab.core.models.legal_event import LegalEvent
 from baobab.engines.event_engine.engine import LegalEventEngine
-from baobab.engines.compliance_engine.engine import ComplianceEngine, ComplianceStatus
 from baobab.verticals.bceao.events import BceaoEventType
 from baobab.verticals.bceao.cascades import (
     DECLARATION_SOUPCON_CASCADE,
     CONTROLE_CBF_CASCADE,
-    RAPPORT_MENSUEL_CASCADE,
     RATIO_PRUDENTIEL_BREACH_CASCADE,
-    OUVERTURE_COMPTE_KYC_CASCADE,
 )
-from baobab.verticals.cima.alerts import generate_alerts, AlertLevel
+from baobab.verticals.cima.alerts import generate_alerts
 
 
 def _engine(*cascades):
     e = LegalEventEngine()
-    for c in cascades: e.register_cascade(c)
+    for cascade in cascades:
+        e.register_cascade(cascade)
     return e
 
 

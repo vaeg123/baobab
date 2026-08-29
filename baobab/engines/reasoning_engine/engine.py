@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -13,7 +13,7 @@ class ReasoningOutput:
     scenarios: list[dict]
     applicable_obligations: list[str]
     confidence: float
-    generated_at: datetime = field(default_factory=datetime.utcnow)
+    generated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class ReasoningEngine:

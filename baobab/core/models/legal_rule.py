@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -18,4 +18,4 @@ class LegalRule:
     sanction: str | None         # Sanction en cas de non-respect
     source_atom_ids: list[str] = field(default_factory=list)
     territory: str = "OHADA"
-    effective_date: datetime = field(default_factory=datetime.utcnow)
+    effective_date: datetime = field(default_factory=lambda: datetime.now(UTC))

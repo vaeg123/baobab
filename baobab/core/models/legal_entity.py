@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 
 
@@ -25,4 +25,4 @@ class LegalEntity:
     regulated_by: list[str] = field(default_factory=list)   # ["CIMA", "BCEAO"]
     active_obligations: list[str] = field(default_factory=list)
     compliance_score: float | None = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))

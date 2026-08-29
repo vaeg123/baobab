@@ -2,9 +2,16 @@
 """Insère les Actes Uniformes OHADA et textes CCJA depuis biblio.ohada.org.
 Usage: DATABASE_URL=... python ingest_ohada_au.py
 """
-import asyncio, asyncpg, json, os, sys, urllib.request
+
+import asyncio
+import asyncpg
+import json
+import os
+import sys
+import urllib.request
 from datetime import date as ddate
 import fitz
+
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 DB = os.environ["DATABASE_URL"]
@@ -164,7 +171,9 @@ def parse_date(s: str):
     return ddate(int(y), int(m), int(d))
 
 
-async def upsert(conn, ref, doc_type, corpus, juridiction, titre, date_str, pays, domaine, resume, texte, meta):
+async def upsert(
+    conn, ref, doc_type, corpus, juridiction, titre, date_str, pays, domaine, resume, texte, meta
+):
     date_obj = parse_date(date_str)
     ex = await conn.fetchval("SELECT id FROM legal_corpus WHERE ref=$1", ref)
     if ex:
@@ -175,7 +184,9 @@ async def upsert(conn, ref, doc_type, corpus, juridiction, titre, date_str, pays
             return "dup"
         await conn.execute(
             "UPDATE legal_corpus SET texte_integral=$1, resume=$2 WHERE ref=$3",
-            texte[:80000], resume[:600], ref,
+            texte[:80000],
+            resume[:600],
+            ref,
         )
         return "updated"
     await conn.execute(
@@ -183,8 +194,16 @@ async def upsert(conn, ref, doc_type, corpus, juridiction, titre, date_str, pays
            (ref,type,corpus,juridiction,titre,date_decision,pays,domaine,
             resume,texte_integral,metadata)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)""",
-        ref, doc_type, corpus, juridiction, titre, date_obj, pays, domaine,
-        resume[:600], texte[:80000],
+        ref,
+        doc_type,
+        corpus,
+        juridiction,
+        titre,
+        date_obj,
+        pays,
+        domaine,
+        resume[:600],
+        texte[:80000],
         json.dumps(meta, ensure_ascii=False),
     )
     return "inserted"
@@ -202,20 +221,32 @@ async def run():
         try:
             pdf = download_pdf(doc["explnum_id"])
             text = extract_text(pdf)
-            print(f"  {len(pdf)//1024}KB → {len(text)} chars")
+            print(f"  {len(pdf) // 1024}KB → {len(text)} chars")
             if len(text.strip()) < 100:
                 print("  WARNING: very little text extracted")
                 text = f"[Texte image — PDF biblio.ohada.org explnum_id={doc['explnum_id']}]"
             meta = {"source": "biblio.ohada.org", "explnum_id": doc["explnum_id"]}
             status = await upsert(
-                conn, ref, doc["type"], doc["corpus"], doc["juridiction"],
-                doc["titre"], doc["date"], doc["pays"], doc["domaine"],
-                text[:600], text, meta,
+                conn,
+                ref,
+                doc["type"],
+                doc["corpus"],
+                doc["juridiction"],
+                doc["titre"],
+                doc["date"],
+                doc["pays"],
+                doc["domaine"],
+                text[:600],
+                text,
+                meta,
             )
             print(f"  {status.upper()}")
-            if status == "inserted": inserted += 1
-            elif status == "updated": updated += 1
-            else: skipped += 1
+            if status == "inserted":
+                inserted += 1
+            elif status == "updated":
+                updated += 1
+            else:
+                skipped += 1
         except Exception as e:
             errors += 1
             print(f"  ERROR: {e}")
@@ -231,17 +262,31 @@ async def run():
                 "explnum_id": doc["explnum_id"],
                 "texte_note": "PDF image — OCR requis",
             }
-            resume = doc.get("resume", f"Texte non extractible. Voir explnum_id={doc['explnum_id']}.")
+            resume = doc.get(
+                "resume", f"Texte non extractible. Voir explnum_id={doc['explnum_id']}."
+            )
             texte = f"[Texte non extractible — PDF scanné. Source: biblio.ohada.org explnum_id={doc['explnum_id']}]\n\n{resume}"
             status = await upsert(
-                conn, ref, doc["type"], doc["corpus"], doc["juridiction"],
-                doc["titre"], doc["date"], doc["pays"], doc["domaine"],
-                resume, texte, meta,
+                conn,
+                ref,
+                doc["type"],
+                doc["corpus"],
+                doc["juridiction"],
+                doc["titre"],
+                doc["date"],
+                doc["pays"],
+                doc["domaine"],
+                resume,
+                texte,
+                meta,
             )
             print(f"  {status.upper()}")
-            if status == "inserted": inserted += 1
-            elif status == "updated": updated += 1
-            else: skipped += 1
+            if status == "inserted":
+                inserted += 1
+            elif status == "updated":
+                updated += 1
+            else:
+                skipped += 1
         except Exception as e:
             errors += 1
             print(f"  ERROR: {e}")
@@ -251,7 +296,7 @@ async def run():
         "SELECT COUNT(*) FROM legal_corpus WHERE type IN ('acte_uniforme','reglement','traite')"
     )
     await conn.close()
-    print(f"\n{'='*55}")
+    print(f"\n{'=' * 55}")
     print(f"Insérés    : {inserted}")
     print(f"Mis à jour : {updated}")
     print(f"Ignorés    : {skipped}")

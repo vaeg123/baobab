@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 from baobab.core.models.legal_event import LegalEvent
 from baobab.engines.event_engine.engine import LegalEventEngine
-from baobab.engines.compliance_engine.engine import ComplianceEngine
 from baobab.verticals.ohada.events import OhadaEventType
 from baobab.verticals.ohada.cascades import (
     CREATION_SARL_CASCADE,
@@ -9,7 +8,7 @@ from baobab.verticals.ohada.cascades import (
     DISSOLUTION_CASCADE,
     INJONCTION_PAYER_CASCADE,
 )
-from baobab.verticals.cima.alerts import generate_alerts, AlertLevel
+from baobab.verticals.cima.alerts import generate_alerts
 
 
 def _make_engine(*cascades):

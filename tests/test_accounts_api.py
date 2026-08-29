@@ -9,6 +9,14 @@ from tests.conftest import postgres_available
 client = TestClient(app)
 
 
+@pytest.fixture(autouse=True)
+def reset_local_rate_limits():
+    """Chaque test simule un nouveau client, sans partager la fenêtre anti-abus."""
+    from baobab import rate_limit
+
+    rate_limit._LOCAL_COUNTERS.clear()
+
+
 @pytest.mark.asyncio
 async def test_workspace_lookup_accepts_admin_token(monkeypatch):
     workspace = {
@@ -77,6 +85,7 @@ def test_free_workspace_can_submit_one_internal_request_then_must_upgrade():
 
     request_response = client.post(
         f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        headers={"X-Access-Token": workspace["user_token"]},
         json={
             "subject": "Analyse contrat",
             "message": "Je souhaite une analyse interne de ce nouveau dossier.",
@@ -88,6 +97,7 @@ def test_free_workspace_can_submit_one_internal_request_then_must_upgrade():
 
     blocked_response = client.post(
         f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        headers={"X-Access-Token": workspace["user_token"]},
         json={
             "subject": "Deuxieme demande",
             "message": "Cette demande doit etre bloquee avec l'offre gratuite.",
@@ -172,6 +182,7 @@ def test_workspace_admin_can_manage_own_internal_requests():
 
     request_response = client.post(
         f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        headers={"X-Access-Token": workspace["user_token"]},
         json={
             "subject": "Demande admin",
             "message": "Cette demande sera traitee depuis l'espace admin.",
@@ -216,6 +227,7 @@ def test_workspace_admin_cannot_manage_another_workspace_request():
 
     request_response = client.post(
         f"/api/v1/accounts/workspaces/{first_workspace['workspace_id']}/internal-requests",
+        headers={"X-Access-Token": first_workspace["user_token"]},
         json={
             "subject": "Demande protegee",
             "message": "Cette demande appartient au premier espace.",
@@ -317,6 +329,7 @@ def test_internal_requests_listing_requires_access_token():
     ).json()
     client.post(
         f"/api/v1/accounts/workspaces/{workspace['workspace_id']}/internal-requests",
+        headers={"X-Access-Token": workspace["user_token"]},
         json={"subject": "Confidentiel", "message": "Contenu prive du client."},
     )
 

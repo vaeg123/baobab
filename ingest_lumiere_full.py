@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Ingestion TOTALE lumierejuridiqueabidjan — tous dossiers, tous formats."""
-import asyncio, asyncpg, json, os, re, pathlib, sys, fitz
+
+import asyncio
+import asyncpg
+import json
+import os
+import re
+import pathlib
+import sys
+import fitz
 from datetime import date as ddate
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -9,7 +17,7 @@ DB = os.environ["DATABASE_URL"]
 ROOT = pathlib.Path(os.environ.get("BAOBAB_IMPORT_SOURCE_DIR", ""))
 
 SKIP_NAMES = {"SERENITY", "Modele_", "Modèle_", "modele_", "__pycache__"}
-SKIP_EXTS  = {".epub", ".csv", ".py", ".pyc", ".json"}
+SKIP_EXTS = {".epub", ".csv", ".py", ".pyc", ".json"}
 
 
 def should_skip(path: pathlib.Path) -> bool:
@@ -41,7 +49,9 @@ def classify(path: pathlib.Path):
         return "decision_crca", "cima", "Retrait d'agrément CRCA", "Zone CIMA"
     if "Jurisprudence_CRCA" in s or "CRCA" in path.name.upper():
         return "decision_crca", "cima", "Jurisprudence CRCA", "Zone CIMA"
-    if "Juridictions_ivoiriennes" in s and ("Cartographie" in path.name or "Inventaire" in path.name):
+    if "Juridictions_ivoiriennes" in s and (
+        "Cartographie" in path.name or "Inventaire" in path.name
+    ):
         return "synthese", "ci", "Cartographie jurisprudence ivoirienne", "Côte d'Ivoire"
     if "04_Jurisprudence" in s:
         return "decision_tca", "ci", "Droit ivoirien", "Côte d'Ivoire"
@@ -49,39 +59,54 @@ def classify(path: pathlib.Path):
     # ── OHADA
     if "02_Droit_OHADA" in s:
         dom = "Droit OHADA"
-        if "societe" in p:     dom = "Droit des sociétés OHADA"
-        if "surete" in p:      dom = "Sûretés OHADA"
-        if "recouvrement" in p: dom = "Recouvrement OHADA"
-        if "collective" in p:  dom = "Procédures collectives OHADA"
-        if "comptable" in p or "comptabilite" in p: dom = "Comptabilité OHADA"
-        if "commercial" in p:  dom = "Droit commercial OHADA"
+        if "societe" in p:
+            dom = "Droit des sociétés OHADA"
+        if "surete" in p:
+            dom = "Sûretés OHADA"
+        if "recouvrement" in p:
+            dom = "Recouvrement OHADA"
+        if "collective" in p:
+            dom = "Procédures collectives OHADA"
+        if "comptable" in p or "comptabilite" in p:
+            dom = "Comptabilité OHADA"
+        if "commercial" in p:
+            dom = "Droit commercial OHADA"
         dt = "doctrine" if "Doctrine" in s else "synthese"
         return dt, "ohada", dom, "Zone OHADA"
 
     # ── CIMA
     if "03_Droit_CIMA" in s:
         dom = "Droit des assurances CIMA"
-        if "caution" in p:  dom = "Cautions et garanties CIMA"
-        if "sanction" in p: dom = "Sanctions CRCA"
-        if "obligation" in p: dom = "Obligations sociétés d'assurance"
+        if "caution" in p:
+            dom = "Cautions et garanties CIMA"
+        if "sanction" in p:
+            dom = "Sanctions CRCA"
+        if "obligation" in p:
+            dom = "Obligations sociétés d'assurance"
         dt = "doctrine" if "Doctrine" in s else "synthese"
         return dt, "cima", dom, "Zone CIMA"
 
     # ── Droit CI entreprises
     if "01_Droit_des_entreprises" in s:
         dom = "Droit des entreprises CI"
-        if "fiscalite" in p or "fiscal" in p: dom = "Fiscalité des entreprises CI"
-        if "creation" in p: dom = "Création d'entreprise CI"
-        if "dirigeant" in p: dom = "Responsabilité des dirigeants CI"
-        if "preuve" in p or "contentieux" in p: dom = "Contentieux commercial CI"
+        if "fiscalite" in p or "fiscal" in p:
+            dom = "Fiscalité des entreprises CI"
+        if "creation" in p:
+            dom = "Création d'entreprise CI"
+        if "dirigeant" in p:
+            dom = "Responsabilité des dirigeants CI"
+        if "preuve" in p or "contentieux" in p:
+            dom = "Contentieux commercial CI"
         dt = "doctrine" if "Doctrine" in s else "synthese"
         return dt, "ci", dom, "Côte d'Ivoire"
 
     # ── Droit famille / patrimoine
     if "09_Droit_famille" in s:
         dom = "Droit de la famille CI"
-        if "succession" in p or "decedes" in p or "deces" in p: dom = "Successions CI"
-        if "communaute" in p or "patrimoine" in p: dom = "Régimes matrimoniaux CI"
+        if "succession" in p or "decedes" in p or "deces" in p:
+            dom = "Successions CI"
+        if "communaute" in p or "patrimoine" in p:
+            dom = "Régimes matrimoniaux CI"
         return "synthese", "ci", dom, "Côte d'Ivoire"
 
     # ── Doctrine & recherche
@@ -106,10 +131,10 @@ def parse_md(text: str):
         m = re.search(pat, text, re.IGNORECASE)
         return m.group(1).strip() if m else ""
 
-    ref      = g(r"- R[eé]f[eé]rence\s*:\s*(.+)")
+    ref = g(r"- R[eé]f[eé]rence\s*:\s*(.+)")
     date_raw = g(r"- Date\s*:\s*([\d\-/]+)")
-    juri     = g(r"- Juridiction\s*:\s*(.+)")
-    parts    = g(r"- Parties\s*:\s*(.+)")
+    juri = g(r"- Juridiction\s*:\s*(.+)")
+    parts = g(r"- Parties\s*:\s*(.+)")
     mots_raw = g(r"- Mots-cles\s*:\s*(.+)")
     mots = [x.strip() for x in mots_raw.split(";") if x.strip()] if mots_raw else []
 
@@ -125,7 +150,11 @@ def parse_md(text: str):
         resume = g(r"## Probl[eè]me juridique[^\n]*\n(.+?)(?:\n##|\Z)")
     if not resume:
         # Prendre les 3 premiers paragraphes non-vides
-        paras = [l.strip() for l in text.split("\n") if l.strip() and not l.startswith("#") and not l.startswith("-")]
+        paras = [
+            line.strip()
+            for line in text.split("\n")
+            if line.strip() and not line.startswith("#") and not line.startswith("-")
+        ]
         resume = " ".join(paras[:3])
 
     date_dec = None
@@ -140,16 +169,21 @@ def parse_md(text: str):
 
 
 async def ingest_md(conn, path: pathlib.Path):
-    if should_skip(path): return False, "skip"
+    if should_skip(path):
+        return False, "skip"
     text = path.read_text(encoding="utf-8", errors="replace")
-    if len(text.strip()) < 50: return False, "empty"
+    if len(text.strip()) < 50:
+        return False, "empty"
 
     ref, titre, juri, parties, mots, resume, date_dec = parse_md(text)
-    if not ref: ref = path.stem[:200]
-    if not titre: titre = path.stem.replace("_", " ")[:200]
+    if not ref:
+        ref = path.stem[:200]
+    if not titre:
+        titre = path.stem.replace("_", " ")[:200]
 
     ex = await conn.fetchval("SELECT id FROM legal_corpus WHERE ref=$1", ref)
-    if ex: return False, "dup"
+    if ex:
+        return False, "dup"
 
     doc_type, corpus, domaine, pays = classify(path)
 
@@ -158,21 +192,30 @@ async def ingest_md(conn, path: pathlib.Path):
            (ref,type,corpus,juridiction,titre,date_decision,parties,
             pays,domaine,resume,texte_integral,mots_cles,metadata)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)""",
-        ref, doc_type, corpus,
+        ref,
+        doc_type,
+        corpus,
         juri or ("Tribunal de Commerce Abidjan" if corpus == "ci" else ""),
-        titre, date_dec,
+        titre,
+        date_dec,
         json.dumps(parties, ensure_ascii=False),
-        pays, domaine, resume, text[:60000], mots,
+        pays,
+        domaine,
+        resume,
+        text[:60000],
+        mots,
         json.dumps({"source": "lumierejuridiqueabidjan", "fichier": path.name}),
     )
     return True, f"[{corpus}:{doc_type}]"
 
 
 async def ingest_pdf(conn, path: pathlib.Path):
-    if should_skip(path): return False, "skip"
+    if should_skip(path):
+        return False, "skip"
     ref = path.stem[:200]
     ex = await conn.fetchval("SELECT id FROM legal_corpus WHERE ref=$1", ref)
-    if ex: return False, "dup"
+    if ex:
+        return False, "dup"
 
     try:
         doc = fitz.open(str(path))
@@ -181,7 +224,8 @@ async def ingest_pdf(conn, path: pathlib.Path):
     except Exception as e:
         return False, f"err:{e}"
 
-    if len(text.strip()) < 100: return False, "empty"
+    if len(text.strip()) < 100:
+        return False, "empty"
 
     doc_type, corpus, domaine, pays = classify(path)
 
@@ -189,9 +233,14 @@ async def ingest_pdf(conn, path: pathlib.Path):
         """INSERT INTO legal_corpus
            (ref,type,corpus,titre,pays,domaine,resume,texte_integral,metadata)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)""",
-        ref, doc_type, corpus,
-        path.name[:200], pays, domaine,
-        text[:600], text,
+        ref,
+        doc_type,
+        corpus,
+        path.name[:200],
+        pays,
+        domaine,
+        text[:600],
+        text,
         json.dumps({"source": "lumierejuridiqueabidjan", "fichier": path.name}),
     )
     return True, f"[{corpus}:{doc_type}]"
@@ -210,8 +259,10 @@ async def run():
 
     # Collecter tous les fichiers
     all_files = sorted(
-        f for f in ROOT.rglob("*")
-        if f.is_file() and f.suffix.lower() in {".md", ".pdf", ".txt"}
+        f
+        for f in ROOT.rglob("*")
+        if f.is_file()
+        and f.suffix.lower() in {".md", ".pdf", ".txt"}
         and "__pycache__" not in str(f)
     )
     print(f"Fichiers totaux : {len(all_files)}")
@@ -240,7 +291,7 @@ async def run():
     total = await conn.fetchval("SELECT COUNT(*) FROM legal_corpus")
     await conn.close()
 
-    print(f"\n{'='*55}")
+    print(f"\n{'=' * 55}")
     print(f"Insérés  : {inserted}")
     print(f"Ignorés  : {skipped}")
     print(f"Erreurs  : {errors}")

@@ -2622,6 +2622,26 @@
       border-radius: 8px; padding: 10px 14px;
     }
     .ppf-step-list { display: flex; flex-direction: column; }
+    .trajectory-shell { margin: 0 0 1rem; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); }
+    .trajectory-head { padding: 13px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .trajectory-title { font-size: 13px; font-weight: 800; color: var(--text); }
+    .trajectory-date { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: .7px; }
+    .trajectory-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
+    .trajectory-col { padding: 15px; border-right: 1px solid var(--border); min-height: 150px; }
+    .trajectory-col:last-child { border-right: 0; }
+    .trajectory-label { font-size: 10px; font-weight: 800; letter-spacing: .9px; text-transform: uppercase; margin-bottom: 10px; color: var(--sub); }
+    .trajectory-col.now .trajectory-label { color: var(--gold); }
+    .trajectory-col.future .trajectory-label { color: #4A72B8; }
+    .trajectory-item { font-size: 12px; line-height: 1.55; color: var(--text); padding: 0 0 9px 12px; position: relative; }
+    .trajectory-item::before { content: ''; position: absolute; left: 0; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: var(--sub); }
+    .trajectory-col.now .trajectory-item::before { background: var(--gold); }
+    .trajectory-col.future .trajectory-item::before { background: #4A72B8; }
+    .trajectory-meta { display: block; font-size: 10px; color: var(--sub); margin-top: 3px; }
+    .trajectory-actions { border-top: 1px solid var(--border); padding: 14px 16px; background: rgba(191,78,30,.035); }
+    .trajectory-actions-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 8px; margin-top: 8px; }
+    .trajectory-action { padding: 9px 11px; border: 1px solid var(--border); border-radius: 7px; font-size: 12px; line-height: 1.45; background: var(--card); }
+    .trajectory-limit { border-top: 1px solid var(--border); padding: 10px 16px; color: var(--sub); font-size: 10px; line-height: 1.5; }
+    @media (max-width: 760px) { .trajectory-grid { grid-template-columns: 1fr; } .trajectory-col { border-right: 0; border-bottom: 1px solid var(--border); min-height: 0; } }
   </style>
 </head>
 <body>
@@ -2702,8 +2722,8 @@
               <div class="ll-mod-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
-              <div class="ll-mod-name">Règles opérationnelles</div>
-              <div class="ll-mod-desc">Transformez un événement juridique en obligations et échéances.</div>
+              <div class="ll-mod-name">Trajectoire juridique</div>
+              <div class="ll-mod-desc">Comprenez l'origine, le droit actuel, l'impact et les évolutions vérifiables.</div>
             </div>
           </div>
         </div>
@@ -3047,25 +3067,25 @@
 
         <!-- Quick actions -->
         <div class="qa-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;margin-bottom:1.5rem">
-          <div class="qa-card" onclick="qaFill('Quels sont les délais obligatoires après un sinistre incendie CIMA ?','cima')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
-            <div style="font-size:18px;margin-bottom:6px">🔥</div>
-            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Sinistre incendie CIMA</div>
-            <div style="font-size:11px;color:var(--sub);line-height:1.4">Délais, sanctions et obligations Art. 260–270</div>
+          <div class="qa-card" onclick="qaFill('Comment cette règle a-t-elle évolué, quelle version est applicable aujourd’hui et quelles évolutions officielles faut-il surveiller ?','')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+            <div style="font-size:18px;margin-bottom:6px">↔</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Comparer avant et maintenant</div>
+            <div style="font-size:11px;color:var(--sub);line-height:1.4">Origine, modifications, abrogations et droit applicable</div>
           </div>
-          <div class="qa-card" onclick="qaFill('Comment créer une SARL en Côte d\'Ivoire selon l\'OHADA ?','ohada')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+          <div class="qa-card" onclick="qaFill('Quel est l’impact concret des règles OHADA de création d’une SARL : personnes concernées, obligations, délais, risques et actions ?','ohada')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
             <div style="font-size:18px;margin-bottom:6px">🏢</div>
-            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Création SARL OHADA</div>
-            <div style="font-size:11px;color:var(--sub);line-height:1.4">Étapes, délais RCCM et formalités légales</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Mesurer l'impact d'une règle</div>
+            <div style="font-size:11px;color:var(--sub);line-height:1.4">Personnes concernées, obligations, délais et actions</div>
           </div>
-          <div class="qa-card" onclick="qaFill('Quelles sont les obligations KYC pour l\'ouverture d\'un compte bancaire BCEAO ?','bceao')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+          <div class="qa-card" onclick="qaFill('Quelles évolutions officiellement adoptées, annoncées ou en projet faut-il surveiller concernant les obligations KYC BCEAO ?','bceao')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
             <div style="font-size:18px;margin-bottom:6px">🏦</div>
-            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">KYC bancaire BCEAO</div>
-            <div style="font-size:11px;color:var(--sub);line-height:1.4">Obligations identification client et LCB/FT</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Anticiper un changement</div>
+            <div style="font-size:11px;color:var(--sub);line-height:1.4">Textes adoptés, projets officiels et tendances qualifiées</div>
           </div>
-          <div class="qa-card" onclick="qaFill('Quelles sanctions a prononcé la CRCA pour retard d\'indemnisation ?','cima')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
+          <div class="qa-card" onclick="qaFill('À partir des sanctions CRCA relatives aux retards d’indemnisation, quelles actions immédiates, échéances et preuves faut-il mettre en place ?','cima')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color .2s,transform .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform=''">
             <div style="font-size:18px;margin-bottom:6px">⚖️</div>
-            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Sanctions CRCA</div>
-            <div style="font-size:11px;color:var(--sub);line-height:1.4">633 décisions indexées — amendes, blâmes, retraits</div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">Transformer le droit en actions</div>
+            <div style="font-size:11px;color:var(--sub);line-height:1.4">Priorités, échéances et fondements vérifiables</div>
           </div>
         </div>
 
@@ -3090,8 +3110,8 @@
             <span style="font-size:11px;color:var(--sub)">jugements TCA</span>
           </div>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;display:flex;align-items:center;gap:8px">
-            <span style="font-size:18px;font-weight:800;color:var(--green)" id="ctr-cascades">24</span>
-            <span style="font-size:11px;color:var(--sub)">cascades réglementaires</span>
+            <span style="font-size:18px;font-weight:800;color:var(--green)" id="ctr-cascades">4</span>
+            <span style="font-size:11px;color:var(--sub)">espaces juridiques reliés</span>
           </div>
           <div id="quota-bar-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;flex:1;min-width:180px;display:none">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
@@ -3106,7 +3126,7 @@
 
         <!-- Barre de question juridique -->
         <div class="question-block">
-          <div class="question-block-label">Question juridique · Analyse d'arrêt · Recherche de texte</div>
+          <div class="question-block-label">Comprendre · Comparer · Mesurer · Anticiper · Agir</div>
           <div class="question-wrap">
             <textarea id="legal_question"
               placeholder="Posez votre question en langage courant, collez un arrêt, un article de loi ou décrivez votre situation…"></textarea>
@@ -3122,7 +3142,7 @@
               <button class="btn btn-primary btn-sm" onclick="analyserQuestion()" id="question-btn" style="white-space:nowrap">Analyser →</button>
             </div>
           </div>
-          <div class="question-hint">Exemples : <em>"Délais après sinistre incendie CIMA"</em> · <em>"Délibération CCJA n°045/2019"</em> · <em>"Art. 234 AUDCG"</em></div>
+          <div class="question-hint">Chaque réponse expose l'origine de la règle, le droit applicable à la date choisie, son impact et les seules évolutions futures vérifiables.</div>
         </div>
 
         <!-- Zone de résultat -->
@@ -5199,34 +5219,25 @@ function goHome() {
 // ════════════════════════════════════════════════
 const NAV_CONFIGS = {
   client: [
-    { id: 'client',    label: 'Mon espace' },
-    { id: 'biblio',    label: 'Bibliothèque' },
-    { id: 'veille',    label: 'Veille juridique' },
-    { id: 'cima',      label: 'CIMA — Sinistre' },
-    { id: 'ohada',     label: 'OHADA' },
-    { id: 'bceao',     label: 'BCEAO' },
+    { id: 'client',    label: 'Intelligence juridique' },
+    { id: 'biblio',    label: 'Sources & décisions' },
+    { id: 'veille',    label: 'Anticiper les changements' },
     { id: 'droit-cm',  label: 'CM  Droit camerounais' },
     { id: 'droit-fr',  label: 'FR  Droit français' },
     { id: 'espace',    label: 'Abonnement' },
   ],
   admin: [
     { id: 'admin',    label: 'Tableau de bord' },
-    { id: 'biblio',   label: 'Bibliothèque' },
-    { id: 'veille',   label: 'Veille juridique' },
-    { id: 'cima',     label: 'CIMA' },
-    { id: 'ohada',    label: 'OHADA' },
-    { id: 'bceao',    label: 'BCEAO' },
+    { id: 'biblio',   label: 'Sources & décisions' },
+    { id: 'veille',   label: 'Anticiper les changements' },
     { id: 'droit-cm', label: 'CM  Droit camerounais' },
     { id: 'droit-fr', label: 'FR  Droit français' },
   ],
   superadmin: [
     { id: 'superadmin',  label: 'Console' },
     { id: 'submissions', label: 'Soumissions' },
-    { id: 'biblio',      label: 'Bibliothèque' },
-    { id: 'veille',      label: 'Veille juridique' },
-    { id: 'cima',        label: 'CIMA' },
-    { id: 'ohada',       label: 'OHADA' },
-    { id: 'bceao',       label: 'BCEAO' },
+    { id: 'biblio',      label: 'Sources & décisions' },
+    { id: 'veille',      label: 'Anticiper les changements' },
     { id: 'droit-cm',    label: 'CM  Droit camerounais' },
     { id: 'droit-fr',    label: 'FR  Droit français' },
   ],
@@ -5295,9 +5306,9 @@ function closeSidebar() {
 // CLIENT WORKSPACE
 // ════════════════════════════════════════════════
 const serviceCatalog = [
-  { key: 'cima',              icon: '',  title: 'CIMA — Sinistres',           desc: 'Calculer une cascade réglementaire assurance.',             tab: 'cima'   },
-  { key: 'ohada',             icon: '',  title: 'OHADA — Droit des affaires', desc: 'Suivre les obligations sociétaires.',                       tab: 'ohada'  },
-  { key: 'bceao',             icon: '',  title: 'BCEAO — Banque & Finance',   desc: 'Obligations bancaires, KYC, LCB/FT et reporting.',          tab: 'bceao'  },
+  { key: 'legal_search',       icon: '',  title: 'Comprendre & comparer',      desc: 'Relier chaque règle à son origine, sa version actuelle et ses sources.', tab: 'client' },
+  { key: 'legal_cm',           icon: '',  title: 'Mesurer l’impact — Cameroun', desc: 'Identifier les personnes concernées, les risques et les actions.', tab: 'droit-cm' },
+  { key: 'legal_fr',           icon: '',  title: 'Mesurer l’impact — France',   desc: 'Interroger les textes et décisions dans leur contexte temporel.', tab: 'droit-fr' },
   { key: 'internal_requests', icon: '',  title: 'Demandes internes',          desc: 'Envoyer une demande à votre équipe BAOBAB.',                tab: 'espace' },
   { key: 'alerts',            icon: '',  title: 'Veille juridique',           desc: 'Surveiller les publications de vos corpus juridiques.',    tab: 'veille' },
   { key: 'priority_support',  icon: '',  title: 'Support prioritaire',        desc: 'Canal de support dédié aux espaces Cabinet & Équipe.',      tab: 'espace' },
@@ -7290,6 +7301,53 @@ const DEMO_ARRET = {
   ],
 };
 
+function renderProfessionalTrajectory(fiche) {
+  const t = fiche && fiche.trajectoire;
+  if (!t) return '';
+  const past = Array.isArray(t.passe) ? t.passe : [];
+  const present = t.present || {};
+  const future = Array.isArray(t.futur) ? t.futur : [];
+  const actions = Array.isArray(t.actions) ? t.actions : [];
+  const refs = v => Array.isArray(v) && v.length
+    ? `<span class="trajectory-meta">Sources : ${v.map(escHtml).join(' · ')}</span>` : '';
+  const pastHtml = past.length ? past.map(item => `
+    <div class="trajectory-item">
+      <strong>${escHtml(item.date || 'Date non établie')}</strong> — ${escHtml(item.evenement || '')}
+      <span class="trajectory-meta">${escHtml(item.relation || 'ÉVOLUTION')} · confiance ${escHtml((item.confiance || 'FAIBLE').toLowerCase())}</span>
+      ${refs(item.source_refs)}
+    </div>`).join('') : '<div class="trajectory-item">Aucun antécédent suffisamment établi dans le corpus.</div>';
+  const impacts = Array.isArray(present.impact_pratique) ? present.impact_pratique : [];
+  const exceptions = Array.isArray(present.exceptions) ? present.exceptions : [];
+  const presentHtml = `
+    <div class="trajectory-item"><strong>${escHtml(present.regle_applicable || 'Règle actuelle à qualifier')}</strong>
+      <span class="trajectory-meta">${escHtml(present.statut || 'INCERTAIN')} · validité : ${escHtml(present.date_validite || t.date_analyse || 'non établie')}</span></div>
+    ${impacts.map(item => `<div class="trajectory-item">Impact : ${escHtml(item)}</div>`).join('')}
+    ${exceptions.map(item => `<div class="trajectory-item">Exception : ${escHtml(item)}</div>`).join('')}`;
+  const futureHtml = future.length ? future.map(item => `
+    <div class="trajectory-item">
+      <strong>${escHtml(item.horizon || 'Horizon non déterminé')}</strong> — ${escHtml(item.evolution || '')}
+      <span class="trajectory-meta">${escHtml((item.nature || 'SCENARIO_ANALYTIQUE').replaceAll('_',' '))} · certitude ${escHtml((item.certitude || 'FAIBLE').toLowerCase())}</span>
+      ${refs(item.source_refs)}
+    </div>`).join('') : '<div class="trajectory-item">Aucune évolution future officiellement sourcée n’est identifiée.</div>';
+  const actionsHtml = actions.length ? `
+    <div class="trajectory-actions">
+      <div class="trajectory-label">Agir — priorités professionnelles</div>
+      <div class="trajectory-actions-grid">${actions.map(item => `
+        <div class="trajectory-action"><strong>${escHtml((item.priorite || 'A_PLANIFIER').replaceAll('_',' '))}</strong><br>${escHtml(item.action || '')}
+          <span class="trajectory-meta">Échéance : ${escHtml(item.echeance || 'non déterminée')}</span>${refs(item.fondement_refs)}</div>`).join('')}</div>
+    </div>` : '';
+  return `<section class="trajectory-shell">
+    <div class="trajectory-head"><div class="trajectory-title">Trajectoire juridique et décisionnelle</div><div class="trajectory-date">Droit analysé au ${escHtml(t.date_analyse || '—')}</div></div>
+    <div class="trajectory-grid">
+      <div class="trajectory-col"><div class="trajectory-label">Passé — comprendre l’origine</div>${pastHtml}</div>
+      <div class="trajectory-col now"><div class="trajectory-label">Présent — mesurer l’impact</div>${presentHtml}</div>
+      <div class="trajectory-col future"><div class="trajectory-label">Futur — anticiper sans spéculer</div>${futureHtml}</div>
+    </div>
+    ${actionsHtml}
+    ${t.limites_temporelles ? `<div class="trajectory-limit"><strong>Limite temporelle :</strong> ${escHtml(t.limites_temporelles)}</div>` : ''}
+  </section>`;
+}
+
 function analyserQuestion() {
   const texte = document.getElementById('legal_question').value.trim();
   const domaine = document.getElementById('question_domain').value;
@@ -7385,6 +7443,7 @@ function analyserQuestion() {
       } else {
         ficheHtml = renderFicheAnalyse(data.fiche);
       }
+      ficheHtml = renderProfessionalTrajectory(data.fiche) + ficheHtml;
 
       result.innerHTML = `
         <div class="baobab-fiche-wrapper">
@@ -9152,6 +9211,8 @@ function renderCmAnalysis(data) {
       <span class="pill pill-blue">${escHtml(corpusTxt)}</span>
     </div>
   </div>`;
+
+  html += renderProfessionalTrajectory(fiche);
 
   // Principe ou réponse directe
   const lead = fiche.principe || fiche.reponse_directe;

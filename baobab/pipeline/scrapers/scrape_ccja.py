@@ -15,7 +15,7 @@ import json
 import logging
 import re
 from pathlib import Path
-from urllib.parse import urljoin, urlencode
+from urllib.parse import urljoin
 
 import httpx
 from bs4 import BeautifulSoup
@@ -158,7 +158,7 @@ async def scrape(page_range: tuple[int, int] | None = None, out: Path = OUTPUT_D
         url = SEARCH_URL
         page_num = 1
 
-        log.info(f"Démarrage scraping CCJA via JURICAF")
+        log.info("Démarrage scraping CCJA via JURICAF")
 
         while url:
             if page_range:

@@ -10,13 +10,13 @@ import asyncpg
 from fastapi import APIRouter, Header, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-logger = logging.getLogger(__name__)
-
+from baobab import notifications
 from baobab.auth import constant_time_equals, hash_password, verify_password, verify_superadmin_jwt
+from baobab.billing import PLAN_PRICES, price_for_plan
 from baobab.config import settings
 from baobab.rate_limit import client_ip, enforce_rate_limit
-from baobab import notifications
-from baobab.billing import PLAN_PRICES, price_for_plan
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["accounts"])
 
@@ -688,7 +688,24 @@ async def check_and_increment_analyses_quota(user_token: str) -> dict:
         "limit": limit,
         "remaining": remaining,
         "plan": plan,
+        "workspace_id": workspace["workspace_id"],
     }
+
+
+async def refund_analysis_quota(user_token: str) -> None:
+    """Release one quota reservation after an AI provider failure."""
+    workspace = await _find_workspace_by_token(user_token)
+    if not workspace:
+        return
+
+    today = datetime.now(UTC).date().isoformat()
+    if workspace.get("analyses_reset_date") != today:
+        return
+
+    used = max(0, int(workspace.get("analyses_today", 0)) - 1)
+    workspace["analyses_today"] = used
+    workspace["updated_at"] = datetime.now(UTC).isoformat()
+    await _save_workspace(workspace)
 
 
 async def require_workspace_service(user_token: str | None, service: str) -> dict:

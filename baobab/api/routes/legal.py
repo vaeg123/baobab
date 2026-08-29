@@ -16,6 +16,7 @@ from fastapi import APIRouter, Header, HTTPException, Query, Request
 from pydantic import BaseModel
 
 from baobab.rate_limit import client_ip, enforce_rate_limit
+from baobab.core.temporal import TEMPORAL_PROMPT_CONTRACT, normalize_temporal_fiche
 
 router = APIRouter(tags=["legal"])
 
@@ -59,7 +60,8 @@ def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> 
         "RÈGLE ABSOLUE : réponds UNIQUEMENT à partir des documents du corpus fournis.\n"
         "Ne présente jamais une source étrangère ou internationale comme directement applicable "
         "sans expliquer son autorité dans la juridiction demandée.\n"
-        "FORMAT : retourne UNIQUEMENT un objet JSON valide, sans markdown, sans ``` ni texte autour.\n\n"
+        + TEMPORAL_PROMPT_CONTRACT
+        + "FORMAT : retourne UNIQUEMENT un objet JSON valide, sans markdown, sans ``` ni texte autour.\n\n"
     )
 
     if query_type == 'arret':
@@ -158,8 +160,8 @@ def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> 
         return (
             base
             + "TYPE : Question juridique pratique ou procédurale.\n"
-            + "IMPORTANT : Ne génère PAS de timeline procédurale ni de section Passé/Présent/Futur. "
-            + "Réponds de façon structurée, directe et pratique.\n\n"
+            + "IMPORTANT : réponds de façon structurée, directe et pratique, puis relie obligatoirement "
+            + "la réponse à son origine, au droit applicable à la date d'analyse et aux seules évolutions sourcées.\n\n"
             + f"SCHÉMA JSON :\n{schema}\n\n"
             + f"QUESTION : {question}\n\n"
             + f"CORPUS ({n_docs} document(s)) :\n{context}\n\n"
@@ -695,6 +697,13 @@ async def analyze_question(
                 fiche = json_lib.loads(txt)
             except Exception:
                 fiche = None
+
+    if fiche is not None:
+        fiche = normalize_temporal_fiche(
+            fiche,
+            as_of=req.as_of,
+            source_documents=docs,
+        )
 
     return {
         "question": req.question,

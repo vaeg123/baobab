@@ -1,8 +1,9 @@
 from datetime import date
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from fastapi import HTTPException
+from pydantic import ValidationError
 
 from baobab.api.routes import cameroon
 from baobab.api.routes.cameroon import _classify_cm_query
@@ -164,6 +165,23 @@ def test_classify_cm_query(question, expected):
     assert _classify_cm_query(question) == expected
 
 
+def test_analyze_request_validates_scope_and_limits():
+    request = cameroon.CameroonAnalyzeRequest(
+        question="Droit applicable ?", context_docs=12,
+        jurisdiction_code="CM.SUPREME", as_of="2026-08-26",
+    )
+    assert request.as_of == date(2026, 8, 26)
+
+    for payload in (
+        {"question": "ab"},
+        {"question": "Question valide", "context_docs": 13},
+        {"question": "Question valide", "jurisdiction_code": "FR"},
+        {"question": "Question valide", "as_of": "26/08/2026"},
+    ):
+        with pytest.raises(ValidationError):
+            cameroon.CameroonAnalyzeRequest(**payload)
+
+
 # ─── Analyze endpoint ─────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
@@ -186,9 +204,6 @@ async def test_analyze_searches_cm_corpus_and_logs(monkeypatch):
     async def allow(_token):
         return {"workspace_id": "ws_test"}
 
-    async def fake_quota(_token):
-        return {"remaining": 25, "limit": 30, "workspace_id": "00000000-0000-0000-0000-000000000001"}
-
     async def fake_search(req):
         assert req.corpus == "cm"
         assert req.country_code == "CM"
@@ -199,9 +214,6 @@ async def test_analyze_searches_cm_corpus_and_logs(monkeypatch):
 
     monkeypatch.setattr(cameroon, "_require_cameroon", allow)
     monkeypatch.setattr(cameroon, "_conn", fake_conn)
-
-    import baobab.api.routes.accounts as accounts_mod
-    monkeypatch.setattr(accounts_mod, "check_and_increment_analyses_quota", fake_quota)
 
     import baobab.api.routes.cameroon as cam_mod
     monkeypatch.setattr(cam_mod, "_search_corpus_impl", fake_search)
@@ -219,6 +231,76 @@ async def test_analyze_searches_cm_corpus_and_logs(monkeypatch):
     assert result["response_type"] == "question"
     assert result["question"] == req.question
     assert result["jurisdiction"] == "CM"
-    assert result["quota"]["remaining"] == 25
+    assert result["quota"] is None
     # Le log a été tenté (INSERT INTO cm_analyze_log)
     assert any("cm_analyze_log" in sql for sql in conn.execute_sql)
+    assert any("source_document_ids" in sql for sql in conn.execute_sql)
+
+
+@pytest.mark.asyncio
+async def test_analyze_requires_cameroon_entitlement_before_search(monkeypatch):
+    search = AsyncMock()
+
+    async def reject(_token):
+        raise HTTPException(status_code=403, detail="Pack Cameroun requis")
+
+    monkeypatch.setattr(cameroon, "_require_cameroon", reject)
+    monkeypatch.setattr(cameroon, "_search_corpus_impl", search)
+    monkeypatch.setattr(cameroon, "enforce_rate_limit", AsyncMock())
+
+    req = cameroon.CameroonAnalyzeRequest(question="Question camerounaise")
+    fake_request = MagicMock()
+    fake_request.client.host = "127.0.0.1"
+    fake_request.headers = {}
+
+    with pytest.raises(HTTPException) as exc:
+        await cameroon.cameroon_analyze(req, fake_request, x_user_token="tok")
+
+    assert exc.value.status_code == 403
+    search.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_analyze_uses_async_anthropic_and_keeps_provider_error_private(monkeypatch):
+    async def allow(_token):
+        return {"workspace_id": "ws_test"}
+
+    async def fake_search(_req):
+        return {"results": [], "total": 0}
+
+    async def fake_quota(_token):
+        return {"remaining": 25, "limit": 30, "workspace_id": "ws_test"}
+
+    refund_quota = AsyncMock()
+
+    class FailingMessages:
+        async def create(self, **_kwargs):
+            raise RuntimeError("secret provider detail")
+
+    class FakeAsyncAnthropic:
+        def __init__(self, **_kwargs):
+            self.messages = FailingMessages()
+
+    monkeypatch.setattr(cameroon, "_require_cameroon", allow)
+    monkeypatch.setattr(cameroon, "_search_corpus_impl", fake_search)
+    monkeypatch.setattr(cameroon, "enforce_rate_limit", AsyncMock())
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+
+    import anthropic
+    import baobab.api.routes.accounts as accounts_mod
+
+    monkeypatch.setattr(anthropic, "AsyncAnthropic", FakeAsyncAnthropic)
+    monkeypatch.setattr(accounts_mod, "check_and_increment_analyses_quota", fake_quota)
+    monkeypatch.setattr(accounts_mod, "refund_analysis_quota", refund_quota)
+
+    req = cameroon.CameroonAnalyzeRequest(question="Question camerounaise")
+    fake_request = MagicMock()
+    fake_request.client.host = "127.0.0.1"
+    fake_request.headers = {}
+
+    with pytest.raises(HTTPException) as exc:
+        await cameroon.cameroon_analyze(req, fake_request, x_user_token="tok")
+
+    assert exc.value.status_code == 502
+    assert "secret provider detail" not in str(exc.value.detail)
+    refund_quota.assert_awaited_once_with("tok")

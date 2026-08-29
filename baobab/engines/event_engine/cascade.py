@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from dataclasses import dataclass
+from datetime import timedelta, timezone
 from typing import Callable
 
 from baobab.core.models.legal_event import LegalEvent

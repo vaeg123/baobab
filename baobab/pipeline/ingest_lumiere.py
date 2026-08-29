@@ -103,7 +103,6 @@ def parse_md(path: Path) -> dict:
         pays = "Zone CIMA (14 États)"
 
     # Mots-clés depuis les sous-dossiers
-    folder_parts = [p for p in path.parts if not p.startswith("0") or len(p) > 3]
     mots_cles = [p.replace("_", " ") for p in path.parts[-3:-1] if len(p) > 3]
 
     doc_type, corpus = detect_type_corpus(path)
@@ -159,7 +158,7 @@ def parse_date(s):
     try:
         from datetime import date
         return date(int(s[:4]), 1, 1)
-    except:
+    except (TypeError, ValueError):
         return None
 
 

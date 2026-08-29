@@ -3,20 +3,26 @@
 from __future__ import annotations
 
 import json as _json
+import logging
 import os
 import re
+import time
 from datetime import date
 from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from baobab.api.routes.accounts import require_workspace_service
 from baobab.api.routes.legal import _conn, _search_corpus_impl, SearchRequest
 from baobab.rate_limit import client_ip, enforce_rate_limit
+from baobab.core.temporal import TEMPORAL_PROMPT_CONTRACT, normalize_temporal_fiche
 
 router = APIRouter(tags=["droit-camerounais"])
+logger = logging.getLogger(__name__)
+CAMEROON_AI_MODEL = "claude-sonnet-4-6"
+CAMEROON_PROMPT_VERSION = "cm-v1"
 
 
 # ─── Auth helper ──────────────────────────────────────────────────────────────
@@ -86,7 +92,8 @@ def _build_cm_prompt(question: str, query_type: str, context: str, n_docs: int) 
         "RÈGLE ABSOLUE : réponds UNIQUEMENT à partir des documents du corpus fournis ci-dessous.\n"
         "Pour chaque affirmation, indique si elle relève du droit national CM, de l'OHADA, "
         "du CEMAC, ou d'un autre corpus. Ne fais jamais de confusion entre ces niveaux.\n"
-        "FORMAT : retourne UNIQUEMENT un objet JSON valide, sans markdown, sans ``` ni texte autour.\n\n"
+        + TEMPORAL_PROMPT_CONTRACT
+        + "FORMAT : retourne UNIQUEMENT un objet JSON valide, sans markdown, sans ``` ni texte autour.\n\n"
     )
 
     if query_type == "arret":
@@ -226,10 +233,36 @@ def _build_cm_prompt(question: str, query_type: str, context: str, n_docs: int) 
 # ─── Modèles ──────────────────────────────────────────────────────────────────
 
 class CameroonAnalyzeRequest(BaseModel):
-    question: str
-    context_docs: int = 6
-    jurisdiction_code: str | None = None  # CM | CM.SUPREME | CEMAC | COBAC
-    as_of: str | None = None
+    question: str = Field(min_length=3, max_length=2000)
+    context_docs: int = Field(default=6, ge=1, le=12)
+    jurisdiction_code: Literal[
+        "CM", "CM.SUPREME", "CM.ADMIN", "CM.APPEAL", "CM.LABOUR",
+        "CM.TRIBUNAL", "CEMAC", "COBAC",
+    ] | None = None
+    as_of: date | None = None
+
+
+async def _log_cameroon_analysis(
+    *, workspace_id: str, question: str, query_type: str, document_ids: list[str],
+    ai_used: bool, provider_status: str, duration_ms: int,
+) -> None:
+    """Persist an audit record without making analysis availability depend on logging."""
+    try:
+        log_conn = await _conn()
+        try:
+            await log_conn.execute(
+                """INSERT INTO cm_analyze_log
+                   (workspace_id, question, query_type, n_docs, ai_used, model_name,
+                    prompt_version, source_document_ids, duration_ms, provider_status)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10)""",
+                workspace_id, question, query_type, len(document_ids), ai_used,
+                CAMEROON_AI_MODEL if ai_used else None, CAMEROON_PROMPT_VERSION,
+                _json.dumps(document_ids), duration_ms, provider_status,
+            )
+        finally:
+            await log_conn.close()
+    except Exception:
+        logger.exception("Unable to persist Cameroon analysis log")
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -381,16 +414,9 @@ async def cameroon_analyze(
     await enforce_rate_limit(
         key=f"legal-cm-analyze:{client_ip(http_request)}", limit=20, window_seconds=3600
     )
-
-    from baobab.api.routes.accounts import check_and_increment_analyses_quota
-    quota_info = await check_and_increment_analyses_quota(x_user_token)
-
-    # Récupérer le workspace_id pour le log
-    workspace_id: str | None = None
-    try:
-        workspace_id = quota_info.get("workspace_id")
-    except Exception:
-        pass
+    workspace = await _require_cameroon(x_user_token)
+    workspace_id = workspace["workspace_id"]
+    started_at = time.perf_counter()
 
     # ── Étape 1 : recherche documentaire CM ────────────────────────────────────
     search_req = SearchRequest(
@@ -398,8 +424,8 @@ async def cameroon_analyze(
         corpus="cm",
         country_code="CM",
         jurisdiction_code=req.jurisdiction_code,
-        as_of=req.as_of,
-        limit=max(req.context_docs, 8),
+        as_of=req.as_of.isoformat() if req.as_of else None,
+        limit=req.context_docs,
         mode="fulltext",
     )
     try:
@@ -447,20 +473,44 @@ async def cameroon_analyze(
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     ai_available = bool(api_key)
     analysis: str | None = None
+    quota_info: dict | None = None
 
     if ai_available:
+        from baobab.api.routes.accounts import check_and_increment_analyses_quota
+
+        # Search and provider configuration have succeeded, so database failures
+        # and missing AI configuration do not consume a user's quota.
+        quota_info = await check_and_increment_analyses_quota(x_user_token)
         try:
             import anthropic
-            client = anthropic.Anthropic(api_key=api_key)
+            client = anthropic.AsyncAnthropic(api_key=api_key)
             prompt = _build_cm_prompt(req.question, query_type, context, len(docs))
-            message = client.messages.create(
-                model="claude-sonnet-4-6",
+            message = await client.messages.create(
+                model=CAMEROON_AI_MODEL,
                 max_tokens=6000,
                 messages=[{"role": "user", "content": prompt}],
             )
             analysis = message.content[0].text
-        except Exception as exc:
-            analysis = f"Erreur IA : {exc}"
+        except Exception:
+            logger.exception("Cameroon legal analysis provider call failed")
+            from baobab.api.routes.accounts import refund_analysis_quota
+
+            try:
+                await refund_analysis_quota(x_user_token)
+            except Exception:
+                logger.exception("Unable to refund Cameroon analysis quota")
+            await _log_cameroon_analysis(
+                workspace_id=workspace_id,
+                question=req.question,
+                query_type=query_type,
+                document_ids=doc_ids,
+                ai_used=True,
+                provider_status="PROVIDER_ERROR",
+                duration_ms=int((time.perf_counter() - started_at) * 1000),
+            )
+            raise HTTPException(
+                502, "Le service d'analyse juridique est temporairement indisponible."
+            )
 
     fiche: dict | None = None
     if analysis:
@@ -479,21 +529,26 @@ async def cameroon_analyze(
             except Exception:
                 fiche = None
 
+    if fiche is not None:
+        fiche = normalize_temporal_fiche(
+            fiche,
+            as_of=req.as_of,
+            source_documents=docs,
+        )
+
     # ── Étape 3 : log analytique (best-effort) ─────────────────────────────────
-    if workspace_id:
-        try:
-            log_conn = await _conn()
-            try:
-                await log_conn.execute(
-                    """INSERT INTO cm_analyze_log
-                       (workspace_id, question, query_type, n_docs, ai_used)
-                       VALUES ($1::uuid, $2, $3, $4, $5)""",
-                    workspace_id, req.question[:2000], query_type, len(docs), ai_available,
-                )
-            finally:
-                await log_conn.close()
-        except Exception:
-            pass
+    provider_status = "NOT_CONFIGURED"
+    if ai_available:
+        provider_status = "SUCCESS" if fiche is not None else "INVALID_RESPONSE"
+    await _log_cameroon_analysis(
+        workspace_id=workspace_id,
+        question=req.question,
+        query_type=query_type,
+        document_ids=doc_ids,
+        ai_used=ai_available,
+        provider_status=provider_status,
+        duration_ms=int((time.perf_counter() - started_at) * 1000),
+    )
 
     return {
         "question": req.question,
