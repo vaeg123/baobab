@@ -116,13 +116,15 @@ INSERT INTO legal_corpus (
     parties, pays, domaine, resume, texte_integral,
     mots_cles, source_url, source_pdf_url, sanction,
     articles_cites, metadata
-) VALUES (
+) SELECT
     $1, $2, $3, $4, $5, $6,
     $7::jsonb, $8, $9, $10, $11,
     $12::text[], $13, $14, $15,
     $16::text[], $17::jsonb
+WHERE NOT EXISTS (
+    SELECT 1 FROM legal_corpus
+    WHERE source_url = $13::text
 )
-ON CONFLICT DO NOTHING
 """
 
 
@@ -139,7 +141,7 @@ async def ingest_file(conn: asyncpg.Connection, path: Path) -> int:
     for raw in records:
         rec = record_from_raw(raw)
         try:
-            await conn.execute(
+            status = await conn.execute(
                 INSERT_SQL,
                 rec["ref"], rec["type"], rec["corpus"], rec["juridiction"],
                 rec["titre"], rec["date_decision"],
@@ -148,7 +150,8 @@ async def ingest_file(conn: asyncpg.Connection, path: Path) -> int:
                 rec["mots_cles"], rec["source_url"], rec["source_pdf_url"],
                 rec["sanction"], rec["articles_cites"], rec["metadata"],
             )
-            count += 1
+            if status.endswith(" 1"):
+                count += 1
         except Exception as exc:
             log.warning(f"  Erreur insert {rec['ref']}: {exc}")
 
@@ -160,6 +163,7 @@ async def run(source: str | None = None):
     files = {
         "crca": DATA_DIR / "crca_decisions.json",
         "ccja": DATA_DIR / "ccja_arrets.json",
+        "ccja-ohada": DATA_DIR / "ohada_arrets.json",
         "ohada": DATA_DIR / "ohada_actes.json",
     }
 
@@ -178,7 +182,7 @@ async def run(source: str | None = None):
 def main():
     parser = argparse.ArgumentParser(description="Ingestion corpus juridique → PostgreSQL")
     parser.add_argument(
-        "--source", choices=["crca", "ccja", "ohada"],
+        "--source", choices=["crca", "ccja", "ccja-ohada", "ohada"],
         help="Source à ingérer (défaut: toutes)", default=None
     )
     args = parser.parse_args()

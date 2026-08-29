@@ -1,0 +1,1352 @@
+[
+  {
+    "ref": "CCJA-007/2015",
+    "titre": "Arrêt 007/2015 - Affaire : Résidence MAÏSHA SA c/ Société Garantie Voyage Gabon",
+    "date_str": "2016-01-26",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Résidence MAÏSHA SA       \t(Conseil : Maître Alber",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=2500",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3155",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-007-2015.pdf",
+    "sha256": "1b0d98e67333d8aa120cda5fff8ea220172d79222e53650746bb45fd85e14b87",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Résidence MAÏSHA SA       \t(Conseil : Maître Alber"
+    },
+    "metadata": {
+      "notice_id": 2500,
+      "document_numerique_id": 3155,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 1,
+      "pdf_bytes": 284556
+    }
+  },
+  {
+    "ref": "CCJA-013/2015",
+    "titre": "Arrêt 013/2015 - Affaire : SOCIETE INDIGO PUBLICITE SARL c/ SOCIETE CELLCOM Guinée. SA",
+    "date_str": "2015-04-02",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "SOCIETE INDIGO PUBLICITE SARL \t      (Conseil : Ma",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=2516",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3164",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-013-2015.pdf",
+    "sha256": "80be3167db4a2ef3eb9de1b2b63d4078da3b25c9ec87ef97372546d714297866",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "SOCIETE INDIGO PUBLICITE SARL \t      (Conseil : Ma"
+    },
+    "metadata": {
+      "notice_id": 2516,
+      "document_numerique_id": 3164,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 2,
+      "pdf_bytes": 389313
+    }
+  },
+  {
+    "ref": "CCJA-016/2013",
+    "titre": "Arrêt 016/2013 - Affaire : Banque OMNIFINANCE c/ Société METAL TRADING SA",
+    "date_str": "2013-03-07",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire : \tBanque OMNIFINANCE       \t (Conseil : M",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4783",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3584",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-016-2013.pdf",
+    "sha256": "4041493d9da9d95299407c811ab45b1bdee9c2d030ef4fc0dcf011a6ed922d03",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire : \tBanque OMNIFINANCE       \t (Conseil : M"
+    },
+    "metadata": {
+      "notice_id": 4783,
+      "document_numerique_id": 3584,
+      "auteurs": "",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 3,
+      "pdf_bytes": 330942
+    }
+  },
+  {
+    "ref": "CCJA-018/2013",
+    "titre": "Arrêt 018/2013 - Affaire : Compagnie des Bananes de Côte d’Ivoire dite CDBCI c/ Société DHL International Guinée SARL",
+    "date_str": "2013-03-07",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire :",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4785",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3587",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-018-2013.pdf",
+    "sha256": "f22ac7a93bfa12c651e5c585a0c37eeed31a00217aa2d5c87b5b048cc48ba050",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire :"
+    },
+    "metadata": {
+      "notice_id": 4785,
+      "document_numerique_id": 3587,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 4,
+      "pdf_bytes": 273153
+    }
+  },
+  {
+    "ref": "CCJA-020/2011",
+    "titre": "Arrêt 020/2011 - Affaire : SAFIC ALCAN COMMODITEIS c/ COMPLEXE CHIMIQUE CAMEROUNAIS",
+    "date_str": "2011-12-06",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire :   SAFIC ALCAN COMMODITEIS            (Co",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=5490",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=2349",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-020-2011.pdf",
+    "sha256": "ee83621e9b586e203d5050e15c4ab037edc8d4a16283651189fd39ae721799c3",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire :   SAFIC ALCAN COMMODITEIS            (Co"
+    },
+    "metadata": {
+      "notice_id": 5490,
+      "document_numerique_id": 2349,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 5,
+      "pdf_bytes": 227306
+    }
+  },
+  {
+    "ref": "CCJA-021/2013",
+    "titre": "Arrêt 021/2013 - Affaire : Société Nationale d’Assurance, du Crédit et du Cautionnement dite SONAC c/ Banque Islamique du Sénégal dite BIS ; Nouvelle Société des Mines et Travaux Publics dite NSMTP SA",
+    "date_str": "2013-04-18",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Arrêt 021/2013 - Affaire : Société Nationale d’Assurance, du Crédit et du Cautionnement dite SONAC c/ Banque Islamique du Sénégal dite BIS ; Nouvelle Société des Mines et Travaux Publics dite NSMTP SA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4787",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3828",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-021-2013.pdf",
+    "sha256": "275e163e6aa0ffb1075096cb4e714fd79b49268bb5351038ae13d5100ce03a76",
+    "articles_cites": [],
+    "parties": {
+      "affaire": ""
+    },
+    "metadata": {
+      "notice_id": 4787,
+      "document_numerique_id": 3828,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 6,
+      "pdf_bytes": 262795
+    }
+  },
+  {
+    "ref": "CCJA-063/2013",
+    "titre": "Arrêt 063/2013 - Affaire : Autorité de Régulation du Coton et de L’Anacarde dite ARECA c/ CISSE Ladji Brahima",
+    "date_str": "2013-07-25",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire : Autorité de Régulation du Coton et de",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4882",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3628",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-063-2013.pdf",
+    "sha256": "0aab8bcc48bbc9a12fc2310f2fceb56f48dd7a1fed9ddaa750779a07a0b9beec",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire : Autorité de Régulation du Coton et de"
+    },
+    "metadata": {
+      "notice_id": 4882,
+      "document_numerique_id": 3628,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 7,
+      "pdf_bytes": 399238
+    }
+  },
+  {
+    "ref": "CCJA-071/2013",
+    "titre": "Arrêt 071/2013 - Affaire : Adnan ATTIEH c/ La Société FINANCO S.A",
+    "date_str": "2017-11-14",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire : Adnan ATTIEH                 (Conseil :",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4897",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3636",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-071-2013.pdf",
+    "sha256": "0cd8d2ca8542cf7460d1b38699733e941413973b995e4181685a23f351a79c14",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire : Adnan ATTIEH                 (Conseil :"
+    },
+    "metadata": {
+      "notice_id": 4897,
+      "document_numerique_id": 3636,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 8,
+      "pdf_bytes": 338811
+    }
+  },
+  {
+    "ref": "CCJA-075/2013",
+    "titre": "Arrêt 075/2013 - Affaire : Société COCOPACK SARL c/ Monsieur SEGBA Adama",
+    "date_str": "2013-11-14",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire :   THAOUL dit  SAÏD CHAOUL",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4901",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3640",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-075-2013.pdf",
+    "sha256": "78ca7b1964700a08a897e11180483258e5c055f00da4fc323fa8f7d9fb4966dc",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire :   THAOUL dit  SAÏD CHAOUL"
+    },
+    "metadata": {
+      "notice_id": 4901,
+      "document_numerique_id": 3640,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 9,
+      "pdf_bytes": 306507
+    }
+  },
+  {
+    "ref": "CCJA-078/2018",
+    "titre": "Arrêt 078/2018 - Affaire : Bank Of Africa - Mali c/ CBAO Groupe Attijariwafa Bank ; Sénégalaise de Commerce et de Services",
+    "date_str": "",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "29/03/2018",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=6345",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4026",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-078-2018.pdf",
+    "sha256": "3cc41cb1e9b16719a2c5b4ad3ce535084910625fc79376f095637796dc3bde60",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "29/03/2018"
+    },
+    "metadata": {
+      "notice_id": 6345,
+      "document_numerique_id": 4026,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 10,
+      "pdf_bytes": 175257
+    }
+  },
+  {
+    "ref": "CCJA-155/2018",
+    "titre": "Arrêt 155/2018 - Affaire :- Société COGEGLACE ; André HERAUD c/ Banque « Le Crédit du Sénégal »",
+    "date_str": "",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "18/10/2018",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=6475",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4132",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-155-2018.pdf",
+    "sha256": "21f8ae5ddb9877d38bfd3d75d55d2e4c4e00212e056ca09a526e93bca0266a8f",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "18/10/2018"
+    },
+    "metadata": {
+      "notice_id": 6475,
+      "document_numerique_id": 4132,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 11,
+      "pdf_bytes": 131499
+    }
+  },
+  {
+    "ref": "CCJA-156/2016",
+    "titre": "Arrêt 156/2016 - Affaire : Monsieur Abdoulaye Halidou CISSE c/ La société malienne de prestation SARL (SOMAPRE) ; La Banque Commerciale du Sahel SA (BCS) ; Maître Boubacar SOW",
+    "date_str": "2016-10-27",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire :\tMonsieur Abdoulaye Halidou CISSE \t(Conse",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4753",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3059",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-156-2016.pdf",
+    "sha256": "ef364680315952b30e98f8bda887a354e395b90ae6dac0bd91fc9a0137bbb02b",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire :\tMonsieur Abdoulaye Halidou CISSE \t(Conse"
+    },
+    "metadata": {
+      "notice_id": 4753,
+      "document_numerique_id": 3059,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 12,
+      "pdf_bytes": 338394
+    }
+  },
+  {
+    "ref": "CCJA-161/2016",
+    "titre": "Arrêt 161/2016 - Affaire : Monsieur OUATTARA Dougnimata Ahmed c/ Société VIVO ENERGY COTE D’IVOIRE ex-société Shell Côte d’Ivoire",
+    "date_str": "",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire :\tMonsieur OUATTARA Dougnimata Ahmed  \t(Co",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=4757",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3064",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-161-2016.pdf",
+    "sha256": "1f7ee61cd16c19514fb2eb1c2795da71844ffd8e4a1d5d423da7d4eb6a639983",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire :\tMonsieur OUATTARA Dougnimata Ahmed  \t(Co"
+    },
+    "metadata": {
+      "notice_id": 4757,
+      "document_numerique_id": 3064,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 13,
+      "pdf_bytes": 314114
+    }
+  },
+  {
+    "ref": "CCJA-167/2018",
+    "titre": "Arrêt 167/2018 - Affaire : ETAT DU NIGER c/ Société AFRICARD CO LIMITED",
+    "date_str": "2018-10-25",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire : ETAT DU NIGER",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=6486",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4156",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-167-2018.pdf",
+    "sha256": "aae6582793c4c63fbef400fc17b56ec4b3a9bd8815fdd64d2a7c4f17b444241c",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire : ETAT DU NIGER"
+    },
+    "metadata": {
+      "notice_id": 6486,
+      "document_numerique_id": 4156,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 14,
+      "pdf_bytes": 147000
+    }
+  },
+  {
+    "ref": "CCJA-181/2017",
+    "titre": "Arrêt 181/2017 - Affaire : Abdoulaye DIALLO c/ Sieur LALLE BI YA Jacques",
+    "date_str": "2017-07-27",
+    "type": "arret_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Affaire : Abdoulaye DIALLO                 (Consei",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=5661",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=2895",
+    "local_pdf": "data/raw/ohada_arrets/arret-ccja-CCJA-181-2017.pdf",
+    "sha256": "65e446e91fe07bc496041d1c130d97a08160ef60a9a7fc1673336c1b7aba861f",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Affaire : Abdoulaye DIALLO                 (Consei"
+    },
+    "metadata": {
+      "notice_id": 5661,
+      "document_numerique_id": 2895,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 22,
+      "shelf_position": 15,
+      "pdf_bytes": 230499
+    }
+  },
+  {
+    "ref": "CCJA-001/2001",
+    "titre": "Ordonnance N°001/2001 - Affaire: EHONGO Alexandre Némes c/ Compagnie Camerounaise d’Assurances et de Réassurance SA CCAR (AXA Assurances)",
+    "date_str": "2001-06-13",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "EHONGO Alexandre Néme",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8458",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5093",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2001.pdf",
+    "sha256": "979da75ae066982a713a362dd4b25e1f87795ef2137ca83b91228e35ea7f68a5",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "EHONGO Alexandre Néme"
+    },
+    "metadata": {
+      "notice_id": 8458,
+      "document_numerique_id": 5093,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 1,
+      "pdf_bytes": 148772
+    }
+  },
+  {
+    "ref": "CCJA-001/2002",
+    "titre": "Ordonnance N° 001/2002 - Affaire: FAZAH Souleymane c/ la société commerciale ivoirienne de matériel industriel dite SCIMI",
+    "date_str": "2001-02-07",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "FAZAH Souleymane",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8548",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5169",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2002.pdf",
+    "sha256": "e41ea833aebac71fd4b87fb314f237ae89cb9fa94a53c8c3864e832b717c9459",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "FAZAH Souleymane"
+    },
+    "metadata": {
+      "notice_id": 8548,
+      "document_numerique_id": 5169,
+      "auteurs": "",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 2,
+      "pdf_bytes": 162771
+    }
+  },
+  {
+    "ref": "CCJA-001/2004",
+    "titre": "Ordonnance N° 001/2004 - Affaire : Société SOTACI c/ Monsieur DELPECH Gérard et Madame DELPECH Joëlle",
+    "date_str": "2004-01-20",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Société SOTACI",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8562",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5182",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2004.pdf",
+    "sha256": "4aab6b66a14b3898ec91d2edab34dc74d0b87d5d770fb87c662ab04d56d48ec3",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Société SOTACI"
+    },
+    "metadata": {
+      "notice_id": 8562,
+      "document_numerique_id": 5182,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 3,
+      "pdf_bytes": 168882
+    }
+  },
+  {
+    "ref": "CCJA-001/2005",
+    "titre": "Ordonnance N°001/2005 - Affaire : MICHEL STUYCK c/ Société Ivoirienne de Banque dite SIB",
+    "date_str": "2005-01-12",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "MICHEL STUYCK",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8594",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5214",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2005.pdf",
+    "sha256": "86aeaacee23ca857fbdded4e4402b16d9bfecdbfe2241e2f26c654ee9990105f",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "MICHEL STUYCK"
+    },
+    "metadata": {
+      "notice_id": 8594,
+      "document_numerique_id": 5214,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 4,
+      "pdf_bytes": 121495
+    }
+  },
+  {
+    "ref": "CCJA-001/2008",
+    "titre": "Ordonnance N° 001/2008 - Affaire : Banque Internationale du Burkina dite BIB c/ Société Etudes Réalisation d’Ouvrages Hydrauliques dite EROH",
+    "date_str": "2008-02-13",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Banque Internationale du Burkina",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8622",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5241",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2008.pdf",
+    "sha256": "abc06cf6ad8edd1808d1a724f5d4b44065c8cc983a7d259675fb62c04c5f868f",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Banque Internationale du Burkina"
+    },
+    "metadata": {
+      "notice_id": 8622,
+      "document_numerique_id": 5241,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 5,
+      "pdf_bytes": 173811
+    }
+  },
+  {
+    "ref": "CCJA-001/2010",
+    "titre": "Ordonnance N° 001/2010 - Affaire : Société d’Exploitation de la Clinique SOKHNA FATMA c/ Société Nationale des Télécommunications du Sénégal dite SONATEL",
+    "date_str": "2010-01-26",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Société d’Exploitation de la Clinique SOKHNA FATMA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8626",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5245",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2010.pdf",
+    "sha256": "45c6a56f1ed69fc9ee925bb5eda73dc613ac5a3c1e2afdd44a341e89fff05637",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Société d’Exploitation de la Clinique SOKHNA FATMA"
+    },
+    "metadata": {
+      "notice_id": 8626,
+      "document_numerique_id": 5245,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 6,
+      "pdf_bytes": 132806
+    }
+  },
+  {
+    "ref": "CCJA-001/2011",
+    "titre": "Ordonnance N° 001/2011 - Affaire : Société Planor Afrique SA c/ Société Atlantique télécom SA",
+    "date_str": "2011-07-12",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Société Planor Afrique SA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8629",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5248",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2011.pdf",
+    "sha256": "4d0f5521fa272dc48b8cba192a585d1f8ba34eface06ffeafdc667e998928d41",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Société Planor Afrique SA"
+    },
+    "metadata": {
+      "notice_id": 8629,
+      "document_numerique_id": 5248,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 7,
+      "pdf_bytes": 121339
+    }
+  },
+  {
+    "ref": "CCJA-001/2012",
+    "titre": "Ordonnance N° 001/2012 - Affairev: Société ABS international Corporate Ltd c/ Etat du Mali",
+    "date_str": "2012-01-18",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Société ABS international Corporate Ltd",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8639",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5258",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2012.pdf",
+    "sha256": "852dfc294f44275a9767292df5725212cda16471a4500ce01bf4df56d25720f1",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Société ABS international Corporate Ltd"
+    },
+    "metadata": {
+      "notice_id": 8639,
+      "document_numerique_id": 5258,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 8,
+      "pdf_bytes": 120165
+    }
+  },
+  {
+    "ref": "CCJA-001/2013",
+    "titre": "Ordonnance N° 001/2013 - Affaire : Elh Harouna MALLAM c/ Monsieur Seydou BOUKARI",
+    "date_str": "2013-01-14",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Elh Harouna MALLAM",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8680",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5321",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2013.pdf",
+    "sha256": "28ef39ffc93091ad00b8469c71cef4d7bef3fd047ff3e7103d69bea3b2094fca",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Elh Harouna MALLAM"
+    },
+    "metadata": {
+      "notice_id": 8680,
+      "document_numerique_id": 5321,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 9,
+      "pdf_bytes": 117893
+    }
+  },
+  {
+    "ref": "CCJA-001/2016/CCJA",
+    "titre": "ORDONNANCE N°001/2016/CCJA - Affaire : Banque Internationale pour le Commerce et l’Industrie en Côte d’Ivoire (BICICI) c/ Société Bolloré Africa Logistics Côte d’Ivoire",
+    "date_str": "",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Banque Internationale pour le Commerce et l’Indust",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=3844",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=1220",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2016-CCJA.pdf",
+    "sha256": "37ff81cd85436380b70b5d0b06ee179568f92c251be3872897a5c57b29715e3d",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Banque Internationale pour le Commerce et l’Indust"
+    },
+    "metadata": {
+      "notice_id": 3844,
+      "document_numerique_id": 1220,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 10,
+      "pdf_bytes": 213174
+    }
+  },
+  {
+    "ref": "CCJA-001/2018",
+    "titre": "Ordonnance N° 001/2018 - Affaire : Société AREEBA Guinée SA c/ Société Guinéenne d’Investissement Limited (SGI LTD) et Société Guinéenne de Développement Limited (SGD LTD)",
+    "date_str": "2018-01-04",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Société AREEBA Guinée SA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8737",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5347",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-001-2018.pdf",
+    "sha256": "515d2081bd06cefa9c6872226251b58c1a34c4125d025766690dc63e907ad5b0",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Société AREEBA Guinée SA"
+    },
+    "metadata": {
+      "notice_id": 8737,
+      "document_numerique_id": 5347,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 11,
+      "pdf_bytes": 133771
+    }
+  },
+  {
+    "ref": "CCJA-002/2000",
+    "titre": "Ordonnance N° 002/2000 - Affaire : Samba SOW c/ PETROCA",
+    "date_str": "2000-04-26",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Samba SOW",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8464",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5099",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-002-2000.pdf",
+    "sha256": "0a27bf35de74f70042ecc246817652d012e7413961a8581b2a85a46832ed423b",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Samba SOW"
+    },
+    "metadata": {
+      "notice_id": 8464,
+      "document_numerique_id": 5099,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 12,
+      "pdf_bytes": 140802
+    }
+  },
+  {
+    "ref": "CCJA-002/2001",
+    "titre": "Ordonnance N°002/2001 - Affaire : Caisse Nationale de Prévoyance Sociale (CNPS) du CAMEROUN et Maître EHONGO Alexandre Nemès c/ SARL PAMOL Plantations LTD",
+    "date_str": "",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Caisse Nationale de Prévoyance Sociale (CNPS) du C",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8460",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5096",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-002-2001.pdf",
+    "sha256": "0030fe15f53d83c9def99dbe6d4e3733ae788a7d2aee1d0b4490393b58491d58",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Caisse Nationale de Prévoyance Sociale (CNPS) du C"
+    },
+    "metadata": {
+      "notice_id": 8460,
+      "document_numerique_id": 5096,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 13,
+      "pdf_bytes": 131075
+    }
+  },
+  {
+    "ref": "CCJA-002/2002",
+    "titre": "Ordonnance N° 002/2002 - Affaire : Société de Transport Saint Christophe dite TT Saint Christophe c/ Société d’Etudes et de Réalisations Industrielles Foncières et Agricoles dite SERIFA",
+    "date_str": "2002-03-27",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Société de Transport Saint Christophe dite TT Sain",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8549",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5170",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-002-2002.pdf",
+    "sha256": "c283c2ddc2c999ecf6ee1303bbb1fe079e5120c6d1ab5214f08b6269fc932321",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Société de Transport Saint Christophe dite TT Sain"
+    },
+    "metadata": {
+      "notice_id": 8549,
+      "document_numerique_id": 5170,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 14,
+      "pdf_bytes": 129062
+    }
+  },
+  {
+    "ref": "CCJA-002/2003",
+    "titre": "Ordonnance N°002/2003 - Affaire : South african airways c/ société ferme Adam",
+    "date_str": "2003-10-01",
+    "type": "ordonnance_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "South african airways",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8551",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5172",
+    "local_pdf": "data/raw/ohada_arrets/ordonnance-ccja-CCJA-002-2003.pdf",
+    "sha256": "3a5fa3e5aef3090aca36ddb91f551c16883b9c36edd270a696ac2063d8cb0c32",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "South african airways"
+    },
+    "metadata": {
+      "notice_id": 8551,
+      "document_numerique_id": 5172,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 21,
+      "shelf_position": 15,
+      "pdf_bytes": 146450
+    }
+  },
+  {
+    "ref": "CCJA-001/1999",
+    "titre": "AVIS N° 001/1999",
+    "date_str": "1999-07-07",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "TRIBUNAL DE LIBREVILLE",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8390",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5030",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-1999.pdf",
+    "sha256": "2fd7373f749baa910a39ac5005b92bdbf0ed2ba99602c22520022532f087689e",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "TRIBUNAL DE LIBREVILLE"
+    },
+    "metadata": {
+      "notice_id": 8390,
+      "document_numerique_id": 5030,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 1,
+      "pdf_bytes": 124077
+    }
+  },
+  {
+    "ref": "CCJA-001/1999/JN",
+    "titre": "AVIS N° 001/1999/JN",
+    "date_str": "1999-07-07",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Tribunal Judiciaire 1ère Instance Libreville",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=5775",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=3950",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-1999-JN.pdf",
+    "sha256": "a7e702e3a893e0b210746cda37dcb6c1f01e29f8e7b5a31f4ef442317ed313c1",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Tribunal Judiciaire 1ère Instance Libreville"
+    },
+    "metadata": {
+      "notice_id": 5775,
+      "document_numerique_id": 3950,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 2,
+      "pdf_bytes": 226510
+    }
+  },
+  {
+    "ref": "CCJA-001/2001",
+    "titre": "AVIS N° 001/2001",
+    "date_str": "2001-03-30",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "REPUBLIQUE DE COTE D’IVOIRE",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8375",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5013",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-2001.pdf",
+    "sha256": "8a4661d62eef0c1694b237679549513826c4f7d845de0bba43ae891fadeb40dc",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "REPUBLIQUE DE COTE D’IVOIRE"
+    },
+    "metadata": {
+      "notice_id": 8375,
+      "document_numerique_id": 5013,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 3,
+      "pdf_bytes": 186365
+    }
+  },
+  {
+    "ref": "CCJA-001/2002",
+    "titre": "AVIS N° 001/2002",
+    "date_str": "2002-12-17",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "SECRETARIAT PERMANENT OHADA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8374",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5012",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-2002.pdf",
+    "sha256": "792fed63c1be728072e548b0ac020e779fd615ae0b8b94f8e530ed699fe47d34",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "SECRETARIAT PERMANENT OHADA"
+    },
+    "metadata": {
+      "notice_id": 8374,
+      "document_numerique_id": 5012,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 4,
+      "pdf_bytes": 175878
+    }
+  },
+  {
+    "ref": "CCJA-001/2004",
+    "titre": "AVIS N° 001/2004",
+    "date_str": "2004-01-28",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "COUR D’APPEL DE N’DJAMENA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8351",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4990",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-2004.pdf",
+    "sha256": "5a5351fdd298a5ebef554378f59f9dbf31480d60ec840c5f5e3c57f756bb8266",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "COUR D’APPEL DE N’DJAMENA"
+    },
+    "metadata": {
+      "notice_id": 8351,
+      "document_numerique_id": 4990,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 5,
+      "pdf_bytes": 121926
+    }
+  },
+  {
+    "ref": "CCJA-001/2006",
+    "titre": "AVIS N° 001/2006",
+    "date_str": "2006-10-17",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "TRIBUNAL DE COMMERCE DE BRAZAVILLE",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8310",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4977",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-2006.pdf",
+    "sha256": "6234b2d1daccf370d7fdb0054e86555bf3e1ae2ff866bd67f9800fb26431cbb8",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "TRIBUNAL DE COMMERCE DE BRAZAVILLE"
+    },
+    "metadata": {
+      "notice_id": 8310,
+      "document_numerique_id": 4977,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 6,
+      "pdf_bytes": 127970
+    }
+  },
+  {
+    "ref": "CCJA-001/2018",
+    "titre": "AVIS N°001/2018",
+    "date_str": "2018-03-27",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "MINISTRE DE LA JUSTICE",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8345",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4985",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-2018.pdf",
+    "sha256": "4d126eeb514376c0ff8aa5683a406e3a8152db19cabf75fa3df1de23d353c50d",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "MINISTRE DE LA JUSTICE"
+    },
+    "metadata": {
+      "notice_id": 8345,
+      "document_numerique_id": 4985,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 7,
+      "pdf_bytes": 210394
+    }
+  },
+  {
+    "ref": "CCJA-001/2019",
+    "titre": "AVIS N°001/2019",
+    "date_str": "2019-03-25",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "TRIBUNAL DE COMMERCE DE COTONOU",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8338",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4983",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-001-2019.pdf",
+    "sha256": "13b654493862d5e7eab09376069597062a945daedfe13d40781d9e99076a023b",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "TRIBUNAL DE COMMERCE DE COTONOU"
+    },
+    "metadata": {
+      "notice_id": 8338,
+      "document_numerique_id": 4983,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 8,
+      "pdf_bytes": 194894
+    }
+  },
+  {
+    "ref": "CCJA-002/1999",
+    "titre": "AVIS N° 002/1999",
+    "date_str": "1999-10-13",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "REPUBLIQUE DU MALI",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8389",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5029",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-002-1999.pdf",
+    "sha256": "75ce2a5d894bd84dce2fb088d63c25a3e310b982cc24769cb161d22ec6eb4def",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "REPUBLIQUE DU MALI"
+    },
+    "metadata": {
+      "notice_id": 8389,
+      "document_numerique_id": 5029,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 9,
+      "pdf_bytes": 132357
+    }
+  },
+  {
+    "ref": "CCJA-002/1999/JN",
+    "titre": "AVIS N°002/1999/JN",
+    "date_str": "1999-10-13",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "AVIS N°002/99/JN",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=5776",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4206",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-002-1999-JN.pdf",
+    "sha256": "05904b3d11de7988a604cfe046cd565d775bc663eaa7cdca229d3251dc34ab05",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "AVIS N°002/99/JN"
+    },
+    "metadata": {
+      "notice_id": 5776,
+      "document_numerique_id": 4206,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 10,
+      "pdf_bytes": 235179
+    }
+  },
+  {
+    "ref": "CCJA-002/2000",
+    "titre": "AVIS N° 002/2000",
+    "date_str": "2000-04-26",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "REPUBLIQUE DU SENEGAL",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8376",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=5014",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-002-2000.pdf",
+    "sha256": "5fee44f06e3b6c388254f78f10234db1a3bb4c63b94571282eafddd660ef2a4f",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "REPUBLIQUE DU SENEGAL"
+    },
+    "metadata": {
+      "notice_id": 8376,
+      "document_numerique_id": 5014,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 11,
+      "pdf_bytes": 120485
+    }
+  },
+  {
+    "ref": "CCJA-002/2009",
+    "titre": "AVIS N° 002/2009",
+    "date_str": "2009-12-18",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "SECRETARIAT PERMANENT DE L’OHADA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8350",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4989",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-002-2009.pdf",
+    "sha256": "b8e8b785480f96a18a49ff4cec17a2e91322103586a0b4a3ecd080a1b10a5ca5",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "SECRETARIAT PERMANENT DE L’OHADA"
+    },
+    "metadata": {
+      "notice_id": 8350,
+      "document_numerique_id": 4989,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 12,
+      "pdf_bytes": 198861
+    }
+  },
+  {
+    "ref": "CCJA-002/2010",
+    "titre": "AVIS N° 002/2010",
+    "date_str": "2010-08-03",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "SECRETARIAT PERMANENT DE L’OHADA",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8349",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4988",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-002-2010.pdf",
+    "sha256": "254059841d1c04339df6cbfbca31111e953f4cc0bbf04e3e956199ba533f4aa3",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "SECRETARIAT PERMANENT DE L’OHADA"
+    },
+    "metadata": {
+      "notice_id": 8349,
+      "document_numerique_id": 4988,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 13,
+      "pdf_bytes": 160436
+    }
+  },
+  {
+    "ref": "CCJA-002/2018",
+    "titre": "AVIS N° 002/2018",
+    "date_str": "2018-10-18",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "Prosper BIZITOU et Zita MBUANA MAKUMBU",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=8346",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4986",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-002-2018.pdf",
+    "sha256": "0a1b69278feafdbd23c1bf4080678bebb1dcd0a69c62652bc9208e0a3d114f56",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "Prosper BIZITOU et Zita MBUANA MAKUMBU"
+    },
+    "metadata": {
+      "notice_id": 8346,
+      "document_numerique_id": 4986,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 14,
+      "pdf_bytes": 134875
+    }
+  },
+  {
+    "ref": "CCJA-003/2012",
+    "titre": "AVIS N° 003/2012",
+    "date_str": "2012-11-02",
+    "type": "avis_ccja",
+    "corpus": "ohada",
+    "juridiction": "CCJA",
+    "pays": "OHADA",
+    "domaine": "Droit des affaires OHADA",
+    "resume": "AVIS N° 003/2012",
+    "texte_integral": "",
+    "mots_cles": [],
+    "source_url": "https://biblio.ohada.org/index.php?lvl=notice_display&id=5777",
+    "source_pdf_url": "https://biblio.ohada.org/doc_num.php?explnum_id=4965",
+    "local_pdf": "data/raw/ohada_arrets/avis-ccja-CCJA-003-2012.pdf",
+    "sha256": "020be2203af50cdb8285982ce4892dbe3dec09119d1ad2ae6a9a1234bcfe3b14",
+    "articles_cites": [],
+    "parties": {
+      "affaire": "AVIS N° 003/2012"
+    },
+    "metadata": {
+      "notice_id": 5777,
+      "document_numerique_id": 4965,
+      "auteurs": "CCJA (Abidjan, Côte d'Ivoire)",
+      "source_officielle": "Bibliothèque numérique de l'OHADA",
+      "shelf_id": 20,
+      "shelf_position": 15,
+      "pdf_bytes": 288555
+    }
+  }
+]
