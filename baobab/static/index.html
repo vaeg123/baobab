@@ -9536,14 +9536,32 @@ function decisionExtract(text, pattern, max=1400) {
 
 function renderDecisionClientBrief(doc) {
   const text = doc.texte_integral || '';
-  const procedure = decisionExtract(text, /(?:Sur le recours|Attendu que|Considérant que)[\s\S]{0,1300}/i, 1300);
+  const brief = doc.fiche_jurisprudentielle || null;
+  const procedure = brief?.procedure || decisionExtract(text, /(?:Sur le recours|Attendu que|Considérant que)[\s\S]{0,1300}/i, 1300);
   const dispositif = decisionExtract(text, /(?:PAR CES MOTIFS|PAR CES CAUSES)[\s\S]{0,1100}/i, 1100);
-  const current = dispositif || doc.resume || 'Le dispositif n’a pas pu être isolé automatiquement. Consultez le texte intégral officiel ci-dessous.';
+  const current = brief?.dispositif || brief?.solution || dispositif || doc.resume || 'Le dispositif n’a pas pu être isolé automatiquement. Consultez le texte intégral officiel ci-dessous.';
   const official = /biblio\.ohada\.org/i.test(doc.source_url || '');
+  const validated = brief?.statut_editorial === 'VALIDATED';
+  const futureText = brief?.futur && (brief?.preuves_futur || []).length
+    ? brief.futur
+    : 'Aucune évolution postérieure n’est affirmée sans texte ou décision plus récente reliée et vérifiable.';
+  const actions = brief?.actions?.length ? brief.actions : [
+    'Vérifier que les faits et la procédure de votre dossier sont comparables.',
+    'Contrôler les textes applicables à la date du litige.',
+    'Rechercher les décisions postérieures confirmant, précisant ou écartant cette solution.',
+    'Citer la référence et joindre la source officielle à votre dossier.'
+  ];
+  const structured = brief ? `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0">
+      ${brief.faits ? `<div class="decision-brief-card"><div class="decision-brief-label">Faits retenus</div><div class="decision-brief-text">${escHtml(brief.faits)}</div></div>` : ''}
+      ${brief.question_droit ? `<div class="decision-brief-card current"><div class="decision-brief-label">Question de droit</div><div class="decision-brief-text">${escHtml(brief.question_droit)}</div></div>` : ''}
+      ${brief.portee ? `<div class="decision-brief-card"><div class="decision-brief-label">Portée</div><div class="decision-brief-text">${escHtml(brief.portee)}</div></div>` : ''}
+    </div>` : '';
   return `
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       ${official ? '<span class="juris-proof">✓ Source officielle OHADA</span>' : ''}
       ${text ? '<span class="juris-proof">✓ Texte intégral disponible</span>' : '<span style="font-size:10px;color:var(--sub)">Notice sans texte intégral</span>'}
+      ${brief ? `<span class="pill ${validated ? 'pill-green' : 'pill-orange'}">${validated ? 'Fiche validée par un juriste' : 'Fiche en attente de validation éditoriale'}</span>` : '<span class="pill pill-gray">Lecture automatique non validée</span>'}
       <span style="font-size:10px;color:var(--sub)">Dernière consultation : ${new Date().toLocaleDateString('fr-FR')}</span>
     </div>
     <div style="padding:15px 17px;border-left:4px solid var(--clay);background:rgba(139,90,43,.06);border-radius:8px;margin-bottom:14px">
@@ -9553,11 +9571,13 @@ function renderDecisionClientBrief(doc) {
     <div class="decision-brief">
       <div class="decision-brief-card"><div class="decision-brief-label">Passé · origine du litige</div><div class="decision-brief-text">${escHtml(procedure || 'La procédure antérieure doit être reconstituée à partir du texte intégral et des décisions citées.')}</div></div>
       <div class="decision-brief-card current"><div class="decision-brief-label">Présent · décision rendue</div><div class="decision-brief-text">${escHtml(current)}</div></div>
-      <div class="decision-brief-card"><div class="decision-brief-label">Futur · portée à vérifier</div><div class="decision-brief-text">Aucune évolution postérieure n’est affirmée sans décisions plus récentes reliées. Utilisez l’analyse Baobab pour comparer cette solution au reste du corpus.</div></div>
+      <div class="decision-brief-card"><div class="decision-brief-label">Futur · portée à vérifier</div><div class="decision-brief-text">${escHtml(futureText)}</div></div>
     </div>
+    ${structured}
     <div class="decision-actions">
       <div style="font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#d9b77d">Pour agir professionnellement</div>
-      <ul><li>Vérifier que les faits et la procédure de votre dossier sont comparables.</li><li>Contrôler les textes applicables à la date du litige.</li><li>Rechercher les décisions postérieures confirmant, précisant ou écartant cette solution.</li><li>Citer la référence et joindre la source officielle à votre dossier.</li></ul>
+      <ul>${actions.map(action => `<li>${escHtml(typeof action === 'string' ? action : action.texte || action.action || '')}</li>`).join('')}</ul>
+      ${brief?.limites ? `<div style="font-size:10px;color:var(--sub);margin-top:8px"><strong>Limites :</strong> ${escHtml(brief.limites)}</div>` : ''}
     </div>`;
 }
 
@@ -9596,8 +9616,8 @@ function openSourceDoc(docId) {
         : '<div style="font-size:12px;color:var(--sub);padding:20px 0;text-align:center">Texte intégral non disponible pour ce document.</div>';
 
       const sourceLinks = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
-        ${doc.source_url ? `<a class="btn btn-sm" href="${escHtml(doc.source_url)}" target="_blank" rel="noopener">Notice officielle ↗</a>` : ''}
-        ${doc.source_pdf_url ? `<a class="btn btn-sm" href="${escHtml(doc.source_pdf_url)}" target="_blank" rel="noopener">PDF original ↗</a>` : ''}
+        ${safeExternalUrl(doc.source_url) ? `<a class="btn btn-sm" href="${escHtml(safeExternalUrl(doc.source_url))}" target="_blank" rel="noopener noreferrer">Notice officielle ↗</a>` : ''}
+        ${safeExternalUrl(doc.source_pdf_url) ? `<a class="btn btn-sm" href="${escHtml(safeExternalUrl(doc.source_pdf_url))}" target="_blank" rel="noopener noreferrer">PDF original ↗</a>` : ''}
       </div>`;
       body.innerHTML = renderDecisionClientBrief(doc) + keywords + articles + sourceLinks +
         `<details style="margin-top:14px"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--clay);padding:10px 0">Lire le texte intégral</summary>${texte}</details>`;

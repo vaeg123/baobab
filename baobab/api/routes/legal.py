@@ -51,6 +51,18 @@ def _classify_query(question: str) -> str:
     return 'analyse'
 
 
+def _json_field(value, fallback):
+    """Normalise les champs JSONB, asyncpg pouvant les retourner sous forme de texte."""
+    if value is None:
+        return fallback
+    if isinstance(value, str):
+        try:
+            return json.loads(value)
+        except (TypeError, json.JSONDecodeError):
+            return fallback
+    return value
+
+
 # ─── Prompt builders ──────────────────────────────────────────────────────────
 
 def _build_prompt(question: str, query_type: str, context: str, n_docs: int) -> str:
@@ -522,11 +534,49 @@ async def get_document(doc_id: str, x_user_token: str | None = Header(default=No
     conn = await _conn()
     try:
         row = await conn.fetchrow(
-            "SELECT * FROM legal_corpus WHERE id = $1",
+            """SELECT c.*,
+                      b.facts AS brief_facts,b.procedure_history AS brief_procedure_history,
+                      b.claims AS brief_claims,b.legal_question AS brief_legal_question,
+                      b.applied_rules AS brief_applied_rules,b.holding AS brief_holding,
+                      b.exact_disposition AS brief_exact_disposition,b.significance AS brief_significance,
+                      b.precedent_status AS brief_precedent_status,b.past_context AS brief_past_context,
+                      b.present_effect AS brief_present_effect,b.future_assessment AS brief_future_assessment,
+                      b.future_evidence AS brief_future_evidence,b.professional_actions AS brief_professional_actions,
+                      b.limitations AS brief_limitations,b.evidence_refs AS brief_evidence_refs,
+                      b.extraction_method AS brief_extraction_method,b.editorial_status AS brief_editorial_status,
+                      b.reviewed_by AS brief_reviewed_by,b.reviewed_at AS brief_reviewed_at
+               FROM legal_corpus c
+               LEFT JOIN legal_documents d ON d.legacy_corpus_id=c.id
+               LEFT JOIN legal_case_briefs b ON b.document_id=d.document_id
+               WHERE c.id = $1""",
             doc_id,
         )
         if not row:
             raise HTTPException(404, f"Document {doc_id} introuvable")
+        brief = None
+        if row["brief_editorial_status"]:
+            brief = {
+                "faits": row["brief_facts"],
+                "procedure": row["brief_procedure_history"],
+                "pretentions": _json_field(row["brief_claims"], []),
+                "question_droit": row["brief_legal_question"],
+                "regles_appliquees": _json_field(row["brief_applied_rules"], []),
+                "solution": row["brief_holding"],
+                "dispositif": row["brief_exact_disposition"],
+                "portee": row["brief_significance"],
+                "statut_jurisprudentiel": row["brief_precedent_status"],
+                "passe": _json_field(row["brief_past_context"], []),
+                "present": row["brief_present_effect"],
+                "futur": row["brief_future_assessment"],
+                "preuves_futur": _json_field(row["brief_future_evidence"], []),
+                "actions": _json_field(row["brief_professional_actions"], []),
+                "limites": row["brief_limitations"],
+                "preuves": _json_field(row["brief_evidence_refs"], []),
+                "methode_extraction": row["brief_extraction_method"],
+                "statut_editorial": row["brief_editorial_status"],
+                "valide_par": row["brief_reviewed_by"],
+                "valide_le": str(row["brief_reviewed_at"]) if row["brief_reviewed_at"] else None,
+            }
         return {
             "id": str(row["id"]),
             "ref": row["ref"],
@@ -558,6 +608,7 @@ async def get_document(doc_id: str, x_user_token: str | None = Header(default=No
             "sanction": row["sanction"],
             "articles_cites": list(row["articles_cites"] or []),
             "metadata": json.loads(row["metadata"] or "{}"),
+            "fiche_jurisprudentielle": brief,
             "created_at": str(row["created_at"]),
         }
     finally:
