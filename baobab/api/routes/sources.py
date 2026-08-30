@@ -34,6 +34,12 @@ class SourceUpdate(BaseModel):
     contact_email: str | None = Field(default=None, max_length=250)
     coverage_scope: dict[str, Any] | None = None
     enabled: bool | None = None
+    authority_grade: Literal["A", "B", "C", "D", "E", "F"] | None = None
+    authenticity_status: str | None = Field(default=None, max_length=40)
+    coverage_status: str | None = Field(default=None, max_length=40)
+    applicability_status: str | None = Field(default=None, max_length=40)
+    authority_note: str | None = Field(default=None, max_length=4000)
+    partnership_priority: int | None = Field(default=None, ge=1, le=999)
 
     @field_validator("agreement_status")
     @classmethod

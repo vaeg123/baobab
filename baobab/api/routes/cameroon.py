@@ -287,10 +287,12 @@ async def cameroon_overview(x_user_token: str | None = Header(default=None)):
         )
         sources = await conn.fetch(
             """SELECT s.code,s.name,s.source_type,s.base_url,s.access_mode,s.enabled,
+                      s.authority_grade,s.authenticity_status,s.coverage_status,
+                      s.applicability_status,s.authority_note,s.partnership_priority,
                       s.last_successful_sync_at,COUNT(c.id) AS document_count
                FROM legal_sources s LEFT JOIN legal_corpus c ON c.source_code=s.code
                WHERE s.jurisdiction_code LIKE 'CM%' OR s.jurisdiction_code IN ('CEMAC','COBAC')
-               GROUP BY s.code ORDER BY CASE WHEN s.access_mode LIKE 'OFFICIAL%' THEN 0 ELSE 1 END,s.name"""
+               GROUP BY s.code ORDER BY s.partnership_priority,s.authority_grade,s.name"""
         )
         return {
             "country": {
@@ -308,6 +310,7 @@ async def cameroon_overview(x_user_token: str | None = Header(default=None)):
                 "La doctrine est séparée des normes et de la jurisprudence.",
                 "Toute évolution doit être reliée à son texte antérieur.",
                 "Une analyse sans source vérifiable est signalée comme non étayée.",
+                "L'origine, l'intégrité, l'exhaustivité et l'applicabilité sont contrôlées séparément.",
             ],
         }
     finally:
