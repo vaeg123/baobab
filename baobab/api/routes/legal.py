@@ -544,6 +544,9 @@ async def get_document(doc_id: str, x_user_token: str | None = Header(default=No
                       b.future_evidence AS brief_future_evidence,b.professional_actions AS brief_professional_actions,
                       b.limitations AS brief_limitations,b.evidence_refs AS brief_evidence_refs,
                       b.extraction_method AS brief_extraction_method,b.editorial_status AS brief_editorial_status,
+                      b.validation_score AS brief_validation_score,
+                      b.automated_validation AS brief_automated_validation,
+                      b.document_verified_at AS brief_document_verified_at,
                       b.reviewed_by AS brief_reviewed_by,b.reviewed_at AS brief_reviewed_at
                FROM legal_corpus c
                LEFT JOIN legal_documents d ON d.legacy_corpus_id=c.id
@@ -574,6 +577,9 @@ async def get_document(doc_id: str, x_user_token: str | None = Header(default=No
                 "preuves": _json_field(row["brief_evidence_refs"], []),
                 "methode_extraction": row["brief_extraction_method"],
                 "statut_editorial": row["brief_editorial_status"],
+                "score_documentaire": row["brief_validation_score"],
+                "controles_documentaires": _json_field(row["brief_automated_validation"], {}),
+                "controle_documentaire_le": str(row["brief_document_verified_at"]) if row["brief_document_verified_at"] else None,
                 "valide_par": row["brief_reviewed_by"],
                 "valide_le": str(row["brief_reviewed_at"]) if row["brief_reviewed_at"] else None,
             }

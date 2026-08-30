@@ -9542,6 +9542,7 @@ function renderDecisionClientBrief(doc) {
   const current = brief?.dispositif || brief?.solution || dispositif || doc.resume || 'Le dispositif n’a pas pu être isolé automatiquement. Consultez le texte intégral officiel ci-dessous.';
   const official = /biblio\.ohada\.org/i.test(doc.source_url || '');
   const validated = brief?.statut_editorial === 'VALIDATED';
+  const documentVerified = brief?.statut_editorial === 'DOCUMENT_VERIFIED';
   const futureText = brief?.futur && (brief?.preuves_futur || []).length
     ? brief.futur
     : 'Aucune évolution postérieure n’est affirmée sans texte ou décision plus récente reliée et vérifiable.';
@@ -9561,7 +9562,7 @@ function renderDecisionClientBrief(doc) {
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       ${official ? '<span class="juris-proof">✓ Source officielle OHADA</span>' : ''}
       ${text ? '<span class="juris-proof">✓ Texte intégral disponible</span>' : '<span style="font-size:10px;color:var(--sub)">Notice sans texte intégral</span>'}
-      ${brief ? `<span class="pill ${validated ? 'pill-green' : 'pill-orange'}">${validated ? 'Fiche validée par un juriste' : 'Fiche en attente de validation éditoriale'}</span>` : '<span class="pill pill-gray">Lecture automatique non validée</span>'}
+      ${brief ? `<span class="pill ${validated || documentVerified ? 'pill-green' : 'pill-orange'}">${validated ? 'Fiche validée par un juriste' : documentVerified ? `Contrôle documentaire réussi · ${brief.score_documentaire}/100` : 'Fiche en attente de validation éditoriale'}</span>` : '<span class="pill pill-gray">Lecture automatique non validée</span>'}
       <span style="font-size:10px;color:var(--sub)">Dernière consultation : ${new Date().toLocaleDateString('fr-FR')}</span>
     </div>
     <div style="padding:15px 17px;border-left:4px solid var(--clay);background:rgba(139,90,43,.06);border-radius:8px;margin-bottom:14px">
