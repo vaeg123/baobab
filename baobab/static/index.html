@@ -3292,6 +3292,7 @@
         <!-- Internal tab bar -->
         <div class="sa-tabs">
           <button class="sa-tab-btn active" id="sa-tab-clients" onclick="_saTab('clients')">Clients</button>
+          <button class="sa-tab-btn" id="sa-tab-sources" onclick="_saTab('sources')">Sources &amp; Qualité</button>
           <button class="sa-tab-btn" id="sa-tab-compte" onclick="_saTab('compte')">Mon compte</button>
         </div>
 
@@ -3474,6 +3475,40 @@
               </div>
             </div>
 
+          </div>
+        </div>
+
+        <!-- ── PANEL SOURCES & QUALITÉ ── -->
+        <div id="sa-panel-sources" style="display:none">
+          <div class="stats-row" style="margin-bottom:1rem">
+            <div class="stat-card gold"><div class="stat-value" id="src-stat-documents">—</div><div class="stat-label">Documents canoniques</div></div>
+            <div class="stat-card green"><div class="stat-value" id="src-stat-verified">—</div><div class="stat-label">Documents vérifiés</div></div>
+            <div class="stat-card orange"><div class="stat-value" id="src-stat-backlog">—</div><div class="stat-label">À valider</div></div>
+            <div class="stat-card blue"><div class="stat-value" id="src-stat-hashed">—</div><div class="stat-label">Textes empreintés</div></div>
+          </div>
+          <div class="grid-2" style="align-items:start">
+            <div class="card">
+              <div class="card-header"><div class="card-icon">◉</div><span class="card-title">Registre des sources</span><button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadSourcesConsole()">↻ Actualiser</button></div>
+              <div class="card-body" id="sa-sources-list"><div class="empty-state"><div class="empty-text">Chargement…</div></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1rem">
+              <div class="card">
+                <div class="card-header"><div class="card-icon">✓</div><span class="card-title">Qualité du corpus</span></div>
+                <div class="card-body">
+                  <div id="sa-source-audit" style="font-size:12px;color:var(--sub);line-height:1.7">Chargement…</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+                    <button class="btn btn-sm" onclick="loadSourceIssues('incomplete')">Documents incomplets</button>
+                    <button class="btn btn-sm" onclick="loadSourceIssues('unmapped')">Sources non rattachées</button>
+                    <button class="btn btn-sm" onclick="loadSourceIssues('duplicate')">Doublons potentiels</button>
+                    <button class="btn btn-sm" onclick="loadSourceIssues('rights')">Droits à examiner</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-icon">!</div><span class="card-title" id="sa-source-issues-title">Anomalies documentaires</span></div>
+                <div class="card-body" id="sa-source-issues"><div style="font-size:12px;color:var(--sub)">Sélectionnez une catégorie de contrôle.</div></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -5883,9 +5918,81 @@ let _saFilterPlan    = '';
 
 function _saTab(tab) {
   document.getElementById('sa-panel-clients').style.display = tab === 'clients' ? '' : 'none';
+  document.getElementById('sa-panel-sources').style.display = tab === 'sources' ? '' : 'none';
   document.getElementById('sa-panel-compte').style.display  = tab === 'compte'  ? '' : 'none';
   document.getElementById('sa-tab-clients').classList.toggle('active', tab === 'clients');
+  document.getElementById('sa-tab-sources').classList.toggle('active', tab === 'sources');
   document.getElementById('sa-tab-compte').classList.toggle('active',  tab === 'compte');
+  if (tab === 'sources') loadSourcesConsole();
+}
+
+function sourceAuthHeaders(json=false) {
+  const headers = { 'Authorization': `Bearer ${state.superadminToken || ''}` };
+  if (json) headers['Content-Type'] = 'application/json';
+  return headers;
+}
+
+async function loadSourcesConsole() {
+  if (!state.superadminToken) return;
+  const list = document.getElementById('sa-sources-list');
+  list.innerHTML = '<div class="empty-state"><span class="spinner"></span><div class="empty-text">Chargement du registre…</div></div>';
+  try {
+    const [overviewRes, sourcesRes, auditRes] = await Promise.all([
+      fetch('/api/v1/sources/overview', { headers: sourceAuthHeaders() }),
+      fetch('/api/v1/sources', { headers: sourceAuthHeaders() }),
+      fetch('/api/v1/sources/audits/latest', { headers: sourceAuthHeaders() }),
+    ]);
+    const overview = await parseJson(overviewRes), sources = await parseJson(sourcesRes), auditData = await parseJson(auditRes);
+    if (!overviewRes.ok) throw new Error(fmtError(overview.detail));
+    const docs = overview.documents || {};
+    document.getElementById('src-stat-documents').textContent = docs.canonical_documents ?? 0;
+    document.getElementById('src-stat-verified').textContent = docs.verified_documents ?? 0;
+    document.getElementById('src-stat-backlog').textContent = docs.editorial_backlog ?? 0;
+    document.getElementById('src-stat-hashed').textContent = docs.texts_hashed ?? 0;
+    const audit = auditData.audit;
+    document.getElementById('sa-source-audit').innerHTML = audit ? `
+      <strong style="color:var(--text)">${audit.documents_scanned} documents audités</strong><br>
+      ${audit.documents_usable} exploitables · ${audit.documents_incomplete} incomplets<br>
+      ${audit.duplicates_suspected} doublons potentiels · ${audit.documents_rights_review} droits à examiner<br>
+      <span style="font-size:10px">Audit terminé le ${escHtml(String(audit.completed_at || '—').slice(0,19).replace('T',' '))}</span>` : 'Aucun audit enregistré.';
+    list.innerHTML = (sources.results || []).map(s => {
+      const safeCode = String(s.code).replace(/[^A-Za-z0-9_-]/g,'_');
+      return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><div><strong style="font-size:12px;color:var(--text)">${escHtml(s.name)}</strong><div style="font-size:10px;color:var(--sub)">${escHtml(s.code)} · ${escHtml(s.jurisdiction_code)} · ${s.canonical_documents || 0} documents</div></div><span class="pill ${s.enabled ? 'pill-green' : 'pill-gray'}" style="font-size:9px">${s.enabled ? 'ACTIVE' : 'DÉSACTIVÉE'}</span></div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:9px">
+          <select id="src-agreement-${safeCode}" style="font-size:10px;padding:5px"><option value="TO_REVIEW" ${s.agreement_status==='TO_REVIEW'?'selected':''}>Convention à examiner</option><option value="NEGOTIATING" ${s.agreement_status==='NEGOTIATING'?'selected':''}>En négociation</option><option value="ACTIVE" ${s.agreement_status==='ACTIVE'?'selected':''}>Convention active</option><option value="EXPIRED" ${s.agreement_status==='EXPIRED'?'selected':''}>Expirée</option></select>
+          <select id="src-rights-${safeCode}" style="font-size:10px;padding:5px"><option value="UNKNOWN" ${s.display_rights==='UNKNOWN'?'selected':''}>Droits inconnus</option><option value="LINK_ONLY" ${s.display_rights==='LINK_ONLY'?'selected':''}>Lien uniquement</option><option value="AUTHORIZED" ${s.display_rights==='AUTHORIZED'?'selected':''}>Affichage autorisé</option><option value="PUBLIC_LICENSE" ${s.display_rights==='PUBLIC_LICENSE'?'selected':''}>Licence publique</option><option value="PROHIBITED" ${s.display_rights==='PROHIBITED'?'selected':''}>Affichage interdit</option></select>
+        </div><button class="btn btn-ghost btn-sm" style="margin-top:7px" onclick="saveSourceRights('${escHtml(s.code)}','${safeCode}')">Enregistrer la qualification</button>
+      </div>`;
+    }).join('') || '<div class="empty-state"><div class="empty-text">Aucune source enregistrée.</div></div>';
+  } catch(e) {
+    list.innerHTML = `<div style="font-size:12px;color:var(--red)">${escHtml(e.message)}</div>`;
+  }
+}
+
+async function saveSourceRights(code, safeCode) {
+  const agreement_status = document.getElementById(`src-agreement-${safeCode}`).value;
+  const display_rights = document.getElementById(`src-rights-${safeCode}`).value;
+  const res = await fetch(`/api/v1/sources/${encodeURIComponent(code)}`, {
+    method:'PATCH', headers:sourceAuthHeaders(true),
+    body:JSON.stringify({ agreement_status, display_rights, indexing_rights:display_rights, analysis_rights:display_rights })
+  });
+  const data = await parseJson(res);
+  if (!res.ok) return alert(`Erreur : ${fmtError(data.detail)}`);
+  alert('✓ Qualification documentaire enregistrée.');
+  loadSourcesConsole();
+}
+
+async function loadSourceIssues(issue) {
+  const labels = { incomplete:'Documents incomplets',unmapped:'Sources non rattachées',duplicate:'Doublons potentiels',rights:'Droits à examiner' };
+  const target = document.getElementById('sa-source-issues');
+  document.getElementById('sa-source-issues-title').textContent = labels[issue] || 'Anomalies documentaires';
+  target.innerHTML = '<span class="spinner"></span>';
+  const res = await fetch(`/api/v1/sources/quality/issues?issue=${encodeURIComponent(issue)}&limit=50`, { headers:sourceAuthHeaders() });
+  const data = await parseJson(res);
+  if (!res.ok) { target.innerHTML = `<div style="color:var(--red)">${escHtml(fmtError(data.detail))}</div>`; return; }
+  target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:8px">${data.total} résultat(s) · 50 affichés au maximum</div>` +
+    (data.results || []).map(d => `<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-size:11px;font-weight:700;color:var(--text)">${escHtml(d.title)}</div><div style="font-size:10px;color:var(--sub)">${escHtml(d.document_type)} · ${escHtml(d.source_code || 'SOURCE NON RATTACHÉE')} · ${escHtml(d.official_identifier || '')}</div>${safeExternalUrl(d.source_url) ? `<a href="${escHtml(safeExternalUrl(d.source_url))}" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:var(--clay)">Vérifier la source ↗</a>` : ''}</div>`).join('');
 }
 
 function _saSetFilter(btn, plan) {

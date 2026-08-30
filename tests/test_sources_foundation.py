@@ -51,6 +51,13 @@ async def test_sources_overview_rejects_anonymous_access():
 
 
 @pytest.mark.asyncio
+async def test_source_quality_issues_rejects_anonymous_access():
+    with pytest.raises(HTTPException) as exc:
+        await sources.source_quality_issues(authorization=None)
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
 async def test_deposit_rejects_anonymous_access_before_database_use():
     request = sources.InstitutionalDocumentDeposit(
         source_code="OHADA.CCJA",

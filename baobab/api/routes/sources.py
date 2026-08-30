@@ -102,6 +102,7 @@ async def sources_overview(authorization: str | None = Header(default=None)):
             SELECT count(*) AS canonical_documents,
                    count(*) FILTER (WHERE validation_level IN ('SOURCE_VERIFIED','EDITORIALLY_VALIDATED')) AS verified_documents,
                    count(*) FILTER (WHERE original_sha256 IS NOT NULL) AS originals_hashed,
+                   count(*) FILTER (WHERE normalized_sha256 IS NOT NULL) AS texts_hashed,
                    count(*) FILTER (WHERE editorial_status='TO_REVIEW') AS editorial_backlog
             FROM legal_documents
             """
@@ -243,5 +244,38 @@ async def latest_corpus_audit(authorization: str | None = Header(default=None)):
     try:
         row = await conn.fetchrow("SELECT * FROM legal_corpus_audit_runs ORDER BY started_at DESC LIMIT 1")
         return {"audit": dict(row) if row else None}
+    finally:
+        await conn.close()
+
+
+@router.get("/sources/quality/issues")
+async def source_quality_issues(
+    issue: Literal["incomplete", "unmapped", "duplicate", "rights"] = "incomplete",
+    limit: int = 50,
+    authorization: str | None = Header(default=None),
+):
+    _auth_superadmin(authorization)
+    _require_database()
+    limit = max(1, min(limit, 200))
+    conditions = {
+        "incomplete": "coalesce(d.normalized_text,'')=''",
+        "unmapped": "d.source_code IS NULL",
+        "duplicate": "d.source_url IN (SELECT source_url FROM legal_documents WHERE coalesce(source_url,'')<>'' GROUP BY source_url HAVING count(*)>1)",
+        "rights": "coalesce(d.rights_snapshot->>'agreement_status','TO_REVIEW')<>'ACTIVE'",
+    }
+    conn = await _connect_db()
+    try:
+        total = await conn.fetchval(f"SELECT count(*) FROM legal_documents d WHERE {conditions[issue]}")
+        rows = await conn.fetch(
+            f"""
+            SELECT d.document_id,d.legacy_corpus_id,d.title,d.document_type,d.source_code,
+                   d.official_identifier,d.source_url,d.validation_level,d.editorial_status,
+                   length(d.normalized_text) AS text_length,d.updated_at
+            FROM legal_documents d WHERE {conditions[issue]}
+            ORDER BY d.updated_at DESC,d.document_id LIMIT $1
+            """,
+            limit,
+        )
+        return {"issue": issue, "total": total, "results": [dict(row) for row in rows]}
     finally:
         await conn.close()
