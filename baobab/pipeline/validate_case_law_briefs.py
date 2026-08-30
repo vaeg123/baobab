@@ -50,7 +50,8 @@ async def validate(*, apply: bool) -> dict:
                    d.original_file_uri,d.official_identifier,
                    COALESCE(d.adoption_date,c.date_decision) AS decision_date,
                    d.jurisdiction_code,d.normalized_sha256,length(d.normalized_text) AS text_length,
-                   c.ref AS legacy_ref,c.juridiction AS legacy_jurisdiction
+                   c.ref AS legacy_ref,c.titre AS legacy_title,
+                   c.juridiction AS legacy_jurisdiction,c.corpus,c.type AS legacy_type
             FROM legal_case_briefs b
             JOIN legal_documents d ON d.document_id=b.document_id
             LEFT JOIN legal_corpus c ON c.id=d.legacy_corpus_id
@@ -59,6 +60,8 @@ async def validate(*, apply: bool) -> dict:
         )
         outcomes = []
         failures: Counter[str] = Counter()
+        review_groups: Counter[str] = Counter()
+        review_examples: dict[str, list[dict]] = {}
         for row in rows:
             data = dict(row)
             score, checks = evaluate_brief(data)
@@ -70,6 +73,16 @@ async def validate(*, apply: bool) -> dict:
                 "solution_present",
             ))
             verified = fundamentals and score >= 80
+            if not verified:
+                group = f"{data.get('corpus') or 'unknown'}:{data.get('legacy_type') or 'unknown'}"
+                review_groups[group] += 1
+                examples = review_examples.setdefault(group, [])
+                if len(examples) < 3:
+                    examples.append({
+                        "title": data.get("legacy_title"),
+                        "ref": data.get("legacy_ref"),
+                        "failed": [name for name, passed in checks.items() if not passed],
+                    })
             for name, passed in checks.items():
                 if not passed:
                     failures[name] += 1
@@ -81,6 +94,8 @@ async def validate(*, apply: bool) -> dict:
             "document_verified": sum(1 for *_, ok in outcomes if ok),
             "to_review": sum(1 for *_, ok in outcomes if not ok),
             "failed_checks": dict(failures),
+            "review_groups": dict(review_groups.most_common(30)),
+            "review_examples": review_examples,
             "legal_validation_performed": False,
         }
         if apply:

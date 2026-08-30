@@ -33,7 +33,10 @@ async def main() -> None:
                 )
                 await connection.execute(
                     """
-                    UPDATE legal_documents d SET normalized_sha256=c.content_checksum,updated_at=NOW()
+                    UPDATE legal_documents d
+                    SET normalized_text=c.texte_integral,
+                        normalized_sha256=c.content_checksum,
+                        updated_at=NOW()
                     FROM legal_corpus c WHERE d.legacy_corpus_id=c.id
                     """
                 )

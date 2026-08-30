@@ -29,3 +29,11 @@ def test_missing_text_and_identity_cannot_look_verified():
     assert checks["identity_present"] is False
     assert checks["substantial_text"] is False
     assert checks["text_integrity_hashed"] is False
+
+
+def test_disposition_is_scored_but_not_a_fundamental_identity_check():
+    record = complete_record()
+    record["exact_disposition"] = None
+    score, checks = evaluate_brief(record)
+    assert score == 95
+    assert checks["disposition_present"] is False
