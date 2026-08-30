@@ -8,7 +8,7 @@ import json
 import re
 from dataclasses import dataclass
 from datetime import date, timedelta
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from uuid import uuid4
 
 import httpx
@@ -31,6 +31,8 @@ class WatchSource:
     country_code: str | None = None
     jurisdiction_code: str | None = None
     pagination_starts: tuple[int, ...] = ()
+    pagination_parameter: str = "start"
+    official_source: bool = True
 
 
 @dataclass(frozen=True)
@@ -90,6 +92,20 @@ WATCH_SOURCES = (
         discovery_url="https://www.minjustice.gov.cm/index.php/fr/e-justice/decisions-de-justice",
         parser="cameroon_minjustice", document_type="decision_juridictionnelle",
         country_code="CM", jurisdiction_code="CM.SUPREME",
+        fallback_urls=("https://minjustice.gov.cm/index.php/fr/e-justice/decisions-de-justice",),
+    ),
+    WatchSource(
+        code="CM.SPM.ACTES", name="Services du Premier ministre — Lois et règlements", corpus="cm",
+        discovery_url="https://www.spm.gov.cm/site/?q=fr%2Fdocumentation%2Flois-et-r%C3%A8glements",
+        parser="cameroon_official_acts", country_code="CM", jurisdiction_code="CM",
+        pagination_starts=(1, 2), pagination_parameter="page",
+        fallback_urls=("https://spm.gov.cm/site/?q=fr%2Fdocumentation%2Flois-et-r%C3%A8glements",),
+    ),
+    WatchSource(
+        code="CM.MINJUSTICE.LEGALIS", name="MINJUSTICE Cameroun — LEGALIS", corpus="cm",
+        discovery_url="https://www.minjustice.gov.cm/index.php/fr/legalis/textes-de-lois",
+        parser="cameroon_official_acts", country_code="CM", jurisdiction_code="CM",
+        fallback_urls=("https://minjustice.gov.cm/index.php/fr/legalis/textes-de-lois",),
     ),
     WatchSource(
         code="CM.JURICAF.SEARCH", name="JURICAF — jurisprudence camerounaise", corpus="cm",
@@ -98,6 +114,7 @@ WATCH_SOURCES = (
         jurisdiction_code="CM.SUPREME",
         fallback_urls=("https://juricaf.org/recherche/cameroun",),
         pagination_starts=(10, 20),
+        official_source=False,
     ),
 )
 
@@ -253,12 +270,42 @@ def parse_cameroon_minjustice(html: str, source: WatchSource) -> list[Artifact]:
     return sorted(artifacts.values(), key=lambda item: item.url)
 
 
+def parse_cameroon_official_acts(html: str, source: WatchSource) -> list[Artifact]:
+    """Parse les actes d'un portail camerounais officiel sans suivre les liens génériques."""
+    soup = BeautifulSoup(html, "html.parser")
+    artifacts: dict[str, Artifact] = {}
+    official_host = (urlparse(source.discovery_url).hostname or "").removeprefix("www.")
+    legal_reference = re.compile(
+        r"\b(loi|ordonnance|d[ée]cret|arr[êe]t[ée]|circulaire|instruction|d[ée]cision)"
+        r"\s*(?:n[°o]|no|num[ée]ro)?\s*[0-9]",
+        re.IGNORECASE,
+    )
+    for link in soup.select("a[href]"):
+        href = str(link.get("href") or "").strip()
+        url = urljoin(source.discovery_url, href).split("#")[0]
+        host = (urlparse(url).hostname or "").removeprefix("www.")
+        if not host.endswith(official_host):
+            continue
+        title = " ".join(link.get_text(" ", strip=True).split())
+        if not legal_reference.search(title):
+            container = link.find_parent(["article", "li", "tr", "div"])
+            candidate = " ".join(container.get_text(" ", strip=True).split()) if container else ""
+            if legal_reference.search(candidate):
+                title = candidate[:500]
+        if not legal_reference.search(title) or len(title) < 12:
+            continue
+        legal_date, precision = _parse_french_date(title)
+        artifacts[url] = Artifact(source.code, source.corpus, url, title[:500], legal_date, precision)
+    return sorted(artifacts.values(), key=lambda item: item.url)
+
+
 def parse_source(html: str, source: WatchSource) -> list[Artifact]:
     parsers = {
         "ohada_biblio": parse_ohada_biblio,
         "cima_crca": parse_cima_crca,
         "cameroon_prc": parse_cameroon_prc,
         "cameroon_minjustice": parse_cameroon_minjustice,
+        "cameroon_official_acts": parse_cameroon_official_acts,
         "juricaf_cm": parse_juricaf_cm,
     }
     return parsers[source.parser](html, source)
@@ -339,7 +386,7 @@ async def _fetch_source(
     errors: list[str] = []
     urls = (source.discovery_url, *source.fallback_urls)
     for url_index, url in enumerate(urls):
-        attempts = 2 if url_index == 0 else 1
+        attempts = 1 if source.fallback_urls else (2 if url_index == 0 else 1)
         for attempt in range(attempts):
             try:
                 response = await client.get(
@@ -354,7 +401,7 @@ async def _fetch_source(
                 pages = [response.text]
                 for start in source.pagination_starts:
                     separator = "&" if "?" in url else "?"
-                    page_url = f"{url}{separator}start={start}"
+                    page_url = f"{url}{separator}{source.pagination_parameter}={start}"
                     try:
                         page_response = await client.get(page_url, headers={
                             "User-Agent": "BAOBAB-Legal-Watch/1.1 (+https://vaegbaobab.com)",
@@ -393,7 +440,7 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
             "INSERT INTO legal_watch_runs (run_id, trigger, status, sources_checked) VALUES ($1,$2,'RUNNING',$3)",
             run_id, trigger, len(WATCH_SOURCES),
         )
-        timeout = httpx.Timeout(12.0, connect=6.0)
+        timeout = httpx.Timeout(20.0, connect=10.0)
         async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
             fetched = await asyncio.gather(
                 *(_fetch_source(client, source) for source in WATCH_SOURCES),
@@ -514,7 +561,8 @@ async def run_watch_cycle(trigger: str = "manual") -> dict:
                             stats["events_created"] += 1
 
                     score, reasons = score_artifact_validation(
-                        artifact, int(observed["consecutive_observation_count"])
+                        artifact, int(observed["consecutive_observation_count"]),
+                        official_source=source.official_source,
                     )
                     await conn.execute(
                         """UPDATE legal_source_artifacts SET validation_score=$3,

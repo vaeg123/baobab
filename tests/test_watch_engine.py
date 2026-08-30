@@ -12,6 +12,7 @@ from baobab.watch_engine import (
     infer_change_type,
     parse_cima_crca,
     parse_cameroon_minjustice,
+    parse_cameroon_official_acts,
     parse_cameroon_prc,
     parse_juricaf_cm,
     parse_ohada_biblio,
@@ -104,6 +105,43 @@ def test_parse_cameroon_minjustice_rejects_navigation_and_keeps_decision():
     artifacts = parse_cameroon_minjustice(html, source)
     assert len(artifacts) == 1
     assert artifacts[0].legal_date == date(2025, 3, 24)
+
+
+def test_parse_spm_keeps_numbered_official_act_and_rejects_navigation():
+    source = _source("CM.SPM.ACTES")
+    html = """
+      <nav><a href="/site/?q=fr/documentation/lois-et-règlements">Lois et règlements</a></nav>
+      <article><a href="/site/sites/default/files/decret-2026-635.pdf">
+        Décret N° 2026/00635/PM du 18 mars 2026 régissant l'aquaculture
+      </a></article>
+      <a href="https://example.org/decret.pdf">Décret N°2026/999 du 1 janvier 2026</a>
+    """
+    artifacts = parse_cameroon_official_acts(html, source)
+    assert len(artifacts) == 1
+    assert artifacts[0].legal_date == date(2026, 3, 18)
+    assert "spm.gov.cm" in artifacts[0].url
+
+
+def test_parse_legalis_uses_parent_text_for_pdf_link():
+    source = _source("CM.MINJUSTICE.LEGALIS")
+    html = """
+      <div class="document"><h3>Loi N°2024/017 du 23 décembre 2024 relative aux données</h3>
+        <a href="/documents/loi-2024-017.pdf">Télécharger</a></div>
+    """
+    artifacts = parse_cameroon_official_acts(html, source)
+    assert len(artifacts) == 1
+    assert artifacts[0].legal_date == date(2024, 12, 23)
+
+
+def test_spm_uses_page_pagination_parameter():
+    assert _source("CM.SPM.ACTES").pagination_parameter == "page"
+
+
+def test_slow_cameroon_sources_keep_https_fallbacks():
+    for code in ("CM.SPM.ACTES", "CM.MINJUSTICE.LEGALIS", "CM.MINJUSTICE.CASELAW"):
+        source = _source(code)
+        assert source.fallback_urls
+        assert all(url.startswith("https://") for url in source.fallback_urls)
 
 
 def test_cameroon_official_law_reaches_validation_threshold_when_stable():
@@ -221,6 +259,17 @@ def test_juricaf_source_registered_in_watch_sources():
     assert juricaf.country_code == "CM"
     assert juricaf.parser == "juricaf_cm"
     assert "juricaf.org" in juricaf.discovery_url
+    assert juricaf.official_source is False
+
+
+def test_secondary_source_cannot_reach_auto_validation_threshold():
+    artifact = Artifact(
+        "CM.JURICAF.SEARCH", "cm", "https://juricaf.org/arret/CAMEROUN-1",
+        "Arrêt N°12/2025 du 24 mars 2025", date(2025, 3, 24), "DAY",
+    )
+    score, reasons = score_artifact_validation(artifact, 3, official_source=False)
+    assert score < 85
+    assert not any(reason.startswith("SOURCE_OFFICIELLE") for reason in reasons)
 
 
 def test_juricaf_matches_cameroon_corpus_in_watch():
