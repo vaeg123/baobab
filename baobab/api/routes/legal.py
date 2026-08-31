@@ -17,6 +17,7 @@ from pydantic import BaseModel
 
 from baobab.rate_limit import client_ip, enforce_rate_limit
 from baobab.core.temporal import TEMPORAL_PROMPT_CONTRACT, normalize_temporal_fiche
+from baobab.core.africa import OHADA_COUNTRY_CODES, africa_country_payload
 
 router = APIRouter(tags=["legal"])
 
@@ -827,6 +828,96 @@ async def analyze_question(
         "ai_available": ai_available,
         "quota": quota_info,
     }
+
+
+@router.get("/legal/africa/coverage")
+async def africa_coverage():
+    """Couverture réelle par État africain, sans confondre national et régional."""
+    conn = await _conn()
+    try:
+        country_rows = await conn.fetch(
+            """SELECT country_code,count(*) AS total,
+                      count(*) FILTER (WHERE lower(type) ~ '(loi|code|decret|décret|arrete|arrêté|ordonnance|reglement|règlement)') AS legislation,
+                      count(*) FILTER (WHERE lower(type) ~ '(arret|arrêt|decision|décision|jugement|jurisprudence)') AS case_law,
+                      count(*) FILTER (WHERE source_code IS NOT NULL) AS sourced,
+                      max(updated_at) AS last_update
+               FROM legal_corpus WHERE country_code IS NOT NULL
+               GROUP BY country_code"""
+        )
+        actual = {row["country_code"]: dict(row) for row in country_rows}
+        ohada = await conn.fetchrow(
+            """SELECT count(*) AS total,
+                      count(*) FILTER (WHERE lower(type) ~ '(acte|traite|traité|reglement|règlement|loi|code)') AS legislation,
+                      count(*) FILTER (WHERE lower(type) ~ '(arret|arrêt|avis|ordonnance|decision|décision)') AS case_law,
+                      count(*) FILTER (WHERE coalesce(texte_integral,'')<>'') AS full_text,
+                      max(updated_at) AS last_update
+               FROM legal_corpus WHERE lower(corpus)='ohada'"""
+        )
+        countries = []
+        for country in africa_country_payload():
+            row = actual.get(country["code"], {})
+            national_total = int(row.get("total") or 0)
+            regional_total = int(ohada["total"] or 0) if country["ohada_member"] else 0
+            countries.append({
+                **country,
+                "national": {
+                    "total": national_total,
+                    "legislation": int(row.get("legislation") or 0),
+                    "case_law": int(row.get("case_law") or 0),
+                    "sourced": int(row.get("sourced") or 0),
+                    "last_update": str(row.get("last_update")) if row.get("last_update") else None,
+                },
+                "regional": {"ohada_documents": regional_total},
+                "integration_status": "NATIONAL_ACTIVE" if national_total else (
+                    "OHADA_ONLY" if regional_total else "PLANNED"
+                ),
+            })
+        return {
+            "countries": countries,
+            "total_countries": len(countries),
+            "ohada": dict(ohada),
+            "methodology": "Les volumes nationaux proviennent des documents explicitement rattachés au code du pays. Le corpus OHADA est affiché séparément pour ses 17 États membres.",
+        }
+    finally:
+        await conn.close()
+
+
+@router.get("/legal/ohada/coverage")
+async def ohada_coverage():
+    """Mesure exploitable de l'implémentation OHADA par grande matière."""
+    conn = await _conn()
+    try:
+        rows = await conn.fetch(
+            """WITH classified AS (
+                 SELECT CASE
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(sûret|surete|caution|hypoth|nantiss|gage)' THEN 'Sûretés'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(recouvr|saisie|exécution|execution|injonction)' THEN 'Recouvrement et voies d’exécution'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(sociét|societ|gie|gouvernance)' THEN 'Sociétés commerciales et GIE'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(collective|faillite|liquidation|redressement|concordat)' THEN 'Procédures collectives'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(arbitr|médiation|mediation)' THEN 'Arbitrage et médiation'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(comptab|syscohada)' THEN 'Droit comptable'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(transport)' THEN 'Transport routier'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(coopér|cooper)' THEN 'Sociétés coopératives'
+                   WHEN lower(coalesce(domaine,'')||' '||coalesce(titre,'')) ~ '(commercial|commerçant|commercant|bail|fonds de commerce)' THEN 'Droit commercial général'
+                   ELSE 'Autres matières OHADA' END AS matter,
+                   type,texte_integral,source_code,updated_at
+                 FROM legal_corpus WHERE lower(corpus)='ohada'
+               )
+               SELECT matter,count(*) AS documents,
+                      count(*) FILTER (WHERE lower(type) ~ '(arret|arrêt|avis|ordonnance|decision|décision)') AS decisions,
+                      count(*) FILTER (WHERE coalesce(texte_integral,'')<>'') AS full_text,
+                      count(*) FILTER (WHERE source_code IS NOT NULL) AS sourced,
+                      max(updated_at) AS last_update
+               FROM classified GROUP BY matter ORDER BY documents DESC"""
+        )
+        return {
+            "members": sorted(OHADA_COUNTRY_CODES),
+            "member_count": len(OHADA_COUNTRY_CODES),
+            "matters": [dict(row) for row in rows],
+            "methodology": "Classement documentaire automatique à contrôler éditorialement. Les chiffres décrivent le corpus présent, pas l’exhaustivité du droit OHADA.",
+        }
+    finally:
+        await conn.close()
 
 
 @router.get("/legal/stats")

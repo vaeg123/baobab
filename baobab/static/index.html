@@ -3944,6 +3944,27 @@
       </div>
     </div>
 
+    <!-- ── DROIT AFRICAIN ── -->
+    <div id="tab-afrique" class="tab-panel">
+      <div class="container">
+        <div class="page-title">Intégration du droit africain</div>
+        <div class="page-sub">Sélectionnez un pays pour connaître exactement les corpus déjà intégrés dans Baobab.</div>
+        <div class="card" style="margin-bottom:1rem;border-top:4px solid var(--clay)">
+          <div class="card-body">
+            <div class="grid-2" style="align-items:end">
+              <div class="form-group" style="margin:0"><label>Pays africain</label><select id="africa-country-select" onchange="renderAfricaCountry()"><option value="">Chargement des 54 États…</option></select></div>
+              <div style="font-size:11px;color:var(--sub);line-height:1.6">Les droits nationaux et régionaux sont comptés séparément. Une appartenance à l’OHADA ne signifie pas que tout le droit national du pays est disponible.</div>
+            </div>
+          </div>
+        </div>
+        <div id="africa-country-result"><div class="empty-state"><div class="empty-text">Choisissez un pays pour consulter son état d’intégration.</div></div></div>
+        <div class="card" style="margin-top:1rem">
+          <div class="card-header"><div class="card-icon">◎</div><span class="card-title">Priorité OHADA — couverture par matière</span><button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadAfricaCoverage()">↻ Actualiser</button></div>
+          <div class="card-body" id="africa-ohada-coverage"><div class="empty-state"><div class="empty-text">Chargement…</div></div></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── OHADA ── -->
     <div id="tab-ohada" class="tab-panel">
       <div class="container">
@@ -5305,6 +5326,8 @@ const NAV_CONFIGS = {
   client: [
     { id: 'client',    label: 'Intelligence juridique' },
     { id: 'biblio',    label: 'Sources & décisions' },
+    { id: 'afrique',   label: 'Afrique · couverture' },
+    { id: 'ohada',     label: 'OHADA' },
     { id: 'veille',    label: 'Anticiper les changements' },
     { id: 'droit-cm',  label: 'CM  Droit camerounais' },
     { id: 'droit-fr',  label: 'FR  Droit français' },
@@ -5313,6 +5336,8 @@ const NAV_CONFIGS = {
   admin: [
     { id: 'admin',    label: 'Tableau de bord' },
     { id: 'biblio',   label: 'Sources & décisions' },
+    { id: 'afrique',  label: 'Afrique · couverture' },
+    { id: 'ohada',    label: 'OHADA' },
     { id: 'veille',   label: 'Anticiper les changements' },
     { id: 'droit-cm', label: 'CM  Droit camerounais' },
     { id: 'droit-fr', label: 'FR  Droit français' },
@@ -5321,6 +5346,8 @@ const NAV_CONFIGS = {
     { id: 'superadmin',  label: 'Console' },
     { id: 'submissions', label: 'Soumissions' },
     { id: 'biblio',      label: 'Sources & décisions' },
+    { id: 'afrique',     label: 'Afrique · couverture' },
+    { id: 'ohada',       label: 'OHADA' },
     { id: 'veille',      label: 'Anticiper les changements' },
     { id: 'droit-cm',    label: 'CM  Droit camerounais' },
     { id: 'droit-fr',    label: 'FR  Droit français' },
@@ -5342,6 +5369,7 @@ function buildNav(role) {
     const requiredService = {
       cima: 'cima', ohada: 'ohada', bceao: 'bceao',
       veille: 'alerts', 'droit-fr': 'legal_fr', 'droit-cm': 'legal_cm', biblio: 'legal_search',
+      afrique: 'legal_search',
     };
     items = items.filter(item => {
       const service = requiredService[item.id];
@@ -5371,6 +5399,7 @@ function switchTab(name) {
   const navBtn = document.getElementById('nav-' + name);
   if (panel) panel.classList.add('active');
   if (navBtn) navBtn.classList.add('active');
+  if (name === 'afrique') loadAfricaCoverage();
   closeSidebar();
 }
 
@@ -5962,6 +5991,49 @@ function _saTab(tab) {
   document.getElementById('sa-tab-guide').classList.toggle('active',   tab === 'guide');
   document.getElementById('sa-tab-compte').classList.toggle('active',  tab === 'compte');
   if (tab === 'sources') loadSourcesConsole();
+}
+
+let _africaCoverage = null;
+
+async function loadAfricaCoverage() {
+  const target = document.getElementById('africa-ohada-coverage');
+  if (!target) return;
+  try {
+    const [africaResponse, ohadaResponse] = await Promise.all([
+      fetch('/api/v1/legal/africa/coverage'),
+      fetch('/api/v1/legal/ohada/coverage'),
+    ]);
+    const africa = await parseJson(africaResponse), ohada = await parseJson(ohadaResponse);
+    if (!africaResponse.ok) throw new Error(fmtError(africa.detail));
+    _africaCoverage = africa;
+    const select = document.getElementById('africa-country-select');
+    const previous = select.value;
+    select.innerHTML = '<option value="">Choisir un pays…</option>' + (africa.countries || []).map(country =>
+      `<option value="${escHtml(country.code)}">${escHtml(country.name)}${country.ohada_member ? ' · OHADA' : ''}</option>`
+    ).join('');
+    if (previous && (africa.countries || []).some(country => country.code === previous)) select.value = previous;
+    const matters = ohada.matters || [];
+    target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:12px">${ohada.member_count || 17} États membres · chiffres calculés depuis le corpus réellement présent.</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px">` + matters.map(matter => `
+      <div class="decision-brief-card"><div class="decision-brief-label">${escHtml(matter.matter)}</div><div style="display:flex;gap:14px"><strong>${matter.documents || 0} documents</strong><span style="color:var(--sub)">${matter.decisions || 0} décisions</span></div><div style="font-size:10px;color:var(--sub);margin-top:5px">${matter.full_text || 0} textes intégraux · ${matter.sourced || 0} sourcés</div></div>`).join('') + `</div><div style="font-size:10px;color:var(--sub);margin-top:12px">${escHtml(ohada.methodology || '')}</div>`;
+    if (select.value) renderAfricaCountry();
+  } catch(error) {
+    target.innerHTML = `<div style="color:var(--red);font-size:12px">Impossible de charger la couverture : ${escHtml(error.message)}</div>`;
+  }
+}
+
+function renderAfricaCountry() {
+  const code = document.getElementById('africa-country-select')?.value;
+  const target = document.getElementById('africa-country-result');
+  const country = (_africaCoverage?.countries || []).find(item => item.code === code);
+  if (!country || !target) return;
+  const national = country.national || {};
+  const status = country.integration_status === 'NATIONAL_ACTIVE' ? 'Droit national en cours d’intégration' : country.integration_status === 'OHADA_ONLY' ? 'Corpus OHADA disponible · droit national à intégrer' : 'Intégration nationale planifiée';
+  const statusPill = country.integration_status === 'NATIONAL_ACTIVE' ? 'pill-green' : country.integration_status === 'OHADA_ONLY' ? 'pill-blue' : 'pill-orange';
+  target.innerHTML = `<div class="card"><div class="card-header"><div class="card-icon">${escHtml(country.code)}</div><span class="card-title">${escHtml(country.name)}</span><span class="pill ${statusPill}" style="margin-left:auto">${escHtml(status)}</span></div><div class="card-body">
+    <div class="stats-row" style="margin:0 0 14px"><div class="stat-card gold"><div class="stat-value">${national.total || 0}</div><div class="stat-label">Documents nationaux</div></div><div class="stat-card blue"><div class="stat-value">${national.legislation || 0}</div><div class="stat-label">Textes normatifs</div></div><div class="stat-card green"><div class="stat-value">${national.case_law || 0}</div><div class="stat-label">Décisions nationales</div></div><div class="stat-card orange"><div class="stat-value">${country.regional?.ohada_documents || 0}</div><div class="stat-label">Documents OHADA applicables</div></div></div>
+    <div style="padding:12px 14px;border-left:4px solid var(--clay);background:rgba(139,90,43,.05);border-radius:8px;font-size:12px;line-height:1.65">${country.ohada_member ? `${escHtml(country.name)} est membre de l’OHADA. Baobab présente le corpus régional séparément des textes et décisions strictement nationaux.` : `Aucune appartenance OHADA n’est attribuée à ${escHtml(country.name)}. Les intégrations régionales pertinentes seront ajoutées selon les sources disponibles.`}</div>
+    <div style="font-size:10px;color:var(--sub);margin-top:10px">${escHtml(_africaCoverage.methodology || '')}</div>
+  </div></div>`;
 }
 
 function sourceAuthHeaders(json=false) {
