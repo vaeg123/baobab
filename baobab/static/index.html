@@ -3293,6 +3293,7 @@
         <div class="sa-tabs">
           <button class="sa-tab-btn active" id="sa-tab-clients" onclick="_saTab('clients')">Clients</button>
           <button class="sa-tab-btn" id="sa-tab-sources" onclick="_saTab('sources')">Sources &amp; Qualité</button>
+          <button class="sa-tab-btn" id="sa-tab-guide" onclick="_saTab('guide')">Guide débutant</button>
           <button class="sa-tab-btn" id="sa-tab-compte" onclick="_saTab('compte')">Mon compte</button>
         </div>
 
@@ -3486,6 +3487,17 @@
             <div class="stat-card orange"><div class="stat-value" id="src-stat-backlog">—</div><div class="stat-label">À valider</div></div>
             <div class="stat-card blue"><div class="stat-value" id="src-stat-hashed">—</div><div class="stat-label">Textes empreintés</div></div>
           </div>
+          <div class="card" style="margin-bottom:1rem;border:2px solid rgba(191,78,30,.28);box-shadow:0 8px 24px rgba(60,20,5,.07)">
+            <div class="card-header" style="background:rgba(191,78,30,.055)">
+              <div class="card-icon">⚖</div><span class="card-title">Fiches jurisprudentielles OCR à contrôler</span>
+              <span class="pill pill-orange" id="sa-briefs-priority" style="margin-left:8px">Chargement…</span>
+              <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadEditorialBriefs()">↻ Actualiser</button>
+            </div>
+            <div class="card-body">
+              <div style="font-size:11px;color:var(--sub);margin-bottom:12px">Cette file met en évidence les décisions dont la copie fidèle et la transcription OCR sont disponibles. « Contrôle documentaire » ne signifie pas « validation juridique ».</div>
+              <div id="sa-editorial-briefs"><div class="empty-state"><div class="empty-text">Chargement des fiches…</div></div></div>
+            </div>
+          </div>
           <div class="grid-2" style="align-items:start">
             <div class="card">
               <div class="card-header"><div class="card-icon">◉</div><span class="card-title">Registre des sources</span><button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadSourcesConsole()">↻ Actualiser</button></div>
@@ -3508,6 +3520,30 @@
                 <div class="card-header"><div class="card-icon">!</div><span class="card-title" id="sa-source-issues-title">Anomalies documentaires</span></div>
                 <div class="card-body" id="sa-source-issues"><div style="font-size:12px;color:var(--sub)">Sélectionnez une catégorie de contrôle.</div></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── GUIDE DÉBUTANT ── -->
+        <div id="sa-panel-guide" style="display:none">
+          <div class="card" style="border-top:4px solid var(--clay)">
+            <div class="card-header"><div class="card-icon">?</div><span class="card-title">Baobab pour les débutants — le plan d’utilisation</span></div>
+            <div class="card-body" style="font-size:13px;line-height:1.75;color:var(--text)">
+              <div style="padding:14px 16px;background:rgba(139,90,43,.06);border-radius:9px;margin-bottom:18px"><strong>Le principe en une phrase :</strong> posez une question, lisez la réponse, ouvrez les sources, vérifiez les dates, puis décidez de l’action à accomplir.</div>
+              <div class="decision-brief">
+                <div class="decision-brief-card"><div class="decision-brief-label">1 · Définir le problème</div><div class="decision-brief-text">Indiquez le pays, la date des faits, les personnes concernées et ce qui s’est passé. Évitez une question vague comme « que dit le droit ? ».</div></div>
+                <div class="decision-brief-card"><div class="decision-brief-label">2 · Lancer la recherche</div><div class="decision-brief-text">Utilisez des mots simples ou une question complète. Ajoutez une référence, un article ou une juridiction si vous les connaissez.</div></div>
+                <div class="decision-brief-card"><div class="decision-brief-label">3 · Trier les résultats</div><div class="decision-brief-text">Regardez d’abord le territoire, la juridiction, la date et l’autorité de la source. Le premier résultat n’est pas toujours le plus important.</div></div>
+                <div class="decision-brief-card"><div class="decision-brief-label">4 · Lire la fiche</div><div class="decision-brief-text">Commencez par les faits, la question de droit, la solution et la portée. Utilisez Passé–Présent–Futur pour comprendre l’évolution.</div></div>
+                <div class="decision-brief-card"><div class="decision-brief-label">5 · Vérifier la preuve</div><div class="decision-brief-text">Ouvrez le PDF ou l’original conservé. L’OCR aide à rechercher des mots, mais la copie visuelle reste la référence.</div></div>
+                <div class="decision-brief-card"><div class="decision-brief-label">6 · Agir prudemment</div><div class="decision-brief-text">Comparez les faits avec votre dossier, contrôlez les textes applicables à la bonne date et recherchez les décisions postérieures.</div></div>
+              </div>
+              <div class="grid-2" style="margin-top:18px;align-items:start">
+                <div style="padding:15px;border:1px solid rgba(23,99,58,.25);border-radius:9px;background:rgba(23,99,58,.04)"><strong style="color:#17633a">Bon réflexe</strong><br>Une affirmation importante doit pouvoir être reliée à une source ouvrable et à un passage précis. Si la fiche indique « à revoir », vérifiez-la avant de la citer.</div>
+                <div style="padding:15px;border:1px solid rgba(176,48,32,.22);border-radius:9px;background:rgba(176,48,32,.035)"><strong style="color:var(--red)">À ne jamais faire</strong><br>Copier une réponse automatique dans un acte sans lire les sources, ignorer la date des faits ou confondre une décision isolée avec une jurisprudence constante.</div>
+              </div>
+              <div style="margin-top:18px;padding:15px;border:1px solid var(--border);border-radius:9px"><strong>Exemple de bonne question :</strong><br><em>« Au Cameroun, en août 2026, une banque peut-elle poursuivre une caution lorsque le montant maximal de l’engagement n’est pas indiqué ? Je souhaite les textes OHADA applicables, les décisions favorables et défavorables et les actions à accomplir. »</em></div>
+              <div style="margin-top:18px;font-size:11px;color:var(--sub)">Baobab est un outil d’aide au travail juridique. Il facilite la recherche et la vérification ; il ne remplace pas l’analyse et la responsabilité du professionnel.</div>
             </div>
           </div>
         </div>
@@ -5919,9 +5955,11 @@ let _saFilterPlan    = '';
 function _saTab(tab) {
   document.getElementById('sa-panel-clients').style.display = tab === 'clients' ? '' : 'none';
   document.getElementById('sa-panel-sources').style.display = tab === 'sources' ? '' : 'none';
+  document.getElementById('sa-panel-guide').style.display   = tab === 'guide'   ? '' : 'none';
   document.getElementById('sa-panel-compte').style.display  = tab === 'compte'  ? '' : 'none';
   document.getElementById('sa-tab-clients').classList.toggle('active', tab === 'clients');
   document.getElementById('sa-tab-sources').classList.toggle('active', tab === 'sources');
+  document.getElementById('sa-tab-guide').classList.toggle('active',   tab === 'guide');
   document.getElementById('sa-tab-compte').classList.toggle('active',  tab === 'compte');
   if (tab === 'sources') loadSourcesConsole();
 }
@@ -5965,8 +6003,41 @@ async function loadSourcesConsole() {
         </div><button class="btn btn-ghost btn-sm" style="margin-top:7px" onclick="saveSourceRights('${escHtml(s.code)}','${safeCode}')">Enregistrer la qualification</button>
       </div>`;
     }).join('') || '<div class="empty-state"><div class="empty-text">Aucune source enregistrée.</div></div>';
+    loadEditorialBriefs();
   } catch(e) {
     list.innerHTML = `<div style="font-size:12px;color:var(--red)">${escHtml(e.message)}</div>`;
+  }
+}
+
+async function loadEditorialBriefs() {
+  const target = document.getElementById('sa-editorial-briefs');
+  if (!target || !state.superadminToken) return;
+  target.innerHTML = '<div class="empty-state"><span class="spinner"></span><div class="empty-text">Chargement des fiches…</div></div>';
+  try {
+    const response = await fetch('/api/v1/sources/editorial/case-briefs?limit=100', { headers:sourceAuthHeaders() });
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    const summary = data.summary || {};
+    const priority = document.getElementById('sa-briefs-priority');
+    if (priority) priority.textContent = `${summary.with_ocr || 0} avec OCR · ${summary.to_review || 0} à revoir au total`;
+    target.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">
+      <span class="pill pill-blue">${summary.with_ocr || 0} fiches OCR</span>
+      <span class="pill pill-green">${summary.document_verified || 0} contrôles documentaires</span>
+      <span class="pill pill-gold">${summary.validated || 0} validations juridiques</span>
+    </div>` + ((data.results || []).map(item => {
+      const legalValidated = item.editorial_status === 'VALIDATED';
+      const documentVerified = item.editorial_status === 'DOCUMENT_VERIFIED';
+      const label = legalValidated ? 'Validée juridiquement' : documentVerified ? 'Document contrôlé' : item.editorial_status === 'IN_REVIEW' ? 'Relecture en cours' : 'À relire';
+      const pill = legalValidated || documentVerified ? 'pill-green' : 'pill-orange';
+      return `<div style="padding:11px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:start;justify-content:space-between;gap:10px"><div><strong style="font-size:12px;color:var(--text)">${escHtml(item.titre || item.ref || 'Décision')}</strong><div style="font-size:10px;color:var(--sub);margin-top:2px">${escHtml(item.ref || '')} · ${escHtml((item.type || '').replaceAll('_',' '))} · ${escHtml(item.date_decision || 'date non renseignée')}</div></div><span class="pill ${pill}" style="white-space:nowrap">${escHtml(label)}</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:7px;font-size:10px;color:var(--sub)"><span>${item.ocr_pages || 0} page(s) OCR</span><span>Score documentaire : ${item.validation_score || 0}/100</span>${item.pages_to_review ? `<span style="color:var(--orange)">${item.pages_to_review} page(s) à relire</span>` : '<span style="color:#17633a">Images sans alerte</span>'}</div>
+        ${item.legal_question ? `<div style="font-size:11px;margin-top:7px;color:var(--text)"><strong>Question :</strong> ${escHtml(item.legal_question)}</div>` : '<div style="font-size:10px;color:var(--orange);margin-top:7px">Question de droit à rédiger pendant la validation.</div>'}
+        <div style="display:flex;gap:8px;margin-top:7px">${safeExternalUrl(item.source_url) ? `<a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(item.source_url))}" target="_blank" rel="noopener noreferrer">Vérifier la notice officielle ↗</a>` : ''}<code style="font-size:9px;color:var(--sub);margin-left:auto;align-self:center">${escHtml(item.corpus_id)}</code></div>
+      </div>`;
+    }).join('') || '<div class="empty-state"><div class="empty-text">Aucune fiche OCR trouvée.</div></div>');
+  } catch(error) {
+    target.innerHTML = `<div style="color:var(--red);font-size:12px">${escHtml(error.message)}</div>`;
   }
 }
 

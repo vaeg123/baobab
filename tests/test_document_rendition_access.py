@@ -34,6 +34,16 @@ def test_client_distinguishes_original_searchable_pdf_and_ocr_text():
     assert "async function openOcrTranscription" in html
 
 
+def test_superadmin_highlights_ocr_briefs_and_beginner_guide():
+    html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert "Fiches jurisprudentielles OCR à contrôler" in html
+    assert "Guide débutant" in html
+    assert "Baobab pour les débutants" in html
+    assert "async function loadEditorialBriefs" in html
+
+
 @pytest.mark.asyncio
 async def test_rendition_list_rejects_anonymous_access():
     with pytest.raises(HTTPException) as exc:

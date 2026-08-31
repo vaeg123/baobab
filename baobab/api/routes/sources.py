@@ -285,3 +285,49 @@ async def source_quality_issues(
         return {"issue": issue, "total": total, "results": [dict(row) for row in rows]}
     finally:
         await conn.close()
+
+
+@router.get("/sources/editorial/case-briefs")
+async def editorial_case_briefs(
+    limit: int = 100,
+    authorization: str | None = Header(default=None),
+):
+    """File superadmin des fiches jurisprudentielles, OCR en priorité."""
+    _auth_superadmin(authorization)
+    _require_database()
+    limit = max(1, min(limit, 200))
+    conn = await _connect_db()
+    try:
+        summary = await conn.fetchrow(
+            """SELECT count(DISTINCT b.brief_id) AS total,
+                      count(DISTINCT b.brief_id) FILTER (WHERE b.editorial_status='VALIDATED') AS validated,
+                      count(DISTINCT b.brief_id) FILTER (WHERE b.editorial_status='DOCUMENT_VERIFIED') AS document_verified,
+                      count(DISTINCT b.brief_id) FILTER (WHERE b.editorial_status IN ('TO_REVIEW','IN_REVIEW')) AS to_review,
+                      count(DISTINCT b.brief_id) FILTER (WHERE r.rendition_id IS NOT NULL) AS with_ocr
+               FROM legal_case_briefs b
+               JOIN legal_documents d ON d.document_id=b.document_id
+               LEFT JOIN legal_document_renditions r ON r.document_id=d.document_id
+                    AND r.rendition_type='OCR_TEXT'"""
+        )
+        rows = await conn.fetch(
+            """SELECT c.id AS corpus_id,d.document_id,c.titre,c.ref,c.type,c.corpus,c.date_decision,
+                      c.source_url,b.editorial_status,b.validation_score,b.precedent_status,
+                      b.legal_question,b.holding,b.reviewed_by,b.reviewed_at,
+                      count(r.rendition_id) FILTER (WHERE r.rendition_type='OCR_TEXT') AS ocr_pages,
+                      count(r.rendition_id) FILTER (WHERE r.rendition_type='PAGE_IMAGE'
+                           AND r.review_status='TO_REVIEW') AS pages_to_review
+               FROM legal_case_briefs b
+               JOIN legal_documents d ON d.document_id=b.document_id
+               JOIN legal_corpus c ON c.id=d.legacy_corpus_id
+               LEFT JOIN legal_document_renditions r ON r.document_id=d.document_id
+               GROUP BY c.id,d.document_id,b.brief_id
+               HAVING count(r.rendition_id) FILTER (WHERE r.rendition_type='OCR_TEXT') > 0
+               ORDER BY CASE b.editorial_status WHEN 'TO_REVIEW' THEN 0 WHEN 'IN_REVIEW' THEN 1
+                        WHEN 'DOCUMENT_VERIFIED' THEN 2 WHEN 'VALIDATED' THEN 3 ELSE 4 END,
+                        b.validation_score ASC,c.date_decision DESC NULLS LAST
+               LIMIT $1""",
+            limit,
+        )
+        return {"summary": dict(summary), "results": [dict(row) for row in rows]}
+    finally:
+        await conn.close()
