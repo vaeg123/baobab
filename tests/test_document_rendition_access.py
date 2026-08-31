@@ -23,6 +23,17 @@ def test_blob_migration_has_hard_size_limit():
     assert "BYTEA" in sql
 
 
+def test_client_distinguishes_original_searchable_pdf_and_ocr_text():
+    html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert "Lire le PDF recherchable" in html
+    assert "Voir l’original conservé" in html
+    assert "Lire la transcription OCR" in html
+    assert "La copie visuelle fait foi pour la lecture" in html
+    assert "async function openOcrTranscription" in html
+
+
 @pytest.mark.asyncio
 async def test_rendition_list_rejects_anonymous_access():
     with pytest.raises(HTTPException) as exc:

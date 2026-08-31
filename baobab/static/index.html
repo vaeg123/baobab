@@ -9554,17 +9554,26 @@ function renderDecisionClientBrief(doc) {
     'Rechercher les décisions postérieures confirmant, précisant ou écartant cette solution.',
     'Citer la référence et joindre la source officielle à votre dossier.'
   ];
+  const listBlock = (label, items) => Array.isArray(items) && items.length ? `
+    <div class="decision-brief-card"><div class="decision-brief-label">${escHtml(label)}</div>
+      <ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.65;color:var(--text)">${items.map(item => `<li>${escHtml(typeof item === 'string' ? item : item.texte || item.regle || item.action || JSON.stringify(item))}</li>`).join('')}</ul>
+    </div>` : '';
   const structured = brief ? `
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0">
       ${brief.faits ? `<div class="decision-brief-card"><div class="decision-brief-label">Faits retenus</div><div class="decision-brief-text">${escHtml(brief.faits)}</div></div>` : ''}
+      ${brief.procedure ? `<div class="decision-brief-card"><div class="decision-brief-label">Procédure</div><div class="decision-brief-text">${escHtml(brief.procedure)}</div></div>` : ''}
       ${brief.question_droit ? `<div class="decision-brief-card current"><div class="decision-brief-label">Question de droit</div><div class="decision-brief-text">${escHtml(brief.question_droit)}</div></div>` : ''}
+      ${brief.solution ? `<div class="decision-brief-card current"><div class="decision-brief-label">Solution de la juridiction</div><div class="decision-brief-text">${escHtml(brief.solution)}</div></div>` : ''}
       ${brief.portee ? `<div class="decision-brief-card"><div class="decision-brief-label">Portée</div><div class="decision-brief-text">${escHtml(brief.portee)}</div></div>` : ''}
+      ${listBlock('Prétentions des parties', brief.pretentions)}
+      ${listBlock('Règles appliquées', brief.regles_appliquees)}
     </div>` : '';
   return `
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       ${official ? '<span class="juris-proof">✓ Source officielle OHADA</span>' : ''}
       ${text ? '<span class="juris-proof">✓ Texte intégral disponible</span>' : '<span style="font-size:10px;color:var(--sub)">Notice sans texte intégral</span>'}
       ${brief ? `<span class="pill ${validated || documentVerified ? 'pill-green' : 'pill-orange'}">${validated ? 'Fiche validée par un juriste' : documentVerified ? `Contrôle documentaire réussi · ${brief.score_documentaire}/100` : 'Fiche en attente de validation éditoriale'}</span>` : '<span class="pill pill-gray">Lecture automatique non validée</span>'}
+      ${brief?.statut_jurisprudentiel ? `<span class="pill pill-gray">Portée : ${escHtml(brief.statut_jurisprudentiel.replaceAll('_',' ').toLowerCase())}</span>` : ''}
       <span style="font-size:10px;color:var(--sub)">Dernière consultation : ${new Date().toLocaleDateString('fr-FR')}</span>
     </div>
     <div style="padding:15px 17px;border-left:4px solid var(--clay);background:rgba(139,90,43,.06);border-radius:8px;margin-bottom:14px">
@@ -9624,12 +9633,27 @@ function openSourceDoc(docId) {
         ? `<div class="src-modal-texte">${escHtml(doc.texte_integral)}</div>`
         : '<div style="font-size:12px;color:var(--sub);padding:20px 0;text-align:center">Texte intégral non disponible pour ce document.</div>';
 
+      window._sourceDoc = doc;
+      const searchable = (doc._renditions||[]).find(r=>r.rendition_type==='SEARCHABLE_PDF');
+      const original = (doc._renditions||[]).find(r=>r.rendition_type==='ORIGINAL');
+      const ocrPages = (doc._renditions||[]).filter(r=>r.rendition_type==='OCR_TEXT');
+      const imagePages = (doc._renditions||[]).filter(r=>r.rendition_type==='PAGE_IMAGE');
+      const reviewPages = imagePages.filter(r=>r.review_status==='TO_REVIEW').length;
+      const confidenceValues = imagePages.map(r=>Number(r.ocr_confidence)).filter(Number.isFinite);
+      const averageConfidence = confidenceValues.length ? Math.round(confidenceValues.reduce((a,b)=>a+b,0)/confidenceValues.length) : null;
+      const evidencePanel = searchable || original ? `<div style="padding:13px 15px;border:1px solid rgba(23,99,58,.22);background:rgba(23,99,58,.04);border-radius:10px;margin:12px 0">
+        <div class="decision-brief-label" style="color:#17633a">Preuve documentaire conservée par Baobab</div>
+        <div style="font-size:11px;line-height:1.65;color:var(--text)">${imagePages.length || ocrPages.length} page(s) traitée(s) · empreinte SHA-256 contrôlée${averageConfidence !== null ? ` · confiance OCR moyenne ${averageConfidence}%` : ''}${reviewPages ? ` · ${reviewPages} page(s) à relire` : ' · aucune page signalée'}</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:5px">La copie visuelle fait foi pour la lecture. La transcription OCR facilite la recherche mais peut contenir des erreurs et ne remplace pas l’original.</div>
+      </div>` : '';
       const sourceLinks = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
-        ${(() => { const copy=(doc._renditions||[]).find(r=>r.rendition_type==='SEARCHABLE_PDF') || (doc._renditions||[]).find(r=>r.rendition_type==='ORIGINAL'); return copy ? `<button class="btn btn-primary btn-sm" onclick="openInternalRendition('${escHtml(doc.id)}','${escHtml(copy.rendition_id)}')">Ouvrir la copie Baobab</button>` : ''; })()}
+        ${searchable ? `<button class="btn btn-primary btn-sm" onclick="openInternalRendition('${escHtml(doc.id)}','${escHtml(searchable.rendition_id)}')">Lire le PDF recherchable</button>` : ''}
+        ${original ? `<button class="btn btn-sm" onclick="openInternalRendition('${escHtml(doc.id)}','${escHtml(original.rendition_id)}')">Voir l’original conservé</button>` : ''}
+        ${ocrPages.length ? `<button class="btn btn-sm" onclick="openOcrTranscription('${escHtml(doc.id)}')">Lire la transcription OCR</button>` : ''}
         ${safeExternalUrl(doc.source_url) ? `<a class="btn btn-sm" href="${escHtml(safeExternalUrl(doc.source_url))}" target="_blank" rel="noopener noreferrer">Notice officielle ↗</a>` : ''}
         ${safeExternalUrl(doc.source_pdf_url) ? `<a class="btn btn-sm" href="${escHtml(safeExternalUrl(doc.source_pdf_url))}" target="_blank" rel="noopener noreferrer">PDF original ↗</a>` : ''}
       </div>`;
-      body.innerHTML = renderDecisionClientBrief(doc) + keywords + articles + sourceLinks +
+      body.innerHTML = renderDecisionClientBrief(doc) + keywords + articles + evidencePanel + sourceLinks +
         `<details style="margin-top:14px"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--clay);padding:10px 0">Lire le texte intégral</summary>${texte}</details>`;
     })
     .catch(err => {
@@ -9653,6 +9677,27 @@ async function openInternalRendition(docId, renditionId) {
     ? `<img src="${escHtml(url)}" alt="Copie fidèle du document" style="display:block;max-width:100%;margin:auto">`
     : `<iframe src="${escHtml(url)}" title="Copie fidèle Baobab" style="width:100%;height:72vh;border:1px solid var(--border);border-radius:8px;background:white"></iframe>`;
   body.innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:10px"><button class="btn btn-ghost btn-sm" onclick="openSourceDoc('${escHtml(docId)}')">← Revenir à l’analyse</button><a class="btn btn-sm" href="${escHtml(url)}" download="copie-baobab.pdf">Télécharger la copie</a></div>${viewer}`;
+}
+
+async function openOcrTranscription(docId) {
+  const doc = window._sourceDoc;
+  const pages = (doc?._renditions || []).filter(r => r.rendition_type === 'OCR_TEXT').sort((a,b) => a.page_number-b.page_number);
+  if (!pages.length) return alert('Aucune transcription OCR n’est disponible pour ce document.');
+  const body = document.getElementById('source-modal-body');
+  body.innerHTML = '<div class="src-modal-loading"><span class="spinner" style="width:18px;height:18px;border-width:2px"></span>Chargement de la transcription OCR…</div>';
+  try {
+    const texts = await Promise.all(pages.map(async page => {
+      const response = await fetch(`/api/v1/legal/corpus/${encodeURIComponent(docId)}/renditions/${encodeURIComponent(page.rendition_id)}/content`, {
+        headers: state.token ? { 'X-User-Token': state.token } : {}
+      });
+      if (!response.ok) throw new Error(`Page ${page.page_number} indisponible`);
+      return { page: page.page_number, text: await response.text(), review: page.review_status === 'TO_REVIEW', confidence: page.ocr_confidence };
+    }));
+    body.innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:12px"><button class="btn btn-ghost btn-sm" onclick="openSourceDoc('${escHtml(docId)}')">← Revenir à l’analyse</button><span style="font-size:10px;color:var(--sub)">Transcription automatique · toujours comparer à la copie visuelle</span></div>` +
+      texts.map(item => `<section style="margin-bottom:16px"><div class="decision-brief-label">Page ${item.page}${item.confidence != null ? ` · confiance ${Math.round(Number(item.confidence))}%` : ''}${item.review ? ' · relecture recommandée' : ''}</div><div class="src-modal-texte">${escHtml(item.text)}</div></section>`).join('');
+  } catch (error) {
+    body.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="openSourceDoc('${escHtml(docId)}')">← Revenir à l’analyse</button><div style="padding:20px;color:var(--red)">${escHtml(error.message)}</div>`;
+  }
 }
 
 function closeSourceModal() {
