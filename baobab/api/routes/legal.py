@@ -920,6 +920,57 @@ async def ohada_coverage():
         await conn.close()
 
 
+@router.get("/legal/ohada/codes")
+async def ohada_codes():
+    """Actes uniformes découpés en articles, avec niveau de complétude explicite."""
+    conn = await _conn()
+    try:
+        rows = await conn.fetch(
+            """SELECT c.id,c.ref,c.titre,c.domaine,c.publication_date,c.source_url,
+                      count(p.provision_id) AS articles,
+                      count(p.provision_id) FILTER (WHERE p.verification_status='AUTOMATED_PARTIAL_SOURCE') AS partial_articles,
+                      max(p.created_at) AS indexed_at
+               FROM legal_corpus c
+               LEFT JOIN legal_provisions p ON p.document_id=c.id
+               WHERE c.corpus='ohada' AND c.type='acte_uniforme'
+               GROUP BY c.id HAVING count(p.provision_id)>0
+               ORDER BY c.publication_date DESC NULLS LAST,c.ref"""
+        )
+        return {
+            "results": [dict(row) for row in rows], "total": len(rows),
+            "coverage_complete": False,
+            "notice": "Découpage automatisé d’extraits plafonnés. Chaque article doit être comparé au Journal officiel avant usage professionnel.",
+        }
+    finally:
+        await conn.close()
+
+
+@router.get("/legal/ohada/codes/{document_id}/articles")
+async def ohada_code_articles(document_id: str, query: str | None = None, limit: int = 200):
+    limit = max(1, min(limit, 500))
+    conn = await _conn()
+    try:
+        document = await conn.fetchrow(
+            """SELECT id,ref,titre,domaine,publication_date,source_url
+               FROM legal_corpus WHERE id=$1::uuid AND corpus='ohada' AND type='acte_uniforme'""",
+            document_id,
+        )
+        if not document:
+            raise HTTPException(404, "Acte uniforme introuvable")
+        rows = await conn.fetch(
+            """SELECT provision_id,provision_number,heading,content,valid_from,status,
+                      verification_status,content_checksum,source_url
+               FROM legal_provisions WHERE document_id=$1::uuid
+                 AND ($2::text IS NULL OR provision_number ILIKE $2 OR content ILIKE $3)
+               ORDER BY CASE WHEN provision_number ~ '^[0-9]+$' THEN provision_number::int ELSE 999999 END,
+                        provision_number LIMIT $4""",
+            document_id, query, f"%{query}%" if query else None, limit,
+        )
+        return {"document": dict(document), "results": [dict(row) for row in rows], "total": len(rows)}
+    finally:
+        await conn.close()
+
+
 @router.get("/legal/stats")
 async def corpus_stats():
     """Statistiques du corpus juridique."""

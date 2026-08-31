@@ -3981,6 +3981,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
             Créer une entreprise
           </button>
+          <button class="ohada-view-btn" id="ohada-view-btn-codes" onclick="switchOhadaView('codes')">Codes OHADA</button>
         </div>
 
         <!-- Vue : Cascade OHADA -->
@@ -4022,6 +4023,17 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Vue : Codes OHADA -->
+        <div id="ohada-view-codes" style="display:none">
+          <div style="padding:13px 15px;border-left:4px solid var(--orange);background:rgba(191,78,30,.055);border-radius:8px;margin-bottom:14px;font-size:11px;line-height:1.65"><strong>Couverture partielle contrôlée :</strong> les articles ci-dessous proviennent de textes identifiés mais plafonnés. Ils facilitent la recherche ; vérifiez toujours le Journal officiel avant citation.</div>
+          <div class="grid-2" style="align-items:end;margin-bottom:14px">
+            <div class="form-group" style="margin:0"><label>Acte uniforme</label><select id="ohada-code-select" onchange="loadOhadaArticles()"><option value="">Chargement…</option></select></div>
+            <div class="form-group" style="margin:0"><label>Rechercher un numéro ou un mot</label><div style="display:flex;gap:7px"><input id="ohada-article-query" placeholder="Ex. 12, cautionnement, saisie…" onkeydown="if(event.key==='Enter')loadOhadaArticles()"><button class="btn btn-primary btn-sm" onclick="loadOhadaArticles()">Rechercher</button></div></div>
+          </div>
+          <div id="ohada-codes-summary"></div>
+          <div id="ohada-articles-results"><div class="empty-state"><div class="empty-text">Choisissez un Acte uniforme.</div></div></div>
         </div>
 
         <!-- Vue : Créer une entreprise -->
@@ -6919,7 +6931,7 @@ async function declareSinistre() {
 // ── OHADA CRÉATION ──────────────────────────────────────────────────────────
 
 function switchOhadaView(view) {
-  ['cascade', 'creation'].forEach(v => {
+  ['cascade', 'creation', 'codes'].forEach(v => {
     document.getElementById('ohada-view-' + v).style.display = v === view ? '' : 'none';
     const btn = document.getElementById('ohada-view-btn-' + v);
     btn.classList.toggle('active', v === view);
@@ -9840,6 +9852,44 @@ async function openOcrTranscription(docId) {
       texts.map(item => `<section style="margin-bottom:16px"><div class="decision-brief-label">Page ${item.page}${item.confidence != null ? ` · confiance ${Math.round(Number(item.confidence))}%` : ''}${item.review ? ' · relecture recommandée' : ''}</div><div class="src-modal-texte">${escHtml(item.text)}</div></section>`).join('');
   } catch (error) {
     body.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="openSourceDoc('${escHtml(docId)}')">← Revenir à l’analyse</button><div style="padding:20px;color:var(--red)">${escHtml(error.message)}</div>`;
+  }
+  if (view === 'codes') loadOhadaCodes();
+}
+
+async function loadOhadaCodes() {
+  const select = document.getElementById('ohada-code-select');
+  const summary = document.getElementById('ohada-codes-summary');
+  if (!select || !summary) return;
+  try {
+    const response = await fetch('/api/v1/legal/ohada/codes');
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    const previous = select.value;
+    select.innerHTML = '<option value="">Choisir un Acte uniforme…</option>' + (data.results || []).map(code =>
+      `<option value="${escHtml(code.id)}">${escHtml(code.ref)} · ${escHtml(code.titre)} (${code.articles} articles détectés)</option>`
+    ).join('');
+    if (previous && (data.results || []).some(code => code.id === previous)) select.value = previous;
+    summary.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:12px"><strong style="color:var(--text)">${data.total || 0} Actes indexés</strong> · ${escHtml(data.notice || '')}</div>`;
+    if (select.value) loadOhadaArticles();
+  } catch(error) {
+    summary.innerHTML = `<div style="color:var(--red)">${escHtml(error.message)}</div>`;
+  }
+}
+
+async function loadOhadaArticles() {
+  const documentId = document.getElementById('ohada-code-select')?.value;
+  const target = document.getElementById('ohada-articles-results');
+  if (!documentId || !target) return;
+  const query = document.getElementById('ohada-article-query')?.value.trim() || '';
+  target.innerHTML = '<div class="empty-state"><span class="spinner"></span><div class="empty-text">Chargement des articles…</div></div>';
+  try {
+    const response = await fetch(`/api/v1/legal/ohada/codes/${encodeURIComponent(documentId)}/articles?limit=200&query=${encodeURIComponent(query)}`);
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${data.total || 0} article(s) affiché(s)${query ? ` pour « ${escHtml(query)} »` : ''}.</div>` + ((data.results || []).map(article => `
+      <details class="card" style="margin-bottom:8px"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong><span class="pill pill-orange">Source partielle · à vérifier</span></summary><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div></details>`).join('') || '<div class="empty-state"><div class="empty-text">Aucun article ne correspond à cette recherche.</div></div>');
+  } catch(error) {
+    target.innerHTML = `<div style="color:var(--red);font-size:12px">${escHtml(error.message)}</div>`;
   }
 }
 

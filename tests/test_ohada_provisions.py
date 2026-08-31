@@ -1,0 +1,25 @@
+from pathlib import Path
+
+from baobab.pipeline.build_ohada_provisions import extract_articles, identity_matches
+
+
+def test_act_identity_must_match_reference_marker():
+    assert identity_matches("AUS-2010", "ACTE UNIFORME PORTANT ORGANISATION DES SÛRETÉS")
+    assert not identity_matches("AUCTMR-2003", "ACTE UNIFORME PORTANT ORGANISATION DES SÛRETÉS")
+
+
+def test_articles_are_split_and_duplicates_rejected():
+    text = "Article premier\nTexte du premier article suffisamment long.\nArticle 2\nTexte du deuxième article suffisamment long.\nArticle 2\nCopie répétée suffisamment longue."
+    articles = extract_articles(text)
+    assert [article["number"] for article in articles] == ["1", "2"]
+    assert "premier article" in articles[0]["content"]
+
+
+def test_ohada_codes_are_visible_and_clearly_partial():
+    html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert "Codes OHADA" in html
+    assert "Source partielle · à vérifier" in html
+    assert "/api/v1/legal/ohada/codes" in html
+    assert "loadOhadaArticles" in html
