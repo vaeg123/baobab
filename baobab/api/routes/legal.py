@@ -12,7 +12,7 @@ import os
 import re as _re_cls
 from typing import Literal
 
-from fastapi import APIRouter, Header, HTTPException, Query, Request
+from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 from pydantic import BaseModel
 
 from baobab.rate_limit import client_ip, enforce_rate_limit
@@ -617,6 +617,61 @@ async def get_document(doc_id: str, x_user_token: str | None = Header(default=No
             "fiche_jurisprudentielle": brief,
             "created_at": str(row["created_at"]),
         }
+    finally:
+        await conn.close()
+
+
+@router.get("/legal/corpus/{doc_id}/renditions")
+async def list_document_renditions(doc_id: str, x_user_token: str | None = Header(default=None)):
+    """Liste les copies internes disponibles, sans exposer leur URI de stockage."""
+    await _require_active_workspace(x_user_token)
+    conn = await _conn()
+    try:
+        rows = await conn.fetch(
+            """SELECT r.rendition_id,r.rendition_type,r.page_number,r.mime_type,r.sha256,
+                      r.byte_size,r.extraction_method,r.ocr_language,r.ocr_confidence,
+                      r.review_status,r.created_at
+               FROM legal_document_renditions r
+               JOIN legal_documents d ON d.document_id=r.document_id
+               WHERE d.legacy_corpus_id=$1::uuid
+               ORDER BY CASE r.rendition_type WHEN 'ORIGINAL' THEN 0
+                    WHEN 'SEARCHABLE_PDF' THEN 1 WHEN 'PAGE_IMAGE' THEN 2 ELSE 3 END,
+                    r.page_number NULLS FIRST""",
+            doc_id,
+        )
+        return {"results": [dict(row) for row in rows], "total": len(rows)}
+    finally:
+        await conn.close()
+
+
+@router.get("/legal/corpus/{doc_id}/renditions/{rendition_id}/content")
+async def get_document_rendition_content(
+    doc_id: str, rendition_id: str, x_user_token: str | None = Header(default=None),
+):
+    """Diffuse une copie interne après vérification du compte et de l'appartenance au document."""
+    await _require_active_workspace(x_user_token)
+    conn = await _conn()
+    try:
+        row = await conn.fetchrow(
+            """SELECT r.mime_type,r.rendition_type,r.sha256,b.content
+               FROM legal_document_renditions r
+               JOIN legal_document_rendition_blobs b ON b.rendition_id=r.rendition_id
+               JOIN legal_documents d ON d.document_id=r.document_id
+               WHERE d.legacy_corpus_id=$1::uuid AND r.rendition_id=$2::uuid""",
+            doc_id, rendition_id,
+        )
+        if not row:
+            raise HTTPException(404, "Copie documentaire introuvable")
+        disposition = "inline" if row["mime_type"].startswith(("application/pdf", "image/")) else "attachment"
+        return Response(
+            content=bytes(row["content"]), media_type=row["mime_type"],
+            headers={
+                "Content-Disposition": f'{disposition}; filename="baobab-{row["rendition_type"].lower()}"',
+                "X-Content-SHA256": row["sha256"],
+                "Cache-Control": "private, max-age=300",
+                "X-Content-Type-Options": "nosniff",
+            },
+        )
     finally:
         await conn.close()
 

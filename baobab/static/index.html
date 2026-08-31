@@ -9598,7 +9598,13 @@ function openSourceDoc(docId) {
 
   const detailHeaders = state.token ? { 'X-User-Token': state.token } : {};
   fetch(`/api/v1/legal/corpus/${encodeURIComponent(docId)}`, { headers: detailHeaders })
-    .then(r => { if (!r.ok) throw new Error('Document introuvable'); return r.json(); })
+    .then(async r => {
+      if (!r.ok) throw new Error('Document introuvable');
+      const doc = await r.json();
+      const copiesResponse = await fetch(`/api/v1/legal/corpus/${encodeURIComponent(docId)}/renditions`, { headers: detailHeaders });
+      doc._renditions = copiesResponse.ok ? (await copiesResponse.json()).results || [] : [];
+      return doc;
+    })
     .then(doc => {
       hdrTag.textContent   = `${(doc.type||'').replace(/_/g,' ')} · ${(doc.corpus||'').toUpperCase()}${doc.pays ? ' · '+doc.pays : ''}${doc.date_decision ? ' · '+doc.date_decision : ''}`;
       hdrTitre.textContent = doc.titre || doc.ref || 'Document';
@@ -9619,6 +9625,7 @@ function openSourceDoc(docId) {
         : '<div style="font-size:12px;color:var(--sub);padding:20px 0;text-align:center">Texte intégral non disponible pour ce document.</div>';
 
       const sourceLinks = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+        ${(() => { const copy=(doc._renditions||[]).find(r=>r.rendition_type==='SEARCHABLE_PDF') || (doc._renditions||[]).find(r=>r.rendition_type==='ORIGINAL'); return copy ? `<button class="btn btn-primary btn-sm" onclick="openInternalRendition('${escHtml(doc.id)}','${escHtml(copy.rendition_id)}')">Ouvrir la copie Baobab</button>` : ''; })()}
         ${safeExternalUrl(doc.source_url) ? `<a class="btn btn-sm" href="${escHtml(safeExternalUrl(doc.source_url))}" target="_blank" rel="noopener noreferrer">Notice officielle ↗</a>` : ''}
         ${safeExternalUrl(doc.source_pdf_url) ? `<a class="btn btn-sm" href="${escHtml(safeExternalUrl(doc.source_pdf_url))}" target="_blank" rel="noopener noreferrer">PDF original ↗</a>` : ''}
       </div>`;
@@ -9631,9 +9638,30 @@ function openSourceDoc(docId) {
     });
 }
 
+async function openInternalRendition(docId, renditionId) {
+  const response = await fetch(`/api/v1/legal/corpus/${encodeURIComponent(docId)}/renditions/${encodeURIComponent(renditionId)}/content`, {
+    headers: state.token ? { 'X-User-Token': state.token } : {}
+  });
+  if (!response.ok) return alert('La copie Baobab ne peut pas être ouverte. Reconnectez-vous puis réessayez.');
+  const blob = await response.blob();
+  if (window._activeRenditionUrl) URL.revokeObjectURL(window._activeRenditionUrl);
+  const url = URL.createObjectURL(blob);
+  window._activeRenditionUrl = url;
+  const body = document.getElementById('source-modal-body');
+  const mime = response.headers.get('content-type') || blob.type;
+  const viewer = mime.startsWith('image/')
+    ? `<img src="${escHtml(url)}" alt="Copie fidèle du document" style="display:block;max-width:100%;margin:auto">`
+    : `<iframe src="${escHtml(url)}" title="Copie fidèle Baobab" style="width:100%;height:72vh;border:1px solid var(--border);border-radius:8px;background:white"></iframe>`;
+  body.innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:10px"><button class="btn btn-ghost btn-sm" onclick="openSourceDoc('${escHtml(docId)}')">← Revenir à l’analyse</button><a class="btn btn-sm" href="${escHtml(url)}" download="copie-baobab.pdf">Télécharger la copie</a></div>${viewer}`;
+}
+
 function closeSourceModal() {
   document.getElementById('source-modal').classList.remove('open');
   document.body.style.overflow = '';
+  if (window._activeRenditionUrl) {
+    URL.revokeObjectURL(window._activeRenditionUrl);
+    window._activeRenditionUrl = null;
+  }
 }
 
 document.addEventListener('keydown', e => {
