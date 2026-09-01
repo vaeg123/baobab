@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Header
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 import uuid
 
@@ -42,7 +42,8 @@ class OhadaEvenementRequest(BaseModel):
     entity_id: str
     event_type: OhadaEventType
     occurred_at: datetime
-    metadata: dict = {}
+    country_code: str = Field(default="CI", pattern=r"^[A-Za-z]{2}$")
+    metadata: dict = Field(default_factory=dict)
 
 
 @router.post("/evenement")
@@ -54,7 +55,7 @@ async def declarer_evenement(request: OhadaEvenementRequest, x_user_token: str |
         entity_id=request.entity_id,
         occurred_at=request.occurred_at,
         corpus="OHADA",
-        territory="CI",
+        territory=request.country_code.upper(),
         metadata=request.metadata,
     )
 
@@ -75,6 +76,8 @@ async def declarer_evenement(request: OhadaEvenementRequest, x_user_token: str |
                 "due_date": s.due_date.isoformat() if s.due_date else None,
                 "deadline_days": s.deadline_days,
                 "rule_id": s.rule_id,
+                "authority": "OHADA" if s.rule_id.startswith("OHADA.") else "NATIONAL",
+                "date_basis": "OPERATIONAL_TARGET_TO_VERIFY",
             }
             for s in process.steps
         ],

@@ -1,4 +1,7 @@
 from datetime import datetime, timezone
+from pathlib import Path
+
+from baobab.api.routes.ohada import OhadaEvenementRequest
 from baobab.core.models.legal_event import LegalEvent
 from baobab.engines.event_engine.engine import LegalEventEngine
 from baobab.verticals.ohada.events import OhadaEventType
@@ -94,3 +97,24 @@ def test_past_ago_generates_alerts():
     alerts = generate_alerts(process)
     assert len(alerts) > 0
     assert any(a.level in ("overdue", "critical") for a in alerts)
+
+
+def test_ohada_request_carries_country_and_project_metadata():
+    request = OhadaEvenementRequest(
+        entity_id="ci-sarl-tech",
+        event_type=OhadaEventType.CREATION_SARL,
+        occurred_at=datetime(2026, 9, 1, tzinfo=timezone.utc),
+        country_code="CI",
+        metadata={"raison_sociale": "SARL TECH ABIDJAN", "city": "Abidjan"},
+    )
+    assert request.country_code == "CI"
+    assert request.metadata["city"] == "Abidjan"
+
+
+def test_ohada_ui_is_an_action_plan_not_a_technical_event_form():
+    html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(encoding="utf-8")
+    assert "Assistant de conformité OHADA" in html
+    assert "Générer mon plan d'action" in html
+    assert "Date cible Baobab" in html
+    assert "Droit CI à vérifier" in html
+    assert 'id="ohada_entity_id"' not in html
