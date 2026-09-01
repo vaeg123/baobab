@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from baobab.pipeline.build_ohada_provisions import extract_articles, identity_matches
+from baobab.pipeline.ohada_catalog import effective_bounds
 
 
 def test_act_identity_must_match_reference_marker():
@@ -23,3 +24,17 @@ def test_ohada_codes_are_visible_and_clearly_partial():
     assert "Source partielle · à vérifier" in html
     assert "/api/v1/legal/ohada/codes" in html
     assert "loadOhadaArticles" in html
+
+
+def test_verified_effective_date_is_not_confused_with_adoption_date():
+    valid_from, valid_until = effective_bounds("AUSCGIE-2014")
+    assert str(valid_from) == "2014-05-05"
+    assert valid_until is None
+
+
+def test_unknown_effective_date_is_not_invented_from_fallback():
+    from datetime import date
+
+    valid_from, valid_until = effective_bounds("AUS-2010", date(2010, 12, 15))
+    assert valid_from is None
+    assert valid_until is None

@@ -10,17 +10,12 @@ import re
 import unicodedata
 
 from baobab.api.routes.accounts import _connect_db
+from baobab.pipeline.ohada_catalog import ACTS, effective_bounds
 
 ARTICLE_RE = re.compile(r"(?im)^\s*Article\s+(premier|\d+[A-Za-z.-]*)\b[^\n]*")
 EXPECTED_MARKERS = {
-    "AUPCAP-2015": ("PROCEDURES COLLECTIVES",),
-    "AUSCGIE-2014": ("SOCIETES COMMERCIALES",),
-    "AUDCIF-2017": ("DROIT COMPTABLE", "INFORMATION FINANCIERE"),
-    "AUS-2010": ("SURETES",),
-    "AUPSRVE-1998": ("RECOUVREMENT",),
-    "AUDCG-2010": ("DROIT COMMERCIAL GENERAL",),
-    "AUSCOOP-2010": ("SOCIETES COOPERATIVES",),
-    "AUCTMR-2003": ("TRANSPORT DE MARCHANDISES",),
+    reference: tuple(metadata.get("identity_markers", metadata["aliases"][1:]))
+    for reference, metadata in ACTS.items()
 }
 
 
@@ -79,19 +74,22 @@ async def build(*, apply: bool) -> dict:
         if apply:
             async with connection.transaction():
                 for row, articles in accepted:
+                    valid_from, valid_until = effective_bounds(
+                        row["ref"], row["publication_date"] or row["date_decision"]
+                    )
                     await connection.execute(
                         "DELETE FROM legal_provisions WHERE document_id=$1 AND verification_status='AUTOMATED_PARTIAL_SOURCE'",
                         row["id"],
                     )
                     await connection.executemany(
                         """INSERT INTO legal_provisions
-                           (document_id,provision_number,heading,content,valid_from,status,
+                           (document_id,provision_number,heading,content,valid_from,valid_until,status,
                             source_url,verification_status,content_checksum)
-                           VALUES($1,$2,$3,$4,$5,'PARTIAL_SOURCE',$6,
-                                  'AUTOMATED_PARTIAL_SOURCE',$7)""",
+                           VALUES($1,$2,$3,$4,$5,$6,'PARTIAL_SOURCE',$7,
+                                  'AUTOMATED_PARTIAL_SOURCE',$8)""",
                         [
                             (row["id"], article["number"], article["heading"], article["content"],
-                             row["publication_date"] or row["date_decision"], row["source_url"],
+                             valid_from, valid_until, row["source_url"],
                              hashlib.sha256(article["content"].encode()).hexdigest())
                             for article in articles
                         ],

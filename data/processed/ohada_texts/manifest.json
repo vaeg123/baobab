@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "corpus": "ohada",
+  "documents": [
+    {
+      "ref": "AUCTMR-2003",
+      "title": "Acte Uniforme relatif aux Contrats de Transport de Marchandises par Route (2003)",
+      "legal_date": "2003-03-22",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUCTMR-2003.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 80001,
+      "articles": 136,
+      "identity_match": false,
+      "sha256": "f36b49d79f9fe95c0b8f0bae794569d91904fc3fa7fea5168bd8504feda3b4db"
+    },
+    {
+      "ref": "AUDCG-2010",
+      "title": "Acte Uniforme relatif au Droit Commercial Général (2010)",
+      "legal_date": "2010-12-15",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUDCG-2010.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 80001,
+      "articles": 86,
+      "identity_match": true,
+      "sha256": "05d565b76581c816a0eb6473ad010bd0cf00cac634701b6ff7aa6a828ba4ec4f"
+    },
+    {
+      "ref": "AUDCIF-2017",
+      "title": "Acte Uniforme relatif au Droit Comptable et à l'Information Financière (2017)",
+      "legal_date": "2017-01-26",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUDCIF-2017.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 78736,
+      "articles": 55,
+      "identity_match": true,
+      "sha256": "676cc73a095ac1ad311c78e1db156928f794097074aa67eabf3d6f354a27bf9b"
+    },
+    {
+      "ref": "AUPCAP-2015",
+      "title": "Acte Uniforme portant organisation des Procédures Collectives d'Apurement du Passif (2015)",
+      "legal_date": "2015-09-10",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUPCAP-2015.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 79021,
+      "articles": 37,
+      "identity_match": true,
+      "sha256": "364f0d57b7755e80fcbd0d8583b069ba4e3597d87ce850a32b173b144ac4ca74"
+    },
+    {
+      "ref": "AUPSRVE-1998",
+      "title": "Acte Uniforme portant organisation des Procédures Simplifiées de Recouvrement et des Voies d'Exécution (1998)",
+      "legal_date": "1998-04-10",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUPSRVE-1998.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 80001,
+      "articles": 120,
+      "identity_match": true,
+      "sha256": "b60703640a3cd755391c9f43dcf29038f2da4c6192c53f574e5c58f74143a4da"
+    },
+    {
+      "ref": "AUS-2010",
+      "title": "Acte Uniforme portant organisation des Sûretés (2010)",
+      "legal_date": "2010-12-15",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUS-2010.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 80001,
+      "articles": 137,
+      "identity_match": true,
+      "sha256": "debef73b517cfa8ce5ef5e8831f1c9198c6387d6fb75820457b4e88720523993"
+    },
+    {
+      "ref": "AUSCGIE-2014",
+      "title": "Acte Uniforme relatif au Droit des Sociétés Commerciales et du GIE (2014)",
+      "legal_date": "2014-01-30",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUSCGIE-2014.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 79931,
+      "articles": 131,
+      "identity_match": true,
+      "sha256": "957174a3190e25e0e7bfcd62731a7d6c64a7db8fc5654aada4548d45a2c63708"
+    },
+    {
+      "ref": "AUSCOOP-2010",
+      "title": "Acte Uniforme relatif au Droit des Sociétés Coopératives (2010)",
+      "legal_date": "2010-12-15",
+      "source_url": null,
+      "source_pdf_url": null,
+      "text_file": "data/processed/ohada_texts/AUSCOOP-2010.txt",
+      "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
+      "verification_status": "AUTOMATED_TO_REVIEW",
+      "characters": 80001,
+      "articles": 147,
+      "identity_match": true,
+      "sha256": "fa77cf60921c9a3f294d459552696d378ce69b268ba3fb0207b84aff85753a3c"
+    }
+  ],
+  "summary": {
+    "documents": 8,
+    "identity_matches": 7,
+    "articles": 849
+  }
+}

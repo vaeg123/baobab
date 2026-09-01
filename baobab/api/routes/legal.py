@@ -958,7 +958,7 @@ async def ohada_code_articles(document_id: str, query: str | None = None, limit:
         if not document:
             raise HTTPException(404, "Acte uniforme introuvable")
         rows = await conn.fetch(
-            """SELECT provision_id,provision_number,heading,content,valid_from,status,
+            """SELECT provision_id,provision_number,heading,content,valid_from,valid_until,status,
                       verification_status,content_checksum,source_url
                FROM legal_provisions WHERE document_id=$1::uuid
                  AND ($2::text IS NULL OR provision_number ILIKE $2 OR content ILIKE $3)

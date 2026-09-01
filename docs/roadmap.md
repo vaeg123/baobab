@@ -37,7 +37,10 @@
 **Objectif** : couverture OHADA + 2ème marché
 
 ### Livrables
-- [ ] BAOBAB OHADA : AUSCGIE, AUPC, AUS
+- [x] BAOBAB OHADA — socle partiel : corpus CCJA, recherche, premiers Actes découpés en articles et cascades métier
+- [x] Traçabilité OHADA — liens déterministes entre décisions et articles explicitement cités
+- [x] Pérennisation du corpus — export texte UTF-8, manifeste de provenance et documentation de reprise
+- [ ] Validation éditoriale complète des Actes et de leurs versions historiques (couverture automatisée encore partielle)
 - [ ] Expansion Sénégal (CIMA + OHADA)
 - [ ] Reasoning Engine v1 (LLM guidé + Legal Atoms)
 - [ ] Module M&A et restructuration

@@ -1,0 +1,2131 @@
+15*" année N° 23 Prix : 1000 FCFA 15 Février 2011
+
+Journal Officiel
+
+ORGANISATION POUR L’HARMONISATION
+EN AFRIQUE DU DROIT DES AFFAIRES
+
+OHADA
+
+Secrétariat permanent : B.P. 10074 Yaoundé (Cameroun) - Tél.: (237) 22 21 09 05 / Fax. (237) 22 24 67 45
+
+ACTE UNIFORME RELATIF AU DROIT
+DES SOCIETES COOPERATIVES
+
+Adopté le 15 décembre 2010 à Lomé
+
+SOMMAIRE
+
+CHAPITRE PRÉLIMINAIRE : CHAMP D'APPLICATION DE L'ACTE UNIFORMEPŒÎS
+PARTIE | : DISPOSITIONS GENERALES SUR LA SOCIETE COOPERATIVE 4
+Titre 1 : Constitution de la société coopérative 4
+Chapitre 1 : Définition de la société coopérative et principes coopératifs 4
+Chapitre 2 : Qualité d'associé ; 5
+Chapitre 3 : Statuts et règlement intâieur 9
+Chapitre 4 : Registre des Sociétés Coopératives - Immatriculation -
+Personnalité Juridique 21
+Titre 2 : Fonctionnement de la société coopérative 28
+Chapitre 1 : Pouvoirs des dirigeants sociaux — Principes généraux 28
+Chapitre 2 : Assemblée Générale - Principes généraux 29
+î Chapitre 3 : Etats financiers de synthèse annuels, affectation du résultat 30
+Chapitre 4 : Procédures de contrôle préventif 33
+Titre 3 : Action en responsabilité civile contre les dirigeants
+' de la société coopérative 34
+i Chapitre 1 : Action individuelle 34
+! Chapitre 2 : Action sociale 35
+; Titre 4 : Liens de droit entre les sociétés coopératives 36
+H Chapitre 1 : Unions — Fédérations — Confédération — Réseaux 36
+‘ Titre 5 : Transformation de la société coopérative 42
+
+r
+Ë
+mmm
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Titre 6 : Fusion - Scission
+Titre 7 : Dissolution - Liquidation de la société coopérative
+Chapitre 1 : Dissolution de la société coopérative
+Chapitre 2 : Liquidation de la société coopérative
+Titre 8 : Nullité de la société coopérative et des actes sociaux
+PARTIE 2 : DISPOSITIONS PARTICULIERES AUX DIFFERENTES
+CATEGORIES DE SOCIETES COOPERATIVES
+Titre 1 : Société coopérative simplifiée
+Chapitre 1 : Constitution
+Chapitre 2 : Fonctionnement de la société coopérative simplifiée
+Chapitre 3 : Fusion - scission
+Chapitre 4 : Dissolution de la société coopérative simplifiée
+Titre 2 : Société coopérative avec conseil d’administration
+Chapitre 1 : Constitution de la société coopérative avec conseil
+d’administration
+Chapitre 2 : Administration et direction de la société coopérative avec
+conseil d'administration
+Chapitre 3 : Assemblée générale
+Chapitre 4 : Dissolution des sociétés coopératives avec conseil
+d'administration
+Chapitre 5 : Responsabilité
+Chapitre 6 : Dispositions relatives aux parts sociales
+PARTIE 3 : DISPOSITIONS PENALES
+PARTIE 4 : DISPOSITIONS DIVERSES, TRANSITOIRES ET FINALES
+
+43
+
+44
+
+44
+
+46
+
+49
+
+50
+
+50
+
+50
+
+52
+
+63
+
+64
+
+64
+
+69 -
+
+81
+
+88
+
+88
+
+89
+
+at
+
+92
+
+—s u
+
+ps
+
+—— — — — ——
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Le Conseil des Ministres de l’Organisation pour l’Harmonisation en Afrique du Droit des
+Affaires (OHADA),
+
+-Vu le Traité relatif à l’harmonisation du droit des affaires en Afrique, signé à Port Louis
+le 17 octobre 1993, tel que révisé à Québec le 17 octobre 2008, notamment en ses arti-
+cles 2, 5 à 10 ;
+
+-Vu le rapport du Secrétariat Permanent et les observations des Etats Parties ;
+
+-Vu l’avis N°02/2009/AU en date du 08 décembre 2009 de la Cour Commune de Justice
+et d’Arbitrage ;
+
+Après en avoir délibéré, adopte le présent Acte uniforme à l’unanimité des représentants
+des Etats Parties présents et votants.
+
+CHAPITRE PRELIMINAIRE : CHAMP D'APPLICATION
+Article 1er
+
+Toute société coopérative, toute union ou fédération de sociétés coopératives, dont le
+siège social est situé sur le territoire de l'un des Etats Parties au Traité relatif à l'harmo-
+nisation du droit des affaires en Afrique, ci-après désignés « les Etats Parties », est sou-
+mise aux dispositions du présent Acte uniforme.
+
+Toute confédération de sociétés coopératives qui fait option de la forme coopérative est
+également soumise aux dispositions du présent Acte uniforme.
+
+Nonobstant les dispositions des articles 1er et 6 de l'Acte uniforme relatif au droit des
+sociétés commerciales et du groupement d'intérêt économique, les sociétés coopérati-
+ves qui exercent une activité commerciale sont soumises aux dispositions du présent
+Acte uniforme.
+
+Article 2
+
+Les dispositions du présent Acte uniforme sont d'ordre public, sauf dans les cas où il
+autorise expressément les coopérateurs, soit à substituer les stipulations dont ils sont
+convenus ou les dispositions de droit interne des Etats Parties à celles du présent Acte
+uniforme, soit à compléter par leurs stipulations les dispositions du présent Acte uni-
+forme.
+
+Nonobstant les dispositions du présent Acte uniforme, les sociétés coopératives qui ont
+pour objet l'exercice d’activités bancaires ou financières demeurent soumises aux dis-
+positions du droit interne ou communautaire relatives à l’exercice de ces activités.
+
+-3-
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 3
+
+Toutes personnes, quelle que soit leur nationalité, désirant exercer en société coopéra-
+tive une activité sur le territoire de l'un des Etats Parties, doivent, sauf dérogation
+expressément prévue par le présent Acte uniforme, choisir l'une des formes de société
+coopérative qui convient à l'activité envisagée parmi celles prévues par le présent Acte
+uniforme.
+
+PARTIE | : DISPOSITIONS GENERALES SUR LA SOCIETE COOPERATIVE
+
+TITRE ! : CONSTITUTION DE LA SOCIETE COOPERATIVE
+
+CHAPITRE 1 : DEFINITION DE LA SOCIETE COOPERATIVE ET
+PRINCIPES COOPERATIFS
+
+Article 4
+
+La société coopérative est un groupement autonome de personnes volontairement réu-
+nies pour satisfaire leurs aspirations et besoins économiques, sociaux et culturels com-
+muns, au moyen d'une entreprise dont la propriété et la gestion sont collectives et où le
+
+pouvoir est exercé démocratiquement et selon les principes coopératifs.
+
+La société coopérative peut, en plus de ses coopérateurs qui en sont les principaux usa-
+gers, traiter avec des usagers non coopérateurs dans les limites que fixent les statuts.
+
+Article 5
+
+Les sociétés coopératives exercent leur action dans toutes les branches de l'activité
+humaine.
+
+Article 6
+
+La société coopérative est constituée et gérée selon les principes coopératifs universel-
+lement reconnus, à savoir :
+
+- l’adhésion volontaire et ouverte à tous ;
+
+- le pouvoir démocratique exercé par les coopérateurs ;
+- la participation économique des coopérateurs ;
+
+- l’autonomie et l’indépendance ;
+
+- l’éducation, la formation et l’information ;
+
+Acte Uniforme relatif au Droit des Sociétés çoopËralives, adopté le 15 décembre 2010
+
+-4-
+
+—
+
+L
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+- la coopération entre organisations à caractère coopératif ;
+- l'engagement volontaire envers la communauté.
+
+Toute discrimination fondée sur le sexe ou sur l’appartenance ethnique, religieuse ou
+politique est interdite.
+
+CHAPITRE 2 : LA QUALITE D'ASSOCIE
+section 1 : Dispositions Générales
+Article 7
+
+Toute personne physique ou morale peut être coopérateur d’une société coopérative
+lorsqu’elle ne fait l'objet d'aucune incapacité juridique conformément aux dispositions de
+la loi nationale de chaque Etat Partie.
+
+Article 8
+
+La société coopérative est composée de coopérateurs qui, unis par le lien commun sur
+la base duquel la société a été créée, participent effectivement et suivant les principes
+coopératifs, aux activités de ladite société et reçoivent en représentation de leurs
+apports des parts sociales.
+
+Au sens du présent Acte uniforme, le lien commun désigne l'élément ou le critère objec-
+tif que possèdent en commun les coopérateurs et sur.la base duquel ils se regroupent.
+I! peut, notamment, être relatif à une profession, à uge identité d'objectif, d'activité, ou
+de forme juridique.
+
+Article 9
+
+I est tenu obligatoirement, au siège de la société coopérative, un registre des membres
+dans lequel ceux-ci sont inscrits par ordre chronologique.
+
+Pour chaque coopérateur, le registre comprend notamment les mentions ci-après :
+- numéro d’adhésion ;
+
+- nom, prénom et référence de sa pièce d’identité ;
+
+- adresse ;
+
+- profession ;
+
+- nombre de parts sociales souscrites ;
+
+- nombre de parts sociales libérées.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+-5-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Section 2 : Adhésion — Retrait — Exclusion
+Sous-section 1 : Adhésion à la société coopérative
+Article 10
+
+La demande d’adhésion à la société coopérative est adressée à l’organe d’administra-
+tion de celle—ci. Elle est formulée par écrit, datée et signée par le postulant.
+
+Le comité de gestion ou le conseil d’administration peut fixer l’adhésion du membre à la
+date de la demande ou à une date ultérieure ne dépassant pas trois mois suivant la date
+de la réception de la demande. L'adhésion est entérinée par l’assemblée générale.
+
+La qualité de coopérateur est constatée par un acte émanant de l’organe d’administra-
+tion de la société coopérative et comportant l’identité du coopérateur, son adresse, sa
+signature ou son empreinte digitale et une mention de l’acceptation par celui-ci des dis-
+positions légales, réglementaires et statutaires régissant la coopérative.
+
+Sous-section 2 : Retrait des associés coopérateurs — Droits au remboursement
+
+Article 11
+
+Le coopérateur ne peut se retirer de la société coopérative qu’après avoir avisé par écrit
+cette dernière. Le retrait prend effet à la date indiquée dans l’avis ou à la date de sa
+réception, si celle-ci est postérieure.
+
+L'organe d’administration de la société coopérative constate par écrit le retrait du coo-
+pérateur.
+
+Au cours de l’année suivant la date de prise d’effet du retrait, la société coopérative rem-
+bourse, au prix fixé conformément aux statuts, toutes les parts sociales détenues par le
+coopérateur qui se retire.
+
+La coopérative rembourse également au coopérateur tous les prêts et les autres som-
+mes portées à son crédit, le solde des prêts qu’elle lui a consentis ainsi que les intérêts
+courus sur ces sommes jusqu’à la date du paiement.
+
+Lorsqu'il estime que le remboursement des parts sociales ou des prêts du coopérateur
+qui se retire est de nature à nuire à la santé financière de la coopérative, le comité de
+gestion ou le conseil d’administration peut porter le délai de remboursement à deux ans
+par décision motivée susceptible de recours devant la juridiction compétente.
+
+En cas d’engagement envers la société coopérative, le coopérateur qui se retire reste
+tenu jusqu’à l’apurement de sa dette. Dans ce cas, l’organe d’administration de la
+société coopérative, en constatant le retrait du coopérateur, fixe les modalités et le délai
+de remboursement de sa dette à l'égard de la coopérative.
+
+-6-
+
+——s ——
+
+S
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Le coopérateur reste également et solidairement tenu à l’égard de la coopérative des
+dettes contractées par celle-ci avant son retrait dans les conditions prévues aux articles
+47, 48 et 50 ci-après ainsi que par les statuts.
+
+Sous-section 3 : Exclusion des coopérateurs
+Paragraphe 1 : Dispositions générales
+Article 12
+
+Sous réserve des dispositions qui suivent, les statuts de la société coopérative peuvent
+prévoir d’autres modes d’exclusion pourvu qu’ils ne portent pas atteinte aux droits que
+le présent Acte uniforme confère aux coopérateurs exclus.
+
+Article 13
+
+La société coopérative peut, après un avis écrit adressé au coopérateur, exclure celui-
+ci lorsque :
+
+a) le coopérateur est une personne morale à l’égard de laquelle une procédure de liqui-
+dation des biens a été ouverte ;
+
+b) le coopérateur ne fait pas volontairement de transactions avec la société coopérative
+pendant deux années consécutives ;
+
+c) le coopérateur, aussi bien par son comportement que par ses actes, au sein ou en
+dehors de la société coopérative, méconnaît les obligations qu’il a contractées confor-
+mément aux dispositions du présent Acte uniforme et aux statuts, notamment les obli-
+gations de loyauté et de fidélité envers la société coopérative et préjudicie de la sorte
+aux intérêts de celle-ci.
+
+Article 14
+
+L’exclusion est prononcée par l’assemblée générale par une résolution spéciale dûment
+motivée.
+
+L'exclusion peut également être prononcée, suivant le cas, par le comité de gestion ou
+par le conseil d’administration. Dans ce cas, l’exclusion ne devient définitive que
+lorsqu’elle a été confirmée par l’assemblée générale ordinaire par une résolution spé-
+ciale dûment motivée.
+
+Dans les dix jours suivant la date de la résolution spéciale de l’assemblée générale déci-
+dant ou confirmant l’exclusion, la société coopérative notifie au coopérateur un avis écrit
+de son exclusion qui en précise les motifs. Cette exclusion prend effet à la date préci-
+sée dans l’avis écrit, mais au plus tard trente jours après sa réception.
+
+La personne exclue ne peut redevenir coopérateur de la société coopérative que par
+résolution spéciale de l’assemblée générale des coopérateurs.
+
+Acte Uniforme relatif au Droit des Sociétés Eoopéraliveä_æ/\_@9ÿtÊÿlÿ_ 15 décembre 2010
+-7-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Paragraphe 2 : Droit de recours du coopérateur exclu
+Article 15
+
+Le coopérateur exclu par résolution du conseil d’administration ou du comité de gestion
+peut saisir l’'assemblée générale des coopérateurs d’un recours en annulation de cette
+décision.
+
+L’effet de la décision spéciale du conseil d’administration ou du comité de gestion est
+suspendu jusqu'à la résolution spéciale prise par l’assemblée générale.
+
+L’assemblée générale statue par résolution spéciale sur ce recours dans les conditions
+prévues par les statuts, en annulant ou en confirmant l’exclusion.
+
+L'exclusion prononcée par l'assemblée générale est, dans tous les cas, faite sans pré-
+judice des voies de recours de droit commun dont dispose le coopérateur contre la déci-
+sion d'exclusion.
+
+Paragraphe 3 : Sort des droits sociaux du coopérateur exclu et des engagements
+en cours
+
+La société coopérative rembourse au membre exclu toutes les sommes dues à ce der-
+nier dans les mêmes conditions que le coopérateur qui se retire.
+
+Toutefois, l’exclusion d’un coopérateur ne le libère pas de ses dettes ou de ses obliga-
+tions envers la société coopérative ou d’un contrat en cours avec celle-ci. En outre, la
+société coopérative n’est pas obligée de verser au coopérateur avant l’échéance le
+solde de tout prêt à terme fixe qui lui a été consenti et qui n’est pas échu.
+
+Article 16
+
+Lorsque l’adresse du coopérateur exclu est inconnue de la société coopérative malgré
+tous les efforts raisonnables déployés pour le retrouver et que deux ans se sont écou-
+lés depuis l’exclusion, la société coopérative transfère à un fonds de réserve toutes les
+sommes qui lui sont dues. Ces sommes ne portent plus intérêts au-delà d’un délai de
+deux (2) ans à compter de leur inscription au fonds de réserve.
+
+Les sommes ainsi transférées sont payées à toute personne qui apporte la preuve, dans
+un délai de cinq (05) ans à compter du transfert, qu’elle y a droit. Elles sont acquises à
+titre précaire à l’Etat à l’expiration du délai de cinq (05) ans.
+
+Ôçt_eÿUnifoyme relatif au Droit des Sociétés Coopératives, aÉlEÈlÊlc 15 décembre 2010
+-8-
+
+!
+
+pc prreseuet urrr —c
+
+—— —— __ ——
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+CHAPITRE 3 : STATUTS ET REGLEMENT INTERIEUR
+
+Section 1 : Statuts
+Sous-section 1 : Forme des statuts
+
+Article 17
+
+Les statuts constituent le contrat de société. lls sont établis par acte sous seing privé ou
+par acte notarié.
+
+Il en est dressé autant d'originaux qu'il est nécessaire pour le dépôt d'un exemplaire au
+siège social et l'exécution des diverses formalités requises. Un exemplaire des statuts
+est tenu à la disposition de tout associé au siège social de la société coopérative.
+
+Sous-section 2 : Contenu des statuts - mentions obligatoires et
+mentions facultatives
+
+Article 18
+Les statuts comportent obligatoirement :
+1°) la forme de la société coopérative ;
+
+2°) sa dénomination suivie, le cas échéant, de son sigle ;
+
+3°) la nature et le domaine de son activité et qui forment son objet social ;
+4°) son siège et sa durée ;
+
+5°) le lien commun qui réunit les membres ;
+
+6°) les noms, prénoms et adresse résidentielle de chaque initiateur ;
+
+7°) le nombre précis ou les nombres minimal et maximal de ses administrateurs ou
+membres du comité de gestion et toutes dispositions portant limitation des pouvoirs des
+administrateurs ou membres du comité de gestion ;
+
+8°) le nombre précis ou les nombres minimal et maximal des membres du comité de sur-
+veillance ou du conseil de surveillance et toutes dispositions relatives à l’exercice effi-
+cace des missions de ces organes ;
+
+9°) la durée du mandat des membres du comité de gestion, du conseil d’administration,
+du comité de surveillance et du conseil de surveillance ;
+
+10) toute limite relative au pourcentage maximal de parts sociales que peut détenir un
+seul membre ;
+
+11°) une déclaration précisant que la société coopérative est organisée et exploitée et
+exerce ses activités selon les principes coopératifs et le rappel de ces principes ;
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+
+-9-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+12°) l’identité des apporteurs en numéraires avec pour chacun d’eux le montant des
+apports, le nombre et la valeur des parts sociales remis en contrepartie de chaque
+apport ;
+
+13°) l’identité des apporteurs en nature, la nature et l’évaluation de l’apport effectué par
+chacun d’eux, le nombre et la valeur des parts sociales remises en contrepartie de cha-
+que apport, le régime des biens ou valeurs apportés lorsque leur valeur excède celle des
+apports exigés ;
+
+14°) le montant du capital social, les limitations minimales et maximales y afférentes, la
+valeur nominale des diverses catégories de parts, les conditions précises de leur émis-
+sion ou souscription ;
+
+15°) les stipulations relatives à la répartition du résultat et notamment, des excédents et
+des réserves ;
+
+16°) les modalités de fonctionnement de la société coopérative ;
+17°) la signature des initiateurs ou l’apposition de leur empreinte digitale ;
+
+18°) l’'étendue des transactions avec les usagers non coopérateurs, tout en ayant en vue
+la sauvegarde de l’autonomie de la société coopérative ;
+
+Les statuts peuvent également comporter :
+
+1°) toutes dispositions concernant :
+
+- le taux de rendement maximal qui peut être appliqué aux prêts et aux épargnes des
+membres ;
+
+- le taux de rémunération maximale qui peut être appliqué aux parts de membres ;
+2°) toute limite imposée aux activités commerciales de la société coopérative.
+Sous-section 3 : Dénomination sociale
+
+Article 19
+
+Toute société coopérative est désignée par une dénomination sociale qui est mention-
+née dans ses statuts.
+
+La société coopérative ne peut prendre la dénomination d’une autre société déjà imma-
+triculée au registre du commerce et du crédit mobilier ou au registre des sociétés coo-
+pératives.
+
+La dénomination sociale doit figurer sur tous les actes et documents émanant de la
+société coopérative et destinés aux tiers, notamment les lettres, les factures, les annon-
+
+Acte Uniforme relatif a\;_Droil‘àËs“Sociélés Coopératives, adopté le 15 décembre 2010
+
+-10-
+
+e SE cmm ME cuvoul
+
+pasciee
+
+pn
+
+—cmed
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+ces et publications diverses. Elle doit être précédée ou suivie immédiatement en carac-
+tères lisibles de l'indication de la forme de la société coopérative, de l'adresse de son
+siège social et de la mention de son numéro d’immatriculation au registre des sociétés
+coopératives.
+
+La dénomination sociale peut être modifiée, pour chaque forme de société coopérative,
+dans les conditions prévues par le présent Acte uniforme pour la modification des statuts.
+
+Sous-section 4 : Objet de la société coopérative
+Article 20
+
+Toute société coopérative a un objet qui est constitué par l'activité qu'elle entreprend et
+qui doit être déterminée et décrite dans ses statuts.
+
+L'objet de la société coopérative doit être licite.
+
+Lorsque l'activité exercée par la société coopérative est réglementée, celle-ci doit se
+conformer aux règles particulières auxquelles ladite activité est soumise.
+
+L'objet social peut être modifié, pour chaque forme de société coopérative, dans les
+conditions prévues par le présent Acte uniforme, pour la modification des statuts.
+
+Article 21
+L'objet de la société coopérative détermine le caractère civil ou commercial de celle-ci.
+
+Sous-section 5 : Siège social
+
+Article 22
+
+Toute société coopérative a un siège social qui doit être mentionné dans ses statuts.
+Le siège doit être fixé sur le territoire de l'un des Etats Parties et au choix des membres,
+soit au lieu du principal centre d’activité de la société, soit à son centre de direction admi-
+nistrative et financière. Il doit être localisé par une adresse ou une indication géographi-
+que suffisamment précise.
+
+Article 23
+
+Les personnes autres que les associés coopérateurs peuvent se prévaloir du siège sta-
+
+tutaire, mais celui-ci ne leur est pas opposable par la société coopérative si le siège réel
+est situé en un autre lieu.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+- 11-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 24
+
+Le siège social peut être modifié, pour chaque forme de société coopérative, dans les
+conditions prévues par le présent Acte uniforme pour la modification des statuts.
+
+Toutefois, il peut être transféré à un autre endroit de la même ville par décision du comité
+de gestion ou du conseil d'administration de la société coopérative.
+
+Toute décision de modification du siège social est enregistrée au Registre des Sociétés
+Coopératives et communiquée à l’autorité de tutelle par le comité de gestion ou le
+conseil d’administration.
+
+Sous-section 6 : Durée - Prorogation
+
+Paragraphe 1 : Durée
+
+Article 25
+
+Toute société coopérative a une durée qui doit être mentionnée dans ses statuts.
+
+Article 26
+
+Le point de départ de la durée de la société coopérative est la date de son immatricula-
+tion au Registre des Sociétés Coopératives.
+
+Article 27
+
+L'arrivée du terme entraîne la dissolution de plein droit de la société coopérative, à
+moins que sa prorogation soit décidée dans les conditions du présent Acte uniforme.
+
+Article 28
+
+La durée de la société coopérative peut être modifiée, pour chaque forme de société, dans
+les conditions prévues par le présent Acte uniforme, pour la modification des statuts.
+
+Paragraphe 2 : Prorogation
+
+Article 29
+
+La durée de la société coopérative peut être prorogée une ou plusieurs fois. La décision
+de prorogation précise la durée pour laquelle celle-ci intervient.
+
+La prorogation de la durée de la société est décidée, pour chaque forme de société coo-
+pérative, dans les conditions prévues par le présent Acte uniforme, pour la modification
+des statuts.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+
+-R-
+
+— —0
+
+—— _ —
+
+—— — ce s0
+
+——
+
+t
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Un an au moins avant la date d'expiration de la durée de la société, les coopérateurs
+doivent être consultés à l'effet de décider si celle-ci doit être prorogée. A défaut, tout coo-
+pérateur peut demander à la juridiction compétente dans le ressort de laquelle est situé
+le siège social, statuant à bref délai, la désignation d'un mandataire de justice chargé
+d’organiser la consultation prévue au présent alinéa.
+
+La prorogation de la durée de la société coopérative n'entraîne pas création d'une per-
+sonne juridique nouvelle.
+
+Sous-section 7 : Apports
+
+Paragraphe 1 : Dispositions générales
+
+Article 30
+
+Chaque coopérateur doit faire un apport à la société coopérative.
+
+Chaque coopérateur est débiteur envers la société de tout ce qu'il s'est obligé à lui
+apporter en numéraire, en nature ou en industrie.
+
+Article 31
+
+En contrepartie de leurs apports et selon la forme de la société coopérative, les coopé-
+rateurs reçoivent dans les conditions précisées par le présent Acte uniforme, des parts
+sociales émises par la société coopérative.
+
+Article 32
+
+Les dispositions de la présente section sont applicables aux apports réalisés au cours
+de la vie sociale et à l'occasion de l’augmentation du capital minimal fixé par les statuts.
+
+Paragraphe 2 : Différents types d'apports
+
+Article 33
+
+Chaque associé peut apporter à la société coopérative :
+- de l'argent, parbapport en numéraire ;
+
+- des droits portant sur des biens en nature, mobiliers ou immobiliers, corporels ou incor-
+porels, par apport en nature ;
+
+- de l'industrie, par apport de main d'œuvre ou de savoir-faire.
+
+-13-
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Paragraphe 3 : Apports en numéraire
+Article 34
+
+Les apports en numéraire sont réalisés par le transfert à la société de la propriété des
+sommes d'argent que le coopérateur s'est engagé à lui apporter.
+
+Les apports en numéraire destinés à la constitution du capital fixé pour la constitution de
+la société coopérative sont libérés intégralement lors de la constitution de la société coo-
+pérative sauf dispositions contraires du présent Acte uniforme. Il en est de même lors de
+l'adhésion du coopérateur en cours de vie sociale, sauf dispositions contraires des statuts.
+Ne sont considérés comme libérés que les apports en numéraire correspondant à des
+sommes dont la société coopérative est devenue propriétaire et qu'elle a intégralement
+et définitivement encaissées.
+
+Article 35
+
+En cas de retard dans le versement, les sommes restant dues à la société coopérative
+portent de plein droit intérêt au taux légal à compter du jour où le versement devrait être
+effectué, sans préjudice de dommages et intérêts, s'il y a lieu.
+
+Article 36
+
+Sauf stipulations contraires des statuts, les apports en numéraire réalisés à l'occasion
+d'une augmentation collective de capital de la société coopérative peuvent être réalisés
+par compensation avec une créance certaine, liquide et exigible sur la société coopéra-
+tive. ;
+
+Paragraphe 4 : Apports en nature
+
+Article 37
+
+Les apports en nature sont réalisés par le transfert des droits réels ou personnels cor-
+respondant aux biens apportés et par la mise à la disposition effective de la société des
+biens sur lesquels portent ces droits.
+
+Les apports en nature doivent être libérés intégralement lors de la constitution de la
+société coopérative ou en cours de vie sociale, par tout coopérateur qui s'y engage.
+
+Article 38
+
+Lorsque l’apport est en propriété, l'apporteur est garant envers la société coopérative
+comme un vendeur envers son acheteur.
+
+Acte Uniforme relatif au f)Îoil des Sociétés C_çopÈratives, adopté le 15 décembre 2010
+
+-14-
+
+P e E
+
+—— ; —— ——
+
+!
+Ê
+ä
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 39
+
+Lorsque l’apport est en jouissance, l'apporteur est garant envers la société coopérative
+comme un bailleur envers son preneur.
+
+Toutefois, lorsque l'apport porte sur des choses de genre ou sur tous autres biens nor-
+malement appelés à être renouvelés pendant la durée de la société, le contrat transfère
+à celle-ci la propriété des biens apportés, à charge d’en rendre une pareille quantité,
+qualité et valeur.
+
+Article 40
+
+L'apport d'un bien ou d'un droit soumis à publicité pour son opposabilité aux tiers peut
+être publié avant l'immatriculation de la société coopérative. La formalité ne produit d'ef-
+fets rétroactifs à la date de son accomplissement qu'à compter de l'immatriculation de
+la société coopérative.
+
+Article 41
+Les coopérateurs évaluent les apports en nature et en garantissent la valeur.
+Article 42
+
+Les statuts contiennent l'évaluation des apports en nature faits lors de'la constitution de
+la société. Cette évaluation est consignée dans un document annexé aux statuts lors-
+que les apports interviennent en cours de vie sociale.
+
+Paragraphe 5 : Apports en industrie
+Article 43
+
+Le régime de l'apport en industrie est déterminé par les statuts.
+A défaut de détermination par les statuts, la part du coopérateur qui a apporté son indus-
+trie est égale à celle du coopérateur qui a le moins apporté.
+
+Le coopérateur qui s'est obligé à apporter son industrie à la société coopérative lui doit
+compte de tous les gains qu'il a réalisés par l'activité faisant l'objet de son apport.
+
+Acte Uniforme relatif au Droit des SociËë{èèäﬁérâtives. adopté le 15 décembre 2010
+-15-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 8 : Parts sociales
+Paragraphe 1 : Principe
+Article 44
+
+La société coopérative émet et remet aux coopérateurs des titres sociaux dénommés
+parts sociales, en représentation de leurs apports.
+
+Article 45
+
+Toutes les parts sociales émises par la société coopérative sont nominatives. Leur valeur
+nominale est la même pour toutes les parts sociales. Elle est fixée dans les statuts.
+
+Les parts sociales ne peuvent être émises pour un montant inférieur à leur valeur nominale.
+Paragraphe 2 : Droits et obligations attachés aux parts sociales
+Sous-paragraphe 1 : Droits
+
+Article 46
+
+Les parts socialçs confèrent à leur titulaire:
+
+- un droit sur les excédents réalisés par la société coopérative lorsque leur répartition a
+été décidée conformément aux dispositions statutaires ;
+
+- un droit à tous les avantages et prestations de la société coopérative ;
+
+- le droit de participer aux décisions collectives des associés et de voter ;
+
+- le droit, en tout état de cause, d'exercer ou de bénéficier, dans la limite des disposi-
+tions du présent Acte uniforme et des statuts, des droits attachés à la qualité d’associé.
+Les droits mentionnés ci-dessus doivent être exercés dans les conditions prévues pour
+chaque forme de société coopérative. Ces droits ne peuvent être suspendus ou suppri-
+més qu’en application des dispositions expresses du présent Acte uniforme.
+
+Sous-paragraphe 2 : Obligations
+Article 47
+Tout coopérateur d'une société coopérative a l'obligation de participer aux pertes socia-
+
+les dans les conditions prévues par le présent acte uniforme, les statuts et le règlement
+intérieur pour chaque forme de société coopérative.
+
+Le coopérateur a également l’obligation de faire des transactions avec la société coo-
+pérative conformément à l’objet social de celle-ci.
+
+Acte Uniforme relatif au Droit des SociélÊsÔ_Coôpéralives, adopté le 15 décembre 2010
+-16-
+
+(
+
+A ;
+
+ec
+
+v
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 48
+
+Sauf clause contraire des statuts et relative à la répartition des résultats, les droits et
+obligations de tous les coopérateurs, visés aux articles 46 et 47 ci-dessus sont égaux
+quel que soit le montant de leurs apports.
+
+Paragraphe 3 : Cessibilité — Non négociabilité
+Article 49
+
+Les parts sociales sont nominatives, individuelles, non négociables, insaisissables et
+cessibles selon les conditions fixées par les statuts.
+
+Elles ne peuvent faire l’objet de nantissement.
+
+Article 50
+
+Les statuts définissent les conditions de cession et de remboursement et la détermina-
+tion de la valeur de ces droits, dans tous les cas où est prévue la cession des droits
+sociaux d'un coopérateur ou le remboursement de ceux-ci par la société coopérative.
+
+En cas de contestation, la valeur de cession ou de remboursement est déterminée par
+l’organisation faîtière à laquelle est affiliée la société coopérative et à défaut, par expert
+désigné d'accord parties ou par la juridiction compétente statuant à bref délai.
+
+Paragraphe 4 : Réduction du nombre de coopérateurs en dessous du seuil légal
+Article 51
+
+La réduction, au cours de la vie sociale, du nombre de coopérateurs en dessous du seuil
+légal autorisé pour le type de société coopérative concernée n’entraîne pas la dissolu-
+
+tion de plein droit de la société coopérative.
+
+Tout intéressé peut demander à la juridiction compétente cette dissolution si la situation
+n'a pas été régularisée dans le délai d'un an.
+
+La juridiction compétente peut accorder à la société un délai maximal de six mois pour
+régulariser la situation ; il ne peut prononcer la dissolution si, au jour où il statue sur le
+fond, cette régularisation a eu lieu.
+
+‘Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15
+-17-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 9 : Ressources de la société coopérative
+Paragraphe 1 : Fonds propres
+
+Sous-paragraphe 1 : Capital social
+
+Article 52
+
+Le capital de la société coopérative est variable.
+
+Il est susceptible d'augmentation ou de diminution dans les conditions prévues aux arti-
+cles 56, 57 et 58 ci-après.
+
+Article 53
+Le capital social initial est indiqué dans les statuts qui déterminent son montant.
+Article 54
+
+Le capital social initial représente le montant des apports en capital faits par les coopé-
+rateurs à la société coopérative lors de la constitution.
+
+Les apports en industrie concourent également à la formation du capital social initial et
+donnent lieu à l'attribution de parts sociales conférant la qualité de coopérateur.
+
+Article 55
+
+Le capital social est divisé en parts sociales. .
+En contrepartie des apports, la société coopérative rémunère l'apporteur par des parts
+sociales pour une valeur égale à celle des apports.
+
+Article 56
+
+Hormis les cas de variation du capital initial par retraits ou adhésions de coopérateurs,
+le montant du capital initial peut être augmenté ou réduit par l’assemblée générale pour
+chaque forme de société coopérative dans les conditions prévues par le présent Acte
+uniforme pour la modification des statuts.
+
+Article 57
+
+L’augmentation du capital par l’assemblée générale peut être réalisée par la souscrip-
+tion d'un nombre proportionnel de parts en plus de celles déjà détenues par chaque
+associé coopérateur ou par l'augmentation de la valeur nominale de la part sociale ou
+par l'incorporation des réserves libres d'affectation.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+
+-18-
+
+——
+
+| pc BEEEE comceue BEEE cn
+
+Journal Officiel de l'Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 58
+
+La réduction par l’assemblée générale du capital peut être réalisée par la réduction du
+montant nominal des parts sociales détenues par chaque coopérateur ou par le rem-
+boursement total ou partiel des apports effectués.
+
+Sous-paragraphe 2 : Autres fonds propres
+Article 59
+
+Les sociétés coopératives peuvent recevoir des subventions, dons et legs destinés au
+développement de leurs activités.
+
+Ces subventions, dons ou legs ne sont pas pris en compte pour le calcul des intérêts
+versés aux parts sociales.
+
+Paragraphe 2 : Fonds d’emprunt
+
+Article 60
+
+La société coopérative peut recourir, dans le respect des dispositions propres aux diffé-
+rentes formes de sociétés coopératives et de celles des statuts, à tous emprunts léga-
+lement admis sur le territoire de l’Etat du siège social.
+
+Sous-section 10 : Modification des statuts
+
+Article 61 cÏ
+
+Les statuts peuvent être modifiés. Cette modification ne peut être décidée que par l’as-
+semblée générale extraordinaire et dans les conditions prévues par le présent Acte uni-
+forme pour chaque forme de société coopérative.
+
+Article 62
+
+Sauf décision contraire spécialement motivée de la juridiction compétente saisie à cet
+effet et statuant à bref délai, aucune augmentation des engagements des coopérateurs
+envers la société coopérative ne peut être décidée sans leur consentement.
+
+Sous-section 11 : Non respect des formalités — Responsabilités
+Article 63
+
+Si les statuts ne contiennent pas toutes les énonciations exigées par le présent Acte uni-
+forme ou si une formalité prescrite par celui-ci pour la constitution de la société coopé-
+rative a été omise ou irrégulièrement accomplie, tout intéressé peut demander à la juri-
+diction compétente ou à l’autorité administrative compétente dans le ressort de laquelle
+est situé le siège social, que soit ordonnée la régularisation de la constitution. Le minis-
+tère public peut également agir aux mêmes fins.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+-19-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 64
+
+L'action aux fins de régularisation se prescrit par trois ans à compter de l’immatricula-
+tion de la société coopérative ou de la publication de l'acte modifiant les statuts.
+
+Article 65
+
+Les initiateurs, ainsi que les premiers membres des organes de gestion ou d'administra-
+tion, sont solidairement responsables du préjudice causé, soit par le défaut d'une men-
+tion obligatoire dans les statuts, soit par l'omission ou l'accomplissement irrégulier d'une
+formalité prescrite pour la constitution de la société coopérative.
+
+De même, les membres des organes de gestion ou d'administration alors en fonction
+encourent les mêmes responsabilités prévues à l’alinéa ci-dessus en cas d’irrégularité
+dans la modification des statuts.
+
+Article 66
+
+L'action en responsabilité prévue à l’article 65 ci-dessus se prescrit par cinq ans à comp-
+ter, selon le cas, du jour de l'immatriculation de la société coopérative ou de la publica-
+tion de l'acte modifiant les statuts.
+
+Section 2 : Règlement intérieur
+
+Sous-section 1 : Forme du règlement intérieur
+
+Article 67
+
+Le règlement intérieur est établi par acte sous seing privé ou par acte notarié.
+
+Il en est dressé autant d'originaux qu'il est nécessaire pour le dépôt d'un exemplaire au
+siège social et l'exécution des diverses formalités requises. Un exemplaire du règlement
+intérieur est tenu à la disposition de tout membre au siège social de la société coopérative.
+Sous-section 2 : Contenu du règlement intérieur
+
+Article 68
+
+Outre les mentions obligatoires des statuts, le règlement intérieur contient les prescrip-
+tions suivantes :
+
+- les conditions de paiement d'indemnités aux membres du conseil d’administration ou
+
+du comité de gestion, du conseil ou du comité de surveillance, définies dans le respect
+des dispositions des articles 225 et 305 ci-dessous ;
+
+- la souscription de parts sociales supplémentaires et teur nombre par coopérateur :
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+
+-20 -
+
+p « e
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+- les critères et conditions de suspension des coopérateurs ;
+
+- la possibilité d’attribution d’un droit de vote plural dans le cas des unions, des fédéra-
+tions et des confédérations ;
+
+- toutes autres prescriptions jugées nécessaires pour la réalisation de l’objet de la
+société coopérative et conformes aux principes coopératifs et aux dispositions impérati-
+ves du présent Acte uniforme.
+
+CHAPITRE 4 : REGISTRE DES SOCIETES COOPERATIVES - IMMATRICULATION
+PERSONNALITE JURIDIQUE
+
+Section 1 : Registre des Sociétés Coopératives
+Sous-section 1 : Dispositions générales
+
+Article 69
+
+Le Registre des Sociétés Coopératives a pour objet de :
+
+- recevoir l’immatriculation des sociétés coopératives et de leurs sociétés faîtières régies
+par le présent Acte uniforme ;
+
+- recevoir également les inscriptions et les mentions constatant les modifications surve-
+nues depuis leur immatriculation, dans la situation juridique des sociétés coopératives
+et des sociétés coopératives faîtières.
+
+Sous-section 2 : Organisation du Registre des Sociétés Coopératives
+Article 70
+
+Le Registre des Sociétés Coopératives est tenu au niveau local par l’autorité adminis-
+trative chargée de la tenue dudit registre.
+
+Dans chaque Etat Partie, l’autorité administrative chargée de la tenue du Registre des
+Sociétés Coopératives est l’organe déconcentré ou décentralisé de l'autorité nationale
+chargée de l’administration territoriale ou l’autorité compétente, auquel est immédiate-
+ment rattaché le siège de la société coopérative.
+
+Le Fichier National prévu par l’Acte uniforme portant sur le droit commercial général
+centralise les renseignements consignés dans chaque Registre des Sociétés
+Coopératives.
+
+Le Fichier Régional prévu par l’Acte uniforme portant sur le droit commercial général
+centralise les renseignements consignés dans chaque Fichier National.
+
+Les informations figurant dans les formulaires remis à l’autorité administrative chargée
+de la tenue du Registre des sociétés coopératives sont destinées à l’information du
+public.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+-21-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 71
+
+Le Registre des Sociétés Coopératives comprend :
+
+1°) un registre d'arrivée mentionnant dans l'ordre chronologique la date et le numéro de
+chaque déclaration acceptée, les nom, prénoms ou dénomination sociale du déclarant,
+ainsi que l'objet de la déclaration ;
+
+2°) la collection des dossiers individuels tenus par ordre alphabétique, lesquels com-
+prennent sous l'indication de leur dénomination sociale, de leur forme juridique, de la
+nature de l'activité exercée, de l'adresse du siège social, l'ensemble des déclarations,
+actes et pièces concernant les sociétés coopératives et leurs sociétés faîtières.
+
+Article 72
+
+Toutes les déclarations sont établies en quatre exemplaires sur formulaires fournis par
+l’autorité administrative chargée de la tenue du Registre des Sociétés Coopératives.
+
+Elles sont revêtues de la signature ou de l’empreinte digitale du déclarant ou de son
+mandataire qui doit à la fois justifier de son identité et, sauf s'il est Avocat ou Notaire,
+être muni d'une procuration signée du déclarant ou sur laquelle est apposée son
+empreinte digitale.
+
+Le premier exemplaire est conservé par l'autorité administrative chargée de la tenue du
+Registre des Sociétés Coopératives.
+
+Le deuxième exemplaire est remis au déclarant avec mention de la date et de la dési-
+gnation de la formalité effectuée. °
+
+Les troisième et quatrième exemplaires sont adressés par l’autorité administrative char-
+gée de la tenue du Registre des Sociétés Coopératives au Fichier National, pour trans-
+mission de l’un d’entre eux au Fichier Régional.
+
+Article 73
+
+Sont en outre mentionnées d'office au Registre des Sociétés Coopératives :
+
+1°) les décisions intervenues dans les procédures individuelles de faillite ou dans les
+procédures collectives d'apurement du passif ;
+
+2°) les décisions prononçant des sanctions patrimoniales contre les dirigeants ;
+
+3°) les décisions de réhabilitation ou les mesures d'amnistie faisant disparaître les
+déchéances ou interdictions.
+
+Les mentions prévues au présent article devront être communiquées par la juridiction
+qui a prononcé la décision, ou à défaut par toute personne intéressée, à l’autorité admi-
+
+Acte Unifgr}merrelalif au Droit des Sociétés Coo_péräﬁ@es, adopté le_15 décembre 2010
+
+-22-
+
+(|
+
+—
+
+e ? ; L ! ; !
+
+—n ——
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+; nistrative chargée de la tenue du Registre des Sociétés Coopératives du ressort territo-
+rial et à l’autorité de tutelle des sociétés coopératives.
+
+Section 2 : Immatriculation - Personnalité Juridique
+Sous-section 1 : Immatriculation
+Article 74
+
+} Toute société coopérative doit être immatriculée au Registre des Sociétés Coopératives
+institué dans chaque Etat Partie.
+
+| Article 75
+
+Ï La société coopérative requiert son immatriculation, dans le mois de sa constitution, au
+Registre des Sociétés Coopératives.
+
+Cette demande mentionne :
+1°) la dénomination sociale ;
+2°) le cas échéant, le nom commercial, le sigle, ou l'enseigne ;
+3°) la ou les activités exercées ;
+p 4°) la forme de la société coopérative ;
+
+, 5°) le montant du capital social initial avec l'indication du montant des apports en numé-
+raire et éventuellement, l'évaluation des apports en nature ou en industrie ;
+
+6°) l'adresse du siège social, et le cas échéant, celle du principal établissement et de
+chacun des autres établissements ;
+
+, 7°) la durée de la société telle que fixée par ses statuts ;
+
+8°) les noms, prénoms, nationalité, date et lieu de naissance et domicile des dirigeants
+, ayant le pouvoir général d'engager la société coopérative.
+
+Article 76
+
+Ï A cette demande, sont jointes, sous peine de rejet, les pièces justificatives suivantes :
+
+1°) deux copies des statuts ;
+
+* 2°) deux exemplaires de la liste des membres du comité de gestion ou du conseil d’ad-
+} ministration de la société coopérative ;
+j 3°) le cas échéant, s’agissant des activités réglementées, les autorisations préalables
+
+requises.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adoplËÿlÿé7—lw5 décembre 2010
+-23-
+
+l—————_
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 77
+
+Aucune société coopérative ne peut être immatriculée à plusieurs registres ou à un
+même registre sous plusieurs numéros.
+
+Dès que la demande du requérant est en état, l’autorité administrative chargée de la
+tenue du Registre des Sociétés Coopératives lui attribue un numéro d'immatriculation et
+mentionne celui-ci sur le formulaire remis au déclarant ; elle transmet ensuite au Fichier
+National un exemplaire du dossier individuel et des autres pièces déposées par le
+requérant.
+
+Sous-section 2 : Personnalité juridique
+
+Article 78
+
+Toute société coopérative jouit de la personnalité juridique à compter de son immatricu-
+lation au Registre des Sociétés Coopératives.
+
+Toutefois, l’exercice de son activité est soumis aux règles qui régissent cette activité.
+Sous-section 3 : Situation en cas de transfert de siège
+
+Article 79
+
+En cas de transfert du siège d'une société coopérative dans le ressort territorial d'une
+autre autorité administrative chargée de la tenue du  Registre des Sociétés
+Coopératives, la société concernée doit requérir :
+
+- sa radiation du Registre des Sociétés Coopératives dans le ressort duquel elle était
+immatriculée ;
+
+- une nouvelle immatriculation au Registre des Sociétés Coopératives de l’autorité
+administrative dans le ressort duquel le siège est transféré, après vérification, par cette
+autorité, de la radiation effective de la précédente immatriculation.
+
+A cet effet, la société coopérative devra fournir les renseignements et documents pré-
+vus aux articles 75 et 76 ci-dessus.
+
+Ces formalités sont effectuées par la société coopérative concernée dans le mois du
+transfert.
+
+Sous-section 4 : Inscriptions modificatives, rectificatives ou complémentaires
+Article 80
+
+Si la situation de la société coopérative subit ultérieurement des modifications qui exi-
+gent la rectification ou le complément des énonciations portées au Registre des
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté Je 15 décembre 2010
+-24 -
+
+
+(O
+
+Ls
+
+rrrn
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sociétés Coopératives, celle-ci doit formuler, dans les trente jours de cette modification,
+une demande de mention rectificative ou complémentaire.
+
+Toute modification concernant notamment les statuts de la société coopérative doit être
+mentionnée au Registre des Sociétés Coopératives.
+
+Toute demande d'inscription modificative rectificative ou complémentaire est signée par
+la personne tenue à la déclaration ou sur laquelle est apposée son empreinte digitale,
+ou par un mandataire qui doit justifier de son identité et, s'il n'est avocat, notaire, syndic
+ou autre auxiliaire de justice habilité à cet effet par la loi, être muni d'une procuration
+spéciale signée du mandant ou sur laquelle est apposée empreinte digitale de celui-ci.
+
+Sous-section 5 : Publicité
+Article 81
+
+Toute immatriculation, ainsi que toute inscription ou mention constatant les modifications
+survenues depuis la date de son immatriculation dans l’état et la capacité de la société
+coopérative, doivent en outre, dans le mois de l’inscription de cette formalité, faire l’ob-
+jet d’un avis à insérer dans un journal habilité à publier les annonces légales. Cet avis
+contient les mentions prévues à l’article 75 ci-dessus.
+
+Sous-section 6 : Inscription secondaire en cas d’établissement secondaire
+Article 82
+
+Toute société coopérative est tenue, si elle exploite des établissements secondaires ou
+des succursales dans le ressort d'autres autorités administratives chargées de la tenue
+du Registre des Sociétés Coopératives, de souscrire une déclaration d'immatriculation
+secondaire dans le délai d'un mois à compter du début de l'exploitation.
+
+Cette déclaration doit mentionner, outre la référence à l'immatriculation principale, les
+renseignements requis pour les sociétés coopératives par l'article 75 ci-dessus.
+
+Article 83
+
+La demande d'une inscription d’immatriculation secondaire doit être déposée auprès de
+l’autorité administrative chargée de la tenue du Registre des Sociétés Coopératives
+dans le ressort duquel est situé l’établissement secondaire ou la succursale.
+
+L’autorité administrative chargée de la tenue de ce Registre adresse, dans le mois de
+l'immatriculation secondaire, une copie de la déclaration d'immatriculation secondaire à
+l’autorité administrative en charge du Registre où a été effectuée l'immatriculation prin-
+cipale.
+
+Toute inscription d'un établissement secondaire donne lieu à l’attribution d'un numéro
+d'immatriculation et doit faire l'objet, dans le mois de cette immatriculation, d'une inser-
+tion dans un journal habilité à publier les annonces légales.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+
+-25-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 7 : Dissolution-Radiation
+Article 84
+
+La dissolution d'une société coopérative pour quelque cause que ce soit doit être décla-
+rée, en vue de son inscription au Registre des Sociétés Coopératives dans lequel celle-
+ci est immatriculée, dans le délai d'un mois auprès de l’autorité administrative chargée
+de la tenue de ce registre.
+
+Il en est de même pour la nullité de la société à compter de la décision qui l'a prononcée.
+
+La radiation doit être demandée par le liquidateur dans le délai d'un mois à compter de
+la clôture des opérations de liquidation.
+
+A défaut de demande de radiation dans le délai prescrit, l’autorité administrative char-
+gée de la tenue du Registre des Sociétés Coopératives compétente procède à la
+radiation sur décision de la juridiction compétente saisie à sa requête ou à celle de tout
+intéressé.
+
+Toute radiation doit faire l'objet d'une insertion dans un journal habilité à publier les
+annonces légales.
+
+Section 3 : Société coopérative en formation et société coopérative constituée
+mais non encore immatriculée
+
+Sous-section 1 : Définitions
+
+Article 85 :
+
+La société coopérative est en formation lorsqu'elle n’est pas encore constituée.
+
+Article 86
+
+Toute société coopérative est constituée à compter de l’assemblée générale constitutive
+et de la signature de ses statuts par les coopérateurs.
+
+Avant son immatriculation au Registre des Sociétés Coopératives, l'existence de la
+société coopérative n'est pas opposable aux personnes autres que les coopérateurs.
+Néanmoins, celles - ci peuvent s'en prévaloir.
+
+Article 87
+
+Les personnes qui prennent l’initiative de la création d'une société coopérative doivent
+avoir une domiciliation sur le territoire de l'un des Etats Parties.
+
+La domiciliation ne peut pas être constituée uniquement par une boîte postale. Elle doit
+être déterminée par une adresse ou une indication géographique suffisamment précise.
+
+Acte Uniforme relatif au Droit des Sociétés Coopéralives, adopté le 15 décembre 2010
+
+-26-
+
+(|
+
+ec E n B crc A ue
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 88
+
+À partir de la signature des statuts, les dirigeants sociaux se substituent aux initiateurs.
+lls agissent au nom de la société coopérative constituée et non encore immatriculée.
+
+Leurs pouvoirs et leurs obligations sont fixés conformément aux dispositions prévues
+par le présent Acte uniforme et par les statuts.
+
+Article 89
+
+Entre la date de constitution de la société coopérative et celle de son immatriculation au
+Registre des Sociétés Coopératives, les rapports entre les coopérateurs sont régis par
+les statuts et par les règles générales de droit applicables aux obligations dans l'Etat du
+siège social.
+
+Sous-section 2 : Engagements pris pour le compte de la société coopérative en
+formation avant sa constitution
+
+Article 90
+
+Les actes et engagements pris par les initiateurs pour le compte de la société coopéra-
+tive avant sa constitution doivent être portés à la connaissance des associés coopéra-
+teurs lors de l'assemblée constitutive.
+
+Article 91
+
+La reprise des actes et engagements accomplis pour le compte de la société coopéra-
+tive en formation fait l'objet d'une résolution spéciale de l'assemblée générale constitu-
+tive prise dans les conditions prévues par le présent Acte uniforme.
+
+L'assemblée doit être complètement informée sur la nature et la portée de chacun des
+actes et engagements dont la reprise lui est proposée. Les personnes ayant accompli
+lesdits actes et engagements ne prennent pas part au vote et il n'est pas tenu compte
+de leurs voix pour le calcul du quorum et de la majorité.
+
+Article 92
+
+Les actes et engagements repris par la société coopérative régulièrement constituée et
+enregistrée sont réputés avoir été contractés par celle-ci dès l'origine.
+
+Les actes et engagements qui n'ont pas été repris par la société coopérative dans les
+conditions prévues par le présent Acte uniforme sont inopposables à celle-ci et les per-
+sonnes qui les ont souscrits sont tenues solidairement et indéfiniment par les obligations
+qu'ils comportent. -
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+-27 -
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 3 : Engagements pris pour le compte de la société coopérative
+constituée et avant son immatriculation
+
+Article 93
+
+Les coopérateurs peuvent, dans les statuts ou par acte séparé, donner mandat à un ou
+plusieurs dirigeants sociaux, selon le cas, de prendre des engagements pour le compte
+de la société coopérative constituée et non encore immatriculée au Registre des
+Sociétés Coopératives. Sous réserve qu'ils soient déterminés et que leurs modalités
+soient précisées dans le mandat, l'immatriculation de la société coopérative emporte
+reprise par elle de ces engagements.
+
+Les actes excédant les pouvoirs qui sont conférés aux dirigeants sociaux par les man-
+dats, ou qui leur sont étrangers, peuvent être repris par la société coopérative à la condi-
+tion qu'ils aient été approuvés par l'assemblée générale ordinaire, dans les conditions
+prévues par le présent Acte Uniforme pour chaque forme de société coopérative, sauf
+dispositions contraires des statuts.
+
+Les coopérateurs ayant accompli lesdits actes et engagements ne prennent pas part au
+vote et il n'est pas tenu compte de leurs voix pour le calcul du quorum et de la majorité.
+
+Article 94
+
+Nonobstant les dispositions de l’article 93 ci-dessus, les dispositions de l’article 92 du
+présent acte uniforme sont applicables aux actes et engagements repris par la société
+coopérative et à ceux qui ne sont pas repris.
+
+TITRE 2 : FONCTIONNEMENT DE LA SOCIETE COOPERATIVE
+CHAPITRE 1 : POUVOIRS DES DIRIGEANTS SOCIAUX-PRINCIPES GENERAUX
+Article 95
+
+A l'égard des personnes de bonne foi autres que les coopérateurs, les organes de ges-
+tion ou d'administration ont, dans les limites fixées par le présent Acte uniforme pour
+chaque type de société coopérative, tout pouvoir pour engager la société coopérative,
+sans avoir à justifier d'un mandat spécial. Toute limitation de leurs pouvoirs légaux par
+les statuts est inopposable aux personnes autres que les coopérateurs.
+
+Article 96
+
+Dans les rapports avec les personnes autres que les coopérateurs, les organes de ges-
+tion ou d'administration engagent la société coopérative par les actes entrant dans l'ob-
+jet social, sauf dispositions contraires du présent Acte uniforme.
+
+La société coopérative est engagée par les actes de gestion ou d’administration qui ne
+relèvent pas de l’objet social, à moins qu’elle ne prouve que les personnes autres que
+les coopérateurs savaient que l’acte dépassait cet objet ou qu’elles ne pouvaient l’igno-
+rer compte tenu des circonstances, sans que la seule publication des statuts suffise à
+constituer cette preuve.
+
+Acte Uniforme relatif au Droit des Sociétés ëÎ>opéralivch adopté le 15-Îiécembrc 2010
+
+-28-
+
+— — —- ——" —— ——
+
+(
+
+crcc
+
+se hs
+
+rr
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+E RE S S
+
+Article 97
+
+Dans les rapports entre associés et sous réserve des dispositions légales spécifiques à
+chaque forme de société coopérative, les statuts peuvent limiter les pouvoirs des orga-
+nes de gestion et d'administration.
+
+Ces limitations sont inopposables aux personnes autres que les coopérateurs qui sont
+de bonne foi.
+
+Article 98
+
+La désignation, la révocation ou la démission des dirigeants sociaux doit être publiée au
+Registre des Sociétés Coopératives dans le délai d’'un mois.
+
+CHAPITRE 2 : ASSEMBLEE GENERALE - PRINCIPES GENERAUX
+Article 99
+
+Sauf disposition contraire du présent Acte uniforme, tout coopérateur a le droit de parti-
+ciper aux décisions de l'assemblée générale. Toute clause statutaire contraire est répu-
+tée non écrite.
+
+Article 100
+
+La participation aux réunions de l’assemblée générale est personnelle.
+
+Toutefois, les coopérateurs empêchés peuvent voter par procuration sauf clauses
+contraires des statuts. Dans ce cas, les statuts de la société coopérative déterminent les
+modalités du vote par procuration dont notamment, le nombre de coopérateurs et/ou de
+voix qu’un mandataire peut représenter.
+
+Article 101
+
+À défaut des dispositions contraires des statuts, les copropriétaires d'une part sociale
+sont représentés par un mandataire unique, choisi parmi les indivisaires. En cas de dés-
+accord, le mandataire est désigné par la juridiction compétente dans le ressort de
+laquelle est situé le siège social, à la demande de l'indivisaire le plus diligent.
+
+Article 102
+
+Chaque coopérateur dispose d'une voix quelle que soit l’importance de sa participation
+au capital de la société coopérative.
+
+Article 103
+
+Les décisions collectives sont ordinaires ou extraordinaires. Elles sont prises en assem-
+blée générale dans les conditions de forme et de fond prévues pour chaque forme de
+société coopérative.
+
+Acte Uniforme relatif au Droit Kît£“So‘c‘iël‘Ë{ëoopéralives, adopté le 15 décembre 2010
+-29-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 104
+
+Toute délibération des coopérateurs est constatée par un procès-verbal qui indique la
+date et le lieu de la réunion, les noms et prénoms des coopérateurs présents ou repré-
+sentés, l'ordre du jour, les documents et rapports soumis à discussion, un résumé des
+débats, le texte des résolutions mises aux voix et le résultat des votes.
+
+Le procès-verbal doit être signé dans les conditions prévues par le présent Acte uni-
+forme pour chaque forme de société coopérative.
+
+Article 105
+
+Les procès-verbaux prévus à l’article précédent sont établis sur un registre spécial tenu
+au siège social.
+
+Les copies ou extraits des procès-verbaux des délibérations des coopérateurs sont vala-
+biement certifiés conformes par le représentant légal de la société coopérative.
+
+Article 106
+
+Lorsque le nombre des coopérateurs est supérieur à cing cent, les statuts de la société
+coopérative peuvent prévoir que l’assemblée générale peut être précédée par des
+assemblées de section délibérant séparément sur le même ordre du jour.
+
+Les assemblées de section élisent des délégués qui sont eux même convoqués en
+assemblée générale. Les statuts déterminent la répartition en section, le nombre des
+délégués par section et les modalités d'application.
+
+CHAPITRE 3 : ETATS FINANCIERS DE SYNTHESE ANNUELS, AFFECTATION
+DU RESULTAT
+
+Section 1 : Etats financiers de synthèse annuels
+
+Sous-section 1 : Principe
+
+Article 107
+
+A la clôture de chaque exercice, le comité de gestion ou le conseil d'administration,
+selon le cas, établit et arrête les états financiers de synthèse conformément aux dispo-
+sitions du présent Acte uniforme et de l'Acte uniforme portant organisation et harmoni-
+sation des comptabilités des entreprises.
+
+Les états financiers sont signés par une personne dûment accréditée pour engager la
+
+responsabilité de la société coopérative et certifiés par un commissaire aux comptes si
+la société coopérative en est dotée.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+- 30 -
+
+e P ce ce |
+
+——
+
+e en e e 7
+
+f
+
+|
+
+Journal Officiel de l'Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 2 : Approbation des états financiers de synthèse annuels
+
+Article 108
+
+Le comité de gestion ou le conseil d'administration, selon le cas, établit un rapport de
+gestion dans lequel il expose la situation de la société coopérative durant l'exercice
+écoulé, son évolution prévisible et, en particulier, les perspectives de continuation de
+l'activité, l'évolution de la situation de trésorerie et le plan de financement.
+
+Le comité de gestion ou le conseil d’administration expose également dans ce rapport,
+l’état de promotion des coopérateurs.
+
+Article 109
+Figurent dans les états financiers de synthèse :
+
+- un état des cautionnements, avals et autres garanties personnelles donnés par la
+société coopérative ;
+
+- un état des sûretés réelles consenties par la société coopérative.
+Article 110
+
+Les états financiers de synthèse annuels et le rapport de gestion sont présentés à l'as-
+semblée générale ordinaire de la société coopérative statuant sur ces documents, qui
+doit obligatoirement se tenir dans les six mois de la clôture de l'exercice.
+
+Ces états financiers de synthèse sont, le cas échéant, également adressés à l’organi-
+sation faîtière immédiate à laquelle est affiliée la société coopérative, quarante-cinq
+jours au moins avant la date de l'assemblée générale ordinaire.
+
+Article 111
+
+Toute modification dans la présentation des états financiers de synthèse ou dans les
+méthodes d'évaluation, d'amortissement ou de provisions conformes à l'Acte uniforme
+portant organisation et harmonisation des comptabilités des entreprises doit être signa-
+lée dans le rapport de gestion.
+
+Section 2 : Ristournes - Réserves
+
+Sous-section 1 : Ristournes
+
+Article 112
+
+Les statuts peuvent prévoir le versement de ristournes aux coopérateurs proportionnel-
+
+lement aux opérations faites par eux avec la société coopérative ou au travail effectué
+en faveur de cette dernière.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+- 31-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 2 : Réserves
+Article 113
+
+L’assemblée générale décide de l'affectation du résultat dans le respect des dispositions
+légales et statutaires.
+
+Elle constitue les dotations nécessaires aux réserves légales et aux réserves statutaires.
+Article 114
+
+Les statuts prévoient, avant toute autre affectation, la constitution d’une réserve géné-
+rale par prélèvements annuels sur les excédents nets d’exploitation.
+
+Les statuts prévoient dans les mêmes conditions qu’à l’alinéa ci-dessus, la constitution
+d'une réserve destinée à la formation, à l'éducation et à la sensibilisation aux principes
+coopératifs.
+
+Tant que chacune de ces réserves légales n’atteint pas le montant du capital fixé par les
+statuts, les prélèvements opérés au titre de chaque réserve ne peuvent être inférieurs à
+vinat pour cent des excédents nets d'exploitation.
+
+Article 115
+
+Les statuts peuvent prévoir des réserves facultatives alimentées par affectation d’un
+pourcentage des excédents nets d'exploitation. Le montant total prélevé au titre des
+réserves facultatives ne peut dépasser vingt pour cent des excédents nets.
+
+Article 116
+
+Les coopérateurs démissionnaires ou exclus ne peuvent prétendre à aucun droit sur les
+sommes affectées à la réserve générale et à la réserve de formation, d’éducation et de
+sensibilisation.
+
+De même, les réserves facultatives prévues à l’article 115 ci-dessus ne peuvent pas
+être reparties entre les coopérateurs.
+
+Section 3 : Litiges entre coopérateurs ou entre un ou plusieurs coopérateurs et
+la société coopérative
+
+Article 117
+
+Tout litige entre coopérateurs ou entre un ou plusieurs coopérateurs et la société coo-
+pérative relève de la juridiction compétente.
+
+Ce litige peut également être soumis à la médiation, à la conciliation ou à l’arbitrage.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+
+-32-
+
+Ü
+
+e © ce
+
+[
+
+p
+
+——n
+
+——
+
+\
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 118
+
+Les sociétés coopératives, leurs unions, fédérations, confédérations ou réseaux soumis
+aux dispositions du présent Acte uniforme peuvent créer en leur sein des organes d’ar-
+bitrage, de conciliation et de médiation, en conformité avec les dispositions de l'Acte
+uniforme relatif au droit de l'arbitrage et du droit international de l’arbitrage, de la conci-
+liation et de la médiation.
+
+CHAPITRE 4 : PROCEDURES DE CONTRÔLE PREVENTIF
+Section 1 : Procédure d’alerte
+Article 119
+
+Le conseil de surveillance ou la commission de surveillance, selon le type de société
+coopérative concernée, demande par écrit ou oralement des explications au comité de
+gestion ou au conseil d’administration qui est tenu de répondre, dans les délais et condi-
+tions fixés à l’alinéa suivant du présent Article, sur tout fait de nature à compromettre la
+continuité de la société coopérative qu'il a relevé à l’occasion de l’exercice de sa mission.
+
+Le comité de gestion ou le conseil d’administration répond par écrit ou oralement à l'oc-
+casion d’une réunion spéciale, dans le mois qui suit la réception de la demande d’expli-
+cation. Dans sa réponse, il donne une analyse de la situation et précise, le cas échéant,
+les mesures envisagées.
+
+En cas d’'inobservation des dispositions prévues à l’alinéa précédent ou si, en dépit des
+décisions prises, le conseil de surveillance ou la commission de surveillance constate
+que la continuité de la société coopérative demeure compromise, il établit un rapport
+spécial qu'il Soumet à l’assemblée générale à l'occasion de la prochaine réunion de
+celle-ci ou, en cas d’urgence, d’une réunion qu’il convoque spécialement à cet effet.
+
+Cette faculté est dévolue, sous les mêmes conditions, aux organisations faîtières aux-
+quelles est affiliée la société coopérative.
+
+Section 2 : Expertise de gestion
+Article 120
+
+Les coopérateurs peuvent, à condition qu'ils atteignent au moins le pourcentage de vingt
+cinq pour cent des membres de la société coopérative, en se groupant sous la forme
+qu’ils jugent appropriée, demander au président de la juridiction compétente du siège
+social, la désignation d’un ou de plusieurs experts chargés de présenter un rapport sur
+une ou plusieurs opérations de gestion.
+
+S’il est fait droit à la demande, le juge détermine l’étendue de la mission et les pouvoirs
+des experts. Les honoraires des experts sont supportés par la société coopérative. Le
+rapport est adressé au demandeur et aux organes de gestion ou d’administration de la
+société coopérative.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+- 33-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Section 3 : Commissariat au compte
+
+Article 121
+
+Les sociétés coopératives avec conseil d’administration sont tenues de désigner au
+moins un commissaire aux comptes lorsqu’elles remplissent les conditions suivantes :
+- nombre total de coopérateurs supérieur à mille ;
+
+- chiffre d’affaire supérieur à cent millions ;
+- total de bilan supérieur à cinq millions.
+
+Le commissaire aux comptes est nommé par l’assemblée générale pour trois exercices.
+Il est choisi parmi les commissaires aux comptes agréés dans l’Etat concerné.
+
+La désignation d’un commissaire aux comptes est facultative pour la société coopéra-
+tive simplifiée.
+
+TITRE 3 : ACTION EN RESPONSABILITE CIVILE CONTRE LES DIRIGEANTS
+DE LA SOCIETE COOPERATIVE
+
+CHAPITRE 1 : ACTION INDIVIDUELLE
+Article 122
+
+Sans préjudice de la responsabilité éventuelle de la société coopérative, chaque diri-
+geant social est responsable individuellement envers les tiers des fautes qu'il commet
+dans l'exercice de ses fonctions.
+
+Si plusieurs dirigeants sociaux ont participé aux mêmes faits, leur responsabilité est soli-
+daire à l’_égard des tiers ou des coopérateurs. Toutefois, dans les rapports entre eux, la
+juridiction compétente détermine la part contributive de chacun dans la réparation du
+dommage.
+
+Article 123
+
+L'action individuelle en réparation du dommage subi par un tiers ou un coopérateur se
+prescrit par trois ans à compter du fait dommageable ou de la découverte de ce fait en
+cas de dissimulation.
+
+Article 124
+
+L’action individuelle est l’action en réparation du dommage subi par un tiers ou par un
+coopérateur, lorsque celui-ci subit un dommage distinct du dommage que pourrait subir
+la société coopérative, du fait de la faute commise individuellement ou collectivement
+par les dirigeants sociaux dans l’exercice de leurs fonctions.
+
+Cette action est intentée par celui qui subit le dommage.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+- 34 -
+
+—
+(s
+
+e …ompmpoàIoonsnss D
+
+[n | ‘ - & ; - m ! ;
+
+_— e r
+
+… - —
+
+U
+
+
+rrr
+
+&
+
+Loues - e
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Article 125
+
+La juridiction compétente pour connaître de l'action individuelle est celle dans le ressort
+de laquelle est situé le siège de la société coopérative
+
+Article 126
+
+L’action individuelle se prescrit par trois ans à compter du fait dommageable ou, s’il a
+été dissimulé, de sa révélation.
+
+L'action individuelle se prescrit par dix ans pour les crimes.
+CHAPITRE 2 : ACTION SOCIALE
+Article 127
+
+Chaque dirigeant social est responsable individuellement envers la société coopérative
+des fautes qu'il commet dans l'exercice de ses fonctions.
+
+Si plusieurs dirigeants sociaux d’une société coopérative ont participé aux mêmes faits,
+la juridiction compétente détermine la part contributive de chacun dans la réparation du
+dommage, dans les conditions fixées par le présent Acte uniforme pour chaque forme
+de société coopérative.
+
+Article 128
+
+L'action sociale est l'action en réparation du dommage subi par la société coopérative
+du fait de la faute commise par un ou des dirigeants sociaux dans l'exercice de leurs
+fonctions.
+
+Cette action est intentée par les autres dirigeants sociaux, dans les conditions prévues
+par le présent Acte uniforme pour chaque forme de société coopérative.
+
+Article 129
+
+Un ou plusieurs coopérateurs peuvent intenter l'action sociale après une mise en
+demeure des organes compétents non suivie d'effet dans le délai de trente jours. Les
+demandeurs sont habilités à poursuivre l’action en réparation du préjudice subi par la
+société coopérative. En cas de condamnation, les dommages et intérêts sont alloués à
+la société coopérative.
+
+Article 130
+
+Est réputée non écrite toute clause des statuts subordonnant l'exercice de l'action
+sociale à l'avis préalable ou à l'autorisation de l’assemblée générale, d'un organe de
+gestion ou d'administration, ou qui comporterait par avance renonciation à l'exercice de
+cette action.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+-35-
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Par ailleurs, aucune décision de l'assemblée générale des coopérateurs, d'un organe de
+gestion ou d'administration ne peut avoir pour effet d'éteindre une action en responsa-
+bilité contre les dirigeants sociaux pour la faute commise dans l'accomplissement de
+leurs fonctions.
+
+Article 131
+
+La juridiction compétente pour connaître de cette action est celle dans le ressort de
+laquelle est situé le siège de la société coopérative.
+
+L'action sociale se prescrit par trois ans à compter du fait dJommageable ou, s'il a été
+dissimulé, de sa révélation.
+
+L'action sociale se prescrit par dix ans pour les crimes.
+Article 132
+
+L'exercice de l'action sociale ne s'oppose pas à ce qu'un coopérateur exerce contre la
+société coopérative l’action en réparation du préjudice qu'il a personnellement subi.
+
+TITRE 4 : LIENS DE DROIT ENTRE LES SOCIETES COOPERATIVES
+
+CHAPITRE 1 : UNIONS — FEDERATIONS — CONFEDERATION — RESEAUX
+
+Section 1 : Unions des sociétés coopératives
+
+Article 133
+
+Au moins deux sociétés coopératives ayant le ou les mêmes objets peuvent consti-
+tuer entre elles, pour la gestion de leurs intérêts communs, une union de sociétés
+coopératives.
+
+Sous-section 1 : Constitution
+
+Article 134
+
+L’union de sociétés coopératives est constituée par l’adoption de ses statuts par l’as-
+semblée générale constitutive réunissant au moins trois délégués dûment mandatés par
+chacune des sociétés coopératives membres fondatrices.
+
+Article 135
+
+L’union est immatriculée au Registre des Sociétés Coopératives conformément aux dis-
+
+positions du présent Acte uniforme relatives à l’immatriculation des sociétés coopérati-
+ves et acquiert la personnalité juridique dans les mêmes conditions.
+
+-36-
+
+È - [e ;
+
+e eo©> e e
+
+=—
+
+berrermeté hn h ec
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Sous-section 2 : Missions — Fonctionnement
+Article 136
+
+L’union des sociétés coopératives peut exercer toutes activités économiques. Toutefois,
+ces activités économiques s’exercent dans le respect du principe de subsidiarité par
+rapport aux activités des sociétés coopératives affiliées.
+
+En concertation avec sa fédération ou sa confédération ou à défaut de ces dernières,
+l’union exerce toutes ou partie des missions assignées à la fédération et à la confédé-
+ration à l’égard de sociétés coopératives qui lui sont affiliées.
+
+Article 137
+
+Chaque société coopérative membre est représentée de droit à l’assemblée générale de
+l’union par son président ou, à défaut, par une personne physique choisie par le conseil
+d’administration ou le comité de gestion de la société coopérative parmi ses membres
+et pouvant justifier de son mandat.
+
+Article 138
+
+L’union des sociétés coopératives peut prévoir dans ses statuts et règlement intérieur la
+possibilité de vote plural pour certains de ses membres et en déterminer les critères.
+
+Article 139
+
+Sauf dispositions contraires du présent Acte uniforme, l’union regroupant plus de deux
+sociétés coopératives n’est pas dissoute par le retrait volontaire ou forcé, la liquidation
+des-biens prononcée par décision de justice ou la dissolution volontaire ou forcée d’une
+coopérative membre ou par le retrait de l’agrément de cette coopérative. Elle continue
+de plein droit entre les autres membres.
+
+Article 140
+
+Pour tous les cas non expressément prévus par la présente section, les dispositions du
+présent Acte uniforme et les principes qui régissent la société coopérative avec conseil
+d’administration s'appliquent à l’union des sociétés coopératives.
+
+Section 2 : Fédération de sociétés coopératives
+
+Sous-section 1 : Constitution
+
+Article 141
+
+Au moins deux unions, même si elles ont des objets différents, peuvent constituer entre
+elles une fédération de sociétés coopératives pour la gestion de leurs intérêts.
+
+Une fédération peut accepter comme affiliées des sociétés coopératives se trouvant
+dans l’impossibilité de former ou d’adhérer à une union.
+
+Acte Uniforme relatif au Droit des Sociétés Coopératives, adopté le 15 décembre 2010
+-37 -
+
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+Articie 142
+
+La fédération de sociétés coopératives est constituée par l’adoption de ses statuts par
+l’assemblée générale constitutive réunissant au moins trois délégués dûment mandatés
+par chacune des unions et sociétés coopératives membres fondatrices.
+
+Article 143
+
+La fédération de sociétés coopératives est immatriculée au Registre des Sociétés
+Coopératives conformément aux dispositions du présent Acte uniforme relatives à l’im-
+matriculation des sociétés coopératives et acquiert la personnalité juridique dans les
+mêmes conditions.
+
+Sous-section 2 : Missions — Fonctionnement
+Article 144
+La fédération a pour missions notamment :
+
+- de veiller à l'application des principes coopératifs au sein des sociétés coopératives et
+unions qui leur sont affiliés ;
+
+- de fournir toute assistance nécessaire pour la constitution, l’administration et la ges-
+tion des unions et sociétés coopératives qui lui sont affiliées ;
+
+- de promouvoir et de développer le mouvement coopératif ainsi que la coopération
+entre organisations à-caractère coopératif ;
+
+- de protéger et de gérer les intérêts de leurs membres auprès des organismes publics
+et privés;
+
+- de fournir à ses affiliées tous services nécessaires, notamment éducatifs, administra-
+tifs, professionnels, financiers et de formation continue des coopérateurs, en vue de
+concourir à la réalisation de leurs objectifs ;
+
+- d’étudier, notamment à l’aide des statistiques, les intérêts de ses affiliées et de leur
+donner toutes informations pouvant améliorer leurs activités ;
+
+- d’offrir à ses affiliées ses bons offices en cas de différends ;
+
+- d'assister ses affiliées, sous réserve des attributions spécifiques aux organes de cel-
+les-ci, dans leurs missions de surveillance ;
+
+- d’agir en qualité d'organisme de contrôle des unions et des coopératives affiliées ;
+
+- de déclencher, en lieu et place de ses affiliées, l’alerte, ou, saisir l’assemblée générale
+des unions et sociétés coopératives affiliées de toute anomalie constatée ;
+
+-38 -
+
+ms TS TU
+
+? « ! ;
+
+xc e —
+
+e « à
+
+rrrc ——
+
+memsoc e
+
+Journal Officiel de l’Organisation pour l’Harmonisation en Afrique du Droit des Affaires
+
+- de créer un fonds pour financer les audits ou contrôles externes de ses affiliées, ali-
+menté par cotisations annuelles de celles-ci au prorata des parts souscrites.
+
+Article 145
+
+La fédération peut exercer des activités économiques dans l'intérêt de ses affiliées.
+L’exercice de ces activités est soumis au respect du principe de subsidiarité par rapport
+à celles des unions et sociétés coopératives affiliées.
+
+Article 146
+
+Sous réserve du respect des dispositions légales, la fédération définit les règles admi-
+nistratives applicables aux unions et sociétés coopératives affiliées.
+
+Article 147
+
+La fédération des sociétés coopératives peut prévoir dans ses statuts et règlement intérieur la
+possibilité de vote plural pour certains de ses membres et en déterminer les critères.
+
+Article 148
+
+La fédération peut adhérer à des organisations régionales ou internationales.
+
+Articile 149
+
+Sauf dispositions contraires du présent Acte uniforme, la fédération regroupant plus de
+deux unions n’est pas dissoute par le retrait, volontaire ou forcé, la liquidation des biens
+par l'effet d'une décision de justice ou la dissolution volontaire ou forcée d’une union ou
+société coopérative affiliée ou par le retrait de l’agrément de celle - ci. Elle continue de
+plein droit entre les autres membres.
+
+Article 150
+
+Pour tous les cas non expressément prévus par la présente section, les dispositions du
+présent Acte uniforme et les principes qui régissent l’immatriculation de la société coo-
+pérative avec conseil d'administration s'appliquent à la fédération des sociétés coopé-
+ratives.
+
+Section 3 : C
