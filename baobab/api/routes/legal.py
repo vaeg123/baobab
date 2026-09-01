@@ -948,6 +948,7 @@ async def ohada_codes():
 @router.get("/legal/ohada/codes/{document_id}/articles")
 async def ohada_code_articles(document_id: str, query: str | None = None, limit: int = 200):
     limit = max(1, min(limit, 500))
+    query = query.strip() or None if query is not None else None
     conn = await _conn()
     try:
         document = await conn.fetchrow(

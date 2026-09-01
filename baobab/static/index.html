@@ -9959,7 +9959,8 @@ async function loadOhadaArticles() {
   const query = document.getElementById('ohada-article-query')?.value.trim() || '';
   target.innerHTML = '<div class="empty-state"><span class="spinner"></span><div class="empty-text">Chargement des articles…</div></div>';
   try {
-    const response = await fetch(`/api/v1/legal/ohada/codes/${encodeURIComponent(documentId)}/articles?limit=200&query=${encodeURIComponent(query)}`);
+    const queryParam = query ? `&query=${encodeURIComponent(query)}` : '';
+    const response = await fetch(`/api/v1/legal/ohada/codes/${encodeURIComponent(documentId)}/articles?limit=200${queryParam}`);
     const data = await parseJson(response);
     if (!response.ok) throw new Error(fmtError(data.detail));
     target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${data.total || 0} article(s) affiché(s)${query ? ` pour « ${escHtml(query)} »` : ''}.</div>` + ((data.results || []).map(article => `

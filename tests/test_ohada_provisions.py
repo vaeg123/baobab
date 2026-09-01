@@ -27,6 +27,7 @@ def test_ohada_codes_are_visible_and_clearly_partial():
     switch_view = html[html.index("function switchOhadaView"):html.index("function switchCreationTab")]
     assert "if (view === 'codes') loadOhadaCodes();" in switch_view
     assert "select.value = data.results[0].id" in html
+    assert "query ? `&query=${encodeURIComponent(query)}` : ''" in html
 
 
 def test_verified_effective_date_is_not_confused_with_adoption_date():
