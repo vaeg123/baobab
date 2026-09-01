@@ -6958,6 +6958,7 @@ function switchOhadaView(view) {
     renderOhadaGuide(document.getElementById('ohada-guide-forme').value);
     renderOhadaDocs(document.getElementById('ohada-docs-forme').value);
   }
+  if (view === 'codes') loadOhadaCodes();
 }
 
 function switchCreationTab(tab) {
@@ -9928,7 +9929,6 @@ async function openOcrTranscription(docId) {
   } catch (error) {
     body.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="openSourceDoc('${escHtml(docId)}')">← Revenir à l’analyse</button><div style="padding:20px;color:var(--red)">${escHtml(error.message)}</div>`;
   }
-  if (view === 'codes') loadOhadaCodes();
 }
 
 async function loadOhadaCodes() {
@@ -9944,6 +9944,7 @@ async function loadOhadaCodes() {
       `<option value="${escHtml(code.id)}">${escHtml(code.ref)} · ${escHtml(code.titre)} (${code.articles} articles détectés)</option>`
     ).join('');
     if (previous && (data.results || []).some(code => code.id === previous)) select.value = previous;
+    else if ((data.results || []).length) select.value = data.results[0].id;
     summary.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:12px"><strong style="color:var(--text)">${data.total || 0} Actes indexés</strong> · ${escHtml(data.notice || '')}</div>`;
     if (select.value) loadOhadaArticles();
   } catch(error) {
