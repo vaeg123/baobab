@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
 
-from baobab.api.routes.ohada import OhadaEvenementRequest
+from baobab.api.routes.ohada import OhadaEvenementRequest, rule_target
 from baobab.core.models.legal_event import LegalEvent
 from baobab.engines.event_engine.engine import LegalEventEngine
 from baobab.verticals.ohada.events import OhadaEventType
@@ -117,4 +117,14 @@ def test_ohada_ui_is_an_action_plan_not_a_technical_event_form():
     assert "Générer mon plan d'action" in html
     assert "Date cible Baobab" in html
     assert "Droit CI à vérifier" in html
+    assert "Voir l'article" in html
+    assert "Article absent du corpus partiel" in html
+    assert "openOhadaRule" in html
     assert 'id="ohada_entity_id"' not in html
+
+
+def test_cascade_rule_resolves_to_materialized_ohada_act():
+    assert rule_target("OHADA.AUSCGIE.ART309.V2014") == ("AUSCGIE-2014", "309")
+    assert rule_target("OHADA.AUDCG.ART25.V2010") == ("AUDCG-2010", "25")
+    assert rule_target("OHADA.AUVE.ART7.V2010") == ("AUPSRVE-1998", "7")
+    assert rule_target("NATIONAL.CGI.ART69.V2022") is None
