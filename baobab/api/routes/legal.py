@@ -939,7 +939,7 @@ async def ohada_codes():
         return {
             "results": [dict(row) for row in rows], "total": len(rows),
             "coverage_complete": False,
-            "notice": "Découpage automatisé d’extraits plafonnés. Chaque article doit être comparé au Journal officiel avant usage professionnel.",
+            "notice": "Découpage automatisé de textes OHADA identifiés. Certains Actes uniformes restent partiels. Chaque article doit être comparé avec sa publication officielle avant tout usage professionnel.",
         }
     finally:
         await conn.close()
@@ -978,7 +978,7 @@ async def search_ohada_articles(query: str, limit: int = 100):
             "total": len(rows),
             "limit": limit,
             "coverage_complete": False,
-            "notice": "Recherche limitée aux articles matérialisés et non encore tous validés éditorialement.",
+            "notice": "La recherche porte sur les articles actuellement indexés. Certains n'ont pas encore fait l'objet d'une validation éditoriale.",
         }
     finally:
         await conn.close()

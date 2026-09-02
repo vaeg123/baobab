@@ -3045,7 +3045,7 @@
       <div class="pending-title">Demande envoyée !</div>
       <div class="pending-sub">
         Votre demande d'abonnement a bien été reçue.<br>
-        L'équipe BAOBAB va vérifier votre paiement et activer votre espace <strong>sous 24h</strong>.<br><br>
+        L'équipe BAOBAB va vérifier votre paiement et activer votre espace <strong>sous 24 heures</strong>.<br><br>
         Vous recevrez un email de confirmation à <strong id="pending-email"></strong> avec votre code d'accès.
       </div>
       <div class="pending-ref" id="pending-ref"></div>
@@ -4009,19 +4009,19 @@
     <div id="tab-ohada" class="tab-panel">
       <div class="container">
         <div class="page-title">Droit des affaires OHADA</div>
-        <div class="page-sub">Cascade réglementaire OHADA et module de création d'entreprise — 17 États membres.</div>
+        <div class="page-sub">Conformité OHADA et accompagnement à la création d'entreprise dans les 17 États membres.</div>
 
         <!-- Sous-navigation OHADA -->
         <div class="ohada-subnav" style="display:flex;gap:8px;margin-bottom:1.75rem;flex-wrap:wrap;">
           <button class="ohada-view-btn active" id="ohada-view-btn-cascade" onclick="switchOhadaView('cascade')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-            Cascade OHADA
+            Assistant OHADA
           </button>
           <button class="ohada-view-btn" id="ohada-view-btn-creation" onclick="switchOhadaView('creation')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
             Créer une entreprise
           </button>
-          <button class="ohada-view-btn" id="ohada-view-btn-codes" onclick="switchOhadaView('codes')">Codes OHADA</button>
+          <button class="ohada-view-btn" id="ohada-view-btn-codes" onclick="switchOhadaView('codes')">Textes OHADA</button>
         </div>
 
         <!-- Vue : Cascade OHADA -->
@@ -4040,12 +4040,12 @@
                   <select id="ohada_event_type" onchange="updateOhadaAssistantMode()">
                     <option value="CREATION_SARL">Création SARL</option>
                     <option value="CREATION_SA">Création SA</option>
-                    <option value="AGO_ANNUELLE">AGO Annuelle</option>
+                    <option value="AGO_ANNUELLE">AGO annuelle</option>
                     <option value="DISSOLUTION">Dissolution</option>
                     <option value="CESSION_PARTS">Cession de parts</option>
                     <option value="FUSION_ABSORPTION">Fusion-absorption</option>
                     <option value="INJONCTION_PAYER">Injonction de payer</option>
-                    <option value="IMMATRICULATION_RCCM">Immatriculation RCCM</option>
+                    <option value="IMMATRICULATION_RCCM">Immatriculation au RCCM</option>
                   </select>
                 </div>
                 <div class="ohada-project-grid">
@@ -4056,7 +4056,7 @@
                   <div class="form-group ohada-creation-field"><label>Nombre d'associés</label><input type="number" min="1" id="ohada_associates" value="2" /></div>
                   <div class="form-group ohada-creation-field"><label>Capital social envisagé (FCFA)</label><input type="number" min="0" step="1000" id="ohada_capital" value="1000000" /></div>
                 </div>
-                <div style="font-size:10px;color:var(--sub);line-height:1.5;margin:12px 0">L'identifiant du dossier sera généré automatiquement. Les échéances produites sont des dates cibles de pilotage tant que leur délai légal n'est pas validé.</div>
+                <div style="font-size:10px;color:var(--sub);line-height:1.5;margin:12px 0">L'identifiant du dossier est généré automatiquement. Les échéances affichées sont des dates prévisionnelles tant que les délais légaux correspondants n'ont pas été validés.</div>
                 <button class="btn btn-primary" id="ohada-submit-btn" onclick="declarerEvenement()">Générer mon plan d'action</button>
               </div>
             </div>
@@ -4065,7 +4065,7 @@
                 <div class="empty-icon">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
                 </div>
-                <div class="empty-text">Renseignez votre projet pour obtenir une checklist OHADA et nationale clairement sourcée.</div>
+                <div class="empty-text">Renseignez votre projet pour obtenir une liste de contrôle fondée sur le droit OHADA et le droit national applicable.</div>
               </div>
             </div>
           </div>
@@ -4073,12 +4073,12 @@
 
         <!-- Vue : Codes OHADA -->
         <div id="ohada-view-codes" style="display:none">
-          <div style="padding:13px 15px;border-left:4px solid var(--orange);background:rgba(191,78,30,.055);border-radius:8px;margin-bottom:14px;font-size:11px;line-height:1.65"><strong>Couverture partielle contrôlée :</strong> les articles ci-dessous proviennent de textes identifiés mais plafonnés. Ils facilitent la recherche ; vérifiez toujours le Journal officiel avant citation.</div>
+          <div style="padding:13px 15px;border-left:4px solid var(--orange);background:rgba(191,78,30,.055);border-radius:8px;margin-bottom:14px;font-size:11px;line-height:1.65"><strong>Couverture en cours de validation :</strong> les articles ci-dessous proviennent de textes OHADA identifiés. Certains Actes uniformes restent partiels. Avant toute citation professionnelle, comparez le contenu avec la publication officielle.</div>
           <div class="grid-2" style="align-items:end;margin-bottom:10px">
             <div class="form-group" style="margin:0"><label>Acte uniforme</label><select id="ohada-code-select" onchange="loadOhadaArticles()"><option value="">Chargement…</option></select></div>
             <div class="form-group" style="margin:0"><label>Matière juridique</label><select id="ohada-topic-select" onchange="selectOhadaTopic(this.value)"><option value="">Choisir une matière…</option><option value="société à responsabilité limitée">SARL et sociétés commerciales</option><option value="assemblée générale">Assemblées générales</option><option value="cession de parts">Cession de parts</option><option value="fusion">Fusion et restructuration</option><option value="dissolution">Dissolution et liquidation</option><option value="RCCM">RCCM et immatriculation</option><option value="bail professionnel">Bail professionnel</option><option value="fonds de commerce">Fonds de commerce</option><option value="cautionnement">Cautionnement</option><option value="garantie autonome">Garantie autonome</option><option value="nantissement">Nantissement</option><option value="hypothèque">Hypothèque</option><option value="injonction de payer">Injonction de payer</option><option value="saisie-attribution">Saisie-attribution</option><option value="redressement judiciaire">Redressement judiciaire</option><option value="procédures collectives">Procédures collectives</option><option value="comptabilité">Comptabilité</option><option value="transport de marchandises">Transport de marchandises</option></select></div>
           </div>
-          <div class="form-group" style="margin:0 0 8px"><label>Recherche libre dans les articles</label><div style="display:flex;gap:7px"><input id="ohada-article-query" list="ohada-search-suggestions" autocomplete="off" placeholder="Ex. article 309, saisie, RCCM…" oninput="suggestOhadaSearch(this.value)" onfocus="suggestOhadaSearch(this.value)" onkeydown="if(event.key==='Enter')loadOhadaArticles()"><datalist id="ohada-search-suggestions"></datalist><button class="btn btn-primary btn-sm" onclick="loadOhadaArticles()">Rechercher</button></div></div>
+          <div class="form-group" style="margin:0 0 8px"><label>Recherche libre dans les articles</label><div style="display:flex;gap:7px"><input id="ohada-article-query" list="ohada-search-suggestions" autocomplete="off" placeholder="Ex. : article 309, saisie, RCCM…" oninput="suggestOhadaSearch(this.value)" onfocus="suggestOhadaSearch(this.value)" onkeydown="if(event.key==='Enter')loadOhadaArticles()"><datalist id="ohada-search-suggestions"></datalist><button class="btn btn-primary btn-sm" onclick="loadOhadaArticles()">Rechercher</button></div></div>
           <div id="ohada-successful-searches" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
           <div id="ohada-codes-summary"></div>
           <div id="ohada-articles-results"><div class="empty-state"><div class="empty-text">Choisissez un Acte uniforme.</div></div></div>
@@ -4090,9 +4090,9 @@
           <!-- Onglets internes -->
           <div class="ohada-creation-tabs" style="display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--border);">
             <button class="ohada-ctab-btn active" id="ohada-ctab-types" onclick="switchCreationTab('types')">Types de sociétés</button>
-            <button class="ohada-ctab-btn" id="ohada-ctab-guide" onclick="switchCreationTab('guide')">Guide pas-à-pas</button>
+            <button class="ohada-ctab-btn" id="ohada-ctab-guide" onclick="switchCreationTab('guide')">Guide étape par étape</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-docs" onclick="switchCreationTab('docs')">Documents requis</button>
-            <button class="ohada-ctab-btn" id="ohada-ctab-couts" onclick="switchCreationTab('couts')">Délais &amp; Coûts</button>
+            <button class="ohada-ctab-btn" id="ohada-ctab-couts" onclick="switchCreationTab('couts')">Délais et coûts</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-juris" onclick="switchCreationTab('juris')">Jurisprudence</button>
             <button class="ohada-ctab-btn" id="ohada-ctab-apres" onclick="switchCreationTab('apres')">Après la création</button>
           </div>
@@ -4104,7 +4104,7 @@
             <div class="ohada-wizard-trigger">
               <div class="ohada-wizard-trigger-text">
                 <div class="ohada-wizard-trigger-title">Quel type de société vous convient ?</div>
-                <div class="ohada-wizard-trigger-sub">Répondez à 4 questions — nous identifions la forme juridique adaptée à votre projet.</div>
+                <div class="ohada-wizard-trigger-sub">Répondez à quatre questions pour identifier la forme juridique adaptée à votre projet.</div>
               </div>
               <button class="btn btn-primary" onclick="openOhadaWizard()" style="white-space:nowrap;flex-shrink:0;">
                 Lancer l'assistant →
@@ -4136,18 +4136,18 @@
               </div>
             </div>
 
-            <div class="section-title">Formes juridiques OHADA — Acte Uniforme révisé 2014</div>
+            <div class="section-title">Formes juridiques prévues par l'Acte uniforme révisé en 2014</div>
             <div class="ohada-formes-grid">
 
               <!-- SARL -->
               <div class="ohada-forme-card">
                 <div class="ohada-forme-header">
                   <span class="pill pill-orange">SARL</span>
-                  <span class="ohada-forme-name">Société à Responsabilité Limitée</span>
+                  <span class="ohada-forme-name">Société à responsabilité limitée</span>
                 </div>
                 <div class="ohada-forme-body">
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">100 000 FCFA</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associés</span><span class="ohada-forme-val">1 à 50</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associés</span><span class="ohada-forme-val">De 1 à 50</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Limitée aux apports</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">PME, startups, commerce</span></div>
                   <div class="ohada-forme-avantage">
@@ -4162,11 +4162,11 @@
               <div class="ohada-forme-card">
                 <div class="ohada-forme-header">
                   <span class="pill pill-blue">SA</span>
-                  <span class="ohada-forme-name">Société Anonyme</span>
+                  <span class="ohada-forme-name">Société anonyme</span>
                 </div>
                 <div class="ohada-forme-body">
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">10 000 000 FCFA (appel public) / 1 000 000 FCFA</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Actionnaires</span><span class="ohada-forme-val">1 minimum</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Actionnaires</span><span class="ohada-forme-val">Au moins 1</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Limitée aux apports</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Grandes entreprises, levée de fonds</span></div>
                   <div class="ohada-forme-avantage">
@@ -4181,11 +4181,11 @@
               <div class="ohada-forme-card">
                 <div class="ohada-forme-header">
                   <span class="pill pill-green">SNC</span>
-                  <span class="ohada-forme-name">Société en Nom Collectif</span>
+                  <span class="ohada-forme-name">Société en nom collectif</span>
                 </div>
                 <div class="ohada-forme-body">
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">Aucun minimum légal</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associés</span><span class="ohada-forme-val">2 minimum, tous commerçants</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associés</span><span class="ohada-forme-val">Au moins 2, tous commerçants</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Illimitée et solidaire</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Cabinets, professions libérales</span></div>
                   <div class="ohada-forme-avantage">
@@ -4200,13 +4200,13 @@
               <div class="ohada-forme-card">
                 <div class="ohada-forme-header">
                   <span class="pill pill-gold">SCS</span>
-                  <span class="ohada-forme-name">Société en Commandite Simple</span>
+                  <span class="ohada-forme-name">Société en commandite simple</span>
                 </div>
                 <div class="ohada-forme-body">
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">Aucun minimum légal</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Associés</span><span class="ohada-forme-val">Commandités (resp. illimitée) + commanditaires (resp. limitée)</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Variable selon catégorie d'associé</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Family offices, associations capital-expertise</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Variable selon la catégorie d'associé</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Structures patrimoniales, associations entre capital et expertise</span></div>
                   <div class="ohada-forme-avantage">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     Distinction gérant / investisseur
@@ -4219,13 +4219,13 @@
               <div class="ohada-forme-card">
                 <div class="ohada-forme-header">
                   <span class="pill pill-orange">SURL</span>
-                  <span class="ohada-forme-name">Société Unipersonnelle à Responsabilité Limitée</span>
+                  <span class="ohada-forme-name">Société unipersonnelle à responsabilité limitée</span>
                 </div>
                 <div class="ohada-forme-body">
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Capital minimum</span><span class="ohada-forme-val">100 000 FCFA</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associé</span><span class="ohada-forme-val">1 seul</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Associé</span><span class="ohada-forme-val">Un associé unique</span></div>
                   <div class="ohada-forme-row"><span class="ohada-forme-label">Responsabilité</span><span class="ohada-forme-val">Limitée aux apports</span></div>
-                  <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Entrepreneur solo, auto-entrepreneur structuré</span></div>
+                  <div class="ohada-forme-row"><span class="ohada-forme-label">Idéal pour</span><span class="ohada-forme-val">Entrepreneur souhaitant exercer seul en société</span></div>
                   <div class="ohada-forme-avantage">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     Entrepreneur seul avec protection patrimoniale
@@ -4318,7 +4318,7 @@
                 <span style="font-size:22px;line-height:1;" aria-label="Drapeau Côte d'Ivoire">🇨🇮</span>
                 <div>
                   <div class="ohada-cepici-title">Déposer votre dossier en ligne — CEPICI</div>
-                  <div class="ohada-cepici-sub">Le guichet unique de Côte d'Ivoire permet la création d'entreprise en 24h via le portail 225invest.ci</div>
+                  <div class="ohada-cepici-sub">Le guichet unique de Côte d'Ivoire permet d'effectuer les formalités de création d'entreprise en ligne sur le portail 225invest.ci.</div>
                 </div>
               </div>
               <div class="ohada-cepici-body">
@@ -4372,7 +4372,7 @@
                 </div>
               </div>
               <div class="ohada-cepici-note">
-                Ce guichet unique intègre <strong style="color:var(--text);">RCCM, DGI et CNPS</strong> en un seul dépôt. Délai officiel : <strong style="color:var(--text);">24h ouvrables</strong>.
+                Ce guichet unique regroupe les formalités auprès du <strong style="color:var(--text);">RCCM, de la DGI et de la CNPS</strong>. Délai annoncé : <strong style="color:var(--text);">24 heures ouvrables</strong>, sous réserve de la conformité du dossier.
               </div>
             </div>
           </div>
@@ -4489,7 +4489,7 @@
                   <div class="info-item">
                     <div style="font-size:10px;color:var(--sub);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Côte d'Ivoire</div>
                     <strong>CEPICI</strong>
-                    <div style="font-size:11px;color:var(--sub);margin-top:4px;">Guichet unique — création en 24h théorique</div>
+                    <div style="font-size:11px;color:var(--sub);margin-top:4px;">Guichet unique — délai annoncé de 24 heures pour un dossier conforme</div>
                   </div>
                   <div class="info-item">
                     <div style="font-size:10px;color:var(--sub);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Sénégal</div>
@@ -4513,18 +4513,18 @@
           <div id="ohada-ctab-juris-panel" class="ohada-creation-panel" style="display:none;padding-top:1.5rem;">
             <div class="juris-hero">
               <div class="juris-hero-kicker">Intelligence jurisprudentielle OHADA</div>
-              <div class="juris-hero-title">Comprendre la décision. Mesurer sa portée. Sécuriser l’action.</div>
-              <div class="juris-hero-copy">Explorez les arrêts, ordonnances et avis de la CCJA à partir de leurs sources officielles. Chaque résultat donne accès au texte, à sa trajectoire procédurale et aux vérifications professionnelles à conduire.</div>
+              <div class="juris-hero-title">Comprendre la décision, mesurer sa portée et sécuriser l’action.</div>
+              <div class="juris-hero-copy">Explorez les arrêts, les ordonnances et les avis de la CCJA à partir de leurs sources officielles. Chaque résultat donne accès au texte, à son parcours procédural et aux vérifications professionnelles à effectuer.</div>
             </div>
             <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.25rem;">
               <div style="flex:1;min-width:180px;">
                 <label style="font-size:12px;font-weight:600;color:var(--sub);display:block;margin-bottom:6px;">Question, partie, article ou thème</label>
-                <input id="ohada-juris-theme" type="search" value="saisie attribution" placeholder="Ex. cautionnement, article 49, société X…" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;" onkeydown="if(event.key==='Enter')searchOhadaJurisprudence()" />
+                <input id="ohada-juris-theme" type="search" value="saisie-attribution" placeholder="Ex. : cautionnement, article 49, société X…" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;" onkeydown="if(event.key==='Enter')searchOhadaJurisprudence()" />
               </div>
               <div style="min-width:150px;">
                 <label style="font-size:12px;font-weight:600;color:var(--sub);display:block;margin-bottom:6px;">Nature</label>
                 <select id="ohada-juris-type" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;">
-                  <option value="">Toute la jurisprudence</option><option value="arret_ccja">Arrêts</option><option value="ordonnance_ccja">Ordonnances</option><option value="avis_ccja">Avis</option>
+                  <option value="">Toutes les décisions</option><option value="arret_ccja">Arrêts</option><option value="ordonnance_ccja">Ordonnances</option><option value="avis_ccja">Avis</option>
                 </select>
               </div>
               <div style="min-width:140px;">
@@ -4615,7 +4615,7 @@
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Assemblée Générale Ordinaire (AGO) — dans les <strong>6 mois</strong> suivant la clôture de l'exercice</span>
+                  <span>Assemblée générale ordinaire (AGO) — dans les <strong>6 mois</strong> suivant la clôture de l'exercice</span>
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -4644,30 +4644,30 @@
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Modification statutaire — acte modificatif + publication JAL + dépôt RCCM dans les <strong>30 jours</strong></span>
+                  <span>Modification statutaire — établissement de l'acte modificatif, publication dans un JAL et dépôt au RCCM dans les <strong>30 jours</strong></span>
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Cession de parts/actions — agrément des associés + enregistrement DGI + mise à jour registre</span>
+                  <span>Cession de parts ou d'actions — agrément des associés, enregistrement auprès de la DGI et mise à jour du registre</span>
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Nomination ou révocation d'un dirigeant — publication JAL + dépôt RCCM</span>
+                  <span>Nomination ou révocation d'un dirigeant — publication dans un JAL et dépôt au RCCM</span>
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Augmentation de capital — rapport CAC + publication + dépôt RCCM</span>
+                  <span>Augmentation du capital — rapport du commissaire aux comptes, publication et dépôt au RCCM</span>
                 </div>
                 <div class="ohada-apres-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Dissolution — décision AG + nomination du liquidateur + publication JAL</span>
+                  <span>Dissolution — décision de l'assemblée générale, nomination du liquidateur et publication dans un JAL</span>
                 </div>
               </div>
             </div>
 
             <div class="ohada-apres-warning">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>Ces obligations varient selon la forme juridique choisie et les législations locales des États OHADA. Les délais fiscaux indiqués sont indicatifs pour la Côte d'Ivoire. Consultez un juriste ou un expert-comptable qualifié pour votre situation spécifique.</span>
+              <span>Ces obligations varient selon la forme juridique choisie et la législation nationale de chaque État membre de l'OHADA. Les délais fiscaux indiqués sont donnés à titre indicatif pour la Côte d'Ivoire. Consultez un juriste ou un expert-comptable qualifié afin d'évaluer votre situation.</span>
             </div>
           </div>
 
@@ -4814,7 +4814,7 @@
               </div>
             </div>
             <div style="font-size:11px;color:var(--sub);margin-top:8px">
-              Le système identifie automatiquement si la question relève du droit civil (francophones) ou de la Common Law (anglophones).
+              Le système détermine si la question relève du droit civil, dans les régions francophones, ou de la common law, dans les régions anglophones.
             </div>
           </div></div>
           <div id="cm-analyze-result" style="margin-top:14px"></div>
@@ -6164,7 +6164,7 @@ async function loadEditorialBriefs() {
       const pill = legalValidated || documentVerified ? 'pill-green' : 'pill-orange';
       return `<div style="padding:11px 0;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:start;justify-content:space-between;gap:10px"><div><strong style="font-size:12px;color:var(--text)">${escHtml(item.titre || item.ref || 'Décision')}</strong><div style="font-size:10px;color:var(--sub);margin-top:2px">${escHtml(item.ref || '')} · ${escHtml((item.type || '').replaceAll('_',' '))} · ${escHtml(item.date_decision || 'date non renseignée')}</div></div><span class="pill ${pill}" style="white-space:nowrap">${escHtml(label)}</span></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:7px;font-size:10px;color:var(--sub)"><span>${item.ocr_pages || 0} page(s) OCR</span><span>Score documentaire : ${item.validation_score || 0}/100</span>${item.pages_to_review ? `<span style="color:var(--orange)">${item.pages_to_review} page(s) à relire</span>` : '<span style="color:#17633a">Images sans alerte</span>'}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:7px;font-size:10px;color:var(--sub)"><span>${pluralFr(item.ocr_pages || 0, 'page')} OCR</span><span>Score documentaire : ${item.validation_score || 0}/100</span>${item.pages_to_review ? `<span style="color:var(--orange)">${pluralFr(item.pages_to_review, 'page')} à relire</span>` : '<span style="color:#17633a">Images sans alerte</span>'}</div>
         ${item.legal_question ? `<div style="font-size:11px;margin-top:7px;color:var(--text)"><strong>Question :</strong> ${escHtml(item.legal_question)}</div>` : '<div style="font-size:10px;color:var(--orange);margin-top:7px">Question de droit à rédiger pendant la validation.</div>'}
         <div style="display:flex;gap:8px;margin-top:7px">${safeExternalUrl(item.source_url) ? `<a class="btn btn-ghost btn-sm" href="${escHtml(safeExternalUrl(item.source_url))}" target="_blank" rel="noopener noreferrer">Vérifier la notice officielle ↗</a>` : ''}<code style="font-size:9px;color:var(--sub);margin-left:auto;align-self:center">${escHtml(item.corpus_id)}</code></div>
       </div>`;
@@ -6254,7 +6254,7 @@ async function loadSourceIssues(issue) {
   const res = await fetch(`/api/v1/sources/quality/issues?issue=${encodeURIComponent(issue)}&limit=50`, { headers:sourceAuthHeaders() });
   const data = await parseJson(res);
   if (!res.ok) { target.innerHTML = `<div style="color:var(--red)">${escHtml(fmtError(data.detail))}</div>`; return; }
-  target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:8px">${data.total} résultat(s) · 50 affichés au maximum</div>` +
+  target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:8px">${pluralFr(data.total, 'résultat')} · 50 affichés au maximum</div>` +
     (data.results || []).map(d => `<div style="padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-size:11px;font-weight:700;color:var(--text)">${escHtml(d.title)}</div><div style="font-size:10px;color:var(--sub)">${escHtml(d.document_type)} · ${escHtml(d.source_code || 'SOURCE NON RATTACHÉE')} · ${escHtml(d.official_identifier || '')}</div>${safeExternalUrl(d.source_url) ? `<a href="${escHtml(safeExternalUrl(d.source_url))}" target="_blank" rel="noopener noreferrer" style="font-size:10px;color:var(--clay)">Vérifier la source ↗</a>` : ''}</div>`).join('');
 }
 
@@ -6871,6 +6871,9 @@ function fmtDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
 }
+function pluralFr(count, singular, plural = `${singular}s`) {
+  return `${count} ${Number(count) === 1 ? singular : plural}`;
+}
 function daysFromNow(iso) {
   if (!iso) return null;
   return Math.round((new Date(iso) - new Date()) / 86400000);
@@ -6933,7 +6936,7 @@ function renderResults(data, entity_id, event_label, occurred_at, colId, corpusL
   const overdueCount  = alerts.filter(a => a.level === 'overdue').length;
   const criticalCount = alerts.filter(a => a.level === 'critical').length;
   const scorePercent  = Math.round(compliance.score * 100);
-  const statusLabels  = { pending: 'En cours', compliant: 'Conforme', at_risk: 'A risque', non_compliant: 'Non conforme' };
+  const statusLabels  = { pending: 'En cours', compliant: 'Conforme', at_risk: 'À risque', non_compliant: 'Non conforme' };
   const statusPillCls = { pending: 'pill-blue', compliant: 'pill-green', at_risk: 'pill-orange', non_compliant: 'pill-red' };
 
   const stats = `
@@ -6955,7 +6958,7 @@ function renderResults(data, entity_id, event_label, occurred_at, colId, corpusL
           </div>
         </div>
         <div class="progress-track"><div class="progress-fill" style="width:${scorePercent}%;background:${scoreColor(compliance.score)}"></div></div>
-        <div style="margin-top:8px;font-size:12px;color:var(--sub)">${compliance.overdue_count} étape(s) en retard</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--sub)">${pluralFr(compliance.overdue_count, 'étape')} en retard</div>
       </div>
     </div>`;
 
@@ -6966,7 +6969,7 @@ function renderResults(data, entity_id, event_label, occurred_at, colId, corpusL
     if (days !== null) {
       if      (days < 0)  daysLabel = `<span style="color:#B03020;font-weight:700">${Math.abs(days)} j de retard</span>`;
       else if (days === 0) daysLabel = `<span style="color:#A05010;font-weight:700">Aujourd'hui</span>`;
-      else daysLabel = `<span style="color:var(--sub)">${days} j restants</span>`;
+      else daysLabel = `<span style="color:var(--sub)">${pluralFr(days, 'jour restant', 'jours restants')}</span>`;
     }
     return `
       <div class="timeline-step ${state}">
@@ -7066,16 +7069,16 @@ function switchCreationTab(tab) {
 ══════════════════════════════════════════════════════════ */
 const OHADA_WIZ_QUESTIONS = [
   {
-    label: 'Vous êtes…',
+    label: 'Combien de personnes participeront au projet ?',
     options: [
-      'Je suis seul (entrepreneur solo)',
+      'Je suis seul',
       'Nous sommes 2 à 50 associés',
       'Nous sommes plus de 50 actionnaires',
       'Des entreprises qui veulent se regrouper'
     ]
   },
   {
-    label: 'Capital prévu pour la création ?',
+    label: 'Quel capital prévoyez-vous pour la création ?',
     options: [
       'Moins de 100 000 FCFA',
       'Entre 100 000 et 999 999 FCFA',
@@ -7084,7 +7087,7 @@ const OHADA_WIZ_QUESTIONS = [
     ]
   },
   {
-    label: 'Votre priorité ?',
+    label: 'Quelle est votre priorité ?',
     options: [
       'Protéger mon patrimoine personnel (responsabilité limitée)',
       'Flexibilité maximale dans l\'organisation',
@@ -7093,7 +7096,7 @@ const OHADA_WIZ_QUESTIONS = [
     ]
   },
   {
-    label: 'Votre secteur / objectif ?',
+    label: 'Quel est votre secteur ou votre objectif principal ?',
     options: [
       'Commerce, PME, négoce',
       'Startup, tech, innovation',
@@ -7118,14 +7121,14 @@ const OHADA_WIZ_SCORES = {
 };
 
 const OHADA_WIZ_META = {
-  SARL: { pill: 'pill-orange', label: 'SARL', full: 'Société à Responsabilité Limitée' },
-  SURL: { pill: 'pill-orange', label: 'SURL', full: 'Société Unipersonnelle à Responsabilité Limitée' },
-  SA:   { pill: 'pill-blue',   label: 'SA',   full: 'Société Anonyme' },
-  SAS:  { pill: 'pill-blue',   label: 'SAS',  full: 'Société par Actions Simplifiée' },
-  SNC:  { pill: 'pill-green',  label: 'SNC',  full: 'Société en Nom Collectif' },
-  SCS:  { pill: 'pill-gold',   label: 'SCS',  full: 'Société en Commandite Simple' },
-  SCA:  { pill: 'pill-gold',   label: 'SCA',  full: 'Société en Commandite par Actions' },
-  GIE:  { pill: 'pill-gray',   label: 'GIE',  full: 'Groupement d\'Intérêt Économique' }
+  SARL: { pill: 'pill-orange', label: 'SARL', full: 'Société à responsabilité limitée' },
+  SURL: { pill: 'pill-orange', label: 'SURL', full: 'Société unipersonnelle à responsabilité limitée' },
+  SA:   { pill: 'pill-blue',   label: 'SA',   full: 'Société anonyme' },
+  SAS:  { pill: 'pill-blue',   label: 'SAS',  full: 'Société par actions simplifiée' },
+  SNC:  { pill: 'pill-green',  label: 'SNC',  full: 'Société en nom collectif' },
+  SCS:  { pill: 'pill-gold',   label: 'SCS',  full: 'Société en commandite simple' },
+  SCA:  { pill: 'pill-gold',   label: 'SCA',  full: 'Société en commandite par actions' },
+  GIE:  { pill: 'pill-gray',   label: 'GIE',  full: 'Groupement d\'intérêt économique' }
 };
 
 // Explications personnalisées basées sur les réponses [étape][réponse_index]
@@ -7137,10 +7140,10 @@ const OHADA_WIZ_EXPLAIN = {
     ['Structure idéale pour le commerce, la PME et le négoce en Afrique de l\'Ouest.', 'La SARL convient aux startups en phase early-stage avant une levée de fonds nécessitant une SAS.', 'Pour une grande entreprise ou l\'expansion internationale, la SA ou SAS sont plus adaptées.', '', '', '']
   ],
   SURL: [
-    ['Conçue pour l\'entrepreneur solo, la SURL est une SARL à associé unique — vous restez seul maître de votre structure.', '', '', ''],
+    ['Conçue pour entreprendre seul, la SURL est une SARL à associé unique : vous conservez seul la maîtrise de la société.', '', '', ''],
     ['', 'Capital minimum 100 000 FCFA — votre budget correspond à la SURL.', 'Capital suffisant — la SURL est accessible, mais envisagez aussi la SARL si vous souhaitez ouvrir à des associés plus tard.', ''],
     ['La SURL protège votre patrimoine personnel — vous n\'êtes responsable qu\'à hauteur de vos apports.', '', '', ''],
-    ['Idéale pour l\'entrepreneur solo dans le commerce, la PME ou le négoce.', 'Bonne option pour lancer une activité tech seul, avant d\'ouvrir à des associés ou investisseurs.', '', '', '', '']
+    ['Forme adaptée à une personne qui souhaite exercer seule une activité commerciale.', 'Option adaptée au lancement individuel d\'une activité technologique, avant une éventuelle ouverture du capital.', '', '', '', '']
   ],
   SA: [
     ['', '', 'La SA est conçue pour accueillir de nombreux actionnaires et structurer une gouvernance robuste (CA, DG).', ''],
@@ -7344,7 +7347,7 @@ async function searchOhadaJurisprudence() {
     }
 
     container.innerHTML = `
-      <div style="font-size:12px;color:var(--sub);margin-bottom:1rem;">${data.total ?? results.length} décision(s) trouvée(s)</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:1rem;">${pluralFr(data.total ?? results.length, 'décision')} ${Number(data.total ?? results.length) === 1 ? 'trouvée' : 'trouvées'}</div>
       ${results.map(d => `
         <div class="juris-card">
           <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
@@ -7385,9 +7388,9 @@ const OHADA_STEPS = {
     { titre: 'Rédaction des statuts', desc: 'Les statuts peuvent être établis par acte notarié ou sous seing privé. Ils fixent la dénomination sociale, le siège, l\'objet, le capital et les modalités de fonctionnement.', delai: 'J1 – J3', organisme: 'Notaire ou sous seing privé', documents: 'Actes de société signés' },
     { titre: 'Dépôt du capital social', desc: 'Les apports en numéraire doivent être déposés sur un compte bloqué ouvert au nom de la société en formation auprès d\'une banque agréée.', delai: 'J3 – J5', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds' },
     { titre: 'Déclaration de souscription et de versement', desc: 'Établie par le notaire ou un avocat, elle atteste que le capital a bien été souscrit et libéré conformément aux statuts.', delai: 'J5 – J7', organisme: 'Notaire ou avocat', documents: 'Déclaration notariée de souscription' },
-    { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier complet au Registre du Commerce et du Crédit Mobilier (RCCM) tenu par le Tribunal de commerce ou le guichet unique (CEPICI en Côte d\'Ivoire).', delai: 'J7 – J20', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'La création de la société doit être publiée dans un Journal d\'Annonces Légales agréé par l\'État concerné pour opposabilité aux tiers.', delai: 'J20 – J25', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du Numéro d\'Identification Fiscale (NIF) et ouverture d\'un compte contribuable auprès de la Direction Générale des Impôts.', delai: 'J25 – J30', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier complet au registre du commerce et du crédit mobilier (RCCM), auprès du greffe compétent ou du guichet unique (le CEPICI en Côte d\'Ivoire).', delai: 'J7 – J20', organisme: 'Greffe compétent / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
+    { titre: 'Publication dans un JAL', desc: 'La création de la société doit faire l\'objet d\'une publication dans un journal d\'annonces légales agréé par l\'État concerné afin d\'être opposable aux tiers.', delai: 'J20 – J25', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du numéro d\'identification fiscale (NIF) et ouverture d\'un compte contribuable auprès de la direction générale des impôts.', delai: 'J25 – J30', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Si la société prévoit d\'employer des salariés, elle doit s\'affilier à la Caisse Nationale de Prévoyance Sociale pour obtenir un numéro employeur.', delai: 'J30 – J45', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   SURL: [
@@ -7395,8 +7398,8 @@ const OHADA_STEPS = {
     { titre: 'Dépôt du capital social', desc: 'Dépôt des 100 000 FCFA minimum sur un compte bloqué au nom de la société en formation.', delai: 'J3 – J5', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds' },
     { titre: 'Déclaration de souscription et de versement', desc: 'Formalité identique à la SARL, attestant la libération du capital par l\'associé unique.', delai: 'J5 – J7', organisme: 'Notaire ou avocat', documents: 'Déclaration notariée de souscription' },
     { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier au RCCM. La SURL est indiquée explicitement comme telle dans l\'extrait RCCM.', delai: 'J7 – J20', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'Avis de création publié dans un Journal d\'Annonces Légales agréé.', delai: 'J20 – J25', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J25 – J30', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Publication dans un JAL', desc: 'Avis de création publié dans un journal d\'annonces légales agréé.', delai: 'J20 – J25', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J25 – J30', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation obligatoire si des salariés sont employés.', delai: 'J30 – J45', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   SA: [
@@ -7407,18 +7410,18 @@ const OHADA_STEPS = {
     { titre: 'Dépôt du capital social', desc: 'Dépôt du capital souscrit (au moins 1/4 libéré à la création) sur un compte bloqué. La SA sans appel public exige 1 000 000 FCFA minimum.', delai: 'J10 – J15', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds' },
     { titre: 'Déclaration de souscription et de versement', desc: 'Établie par le notaire, elle certifie que toutes les actions ont été souscrites et le capital libéré.', delai: 'J12 – J18', organisme: 'Notaire', documents: 'Déclaration notariée' },
     { titre: 'Immatriculation au RCCM', desc: 'Dossier déposé au RCCM avec l\'ensemble des pièces constitutives de la SA, incluant la liste des administrateurs et du PDG/DG.', delai: 'J18 – J40', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'Publication de l\'avis de constitution dans un journal agréé.', delai: 'J40 – J50', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J50 – J60', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Publication dans un JAL', desc: 'Publication de l\'avis de constitution dans un journal agréé.', delai: 'J40 – J50', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J50 – J60', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation à la CNPS si des salariés sont employés.', delai: 'J60 – J90', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   SAS: [
     { titre: 'Rédaction des statuts', desc: 'Les statuts de SAS offrent une liberté statutaire maximale : les fondateurs organisent librement la gouvernance (président, comité de direction, droits de vote différenciés). La forme notariée n\'est pas obligatoire sauf apports en nature ou en industrie.', delai: 'J1 – J5', organisme: 'Notaire ou sous seing privé', documents: 'Statuts signés par tous les actionnaires fondateurs' },
-    { titre: 'Nomination du Président', desc: 'La SAS est représentée à l\'égard des tiers par un Président (personne physique ou morale). Sa désignation doit figurer dans les statuts ou un acte séparé.', delai: 'J1 – J5', organisme: 'Actionnaires fondateurs', documents: 'Acte de nomination du Président' },
+    { titre: 'Nomination du président', desc: 'La SAS est représentée à l\'égard des tiers par un président, personne physique ou morale. Sa désignation doit figurer dans les statuts ou dans un acte séparé.', delai: 'J1 – J5', organisme: 'Actionnaires fondateurs', documents: 'Acte de nomination du président' },
     { titre: 'Libération du capital (si apports en numéraire)', desc: 'Contrairement à la SA, la SAS ne fixe pas de capital minimum légal. Les apports en numéraire doivent néanmoins être déposés sur un compte bloqué avant immatriculation.', delai: 'J3 – J7', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds (si applicable)' },
     { titre: 'Rapport du commissaire aux apports (si apports en nature)', desc: 'Obligatoire si des apports en nature sont prévus. Le commissaire aux apports évalue la valeur des biens apportés avant souscription.', delai: 'J5 – J15', organisme: 'Commissaire aux apports désigné', documents: 'Rapport d\'évaluation des apports en nature' },
-    { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier au RCCM. La SAS acquiert la personnalité morale à compter de son immatriculation. Le dossier inclut statuts, acte de nomination du Président, justificatif de siège.', delai: 'J7 – J25', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un Journal d\'Annonces Légales agréé pour opposabilité aux tiers.', delai: 'J25 – J30', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable. La SAS est soumise à l\'impôt sur les sociétés.', delai: 'J30 – J38', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier au RCCM. La SAS acquiert la personnalité morale à compter de son immatriculation. Le dossier comprend notamment les statuts, l\'acte de nomination du président et le justificatif du siège.', delai: 'J7 – J25', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
+    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un journal d\'annonces légales agréé afin d\'être opposable aux tiers.', delai: 'J25 – J30', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable. La SAS est soumise à l\'impôt sur les sociétés.', delai: 'J30 – J38', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation obligatoire si des salariés sont employés.', delai: 'J38 – J50', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   SCA: [
@@ -7427,29 +7430,29 @@ const OHADA_STEPS = {
     { titre: 'Évaluation des apports en nature (si applicable)', desc: 'Si des commanditaires apportent des biens en nature, un rapport d\'évaluation du commissaire aux apports est requis avant souscription.', delai: 'J5 – J15', organisme: 'Commissaire aux apports désigné', documents: 'Rapport de vérification des apports' },
     { titre: 'Dépôt du capital social', desc: 'Le capital minimum est de 1 000 000 FCFA (sans appel public) ou 10 000 000 FCFA (avec appel public). Les apports des commanditaires sont déposés sur un compte bloqué.', delai: 'J10 – J18', organisme: 'Banque agréée', documents: 'Certificat de dépôt de fonds' },
     { titre: 'Immatriculation au RCCM', desc: 'Le dossier doit lister séparément les commandités (avec qualité de commerçant) et les commanditaires (actionnaires). La SCA est une forme rare mais puissante pour les holdings.', delai: 'J18 – J45', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'Publication obligatoire pour opposabilité aux tiers, incluant la liste des commandités.', delai: 'J45 – J55', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable. La SCA est soumise à l\'impôt sur les sociétés.', delai: 'J55 – J65', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Publication dans un JAL', desc: 'Publication obligatoire afin d\'assurer l\'opposabilité aux tiers, avec mention de la liste des commandités.', delai: 'J45 – J55', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable. La SCA est soumise à l\'impôt sur les sociétés.', delai: 'J55 – J65', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation obligatoire si des salariés sont employés.', delai: 'J65 – J80', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   SNC: [
     { titre: 'Rédaction du contrat de société', desc: 'Les associés, qui doivent tous avoir la qualité de commerçant, rédigent les statuts. Aucun capital minimum n\'est requis. Tous les associés sont solidairement et indéfiniment responsables.', delai: 'J1 – J3', organisme: 'Notaire ou sous seing privé', documents: 'Contrat de société signé' },
     { titre: 'Immatriculation au RCCM', desc: 'Dépôt du dossier au RCCM. La qualité de commerçant de chaque associé doit être établie (pièce d\'identité, extrait de casier judiciaire vierge).', delai: 'J3 – J20', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un journal agréé pour opposabilité aux tiers.', delai: 'J20 – J28', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF. La SNC est transparente fiscalement — les associés sont imposés à titre personnel sur leur quote-part de bénéfices.', delai: 'J28 – J35', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un journal agréé afin d\'être opposable aux tiers.', delai: 'J20 – J28', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF. La SNC est fiscalement transparente : les associés sont imposés à titre personnel sur leur quote-part des bénéfices.', delai: 'J28 – J35', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation obligatoire si des salariés non-associés sont employés.', delai: 'J35 – J45', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   SCS: [
     { titre: 'Rédaction du contrat de société', desc: 'Les statuts distinguent les commandités (responsabilité illimitée, gérants) et les commanditaires (responsabilité limitée à leurs apports, simples investisseurs). Aucun capital minimum n\'est exigé.', delai: 'J1 – J5', organisme: 'Notaire ou sous seing privé', documents: 'Contrat de société avec deux catégories d\'associés' },
     { titre: 'Immatriculation au RCCM', desc: 'Le dossier doit préciser la liste des commandités et des commanditaires avec leurs apports respectifs. Seuls les commandités ont la qualité de commerçant.', delai: 'J5 – J25', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un journal agréé.', delai: 'J25 – J32', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J32 – J40', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' },
+    { titre: 'Publication dans un JAL', desc: 'Avis de constitution publié dans un journal agréé.', delai: 'J25 – J32', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Obtention du NIF et ouverture du compte contribuable.', delai: 'J32 – J40', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' },
     { titre: 'Affiliation CNPS (si salariés)', desc: 'Affiliation si des salariés sont employés.', delai: 'J40 – J50', organisme: 'CNPS', documents: 'Numéro employeur' }
   ],
   GIE: [
     { titre: 'Rédaction du contrat constitutif', desc: 'Le contrat constitutif fixe la dénomination, l\'objet, le siège, la durée, les apports (aucun capital minimum), les modalités d\'administration et les conditions d\'admission/retrait des membres.', delai: 'J1 – J3', organisme: 'Sous seing privé ou notaire', documents: 'Contrat constitutif du GIE signé' },
     { titre: 'Immatriculation au RCCM', desc: 'Le GIE doit être immatriculé au RCCM pour acquérir la personnalité morale. Le dossier comprend le contrat constitutif et la liste des membres.', delai: 'J3 – J18', organisme: 'Tribunal de commerce / CEPICI', documents: 'Extrait RCCM, numéro d\'immatriculation' },
-    { titre: 'Publication dans un JAL (optionnelle selon États)', desc: 'La publication est optionnelle dans certains États membres et obligatoire dans d\'autres. Vérifier la réglementation locale applicable.', delai: 'J18 – J25', organisme: 'Journal d\'Annonces Légales agréé', documents: 'Attestation de publication' },
-    { titre: 'Inscription à la DGI', desc: 'Le GIE n\'est pas soumis à l\'impôt sur les bénéfices en tant que tel — les résultats sont répartis entre membres. Obtention du NIF pour les formalités administratives.', delai: 'J25 – J30', organisme: 'Direction Générale des Impôts (DGI)', documents: 'NIF, compte contribuable' }
+    { titre: 'Publication dans un JAL (selon l\'État)', desc: 'La publication est facultative dans certains États membres et obligatoire dans d\'autres. Vérifiez la réglementation nationale applicable.', delai: 'J18 – J25', organisme: 'Journal d\'annonces légales agréé', documents: 'Attestation de publication' },
+    { titre: 'Inscription à la DGI', desc: 'Le GIE n\'est pas soumis à l\'impôt sur les bénéfices en tant que tel : les résultats sont répartis entre ses membres. Le NIF est obtenu pour l\'accomplissement des formalités administratives.', delai: 'J25 – J30', organisme: 'Direction générale des impôts (DGI)', documents: 'NIF, compte contribuable' }
   ]
 };
 
@@ -7496,7 +7499,7 @@ const OHADA_DOCS = {
   SARL: ['Certificat de dépôt de capital (banque)', 'Déclaration de souscription et de versement (notaire)', 'Liste des souscripteurs'],
   SURL: ['Certificat de dépôt de capital (banque)', 'Déclaration de souscription et de versement (notaire)'],
   SA: ['Rapport de vérification des apports (commissaire aux comptes)', 'Liste des premiers administrateurs et DG', 'PV de l\'assemblée constitutive', 'Attestation de désignation du commissaire aux comptes'],
-  SAS: ['Acte de nomination du Président (si non prévu dans les statuts)', 'Certificat de dépôt de fonds (si apports en numéraire)', 'Rapport d\'évaluation des apports en nature (si applicable)', 'Liste des actionnaires fondateurs avec nombre d\'actions souscrites'],
+  SAS: ['Acte de nomination du président (si cette nomination n\'est pas prévue dans les statuts)', 'Certificat de dépôt de fonds (si apports en numéraire)', 'Rapport d\'évaluation des apports en nature (le cas échéant)', 'Liste des actionnaires fondateurs et nombre d\'actions souscrites par chacun'],
   SNC: ['Justificatif de la qualité de commerçant des associés'],
   SCS: ['Justificatif de la qualité de commerçant des associés commandités', 'Liste distincte des commandités et commanditaires'],
   SCA: ['Rapport de vérification des apports (commissaire aux comptes)', 'Liste distincte des commandités (gérants) et commanditaires (actionnaires)', 'Attestation de désignation du commissaire aux comptes', 'Certificat de dépôt de fonds'],
@@ -7522,7 +7525,7 @@ function renderOhadaDocs(forme) {
       ${communsHtml}
     </div>
     ${specHtml ? `<div class="ohada-checklist-section">
-      <div class="ohada-checklist-section-title">Documents spécifiques ${forme}</div>
+      <div class="ohada-checklist-section-title">Documents propres à la forme ${forme}</div>
       ${specHtml}
     </div>` : ''}`;
 }
@@ -7558,7 +7561,7 @@ function printDocumentChecklist() {
 })();
 
 // ── OHADA ──
-const ohadaLabels = { CREATION_SARL:'Création SARL', CREATION_SA:'Création SA', AGO_ANNUELLE:'AGO Annuelle', DISSOLUTION:'Dissolution', CESSION_PARTS:'Cession de parts', FUSION_ABSORPTION:'Fusion-absorption', INJONCTION_PAYER:'Injonction de payer', IMMATRICULATION_RCCM:'Immatriculation RCCM' };
+const ohadaLabels = { CREATION_SARL:'Création d’une SARL', CREATION_SA:'Création d’une SA', AGO_ANNUELLE:'AGO annuelle', DISSOLUTION:'Dissolution', CESSION_PARTS:'Cession de parts', FUSION_ABSORPTION:'Fusion-absorption', INJONCTION_PAYER:'Injonction de payer', IMMATRICULATION_RCCM:'Immatriculation au RCCM' };
 function updateOhadaAssistantMode() {
   const operation = document.getElementById('ohada_event_type')?.value || '';
   const isCreation = operation.startsWith('CREATION_');
@@ -7591,7 +7594,7 @@ function renderOhadaPlan(data, project) {
     const national = step.authority === 'NATIONAL';
     const legalReference = step.legal_reference;
     const ruleAction = legalReference
-      ? `<button class="btn btn-sm" style="margin-top:6px" onclick="openOhadaRule('${escHtml(legalReference.document_id)}','${escHtml(legalReference.provision_number)}')">Voir l'article · ${Number(legalReference.citation_count || 0)} décision(s)</button>`
+      ? `<button class="btn btn-sm" style="margin-top:6px" onclick="openOhadaRule('${escHtml(legalReference.document_id)}','${escHtml(legalReference.provision_number)}')">Voir l'article · ${pluralFr(Number(legalReference.citation_count || 0), 'décision')}</button>`
       : (!national ? '<div style="font-size:9px;color:var(--orange);margin-top:5px">Article absent du corpus partiel</div>' : '');
     return `<tr>
       <td><input type="checkbox" aria-label="Marquer l'étape ${index + 1} comme terminée" onchange="toggleOhadaPlanStep(this)"></td>
@@ -7725,7 +7728,7 @@ const DEMO_ARRET = {
   present: {
     faits: 'La société ATLAS SARL a obtenu un prêt de 45 000 000 FCFA auprès de la SGBCI, garanti par un acte de cautionnement signé par M. Konan en qualité de gérant. L\'acte de cautionnement ne mentionnait pas expressément la cause de l\'engagement mais renvoyait au contrat de prêt principal.',
     pretentions: [
-      { partie: 'Demandeur (M. Konan)', arg: 'Nullité de l\'acte de cautionnement pour absence de mention de la cause — violation de l\'article 4 du Code Civil OHADA' },
+      { partie: 'Demandeur (M. Konan)', arg: 'Nullité de l\'acte de cautionnement pour absence de mention de la cause — violation alléguée de l\'article 4 du droit civil national applicable' },
       { partie: 'Demandeur (M. Konan)', arg: 'Prescription de l\'action en paiement — délai de 5 ans dépassé depuis la mise en demeure' },
       { partie: 'Défendeur (SGBCI)', arg: 'La cause est déterminable par référence au contrat de prêt expressément visé dans l\'acte' },
       { partie: 'Défendeur (SGBCI)', arg: 'La prescription n\'est pas acquise — la mise en demeure a interrompu le délai' },
@@ -7736,7 +7739,7 @@ const DEMO_ARRET = {
     ],
     question_droit: 'L\'absence de mention expresse de la cause dans un acte de cautionnement entraîne-t-elle sa nullité lorsque cette cause est déterminable par référence aux documents contractuels expressément visés ?',
     raisonnement: 'La Cour relève que si la mention de la cause constitue une condition de validité du cautionnement, cette exigence est satisfaite dès lors que la cause peut être déterminée avec certitude par référence aux autres documents contractuels. En l\'espèce, l\'acte de cautionnement visait expressément le contrat de prêt n°2015/SGBCI/047, permettant ainsi de déterminer avec précision la nature et l\'étendue de l\'engagement de la caution.',
-    visa: ['Art. 4 AUDCG', 'Art. 13 AUS', 'Art. 1131 du Code Civil applicable'],
+    visa: ['Article 4 de l\'AUDCG', 'Article 13 de l\'AUS', 'Article 1131 du code civil national applicable'],
     dispositif: 'Rejet du pourvoi — confirmation de l\'arrêt de la Cour d\'Appel d\'Abidjan du 14 septembre 2018',
   },
   futur: {
@@ -8423,9 +8426,9 @@ function copierCitation(texte) {
 const DEMO_VEILLE = [
   {
     id: 'v1', corpus: 'ohada',
-    type: 'Acte Uniforme', source: 'OHADA — Journal Officiel',
+    type: 'Acte uniforme', source: 'OHADA — Journal officiel',
     date: '15 janvier 2024',
-    titre: 'Révision de l\'Acte Uniforme sur le Droit des Sociétés Commerciales (AUSC)',
+    titre: 'Révision de l\'Acte uniforme relatif au droit des sociétés commerciales (AUSCGIE)',
     resume: 'La révision introduit de nouvelles dispositions relatives à la société par actions simplifiée (SAS) et modernise les règles de gouvernance des SA. Entrée en vigueur différée de 6 mois pour les sociétés déjà constituées.',
     impact: 'high',
     impact_label: 'Impact élevé',
@@ -8507,7 +8510,7 @@ async function renderVeille(filter) {
     document.getElementById('veille-methodology').innerHTML = `
       <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
         <strong>${escHtml(methodology.label || 'Veille sourcée BAOBAB')}</strong>
-        <span class="pill pill-gold">${Number(data.filtered_total || 0).toLocaleString('fr-FR')} publication(s)</span>
+        <span class="pill pill-gold">${pluralFr(Number(data.filtered_total || 0).toLocaleString('fr-FR'), 'publication')}</span>
         <span class="pill pill-gray">${sourceScope === 'official' ? 'Sources officielles' : sourceScope === 'trusted' ? 'Sources officielles et institutionnelles' : 'Toutes les sources'}</span>
       </div>
       <div style="margin-top:7px;color:var(--sub)">${escHtml(methodology.coverage_notice || '')}</div>
@@ -8707,7 +8710,7 @@ async function deleteLegalWatch(watchId) {
 
 const DEMO_ARTICLE = {
   ref: 'Art. 4 AUDCG',
-  titre: 'Article 4 — Acte Uniforme sur le Droit Commercial Général (AUDCG)',
+  titre: 'Article 4 — Acte uniforme portant sur le droit commercial général (AUDCG)',
   corpus: 'OHADA',
   version_actuelle: 'Révisé le 15 décembre 2010',
   texte: 'Tout acte de commerce est soumis à la loi du lieu de sa conclusion, à moins que les parties n\'aient désigné la loi applicable. Cependant, en ce qui concerne les actes conclus entre commerçants et portant sur des opérations commerciales relevant de la même activité, la loi applicable est celle du pays dans lequel l\'une des parties a son établissement principal, si cet établissement était connu de l\'autre partie au moment de la conclusion de l\'acte ou au plus tard au moment de l\'exécution de la prestation caractéristique.',
@@ -9593,7 +9596,7 @@ function frRenderResults(data) {
   const pg = document.getElementById('fr-pagination');
   const lbl = document.getElementById('fr-page-label');
   pg.style.display = 'flex';
-  lbl.textContent = `Page ${frState.page + 1} — ${total} résultat(s)`;
+  lbl.textContent = `Page ${frState.page + 1} — ${pluralFr(total, 'résultat')}`;
   document.getElementById('fr-prev').disabled = frState.page === 0;
   document.getElementById('fr-next').disabled = items.length < 10;
 }
@@ -9744,7 +9747,7 @@ function renderCmAnalysis(data) {
   // Documents sources
   if (docs.length) {
     html += `<div style="font-size:11px;color:var(--sub);margin-top:8px">
-      <strong>${docs.length} document(s) analysé(s) :</strong> ${docs.map(d => escHtml(d.ref || d.titre || '—')).join(' · ')}
+      <strong>${pluralFr(docs.length, 'document')} ${docs.length === 1 ? 'analysé' : 'analysés'} :</strong> ${docs.map(d => escHtml(d.ref || d.titre || '—')).join(' · ')}
     </div>`;
   }
 
@@ -9874,7 +9877,7 @@ function renderArticleLegalJourney(article, decisions = []) {
     ...decisions.slice().sort((a,b) => String(a.date_decision || '9999').localeCompare(String(b.date_decision || '9999'))).map(item => ({ date:item.date_decision, label:item.ref || item.titre || 'Décision liée', kind:item.date_decision ? 'decision' : 'unknown' })),
     ...(article.valid_until ? [{ date:article.valid_until, label:'Fin d’effet', kind:'unknown' }] : [])
   ];
-  return `<div class="legal-journey"><div class="legal-journey-title">Position de l'article dans le temps</div><div class="legal-timeline">${events.map(event => `<div class="legal-time-step ${event.kind}"><span class="legal-time-dot"></span><div class="legal-time-date">${escHtml(legalJourneyDate(event.date))}</div><div class="legal-time-label">${escHtml(event.label)}</div></div>`).join('')}</div><div class="journey-legend"><span>● vert : vie du texte</span><span>● brun : décision citant l'article</span><span>● gris : information absente ou fin d'effet</span></div></div>`;
+  return `<div class="legal-journey"><div class="legal-journey-title">Position de l'article dans le temps</div><div class="legal-timeline">${events.map(event => `<div class="legal-time-step ${event.kind}"><span class="legal-time-dot"></span><div class="legal-time-date">${escHtml(legalJourneyDate(event.date))}</div><div class="legal-time-label">${escHtml(event.label)}</div></div>`).join('')}</div><div class="journey-legend"><span>● vert : période d'application du texte</span><span>● brun : décision citant l'article</span><span>● gris : information non documentée ou fin d'effet</span></div></div>`;
 }
 
 function renderDecisionProcedureJourney(doc) {
@@ -9899,15 +9902,15 @@ function renderDecisionProcedureJourney(doc) {
     text:brief.dispositif || brief.solution || doc.resume || 'Décision disponible dans le texte intégral.',
     date:doc.date_decision, current:true
   }];
-  return `<div class="legal-journey"><div class="legal-journey-title">Parcours procédural ayant conduit à la décision</div><div class="procedure-flow">${nodes.map(node => `<div class="procedure-node ${node.current ? 'current' : ''} ${node.unknown ? 'unknown' : ''}"><div class="decision-brief-label">${escHtml(node.title)}</div>${node.date ? `<div style="font-size:10px;font-weight:800;margin-bottom:5px">${escHtml(legalJourneyDate(node.date))}</div>` : ''}<div>${escHtml(node.text)}</div></div>`).join('')}</div><div class="journey-legend"><span>Trait plein : information présente dans le dossier</span><span>Trait pointillé : étape non documentée</span><span>Les étapes manquantes ne sont jamais inventées</span></div>${(doc.articles_cites || []).length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px"><strong>Droit cité à la date de la décision :</strong> ${(doc.articles_cites || []).map(item => `<span class="pill pill-blue" style="margin:3px">${escHtml(item)}</span>`).join('')}</div>` : ''}</div>`;
+  return `<div class="legal-journey"><div class="legal-journey-title">Parcours procédural ayant conduit à la décision</div><div class="procedure-flow">${nodes.map(node => `<div class="procedure-node ${node.current ? 'current' : ''} ${node.unknown ? 'unknown' : ''}"><div class="decision-brief-label">${escHtml(node.title)}</div>${node.date ? `<div style="font-size:10px;font-weight:800;margin-bottom:5px">${escHtml(legalJourneyDate(node.date))}</div>` : ''}<div>${escHtml(node.text)}</div></div>`).join('')}</div><div class="journey-legend"><span>Trait plein : information présente dans le dossier</span><span>Trait pointillé : étape non documentée</span><span>Les étapes manquantes ne sont jamais inventées</span></div>${(doc.articles_cites || []).length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px"><strong>Règles citées dans la décision :</strong> ${(doc.articles_cites || []).map(item => `<span class="pill pill-blue" style="margin:3px">${escHtml(item)}</span>`).join('')}</div>` : ''}</div>`;
 }
 
 function renderLinkedCaseJourney(decision, article) {
-  return `<div class="procedure-flow" style="margin-top:9px"><div class="procedure-node unknown"><div class="decision-brief-label">Étapes antérieures</div>Non documentées dans la relation automatique</div><div class="procedure-node current"><div class="decision-brief-label">Décision · ${escHtml(legalJourneyDate(decision.date_decision))}</div>${escHtml(decision.juridiction || 'Juridiction non précisée')}</div><div class="procedure-node"><div class="decision-brief-label">Règle examinée</div>${escHtml(article.document_ref || 'Acte OHADA')} · article ${escHtml(article.provision_number)}</div></div>`;
+  return `<div class="procedure-flow" style="margin-top:9px"><div class="procedure-node unknown"><div class="decision-brief-label">Étapes antérieures</div>Non documentées par la relation automatique</div><div class="procedure-node current"><div class="decision-brief-label">Décision · ${escHtml(legalJourneyDate(decision.date_decision))}</div>${escHtml(decision.juridiction || 'Juridiction non précisée')}</div><div class="procedure-node"><div class="decision-brief-label">Article cité</div>${escHtml(article.document_ref || 'Acte OHADA')} · article ${escHtml(article.provision_number)}</div></div>`;
 }
 
 function renderDecisionSearchJourney(decision) {
-  return `<div class="legal-journey" style="padding:10px;margin:10px 0 0"><div class="legal-journey-title">Position temporelle et parcours</div><div class="procedure-flow"><div class="procedure-node unknown"><div class="decision-brief-label">Origine et recours</div>À ouvrir pour voir les étapes documentées</div><div class="procedure-node current"><div class="decision-brief-label">Décision rendue</div><strong>${escHtml(legalJourneyDate(decision.date_decision))}</strong><br>${escHtml(decision.juridiction || 'Juridiction non précisée')}</div><div class="procedure-node unknown"><div class="decision-brief-label">Portée postérieure</div>À apprécier avec les décisions plus récentes</div></div></div>`;
+  return `<div class="legal-journey" style="padding:10px;margin:10px 0 0"><div class="legal-journey-title">Position temporelle et parcours</div><div class="procedure-flow"><div class="procedure-node unknown"><div class="decision-brief-label">Origine et recours</div>Ouvrez la fiche pour consulter les étapes documentées.</div><div class="procedure-node current"><div class="decision-brief-label">Décision rendue</div><strong>${escHtml(legalJourneyDate(decision.date_decision))}</strong><br>${escHtml(decision.juridiction || 'Juridiction non précisée')}</div><div class="procedure-node unknown"><div class="decision-brief-label">Portée postérieure</div>À apprécier au regard des décisions plus récentes.</div></div></div>`;
 }
 
 function renderDecisionClientBrief(doc) {
@@ -10018,7 +10021,7 @@ function openSourceDoc(docId) {
       const averageConfidence = confidenceValues.length ? Math.round(confidenceValues.reduce((a,b)=>a+b,0)/confidenceValues.length) : null;
       const evidencePanel = searchable || original ? `<div style="padding:13px 15px;border:1px solid rgba(23,99,58,.22);background:rgba(23,99,58,.04);border-radius:10px;margin:12px 0">
         <div class="decision-brief-label" style="color:#17633a">Preuve documentaire conservée par Baobab</div>
-        <div style="font-size:11px;line-height:1.65;color:var(--text)">${imagePages.length || ocrPages.length} page(s) traitée(s) · empreinte SHA-256 contrôlée${averageConfidence !== null ? ` · confiance OCR moyenne ${averageConfidence}%` : ''}${reviewPages ? ` · ${reviewPages} page(s) à relire` : ' · aucune page signalée'}</div>
+        <div style="font-size:11px;line-height:1.65;color:var(--text)">${pluralFr(imagePages.length || ocrPages.length, 'page')} ${Number(imagePages.length || ocrPages.length) === 1 ? 'traitée' : 'traitées'} · empreinte SHA-256 contrôlée${averageConfidence !== null ? ` · confiance OCR moyenne ${averageConfidence}%` : ''}${reviewPages ? ` · ${pluralFr(reviewPages, 'page')} à relire` : ' · aucune page signalée'}</div>
         <div style="font-size:10px;color:var(--sub);margin-top:5px">La copie visuelle fait foi pour la lecture. La transcription OCR facilite la recherche mais peut contenir des erreurs et ne remplace pas l’original.</div>
       </div>` : '';
       const sourceLinks = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
@@ -10123,11 +10126,13 @@ async function loadOhadaArticles() {
     const data = await parseJson(response);
     if (!response.ok) throw new Error(fmtError(data.detail));
     if (query && Number(data.total || 0) > 0) rememberOhadaSearch(query, Number(data.total));
-    target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${data.total || 0} article(s) affiché(s)${query ? ` pour « ${escHtml(query)} »` : ''}.${data.notice ? ` ${escHtml(data.notice)}` : ''}</div>` + ((data.results || []).map(article => {
+    const articleTotal = Number(data.total || 0);
+    target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${pluralFr(articleTotal, 'article')} ${articleTotal === 1 ? 'affiché' : 'affichés'}${query ? ` pour « ${escHtml(query)} »` : ''}.${data.notice ? ` ${escHtml(data.notice)}` : ''}</div>` + ((data.results || []).map(article => {
       const articleDocumentId = article.document_id || documentId;
       const actLabel = article.document_ref ? `<span class="pill pill-gray">${escHtml(article.document_ref)}</span>` : '';
       const journeyArticle = {...article, publication_date:article.publication_date || data.document?.publication_date};
-      return `<details class="card" style="margin-bottom:8px" ontoggle="if(this.open)loadOhadaArticleDecisions('${escHtml(articleDocumentId)}','${escHtml(article.provision_number)}','${escHtml(article.provision_id)}')"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong>${actLabel}</span><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pill pill-blue">${Number(article.citation_count || 0)} décision(s) liée(s)</span>${ohadaVerificationBadge(article.verification_status)}</span></summary><div id="ohada-journey-${escHtml(article.provision_id)}" style="padding:0 15px">${renderArticleLegalJourney(journeyArticle)}</div><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div><div id="ohada-case-links-${escHtml(article.provision_id)}" style="padding:0 15px 15px;border-top:1px solid var(--border)"><div style="padding-top:12px;font-size:11px;color:var(--sub)">Ouvrez l'article pour charger la jurisprudence liée.</div></div></details>`;
+      const citationCount = Number(article.citation_count || 0);
+      return `<details class="card" style="margin-bottom:8px" ontoggle="if(this.open)loadOhadaArticleDecisions('${escHtml(articleDocumentId)}','${escHtml(article.provision_number)}','${escHtml(article.provision_id)}')"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong>${actLabel}</span><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pill pill-blue">${pluralFr(citationCount, 'décision')} ${citationCount === 1 ? 'liée' : 'liées'}</span>${ohadaVerificationBadge(article.verification_status)}</span></summary><div id="ohada-journey-${escHtml(article.provision_id)}" style="padding:0 15px">${renderArticleLegalJourney(journeyArticle)}</div><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div><div id="ohada-case-links-${escHtml(article.provision_id)}" style="padding:0 15px 15px;border-top:1px solid var(--border)"><div style="padding-top:12px;font-size:11px;color:var(--sub)">Ouvrez l'article pour charger la jurisprudence liée.</div></div></details>`;
     }).join('') || '<div class="empty-state"><div class="empty-text">Aucun article ne correspond à cette recherche.</div></div>');
   } catch(error) {
     target.innerHTML = `<div style="color:var(--red);font-size:12px">${escHtml(error.message)}</div>`;

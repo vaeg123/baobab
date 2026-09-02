@@ -77,3 +77,16 @@ L'interface affiche désormais un « Parcours juridique OHADA » dès qu'un arti
 - la fiche complète d'une décision présente un schéma procédural alimenté par la fiche jurisprudentielle structurée et les règles citées.
 
 Une date ou une étape absente doit toujours porter la mention « non documentée ». Le client ne doit jamais déduire un degré de juridiction ou une date à partir du seul ordre narratif. Les liens article–décision restent qualifiés comme automatiques tant qu'ils ne sont pas validés éditorialement.
+
+## Révision linguistique de l'interface (2 septembre 2026)
+
+Les textes visibles de l'espace OHADA, les libellés produits par les cascades et les messages des routes juridiques ont fait l'objet d'une révision rédactionnelle. Les règles suivantes doivent être conservées :
+
+- écrire les phrases en toutes lettres et éviter les formulations techniques abrégées telles que « décision(s) », « dépôt RCCM » ou « publication JAL » ;
+- utiliser les capitales avec retenue : « Acte uniforme », « société anonyme », « journal d'annonces légales » et « direction générale des impôts » ;
+- préférer les termes français aux anglicismes visibles : « liste de contrôle » et « entreprendre seul » ;
+- distinguer systématiquement le droit OHADA du droit national ; l'expression « Code civil OHADA » est juridiquement incorrecte ;
+- utiliser une fonction de pluralisation pour les nombres variables affichés dans l'interface ;
+- présenter les délais administratifs annoncés comme tels et rappeler qu'ils supposent un dossier conforme.
+
+Le test `test_ohada_interface_uses_complete_and_consistent_french` empêche la réintroduction des principales formulations fautives.

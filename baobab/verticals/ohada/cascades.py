@@ -10,7 +10,7 @@ CREATION_SARL_CASCADE = CascadeDefinition(
     cascade_id="OHADA.CREATION.SARL.V2014",
     event_type=OhadaEventType.CREATION_SARL,
     corpus="OHADA",
-    description="Cascade création SARL — AUSCGIE Art. 309-395",
+    description="Création d'une SARL — articles 309 à 395 de l'AUSCGIE",
     steps=[
         CascadeStep(
             name="Rédaction et signature des statuts",
@@ -18,12 +18,12 @@ CREATION_SARL_CASCADE = CascadeDefinition(
             deadline_days=0,
         ),
         CascadeStep(
-            name="Dépôt du capital social en banque (libération au moins 1/4)",
+            name="Dépôt du capital social à la banque et libération d'au moins un quart",
             rule_id="OHADA.AUSCGIE.ART311.V2014",
             deadline_days=5,
         ),
         CascadeStep(
-            name="Enregistrement des statuts (Administration fiscale)",
+            name="Enregistrement des statuts auprès de l'administration fiscale",
             rule_id="OHADA.AUDCG.ART27.V2010",
             deadline_days=30,
             sanction="Amende fiscale",
@@ -35,7 +35,7 @@ CREATION_SARL_CASCADE = CascadeDefinition(
             sanction="Absence de personnalité morale",
         ),
         CascadeStep(
-            name="Publication dans un Journal d'Annonces Légales",
+            name="Publication dans un journal d'annonces légales",
             rule_id="OHADA.AUSCGIE.ART260.V2014",
             deadline_days=75,
         ),
@@ -45,7 +45,7 @@ CREATION_SARL_CASCADE = CascadeDefinition(
             deadline_days=30,
         ),
         CascadeStep(
-            name="Affiliation organismes sociaux",
+            name="Affiliation auprès des organismes sociaux",
             rule_id="NATIONAL.CSS.ART10.V2022",
             deadline_days=30,
         ),
@@ -57,15 +57,15 @@ CREATION_SA_CASCADE = CascadeDefinition(
     cascade_id="OHADA.CREATION.SA.V2014",
     event_type=OhadaEventType.CREATION_SA,
     corpus="OHADA",
-    description="Cascade création SA — AUSCGIE Art. 385-920",
+    description="Création d'une SA — articles 385 à 920 de l'AUSCGIE",
     steps=[
         CascadeStep(
-            name="Rédaction statuts SA",
+            name="Rédaction des statuts de la SA",
             rule_id="OHADA.AUSCGIE.ART385.V2014",
             deadline_days=0,
         ),
         CascadeStep(
-            name="Constitution et souscription du capital (libération 50% minimum)",
+            name="Constitution et souscription du capital, avec libération d'au moins 50 %",
             rule_id="OHADA.AUSCGIE.ART389.V2014",
             deadline_days=30,
             sanction="Nullité de la société",
@@ -81,17 +81,17 @@ CREATION_SA_CASCADE = CascadeDefinition(
             deadline_days=60,
         ),
         CascadeStep(
-            name="Immatriculation RCCM",
+            name="Immatriculation au RCCM",
             rule_id="OHADA.AUDCG.ART25.V2010",
             deadline_days=75,
         ),
         CascadeStep(
-            name="Publication JAL",
+            name="Publication dans un journal d'annonces légales",
             rule_id="OHADA.AUSCGIE.ART260.V2014",
             deadline_days=90,
         ),
         CascadeStep(
-            name="Premier Conseil d'Administration (nomination dirigeants)",
+            name="Première réunion du conseil d'administration et nomination des dirigeants",
             rule_id="OHADA.AUSCGIE.ART414.V2014",
             deadline_days=105,
         ),
@@ -103,7 +103,7 @@ AGO_ANNUELLE_CASCADE = CascadeDefinition(
     cascade_id="OHADA.AGO.ANNUELLE.V2014",
     event_type=OhadaEventType.AGO_ANNUELLE,
     corpus="OHADA",
-    description="Cascade AGO annuelle — AUSCGIE Art. 133-156",
+    description="Assemblée générale ordinaire annuelle — articles 133 à 156 de l'AUSCGIE",
     steps=[
         CascadeStep(
             name="Clôture de l'exercice comptable",
@@ -116,28 +116,28 @@ AGO_ANNUELLE_CASCADE = CascadeDefinition(
             deadline_days=90,
         ),
         CascadeStep(
-            name="Rapport du Commissaire aux Comptes",
+            name="Rapport du commissaire aux comptes",
             rule_id="OHADA.AUSCGIE.ART702.V2014",
             deadline_days=120,
             sanction="Nullité des délibérations",
         ),
         CascadeStep(
-            name="Convocation des associés/actionnaires (21j minimum avant AGO)",
+            name="Convocation des associés ou des actionnaires au moins 21 jours avant l'AGO",
             rule_id="OHADA.AUSCGIE.ART133.V2014",
             deadline_days=150,
             sanction="Nullité de l'AGO",
         ),
         CascadeStep(
-            name="Tenue de l'AGO (dans les 6 mois suivant clôture)",
+            name="Tenue de l'AGO dans les six mois suivant la clôture de l'exercice",
             rule_id="OHADA.AUSCGIE.ART140.V2014",
             deadline_days=180,
-            sanction="Sanction pénale dirigeants + dissolution judiciaire possible",
+            sanction="Sanctions pénales visant les dirigeants et dissolution judiciaire éventuelle",
         ),
         CascadeStep(
             name="Dépôt des comptes approuvés au RCCM",
             rule_id="OHADA.AUDCG.ART20.V2010",
             deadline_days=210,
-            sanction="Amende + injonction tribunal",
+            sanction="Amende et injonction du tribunal",
         ),
     ],
 )
@@ -147,7 +147,7 @@ DISSOLUTION_CASCADE = CascadeDefinition(
     cascade_id="OHADA.DISSOLUTION.V2014",
     event_type=OhadaEventType.DISSOLUTION,
     corpus="OHADA",
-    description="Cascade dissolution — AUSCGIE Art. 200-234",
+    description="Dissolution — articles 200 à 234 de l'AUSCGIE",
     steps=[
         CascadeStep(
             name="Décision de dissolution (AGE ou tribunal)",
@@ -160,7 +160,7 @@ DISSOLUTION_CASCADE = CascadeDefinition(
             deadline_days=15,
         ),
         CascadeStep(
-            name="Publication dissolution dans JAL",
+            name="Publication de la dissolution dans un journal d'annonces légales",
             rule_id="OHADA.AUSCGIE.ART206.V2014",
             deadline_days=15,
             sanction="Inopposabilité aux tiers",
@@ -199,7 +199,7 @@ CESSION_PARTS_CASCADE = CascadeDefinition(
     cascade_id="OHADA.CESSION.PARTS.V2014",
     event_type=OhadaEventType.CESSION_PARTS,
     corpus="OHADA",
-    description="Cascade cession de parts SARL — AUSCGIE Art. 317-328",
+    description="Cession de parts d'une SARL — articles 317 à 328 de l'AUSCGIE",
     steps=[
         CascadeStep(
             name="Notification aux autres associés (droit de préemption)",
@@ -213,7 +213,7 @@ CESSION_PARTS_CASCADE = CascadeDefinition(
             sanction="Réputé avoir renoncé",
         ),
         CascadeStep(
-            name="Agrément de la cession (AGO si requis)",
+            name="Agrément de la cession par l'assemblée, lorsqu'il est requis",
             rule_id="OHADA.AUSCGIE.ART319.V2014",
             deadline_days=45,
         ),
@@ -229,7 +229,7 @@ CESSION_PARTS_CASCADE = CascadeDefinition(
             sanction="Droits de mutation + pénalités",
         ),
         CascadeStep(
-            name="Mise à jour statuts et registre des associés",
+            name="Mise à jour des statuts et du registre des associés",
             rule_id="OHADA.AUSCGIE.ART325.V2014",
             deadline_days=90,
         ),
@@ -246,7 +246,7 @@ FUSION_ABSORPTION_CASCADE = CascadeDefinition(
     cascade_id="OHADA.FUSION.ABSORPTION.V2014",
     event_type=OhadaEventType.FUSION_ABSORPTION,
     corpus="OHADA",
-    description="Cascade fusion-absorption — AUSCGIE Art. 189-199",
+    description="Fusion-absorption — articles 189 à 199 de l'AUSCGIE",
     steps=[
         CascadeStep(
             name="Projet de fusion établi et signé",
@@ -254,39 +254,39 @@ FUSION_ABSORPTION_CASCADE = CascadeDefinition(
             deadline_days=0,
         ),
         CascadeStep(
-            name="Dépôt projet au RCCM (30j avant toute AGE)",
+            name="Dépôt du projet au RCCM au moins 30 jours avant l'AGE",
             rule_id="OHADA.AUSCGIE.ART193.V2014",
             deadline_days=5,
             sanction="Nullité de la fusion",
         ),
         CascadeStep(
-            name="Rapport commissaire à la fusion",
+            name="Rapport du commissaire à la fusion",
             rule_id="OHADA.AUSCGIE.ART194.V2014",
             deadline_days=30,
         ),
         CascadeStep(
-            name="AGE des sociétés fusionnantes (approbation)",
+            name="Approbation par les assemblées générales extraordinaires des sociétés fusionnantes",
             rule_id="OHADA.AUSCGIE.ART195.V2014",
             deadline_days=60,
         ),
         CascadeStep(
-            name="Publication de la fusion dans JAL",
+            name="Publication de la fusion dans un journal d'annonces légales",
             rule_id="OHADA.AUSCGIE.ART197.V2014",
             deadline_days=75,
             sanction="Inopposabilité aux créanciers",
         ),
         CascadeStep(
-            name="Opposition des créanciers (délai 30j courant)",
+            name="Délai de 30 jours ouvert aux créanciers pour former opposition",
             rule_id="OHADA.AUSCGIE.ART198.V2014",
             deadline_days=105,
         ),
         CascadeStep(
-            name="Immatriculation société absorbante / RCCM",
+            name="Mise à jour de l'immatriculation de la société absorbante au RCCM",
             rule_id="OHADA.AUDCG.ART35.V2010",
             deadline_days=120,
         ),
         CascadeStep(
-            name="Radiation société absorbée au RCCM",
+            name="Radiation de la société absorbée au RCCM",
             rule_id="OHADA.AUDCG.ART57.V2010",
             deadline_days=135,
         ),
@@ -298,10 +298,10 @@ INJONCTION_PAYER_CASCADE = CascadeDefinition(
     cascade_id="OHADA.INJONCTION.PAYER.V2010",
     event_type=OhadaEventType.INJONCTION_PAYER,
     corpus="OHADA",
-    description="Cascade injonction de payer — AUVE Art. 1-25",
+    description="Injonction de payer — articles 1 à 25 de l'Acte uniforme applicable",
     steps=[
         CascadeStep(
-            name="Requête en injonction de payer déposée au Tribunal",
+            name="Dépôt de la requête en injonction de payer auprès du tribunal",
             rule_id="OHADA.AUVE.ART1.V2010",
             deadline_days=0,
         ),
@@ -322,7 +322,7 @@ INJONCTION_PAYER_CASCADE = CascadeDefinition(
             deadline_days=60,
         ),
         CascadeStep(
-            name="Si pas d'opposition : apposition formule exécutoire",
+            name="En l'absence d'opposition, apposition de la formule exécutoire",
             rule_id="OHADA.AUVE.ART14.V2010",
             deadline_days=75,
         ),
@@ -339,26 +339,26 @@ IMMATRICULATION_RCCM_CASCADE = CascadeDefinition(
     cascade_id="OHADA.IMMATRICULATION.RCCM.V2010",
     event_type=OhadaEventType.IMMATRICULATION_RCCM,
     corpus="OHADA",
-    description="Cascade immatriculation RCCM — AUDCG Art. 25-55",
+    description="Immatriculation au RCCM — articles 25 à 55 de l'AUDCG",
     steps=[
         CascadeStep(
-            name="Constitution du dossier RCCM",
+            name="Constitution du dossier d'immatriculation au RCCM",
             rule_id="OHADA.AUDCG.ART25.V2010",
             deadline_days=0,
         ),
         CascadeStep(
-            name="Dépôt dossier au Greffe du Tribunal de Commerce",
+            name="Dépôt du dossier au greffe du tribunal de commerce",
             rule_id="OHADA.AUDCG.ART25.V2010",
             deadline_days=15,
             sanction="Impossibilité d'exercer légalement",
         ),
         CascadeStep(
-            name="Vérification et immatriculation par le Greffe",
+            name="Vérification du dossier et immatriculation par le greffe",
             rule_id="OHADA.AUDCG.ART29.V2010",
             deadline_days=30,
         ),
         CascadeStep(
-            name="Délivrance extrait RCCM",
+            name="Délivrance de l'extrait du RCCM",
             rule_id="OHADA.AUDCG.ART31.V2010",
             deadline_days=35,
         ),

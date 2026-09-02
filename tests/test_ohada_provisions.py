@@ -25,7 +25,7 @@ def test_ohada_codes_show_the_editorial_verification_status():
     html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
         encoding="utf-8"
     )
-    assert "Codes OHADA" in html
+    assert "Textes OHADA" in html
     assert "Extraction automatique · à vérifier" in html
     assert "Document contrôlé" in html
     assert "Validé juridiquement" in html
@@ -52,7 +52,26 @@ def test_ohada_codes_show_the_editorial_verification_status():
     assert "Parcours procédural ayant conduit à la décision" in html
     assert "renderDecisionProcedureJourney" in html
     assert "Les étapes manquantes ne sont jamais inventées" in html
-    assert "Droit cité à la date de la décision" in html
+    assert "Règles citées dans la décision" in html
+
+
+def test_ohada_interface_uses_complete_and_consistent_french():
+    html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    forbidden_phrases = (
+        "AGO Annuelle",
+        "A risque",
+        "décision(s)",
+        "article(s)",
+        "étape(s)",
+        "entrepreneur solo",
+        "Journal d'Annonces Légales",
+        "Direction Générale des Impôts",
+        "Toute la jurisprudence",
+    )
+    for phrase in forbidden_phrases:
+        assert phrase not in html
 
 
 def test_verified_effective_date_is_not_confused_with_adoption_date():
