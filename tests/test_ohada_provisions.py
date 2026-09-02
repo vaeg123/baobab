@@ -36,6 +36,8 @@ def test_ohada_codes_are_visible_and_clearly_partial():
     assert "loadOhadaArticleDecisions" in html
     assert "Jurisprudence citant explicitement cet article" in html
     assert "validation éditoriale requise" in html
+    assert "Tous les Actes OHADA" in html
+    assert "/api/v1/legal/ohada/articles/search" in html
 
 
 def test_verified_effective_date_is_not_confused_with_adoption_date():

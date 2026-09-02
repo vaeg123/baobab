@@ -945,6 +945,45 @@ async def ohada_codes():
         await conn.close()
 
 
+@router.get("/legal/ohada/articles/search")
+async def search_ohada_articles(query: str, limit: int = 100):
+    """Recherche un article dans tous les Actes OHADA matérialisés."""
+    query = query.strip()
+    if len(query) < 2:
+        raise HTTPException(422, "Saisissez au moins 2 caractères")
+    limit = max(1, min(limit, 200))
+    conn = await _conn()
+    try:
+        rows = await conn.fetch(
+            """SELECT p.provision_id,p.provision_number,p.heading,p.content,p.valid_from,p.valid_until,
+                      p.verification_status,p.content_checksum,c.id AS document_id,c.ref AS document_ref,
+                      c.titre AS document_title,c.source_url,
+                      (SELECT count(*) FROM legal_document_relations r
+                       WHERE r.target_document_id=c.id
+                         AND r.relation_type='EXPLICITLY_CITES_PROVISION'
+                         AND r.provision_ref='Article '||p.provision_number) AS citation_count
+               FROM legal_provisions p JOIN legal_corpus c ON c.id=p.document_id
+               WHERE c.corpus='ohada' AND c.type='acte_uniforme'
+                 AND (p.provision_number ILIKE $1 OR p.content ILIKE $2 OR c.ref ILIKE $2 OR c.titre ILIKE $2)
+               ORDER BY CASE WHEN p.provision_number ILIKE $1 THEN 0 ELSE 1 END,
+                        c.ref,CASE WHEN p.provision_number ~ '^[0-9]+$' THEN p.provision_number::int ELSE 999999 END,
+                        p.provision_number LIMIT $3""",
+            query,
+            f"%{query}%",
+            limit,
+        )
+        return {
+            "query": query,
+            "results": [dict(row) for row in rows],
+            "total": len(rows),
+            "limit": limit,
+            "coverage_complete": False,
+            "notice": "Recherche limitée aux articles matérialisés et non encore tous validés éditorialement.",
+        }
+    finally:
+        await conn.close()
+
+
 @router.get("/legal/ohada/codes/{document_id}/articles")
 async def ohada_code_articles(document_id: str, query: str | None = None, limit: int = 200):
     limit = max(1, min(limit, 500))
