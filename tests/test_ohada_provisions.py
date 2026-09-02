@@ -38,6 +38,10 @@ def test_ohada_codes_are_visible_and_clearly_partial():
     assert "validation éditoriale requise" in html
     assert "Tous les Actes OHADA" in html
     assert "/api/v1/legal/ohada/articles/search" in html
+    assert "Matière juridique" in html
+    assert "OHADA_SEARCH_HISTORY_KEY" in html
+    assert "rememberOhadaSearch" in html
+    assert "Recherches utiles" in html
 
 
 def test_verified_effective_date_is_not_confused_with_adoption_date():

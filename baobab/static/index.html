@@ -4046,10 +4046,12 @@
         <!-- Vue : Codes OHADA -->
         <div id="ohada-view-codes" style="display:none">
           <div style="padding:13px 15px;border-left:4px solid var(--orange);background:rgba(191,78,30,.055);border-radius:8px;margin-bottom:14px;font-size:11px;line-height:1.65"><strong>Couverture partielle contrôlée :</strong> les articles ci-dessous proviennent de textes identifiés mais plafonnés. Ils facilitent la recherche ; vérifiez toujours le Journal officiel avant citation.</div>
-          <div class="grid-2" style="align-items:end;margin-bottom:14px">
+          <div class="grid-2" style="align-items:end;margin-bottom:10px">
             <div class="form-group" style="margin:0"><label>Acte uniforme</label><select id="ohada-code-select" onchange="loadOhadaArticles()"><option value="">Chargement…</option></select></div>
-            <div class="form-group" style="margin:0"><label>Rechercher un numéro ou un mot</label><div style="display:flex;gap:7px"><input id="ohada-article-query" placeholder="Ex. 12, cautionnement, saisie…" onkeydown="if(event.key==='Enter')loadOhadaArticles()"><button class="btn btn-primary btn-sm" onclick="loadOhadaArticles()">Rechercher</button></div></div>
+            <div class="form-group" style="margin:0"><label>Matière juridique</label><select id="ohada-topic-select" onchange="selectOhadaTopic(this.value)"><option value="">Choisir une matière…</option><option value="société à responsabilité limitée">SARL et sociétés commerciales</option><option value="assemblée générale">Assemblées générales</option><option value="cession de parts">Cession de parts</option><option value="fusion">Fusion et restructuration</option><option value="dissolution">Dissolution et liquidation</option><option value="RCCM">RCCM et immatriculation</option><option value="bail professionnel">Bail professionnel</option><option value="fonds de commerce">Fonds de commerce</option><option value="cautionnement">Cautionnement</option><option value="garantie autonome">Garantie autonome</option><option value="nantissement">Nantissement</option><option value="hypothèque">Hypothèque</option><option value="injonction de payer">Injonction de payer</option><option value="saisie-attribution">Saisie-attribution</option><option value="redressement judiciaire">Redressement judiciaire</option><option value="procédures collectives">Procédures collectives</option><option value="comptabilité">Comptabilité</option><option value="transport de marchandises">Transport de marchandises</option></select></div>
           </div>
+          <div class="form-group" style="margin:0 0 8px"><label>Recherche libre dans les articles</label><div style="display:flex;gap:7px"><input id="ohada-article-query" list="ohada-search-suggestions" autocomplete="off" placeholder="Ex. article 309, saisie, RCCM…" oninput="suggestOhadaSearch(this.value)" onfocus="suggestOhadaSearch(this.value)" onkeydown="if(event.key==='Enter')loadOhadaArticles()"><datalist id="ohada-search-suggestions"></datalist><button class="btn btn-primary btn-sm" onclick="loadOhadaArticles()">Rechercher</button></div></div>
+          <div id="ohada-successful-searches" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
           <div id="ohada-codes-summary"></div>
           <div id="ohada-articles-results"><div class="empty-state"><div class="empty-text">Choisissez un Acte uniforme.</div></div></div>
         </div>
@@ -9950,6 +9952,7 @@ async function loadOhadaCodes(preferredDocumentId = null) {
     if (previous && (data.results || []).some(code => code.id === previous)) select.value = previous;
     else if ((data.results || []).length) select.value = data.results[0].id;
     summary.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:12px"><strong style="color:var(--text)">${data.total || 0} Actes indexés</strong> · ${escHtml(data.notice || '')}</div>`;
+    renderOhadaSuccessfulSearches();
     if (select.value) loadOhadaArticles();
   } catch(error) {
     summary.innerHTML = `<div style="color:var(--red)">${escHtml(error.message)}</div>`;
@@ -9981,6 +9984,7 @@ async function loadOhadaArticles() {
     const response = await fetch(endpoint);
     const data = await parseJson(response);
     if (!response.ok) throw new Error(fmtError(data.detail));
+    if (query && Number(data.total || 0) > 0) rememberOhadaSearch(query, Number(data.total));
     target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${data.total || 0} article(s) affiché(s)${query ? ` pour « ${escHtml(query)} »` : ''}.${data.notice ? ` ${escHtml(data.notice)}` : ''}</div>` + ((data.results || []).map(article => {
       const articleDocumentId = article.document_id || documentId;
       const actLabel = article.document_ref ? `<span class="pill pill-gray">${escHtml(article.document_ref)}</span>` : '';
@@ -9989,6 +9993,47 @@ async function loadOhadaArticles() {
   } catch(error) {
     target.innerHTML = `<div style="color:var(--red);font-size:12px">${escHtml(error.message)}</div>`;
   }
+}
+
+const OHADA_TOPICS = ['société à responsabilité limitée','assemblée générale','cession de parts','fusion','dissolution','liquidation','RCCM','bail professionnel','fonds de commerce','cautionnement','garantie autonome','nantissement','hypothèque','injonction de payer','saisie-attribution','redressement judiciaire','procédures collectives','comptabilité','transport de marchandises','AUSCGIE','AUDCG','AUS','AUPSRVE'];
+const OHADA_SEARCH_HISTORY_KEY = 'baobab_ohada_successful_searches_v1';
+
+function getOhadaSuccessfulSearches() {
+  try { return JSON.parse(localStorage.getItem(OHADA_SEARCH_HISTORY_KEY) || '[]'); }
+  catch (_) { return []; }
+}
+function rememberOhadaSearch(query, total) {
+  const clean = (query || '').trim();
+  if (clean.length < 2 || total < 1) return;
+  const history = getOhadaSuccessfulSearches().filter(item => item.query.toLowerCase() !== clean.toLowerCase());
+  history.unshift({ query: clean, total, used_at: new Date().toISOString() });
+  try { localStorage.setItem(OHADA_SEARCH_HISTORY_KEY, JSON.stringify(history.slice(0, 12))); } catch (_) {}
+  renderOhadaSuccessfulSearches();
+  suggestOhadaSearch(clean);
+}
+function suggestOhadaSearch(value = '') {
+  const datalist = document.getElementById('ohada-search-suggestions');
+  if (!datalist) return;
+  const needle = value.trim().toLowerCase();
+  const history = getOhadaSuccessfulSearches().map(item => item.query);
+  const suggestions = [...new Set([...history, ...OHADA_TOPICS])]
+    .filter(item => !needle || item.toLowerCase().includes(needle)).slice(0, 15);
+  datalist.innerHTML = suggestions.map(item => `<option value="${escHtml(item)}"></option>`).join('');
+}
+function renderOhadaSuccessfulSearches() {
+  const target = document.getElementById('ohada-successful-searches');
+  if (!target) return;
+  const history = getOhadaSuccessfulSearches().slice(0, 6);
+  target.innerHTML = history.length ? '<span style="font-size:9px;color:var(--sub);align-self:center;text-transform:uppercase;font-weight:700">Recherches utiles</span>' + history.map(item => `<button class="btn btn-ghost btn-sm" data-search="${escHtml(item.query)}" onclick="selectOhadaTopic(this.dataset.search)">${escHtml(item.query)} · ${Number(item.total)}</button>`).join('') : '';
+}
+function selectOhadaTopic(value) {
+  if (!value) return;
+  const query = document.getElementById('ohada-article-query');
+  const code = document.getElementById('ohada-code-select');
+  if (query) query.value = value;
+  if (code) code.value = '__all__';
+  suggestOhadaSearch(value);
+  loadOhadaArticles();
 }
 
 async function loadOhadaArticleDecisions(documentId, provisionNumber, provisionId) {
