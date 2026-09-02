@@ -56,3 +56,14 @@ La tentative de rattrapage du 1er septembre 2026 a examiné 39 décisions sans t
 L'AUSCGIE-2014 a été remplacé le 2 septembre 2026 par le texte complet de la copie institutionnelle `explnum_id=2032` : 240 pages, 599 967 caractères, 906 articles uniques détectés jusqu'à l'article 920. L'empreinte du PDF et la méthode d'extraction sont conservées dans les métadonnées et le manifeste.
 
 Les cinq références OHADA utilisées par la cascade « Création SARL » sont désormais consultables : AUSCGIE 260, 309 et 311 ; AUDCG 25 et 27.
+
+## Circuit de validation éditoriale (2 septembre 2026)
+
+La migration `021_ohada_provision_reviews.sql` ajoute un journal append-only des décisions prises sur chaque article. Le superadmin dispose, dans « Sources & qualité », d'une file « Articles OHADA à relire » avec quatre états :
+
+- `IN_REVIEW` : article pris en relecture ;
+- `DOCUMENT_VERIFIED` : texte rapproché de la copie source, sans revendiquer une validation juridique ;
+- `VALIDATED` : contenu relu et validé juridiquement par un humain identifié ;
+- `REJECTED` : article écarté, avec motif obligatoire.
+
+Chaque transition enregistre l'identité issue du jeton superadmin, la date et une note sans écraser l'historique. Le statut courant est répercuté sur `legal_provisions.verification_status` et affiché publiquement avec l'article. Ne jamais attribuer automatiquement `DOCUMENT_VERIFIED` ou `VALIDATED` lors d'une extraction ou d'une migration.

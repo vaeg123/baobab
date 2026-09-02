@@ -7,7 +7,7 @@ from typing import Any, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, status
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from baobab.api.routes.accounts import _connect_db, _use_database
 from baobab.api.routes.superadmin_auth import _auth_superadmin
@@ -81,6 +81,22 @@ class InstitutionalDocumentDeposit(BaseModel):
         if value and not value.startswith(("https://", "sftp://", "storage://")):
             raise ValueError("URI autorisée : HTTPS, SFTP ou stockage interne")
         return value
+
+
+class ProvisionReviewRequest(BaseModel):
+    status: Literal["IN_REVIEW", "DOCUMENT_VERIFIED", "VALIDATED", "REJECTED"]
+    note: str | None = Field(default=None, max_length=4000)
+
+    @field_validator("note")
+    @classmethod
+    def normalize_note(cls, value: str | None) -> str | None:
+        return value.strip() if value and value.strip() else None
+
+    @model_validator(mode="after")
+    def require_rejection_note(self):
+        if self.status == "REJECTED" and not self.note:
+            raise ValueError("Une note est obligatoire pour rejeter un article")
+        return self
 
 
 def _require_database() -> None:
@@ -329,5 +345,83 @@ async def editorial_case_briefs(
             limit,
         )
         return {"summary": dict(summary), "results": [dict(row) for row in rows]}
+    finally:
+        await conn.close()
+
+
+@router.get("/sources/editorial/ohada-provisions")
+async def editorial_ohada_provisions(
+    limit: int = 100,
+    authorization: str | None = Header(default=None),
+):
+    """File superadmin de validation des articles OHADA."""
+    _auth_superadmin(authorization)
+    _require_database()
+    limit = max(1, min(limit, 200))
+    conn = await _connect_db()
+    try:
+        summary = await conn.fetchrow(
+            """SELECT count(*) AS total,
+                      count(*) FILTER (WHERE p.verification_status='VALIDATED') AS validated,
+                      count(*) FILTER (WHERE p.verification_status='DOCUMENT_VERIFIED') AS document_verified,
+                      count(*) FILTER (WHERE p.verification_status IN ('AUTOMATED_PARTIAL_SOURCE','IN_REVIEW')) AS to_review,
+                      count(*) FILTER (WHERE p.verification_status='REJECTED') AS rejected
+               FROM legal_provisions p JOIN legal_corpus c ON c.id=p.document_id
+               WHERE c.corpus='ohada'"""
+        )
+        rows = await conn.fetch(
+            """SELECT p.provision_id,p.provision_number,p.heading,p.verification_status,
+                      p.content_checksum,p.created_at,c.id AS document_id,c.ref AS document_ref,c.titre AS document_title,
+                      latest.review_note,latest.reviewed_by,latest.reviewed_at
+               FROM legal_provisions p JOIN legal_corpus c ON c.id=p.document_id
+               LEFT JOIN LATERAL (
+                   SELECT review_note,reviewed_by,reviewed_at FROM legal_provision_reviews
+                   WHERE provision_id=p.provision_id ORDER BY reviewed_at DESC LIMIT 1
+               ) latest ON TRUE
+               WHERE c.corpus='ohada'
+               ORDER BY CASE p.verification_status WHEN 'IN_REVIEW' THEN 0 WHEN 'AUTOMATED_PARTIAL_SOURCE' THEN 1
+                        WHEN 'DOCUMENT_VERIFIED' THEN 2 WHEN 'VALIDATED' THEN 3 ELSE 4 END,
+                        c.ref,p.provision_number LIMIT $1""",
+            limit,
+        )
+        return {"summary": dict(summary), "results": [dict(row) for row in rows]}
+    finally:
+        await conn.close()
+
+
+@router.post("/sources/editorial/ohada-provisions/{provision_id}/review")
+async def review_ohada_provision(
+    provision_id: UUID,
+    request: ProvisionReviewRequest,
+    authorization: str | None = Header(default=None),
+):
+    """Enregistre une décision éditoriale sans effacer l'historique précédent."""
+    payload = _auth_superadmin(authorization)
+    _require_database()
+    reviewer = payload.get("email") or "superadmin"
+    conn = await _connect_db()
+    try:
+        async with conn.transaction():
+            provision = await conn.fetchrow(
+                """SELECT p.provision_id,c.corpus FROM legal_provisions p
+                   JOIN legal_corpus c ON c.id=p.document_id WHERE p.provision_id=$1""",
+                provision_id,
+            )
+            if not provision or provision["corpus"] != "ohada":
+                raise HTTPException(status.HTTP_404_NOT_FOUND, "Article OHADA introuvable")
+            review = await conn.fetchrow(
+                """INSERT INTO legal_provision_reviews(provision_id,review_status,review_note,reviewed_by)
+                   VALUES($1,$2,$3,$4) RETURNING review_id,provision_id,review_status,review_note,reviewed_by,reviewed_at""",
+                provision_id,
+                request.status,
+                request.note,
+                reviewer,
+            )
+            await conn.execute(
+                "UPDATE legal_provisions SET verification_status=$2 WHERE provision_id=$1",
+                provision_id,
+                request.status,
+            )
+        return dict(review)
     finally:
         await conn.close()

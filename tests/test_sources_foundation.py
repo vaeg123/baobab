@@ -43,6 +43,17 @@ def test_institutional_deposit_requires_safe_provenance_fields():
         )
 
 
+def test_ohada_provision_review_normalizes_note_and_requires_rejection_reason():
+    review = sources.ProvisionReviewRequest(status="IN_REVIEW", note="  contrôle commencé  ")
+    assert review.note == "contrôle commencé"
+
+    with pytest.raises(ValidationError):
+        sources.ProvisionReviewRequest(status="REJECTED", note="  ")
+
+    with pytest.raises(ValidationError):
+        sources.ProvisionReviewRequest(status="AUTOMATED_PARTIAL_SOURCE")
+
+
 @pytest.mark.asyncio
 async def test_sources_overview_rejects_anonymous_access():
     with pytest.raises(HTTPException) as exc:
@@ -61,6 +72,13 @@ async def test_source_quality_issues_rejects_anonymous_access():
 async def test_editorial_case_briefs_reject_anonymous_access():
     with pytest.raises(HTTPException) as exc:
         await sources.editorial_case_briefs(authorization=None)
+    assert exc.value.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_editorial_ohada_provisions_reject_anonymous_access():
+    with pytest.raises(HTTPException) as exc:
+        await sources.editorial_ohada_provisions(authorization=None)
     assert exc.value.status_code == 403
 
 

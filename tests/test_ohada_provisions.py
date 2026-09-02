@@ -21,12 +21,17 @@ def test_ocr_punctuation_is_removed_from_article_number():
     assert extract_articles(text)[0]["number"] == "2"
 
 
-def test_ohada_codes_are_visible_and_clearly_partial():
+def test_ohada_codes_show_the_editorial_verification_status():
     html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
         encoding="utf-8"
     )
     assert "Codes OHADA" in html
-    assert "Source partielle · à vérifier" in html
+    assert "Extraction automatique · à vérifier" in html
+    assert "Document contrôlé" in html
+    assert "Validé juridiquement" in html
+    assert "Relecture en cours" in html
+    assert "Article rejeté" in html
+    assert "ohadaVerificationBadge(article.verification_status)" in html
     assert "/api/v1/legal/ohada/codes" in html
     assert "loadOhadaArticles" in html
     switch_view = html[html.index("function switchOhadaView"):html.index("function switchCreationTab")]
