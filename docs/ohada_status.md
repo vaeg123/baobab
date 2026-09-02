@@ -67,3 +67,13 @@ La migration `021_ohada_provision_reviews.sql` ajoute un journal append-only des
 - `REJECTED` : article écarté, avec motif obligatoire.
 
 Chaque transition enregistre l'identité issue du jeton superadmin, la date et une note sans écraser l'historique. Le statut courant est répercuté sur `legal_provisions.verification_status` et affiché publiquement avec l'article. Ne jamais attribuer automatiquement `DOCUMENT_VERIFIED` ou `VALIDATED` lors d'une extraction ou d'une migration.
+
+## Parcours juridique visuel (2 septembre 2026)
+
+L'interface affiche désormais un « Parcours juridique OHADA » dès qu'un article ou une jurisprudence est présenté :
+
+- l'article est placé entre publication, entrée en vigueur, décisions qui le citent et fin d'effet éventuelle ;
+- chaque décision liée montre les étapes antérieures connues, la juridiction et la date de la décision, puis l'article examiné ;
+- la fiche complète d'une décision présente un schéma procédural alimenté par la fiche jurisprudentielle structurée et les règles citées.
+
+Une date ou une étape absente doit toujours porter la mention « non documentée ». Le client ne doit jamais déduire un degré de juridiction ou une date à partir du seul ordre narratif. Les liens article–décision restent qualifiés comme automatiques tant qu'ils ne sont pas validés éditorialement.

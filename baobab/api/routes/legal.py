@@ -957,7 +957,7 @@ async def search_ohada_articles(query: str, limit: int = 100):
         rows = await conn.fetch(
             """SELECT p.provision_id,p.provision_number,p.heading,p.content,p.valid_from,p.valid_until,
                       p.verification_status,p.content_checksum,c.id AS document_id,c.ref AS document_ref,
-                      c.titre AS document_title,c.source_url,
+                      c.titre AS document_title,c.source_url,c.publication_date,
                       (SELECT count(*) FROM legal_document_relations r
                        WHERE r.target_document_id=c.id
                          AND r.relation_type='EXPLICITLY_CITES_PROVISION'
@@ -1022,7 +1022,8 @@ async def ohada_article_decisions(document_id: str, provision_number: str, limit
     conn = await _conn()
     try:
         provision = await conn.fetchrow(
-            """SELECT p.provision_id,p.provision_number,c.ref AS document_ref,c.titre AS document_title
+            """SELECT p.provision_id,p.provision_number,p.valid_from,p.valid_until,p.verification_status,
+                      c.ref AS document_ref,c.titre AS document_title,c.publication_date
                FROM legal_provisions p JOIN legal_corpus c ON c.id=p.document_id
                WHERE p.document_id=$1::uuid AND p.provision_number=$2
                  AND c.corpus='ohada' AND c.type='acte_uniforme'""",
@@ -1041,7 +1042,8 @@ async def ohada_article_decisions(document_id: str, provision_number: str, limit
         )
         rows = await conn.fetch(
             """SELECT d.id,d.ref,d.titre,d.type,d.juridiction,d.pays,d.date_decision,
-                      d.resume,d.source_url,d.source_pdf_url,r.confidence_score,r.evidence
+                      d.resume,d.source_url,d.source_pdf_url,d.articles_cites,
+                      r.confidence_score,r.evidence
                FROM legal_document_relations r
                JOIN legal_corpus d ON d.id=r.source_document_id
                WHERE r.target_document_id=$1::uuid

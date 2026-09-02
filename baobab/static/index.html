@@ -1808,9 +1808,26 @@
     .decision-brief-card.current { border-color:rgba(139,90,43,.38);background:rgba(139,90,43,.05); }
     .decision-brief-label { font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--clay);margin-bottom:7px; }
     .decision-brief-text { font-size:12px;line-height:1.65;color:var(--text);white-space:pre-wrap; }
+    .legal-journey { margin:14px 0;padding:14px;border:1px solid rgba(76,145,197,.28);border-radius:12px;background:linear-gradient(135deg,rgba(76,145,197,.055),rgba(139,90,43,.045));overflow:hidden; }
+    .legal-journey-title { font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--clay);margin-bottom:12px; }
+    .legal-timeline { display:flex;align-items:flex-start;overflow-x:auto;padding:2px 4px 10px;min-width:0; }
+    .legal-time-step { position:relative;flex:1;min-width:125px;padding:25px 9px 0;text-align:center; }
+    .legal-time-step::before { content:'';position:absolute;top:8px;left:0;right:0;height:3px;background:#c9d4dc; }
+    .legal-time-step:first-child::before { left:50%; }.legal-time-step:last-child::before { right:50%; }
+    .legal-time-dot { position:absolute;z-index:1;top:2px;left:calc(50% - 7px);width:14px;height:14px;border-radius:50%;background:#4C91C5;border:3px solid var(--surface);box-shadow:0 0 0 1px #4C91C5; }
+    .legal-time-step.rule .legal-time-dot { background:#17633a;box-shadow:0 0 0 1px #17633a; }
+    .legal-time-step.decision .legal-time-dot { background:var(--clay);box-shadow:0 0 0 1px var(--clay); }
+    .legal-time-step.unknown .legal-time-dot { background:#9aa4ac;box-shadow:0 0 0 1px #9aa4ac; }
+    .legal-time-date { font-size:10px;font-weight:800;color:var(--text); }.legal-time-label { margin-top:3px;font-size:10px;line-height:1.35;color:var(--sub); }
+    .procedure-flow { display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding-bottom:5px; }
+    .procedure-node { flex:1;min-width:155px;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:11px;line-height:1.5;position:relative; }
+    .procedure-node + .procedure-node::before { content:'→';position:absolute;left:-13px;top:calc(50% - 10px);color:var(--clay);font-weight:900; }
+    .procedure-node.current { border-color:var(--clay);box-shadow:inset 0 0 0 1px rgba(139,90,43,.15); }
+    .procedure-node.unknown { border-style:dashed;color:var(--sub); }
+    .journey-legend { display:flex;gap:12px;flex-wrap:wrap;margin-top:9px;font-size:9px;color:var(--sub); }
     .decision-actions { padding:14px 16px;border-radius:10px;background:#16261e;color:#f6f2e9;margin:14px 0; }
     .decision-actions li { margin:5px 0;font-size:12px;line-height:1.5; }
-    @media(max-width:720px){.decision-brief{grid-template-columns:1fr}.juris-hero-title{font-size:19px}}
+    @media(max-width:720px){.decision-brief{grid-template-columns:1fr}.juris-hero-title{font-size:19px}.procedure-flow{flex-direction:column}.procedure-node + .procedure-node::before{content:'↓';left:calc(50% - 5px);top:-15px}}
     /* Modal source viewer */
     #source-modal {
       display: none;
@@ -7341,6 +7358,7 @@ async function searchOhadaJurisprudence() {
                 ${d.source_code === 'OHADA.BIBLIO' || /biblio\.ohada\.org/i.test(d.source_url||'') ? '<span class="juris-proof">✓ Source officielle vérifiée</span>' : ''}
               </div>
               ${d.resume ? `<div style="font-size:12px;color:var(--sub);line-height:1.6;">${escHtml(d.resume)}</div>` : ''}
+              ${renderDecisionSearchJourney(d)}
               ${d.sanction ? `<div style="margin-top:8px;font-size:12px;font-weight:600;color:#1A7A40;">Sanction : ${escHtml(d.sanction)}</div>` : ''}
             </div>
             <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -7844,6 +7862,7 @@ function analyserQuestion() {
         <div class="bsc-titre">${escHtml(d.ref || d.titre)}</div>
         ${d.titre && d.ref && d.titre !== d.ref ? `<div class="bsc-sous-titre">${escHtml(d.titre)}</div>` : ''}
         ${d.resume ? `<div class="bsc-resume">${escHtml(d.resume)}</div>` : ''}
+        ${d.date_decision ? renderDecisionSearchJourney(d) : ''}
         ${d.sanction ? `<div class="bsc-sanction">⚖ ${escHtml(d.sanction)}</div>` : ''}
         <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
           <button class="bsc-read-btn" onclick="openSourceDoc('${d.id}')">Lire le texte →</button>
@@ -9844,6 +9863,53 @@ function decisionExtract(text, pattern, max=1400) {
   return match ? match[0].slice(0, max).trim() : '';
 }
 
+function legalJourneyDate(value) {
+  return value ? fmtDate(String(value).slice(0,10)) : 'Date non documentée';
+}
+
+function renderArticleLegalJourney(article, decisions = []) {
+  const events = [
+    { date:article.publication_date, label:'Publication de l’Acte', kind:article.publication_date ? 'rule' : 'unknown' },
+    { date:article.valid_from, label:'Entrée en vigueur', kind:article.valid_from ? 'rule' : 'unknown' },
+    ...decisions.slice().sort((a,b) => String(a.date_decision || '9999').localeCompare(String(b.date_decision || '9999'))).map(item => ({ date:item.date_decision, label:item.ref || item.titre || 'Décision liée', kind:item.date_decision ? 'decision' : 'unknown' })),
+    ...(article.valid_until ? [{ date:article.valid_until, label:'Fin d’effet', kind:'unknown' }] : [])
+  ];
+  return `<div class="legal-journey"><div class="legal-journey-title">Position de l'article dans le temps</div><div class="legal-timeline">${events.map(event => `<div class="legal-time-step ${event.kind}"><span class="legal-time-dot"></span><div class="legal-time-date">${escHtml(legalJourneyDate(event.date))}</div><div class="legal-time-label">${escHtml(event.label)}</div></div>`).join('')}</div><div class="journey-legend"><span>● vert : vie du texte</span><span>● brun : décision citant l'article</span><span>● gris : information absente ou fin d'effet</span></div></div>`;
+}
+
+function renderDecisionProcedureJourney(doc) {
+  const brief = doc.fiche_jurisprudentielle || {};
+  const past = Array.isArray(brief.passe) ? brief.passe : [];
+  const knownPast = past.map((item, index) => ({
+    title:item.titre || item.juridiction || item.etape || `Étape antérieure ${index + 1}`,
+    text:item.texte || item.decision || item.resume || item.fait || JSON.stringify(item),
+    date:item.date || null
+  }));
+  if (!knownPast.length) knownPast.push({
+    title:brief.faits ? 'Origine du litige' : 'Origine du litige non documentée',
+    text:brief.faits || 'Les faits structurés ne sont pas encore disponibles.', date:null, unknown:!brief.faits
+  });
+  knownPast.push({
+    title:brief.procedure ? 'Procédure antérieure' : 'Degrés antérieurs non documentés',
+    text:brief.procedure || 'Le corpus ne permet pas encore d’identifier avec certitude chaque juridiction et chaque recours.',
+    date:null, unknown:!brief.procedure
+  });
+  const nodes = [...knownPast, {
+    title:doc.juridiction || 'Juridiction de la décision',
+    text:brief.dispositif || brief.solution || doc.resume || 'Décision disponible dans le texte intégral.',
+    date:doc.date_decision, current:true
+  }];
+  return `<div class="legal-journey"><div class="legal-journey-title">Parcours procédural ayant conduit à la décision</div><div class="procedure-flow">${nodes.map(node => `<div class="procedure-node ${node.current ? 'current' : ''} ${node.unknown ? 'unknown' : ''}"><div class="decision-brief-label">${escHtml(node.title)}</div>${node.date ? `<div style="font-size:10px;font-weight:800;margin-bottom:5px">${escHtml(legalJourneyDate(node.date))}</div>` : ''}<div>${escHtml(node.text)}</div></div>`).join('')}</div><div class="journey-legend"><span>Trait plein : information présente dans le dossier</span><span>Trait pointillé : étape non documentée</span><span>Les étapes manquantes ne sont jamais inventées</span></div>${(doc.articles_cites || []).length ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px"><strong>Droit cité à la date de la décision :</strong> ${(doc.articles_cites || []).map(item => `<span class="pill pill-blue" style="margin:3px">${escHtml(item)}</span>`).join('')}</div>` : ''}</div>`;
+}
+
+function renderLinkedCaseJourney(decision, article) {
+  return `<div class="procedure-flow" style="margin-top:9px"><div class="procedure-node unknown"><div class="decision-brief-label">Étapes antérieures</div>Non documentées dans la relation automatique</div><div class="procedure-node current"><div class="decision-brief-label">Décision · ${escHtml(legalJourneyDate(decision.date_decision))}</div>${escHtml(decision.juridiction || 'Juridiction non précisée')}</div><div class="procedure-node"><div class="decision-brief-label">Règle examinée</div>${escHtml(article.document_ref || 'Acte OHADA')} · article ${escHtml(article.provision_number)}</div></div>`;
+}
+
+function renderDecisionSearchJourney(decision) {
+  return `<div class="legal-journey" style="padding:10px;margin:10px 0 0"><div class="legal-journey-title">Position temporelle et parcours</div><div class="procedure-flow"><div class="procedure-node unknown"><div class="decision-brief-label">Origine et recours</div>À ouvrir pour voir les étapes documentées</div><div class="procedure-node current"><div class="decision-brief-label">Décision rendue</div><strong>${escHtml(legalJourneyDate(decision.date_decision))}</strong><br>${escHtml(decision.juridiction || 'Juridiction non précisée')}</div><div class="procedure-node unknown"><div class="decision-brief-label">Portée postérieure</div>À apprécier avec les décisions plus récentes</div></div></div>`;
+}
+
 function renderDecisionClientBrief(doc) {
   const text = doc.texte_integral || '';
   const brief = doc.fiche_jurisprudentielle || null;
@@ -9884,6 +9950,7 @@ function renderDecisionClientBrief(doc) {
       ${brief?.statut_jurisprudentiel ? `<span class="pill pill-gray">Portée : ${escHtml(brief.statut_jurisprudentiel.replaceAll('_',' ').toLowerCase())}</span>` : ''}
       <span style="font-size:10px;color:var(--sub)">Dernière consultation : ${new Date().toLocaleDateString('fr-FR')}</span>
     </div>
+    ${renderDecisionProcedureJourney(doc)}
     <div style="padding:15px 17px;border-left:4px solid var(--clay);background:rgba(139,90,43,.06);border-radius:8px;margin-bottom:14px">
       <div class="decision-brief-label">Réponse immédiate · élément établi par la source</div>
       <div style="font-family:Georgia,serif;font-size:15px;line-height:1.65;color:var(--text)">${escHtml(doc.resume || current.slice(0,600))}</div>
@@ -10059,7 +10126,8 @@ async function loadOhadaArticles() {
     target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${data.total || 0} article(s) affiché(s)${query ? ` pour « ${escHtml(query)} »` : ''}.${data.notice ? ` ${escHtml(data.notice)}` : ''}</div>` + ((data.results || []).map(article => {
       const articleDocumentId = article.document_id || documentId;
       const actLabel = article.document_ref ? `<span class="pill pill-gray">${escHtml(article.document_ref)}</span>` : '';
-      return `<details class="card" style="margin-bottom:8px" ontoggle="if(this.open)loadOhadaArticleDecisions('${escHtml(articleDocumentId)}','${escHtml(article.provision_number)}','${escHtml(article.provision_id)}')"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong>${actLabel}</span><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pill pill-blue">${Number(article.citation_count || 0)} décision(s) liée(s)</span>${ohadaVerificationBadge(article.verification_status)}</span></summary><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div><div id="ohada-case-links-${escHtml(article.provision_id)}" style="padding:0 15px 15px;border-top:1px solid var(--border)"><div style="padding-top:12px;font-size:11px;color:var(--sub)">Ouvrez l'article pour charger la jurisprudence liée.</div></div></details>`;
+      const journeyArticle = {...article, publication_date:article.publication_date || data.document?.publication_date};
+      return `<details class="card" style="margin-bottom:8px" ontoggle="if(this.open)loadOhadaArticleDecisions('${escHtml(articleDocumentId)}','${escHtml(article.provision_number)}','${escHtml(article.provision_id)}')"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong>${actLabel}</span><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pill pill-blue">${Number(article.citation_count || 0)} décision(s) liée(s)</span>${ohadaVerificationBadge(article.verification_status)}</span></summary><div id="ohada-journey-${escHtml(article.provision_id)}" style="padding:0 15px">${renderArticleLegalJourney(journeyArticle)}</div><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div><div id="ohada-case-links-${escHtml(article.provision_id)}" style="padding:0 15px 15px;border-top:1px solid var(--border)"><div style="padding-top:12px;font-size:11px;color:var(--sub)">Ouvrez l'article pour charger la jurisprudence liée.</div></div></details>`;
     }).join('') || '<div class="empty-state"><div class="empty-text">Aucun article ne correspond à cette recherche.</div></div>');
   } catch(error) {
     target.innerHTML = `<div style="color:var(--red);font-size:12px">${escHtml(error.message)}</div>`;
@@ -10118,9 +10186,11 @@ async function loadOhadaArticleDecisions(documentId, provisionNumber, provisionI
     if (!response.ok) throw new Error(fmtError(data.detail));
     target.dataset.loaded = 'true';
     const decisions = data.results || [];
+    const journey = document.getElementById(`ohada-journey-${provisionId}`);
+    if (journey) journey.innerHTML = renderArticleLegalJourney(data.article || {}, decisions);
     target.innerHTML = `<div style="padding-top:12px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sub);margin-bottom:8px">Jurisprudence citant explicitement cet article (${Number(data.total || 0)})</div>${decisions.length ? decisions.map(decision => {
       const evidence = decision.evidence || {};
-      return `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><strong style="font-size:12px">${escHtml(decision.ref || decision.titre || 'Décision CCJA')}</strong><div style="font-size:10px;color:var(--sub);margin-top:2px">${escHtml(decision.juridiction || 'CCJA')} · ${fmtDate(decision.date_decision)} · confiance ${Number(decision.confidence_score || 0)}%</div></div><button class="btn btn-sm" onclick="openSourceDoc('${escHtml(decision.id)}')">Lire la décision</button></div>${evidence.excerpt ? `<div style="margin-top:8px;padding:8px 10px;background:rgba(30,100,160,.06);border-left:3px solid #4C91C5;font-family:Georgia,serif;font-size:11px;line-height:1.55">…${escHtml(evidence.excerpt)}…</div>` : ''}<div style="font-size:9px;color:var(--sub);margin-top:5px">Lien automatique · validation éditoriale requise</div></div>`;
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><strong style="font-size:12px">${escHtml(decision.ref || decision.titre || 'Décision CCJA')}</strong><div style="font-size:10px;color:var(--sub);margin-top:2px">${escHtml(decision.juridiction || 'CCJA')} · ${fmtDate(decision.date_decision)} · confiance ${Number(decision.confidence_score || 0)}%</div></div><button class="btn btn-sm" onclick="openSourceDoc('${escHtml(decision.id)}')">Lire la décision</button></div>${renderLinkedCaseJourney(decision, data.article || {})}${evidence.excerpt ? `<div style="margin-top:8px;padding:8px 10px;background:rgba(30,100,160,.06);border-left:3px solid #4C91C5;font-family:Georgia,serif;font-size:11px;line-height:1.55">…${escHtml(evidence.excerpt)}…</div>` : ''}<div style="font-size:9px;color:var(--sub);margin-top:5px">Lien automatique · validation éditoriale requise</div></div>`;
     }).join('') : '<div class="empty-state" style="padding:14px"><div class="empty-text">Aucune citation explicite détectée pour cet article.</div></div>'}<div style="font-size:9px;color:var(--sub);margin-top:8px">${escHtml(data.methodology || '')}</div></div>`;
   } catch(error) {
     target.innerHTML = `<div style="padding-top:12px;color:var(--red);font-size:11px">${escHtml(error.message)}</div>`;

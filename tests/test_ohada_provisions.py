@@ -47,6 +47,12 @@ def test_ohada_codes_show_the_editorial_verification_status():
     assert "OHADA_SEARCH_HISTORY_KEY" in html
     assert "rememberOhadaSearch" in html
     assert "Recherches utiles" in html
+    assert "Position de l'article dans le temps" in html
+    assert "renderArticleLegalJourney" in html
+    assert "Parcours procédural ayant conduit à la décision" in html
+    assert "renderDecisionProcedureJourney" in html
+    assert "Les étapes manquantes ne sont jamais inventées" in html
+    assert "Droit cité à la date de la décision" in html
 
 
 def test_verified_effective_date_is_not_confused_with_adoption_date():
