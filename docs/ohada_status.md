@@ -23,6 +23,9 @@ Dernière actualisation : 1er septembre 2026.
 python -m baobab.pipeline.verify_ohada_arrets
 python -m baobab.pipeline.backfill_ohada_texts
 python -m baobab.pipeline.materialize_ohada_texts
+# Rafraîchissement contrôlé d'un Acte depuis sa copie institutionnelle :
+python -m baobab.pipeline.refresh_ohada_act AUSCGIE-2014
+python -m baobab.pipeline.refresh_ohada_act AUSCGIE-2014 --apply
 python -m baobab.pipeline.build_ohada_provisions --apply
 python -m baobab.pipeline.link_ohada_case_law --apply
 python -m pytest -q tests/test_ohada_provisions.py tests/test_ohada_case_links.py
@@ -46,8 +49,10 @@ La tentative de rattrapage du 1er septembre 2026 a examiné 39 décisions sans t
 
 - 8 textes d'Actes matérialisés en UTF-8 avec manifeste et empreintes ;
 - 7 textes acceptés par le contrôle d'identité, `AUCTMR-2003` rejeté ;
-- 713 articles reconstruits en base avec statut `AUTOMATED_PARTIAL_SOURCE` ;
-- 516 liens de citations explicites créés sur 2 589 décisions textuelles ;
+- 1 477 articles reconstruits en base avec statut `AUTOMATED_PARTIAL_SOURCE` ;
+- 576 liens de citations explicites créés sur 2 589 décisions textuelles ;
 - aucune validation humaine revendiquée (`human_reviewed=false`).
 
-Répartition des liens : AUPSRVE-1998 (333), AUDCG-2010 (141), AUSCGIE-2014 (32), AUS-2010 (8), AUDCIF-2017 (2). Aucun lien explicite détecté pour AUPCAP-2015 et AUSCOOP-2010.
+L'AUSCGIE-2014 a été remplacé le 2 septembre 2026 par le texte complet de la copie institutionnelle `explnum_id=2032` : 240 pages, 599 967 caractères, 906 articles uniques détectés jusqu'à l'article 920. L'empreinte du PDF et la méthode d'extraction sont conservées dans les métadonnées et le manifeste.
+
+Les cinq références OHADA utilisées par la cascade « Création SARL » sont désormais consultables : AUSCGIE 260, 309 et 311 ; AUDCG 25 et 27.

@@ -37,7 +37,7 @@ def extract_articles(text: str) -> list[dict]:
     articles = []
     seen = set()
     for index, match in enumerate(matches):
-        number = match.group(1).lower().rstrip(".")
+        number = match.group(1).lower().rstrip(".-")
         number = "1" if number == "premier" else number
         if number in seen:
             continue

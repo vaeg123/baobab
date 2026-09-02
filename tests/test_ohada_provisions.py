@@ -16,6 +16,11 @@ def test_articles_are_split_and_duplicates_rejected():
     assert "premier article" in articles[0]["content"]
 
 
+def test_ocr_punctuation_is_removed_from_article_number():
+    text = "Article 2-\nTexte de l'article avec une longueur suffisante pour être conservé."
+    assert extract_articles(text)[0]["number"] == "2"
+
+
 def test_ohada_codes_are_visible_and_clearly_partial():
     html = (Path(__file__).parents[1] / "baobab" / "static" / "index.html").read_text(
         encoding="utf-8"

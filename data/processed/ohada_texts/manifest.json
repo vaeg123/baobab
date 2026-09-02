@@ -40,7 +40,7 @@
       "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
       "verification_status": "AUTOMATED_TO_REVIEW",
       "characters": 78736,
-      "articles": 55,
+      "articles": 54,
       "identity_match": true,
       "sha256": "676cc73a095ac1ad311c78e1db156928f794097074aa67eabf3d6f354a27bf9b"
     },
@@ -54,7 +54,7 @@
       "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
       "verification_status": "AUTOMATED_TO_REVIEW",
       "characters": 79021,
-      "articles": 37,
+      "articles": 27,
       "identity_match": true,
       "sha256": "364f0d57b7755e80fcbd0d8583b069ba4e3597d87ce850a32b173b144ac4ca74"
     },
@@ -90,15 +90,15 @@
       "ref": "AUSCGIE-2014",
       "title": "Acte Uniforme relatif au Droit des Sociétés Commerciales et du GIE (2014)",
       "legal_date": "2014-01-30",
-      "source_url": null,
-      "source_pdf_url": null,
+      "source_url": "https://www.ohada.org/droit-des-societes-commerciales-et-du-gie/",
+      "source_pdf_url": "https://biblio.ohada.org/pmb/opac_css/doc_num.php?explnum_id=2032",
       "text_file": "data/processed/ohada_texts/AUSCGIE-2014.txt",
       "materialization_method": "DATABASE_CANONICAL_TEXT_EXPORT_V1",
       "verification_status": "AUTOMATED_TO_REVIEW",
-      "characters": 79931,
-      "articles": 131,
+      "characters": 599689,
+      "articles": 906,
       "identity_match": true,
-      "sha256": "957174a3190e25e0e7bfcd62731a7d6c64a7db8fc5654aada4548d45a2c63708"
+      "sha256": "d9cb1b063d333a23e3eff7350e349efd31d290092bd4e249f10cbea3537d23e2"
     },
     {
       "ref": "AUSCOOP-2010",
@@ -118,6 +118,6 @@
   "summary": {
     "documents": 8,
     "identity_matches": 7,
-    "articles": 849
+    "articles": 1613
   }
 }
