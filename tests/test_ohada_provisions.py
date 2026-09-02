@@ -28,6 +28,9 @@ def test_ohada_codes_are_visible_and_clearly_partial():
     assert "if (view === 'codes') loadOhadaCodes();" in switch_view
     assert "select.value = data.results[0].id" in html
     assert "query ? `&query=${encodeURIComponent(query)}` : ''" in html
+    assert "loadOhadaArticleDecisions" in html
+    assert "Jurisprudence citant explicitement cet article" in html
+    assert "validation éditoriale requise" in html
 
 
 def test_verified_effective_date_is_not_confused_with_adoption_date():

@@ -960,7 +960,11 @@ async def ohada_code_articles(document_id: str, query: str | None = None, limit:
             raise HTTPException(404, "Acte uniforme introuvable")
         rows = await conn.fetch(
             """SELECT provision_id,provision_number,heading,content,valid_from,valid_until,status,
-                      verification_status,content_checksum,source_url
+                      verification_status,content_checksum,source_url,
+                      (SELECT count(*) FROM legal_document_relations r
+                       WHERE r.target_document_id=legal_provisions.document_id
+                         AND r.relation_type='EXPLICITLY_CITES_PROVISION'
+                         AND r.provision_ref='Article '||legal_provisions.provision_number) AS citation_count
                FROM legal_provisions WHERE document_id=$1::uuid
                  AND ($2::text IS NULL OR provision_number ILIKE $2 OR content ILIKE $3)
                ORDER BY CASE WHEN provision_number ~ '^[0-9]+$' THEN provision_number::int ELSE 999999 END,
@@ -968,6 +972,57 @@ async def ohada_code_articles(document_id: str, query: str | None = None, limit:
             document_id, query, f"%{query}%" if query else None, limit,
         )
         return {"document": dict(document), "results": [dict(row) for row in rows], "total": len(rows)}
+    finally:
+        await conn.close()
+
+
+@router.get("/legal/ohada/codes/{document_id}/articles/{provision_number}/decisions")
+async def ohada_article_decisions(document_id: str, provision_number: str, limit: int = 50):
+    """Décisions qui citent explicitement un article, avec la preuve textuelle du lien."""
+    limit = max(1, min(limit, 100))
+    conn = await _conn()
+    try:
+        provision = await conn.fetchrow(
+            """SELECT p.provision_id,p.provision_number,c.ref AS document_ref,c.titre AS document_title
+               FROM legal_provisions p JOIN legal_corpus c ON c.id=p.document_id
+               WHERE p.document_id=$1::uuid AND p.provision_number=$2
+                 AND c.corpus='ohada' AND c.type='acte_uniforme'""",
+            document_id,
+            provision_number,
+        )
+        if not provision:
+            raise HTTPException(404, "Article OHADA introuvable")
+        relation_ref = f"Article {provision_number}"
+        total = await conn.fetchval(
+            """SELECT count(*) FROM legal_document_relations
+               WHERE target_document_id=$1::uuid AND relation_type='EXPLICITLY_CITES_PROVISION'
+                 AND provision_ref=$2""",
+            document_id,
+            relation_ref,
+        )
+        rows = await conn.fetch(
+            """SELECT d.id,d.ref,d.titre,d.type,d.juridiction,d.pays,d.date_decision,
+                      d.resume,d.source_url,d.source_pdf_url,r.confidence_score,r.evidence
+               FROM legal_document_relations r
+               JOIN legal_corpus d ON d.id=r.source_document_id
+               WHERE r.target_document_id=$1::uuid
+                 AND r.relation_type='EXPLICITLY_CITES_PROVISION' AND r.provision_ref=$2
+               ORDER BY d.date_decision DESC NULLS LAST,d.ref LIMIT $3""",
+            document_id,
+            relation_ref,
+            limit,
+        )
+        decisions = []
+        for row in rows:
+            decision = dict(row)
+            decision["evidence"] = _json_field(decision.get("evidence"), {})
+            decisions.append(decision)
+        return {
+            "article": dict(provision),
+            "results": decisions,
+            "total": int(total or 0),
+            "methodology": "Citation textuelle explicite détectée automatiquement ; le lien reste à valider éditorialement.",
+        }
     finally:
         await conn.close()
 

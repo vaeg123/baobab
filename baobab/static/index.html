@@ -9964,9 +9964,31 @@ async function loadOhadaArticles() {
     const data = await parseJson(response);
     if (!response.ok) throw new Error(fmtError(data.detail));
     target.innerHTML = `<div style="font-size:11px;color:var(--sub);margin-bottom:10px">${data.total || 0} article(s) affiché(s)${query ? ` pour « ${escHtml(query)} »` : ''}.</div>` + ((data.results || []).map(article => `
-      <details class="card" style="margin-bottom:8px"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong><span class="pill pill-orange">Source partielle · à vérifier</span></summary><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div></details>`).join('') || '<div class="empty-state"><div class="empty-text">Aucun article ne correspond à cette recherche.</div></div>');
+      <details class="card" style="margin-bottom:8px" ontoggle="if(this.open)loadOhadaArticleDecisions('${escHtml(documentId)}','${escHtml(article.provision_number)}','${escHtml(article.provision_id)}')"><summary style="cursor:pointer;padding:13px 15px;display:flex;justify-content:space-between;gap:10px;align-items:center"><strong style="color:var(--clay)">Article ${escHtml(article.provision_number)}</strong><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="pill pill-blue">${Number(article.citation_count || 0)} décision(s) liée(s)</span><span class="pill pill-orange">Source partielle · à vérifier</span></span></summary><div class="card-body" style="white-space:pre-wrap;font-family:Georgia,serif;font-size:13px;line-height:1.75">${escHtml(article.content)}</div><div style="padding:0 15px 13px;font-size:9px;color:var(--sub)">Empreinte : ${escHtml(article.content_checksum || '')}</div><div id="ohada-case-links-${escHtml(article.provision_id)}" style="padding:0 15px 15px;border-top:1px solid var(--border)"><div style="padding-top:12px;font-size:11px;color:var(--sub)">Ouvrez l'article pour charger la jurisprudence liée.</div></div></details>`).join('') || '<div class="empty-state"><div class="empty-text">Aucun article ne correspond à cette recherche.</div></div>');
   } catch(error) {
     target.innerHTML = `<div style="color:var(--red);font-size:12px">${escHtml(error.message)}</div>`;
+  }
+}
+
+async function loadOhadaArticleDecisions(documentId, provisionNumber, provisionId) {
+  const target = document.getElementById(`ohada-case-links-${provisionId}`);
+  if (!target || target.dataset.loaded === 'true' || target.dataset.loading === 'true') return;
+  target.dataset.loading = 'true';
+  target.innerHTML = '<div style="padding-top:12px"><span class="spinner"></span> <span style="font-size:11px;color:var(--sub)">Chargement de la jurisprudence…</span></div>';
+  try {
+    const response = await fetch(`/api/v1/legal/ohada/codes/${encodeURIComponent(documentId)}/articles/${encodeURIComponent(provisionNumber)}/decisions?limit=50`);
+    const data = await parseJson(response);
+    if (!response.ok) throw new Error(fmtError(data.detail));
+    target.dataset.loaded = 'true';
+    const decisions = data.results || [];
+    target.innerHTML = `<div style="padding-top:12px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sub);margin-bottom:8px">Jurisprudence citant explicitement cet article (${Number(data.total || 0)})</div>${decisions.length ? decisions.map(decision => {
+      const evidence = decision.evidence || {};
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><strong style="font-size:12px">${escHtml(decision.ref || decision.titre || 'Décision CCJA')}</strong><div style="font-size:10px;color:var(--sub);margin-top:2px">${escHtml(decision.juridiction || 'CCJA')} · ${fmtDate(decision.date_decision)} · confiance ${Number(decision.confidence_score || 0)}%</div></div><button class="btn btn-sm" onclick="openSourceDoc('${escHtml(decision.id)}')">Lire la décision</button></div>${evidence.excerpt ? `<div style="margin-top:8px;padding:8px 10px;background:rgba(30,100,160,.06);border-left:3px solid #4C91C5;font-family:Georgia,serif;font-size:11px;line-height:1.55">…${escHtml(evidence.excerpt)}…</div>` : ''}<div style="font-size:9px;color:var(--sub);margin-top:5px">Lien automatique · validation éditoriale requise</div></div>`;
+    }).join('') : '<div class="empty-state" style="padding:14px"><div class="empty-text">Aucune citation explicite détectée pour cet article.</div></div>'}<div style="font-size:9px;color:var(--sub);margin-top:8px">${escHtml(data.methodology || '')}</div></div>`;
+  } catch(error) {
+    target.innerHTML = `<div style="padding-top:12px;color:var(--red);font-size:11px">${escHtml(error.message)}</div>`;
+  } finally {
+    target.dataset.loading = 'false';
   }
 }
 
