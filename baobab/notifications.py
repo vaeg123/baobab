@@ -348,7 +348,7 @@ async def notify_user_payment_confirmed(payment: dict, workspace: dict) -> bool:
     owner_name = esc(workspace["owner_name"])
     organization_name = esc(workspace["organization_name"])
     plan_label = esc(plan_labels.get(payment["plan"], payment["plan"]))
-    user_token = esc(workspace["user_token"])
+    login_instruction = "Connectez-vous avec votre adresse email et votre mot de passe."
     provider_reference = esc(payment["provider_reference"])
 
     html = f"""
@@ -361,13 +361,13 @@ async def notify_user_payment_confirmed(payment: dict, workspace: dict) -> bool:
         <p>Votre abonnement <strong>{plan_label}</strong> a été validé.
            Votre espace BAOBAB est maintenant pleinement actif.</p>
         <div style="background:#fff;border:2px solid #1B4332;border-radius:8px;padding:16px;margin:20px 0">
-          <p style="margin:0 0 8px;font-size:13px;color:#555">Votre code d'accès :</p>
+          <p style="margin:0 0 8px;font-size:13px;color:#555">Votre connexion :</p>
           <p style="margin:0;font-family:monospace;font-size:16px;color:#1B4332;font-weight:bold;word-break:break-all">
-            {user_token}
+            {login_instruction}
           </p>
         </div>
         <p style="font-size:13px;color:#555">
-          Conservez ce code précieusement — il vous permet de vous connecter à votre espace.
+          Retrouvez votre espace depuis le bouton ci-dessous.
         </p>
         <a href="{APP_URL}" style="display:inline-block;background:#1B4332;color:#fff;padding:12px 24px;
            border-radius:6px;text-decoration:none;font-weight:bold;margin-top:8px">
@@ -379,7 +379,7 @@ async def notify_user_payment_confirmed(payment: dict, workspace: dict) -> bool:
       </div>
     </div>
     """
-    # Pas de BCC : cet email contient le token d'accès permanent du client.
+    # Notification personnelle de confirmation du paiement.
     return await _send(
         workspace["email"],
         "[BAOBAB] Votre abonnement est activé — accédez à votre espace",

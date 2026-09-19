@@ -5098,6 +5098,7 @@ async function submitFirstAccess(token, role, workspace) {
     });
     const data = await parseJson(res);
     if (!res.ok) throw new Error(fmtError(data.detail));
+    if (data.token) token = data.token;
 
     document.getElementById('first-access-screen').style.display = 'none';
     if (role === 'admin') {
@@ -5219,6 +5220,7 @@ async function doAdminChangePwd() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    state.token = data.token;
     _showMsg('admin-pwd-msg', '✓ Mot de passe mis à jour. Utilisez-le à votre prochaine connexion.', true);
     document.getElementById('admin-pwd-info').style.display = 'none';
     ['admin_cur_pwd','admin_new_pwd','admin_confirm_pwd'].forEach(id => document.getElementById(id).value = '');
@@ -5240,6 +5242,7 @@ async function doClientChangePwd() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || `Erreur ${res.status}`);
+    state.token = data.token;
     _showMsg('client-pwd-msg', '✓ Mot de passe mis à jour. Utilisez-le à votre prochaine connexion.', true);
     document.getElementById('client-pwd-info').style.display = 'none';
     ['client_cur_pwd','client_new_pwd','client_confirm_pwd'].forEach(id => document.getElementById(id).value = '');
@@ -5362,6 +5365,8 @@ function enterSuperadmin(token, email = '') {
 }
 
 function logout() {
+  if (state.token) void fetch('/api/v1/accounts/access/logout', {method:'POST', headers:{'X-Access-Token':state.token}, keepalive:true}).catch(() => {});
+  sessionStorage.removeItem('baobab_stripe_pending');
   state = { role: null, token: null, workspace: null, adminWorkspace: null, superadminToken: null };
   document.getElementById('login-screen').style.display = '';
   document.getElementById('app-shell').classList.remove('active');
@@ -6705,8 +6710,7 @@ function renderWorkspaceBox(ws) {
       <div class="info-item">Demandes<strong>${ws.internal_requests_used || 0}</strong></div>
     </div>
     <div class="code-box" style="margin-top:10px;font-size:12px">
-<span class="code-label">Code utilisateur</span> ${ws.user_token}
-<span class="code-label">Code admin</span> ${ws.admin_token}
+Connectez-vous avec votre adresse email et votre mot de passe.
     </div>`;
 }
 

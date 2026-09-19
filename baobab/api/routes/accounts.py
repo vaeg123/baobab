@@ -10,7 +10,7 @@ import asyncpg
 from fastapi import APIRouter, Header, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-from baobab import notifications
+from baobab import notifications, sessions
 from baobab.auth import constant_time_equals, hash_password, verify_password, verify_superadmin_jwt
 from baobab.billing import PLAN_PRICES, price_for_plan
 from baobab.config import settings
@@ -492,33 +492,17 @@ async def _list_payments() -> list[dict]:
 
 
 async def _require_workspace_admin(workspace_id: str, x_admin_token: str | None) -> dict:
-    workspace = await _get_workspace(workspace_id)
-    if not constant_time_equals(x_admin_token, workspace.get("admin_token")):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Workspace admin token required",
-        )
-    return workspace
+    principal = await sessions.resolve(x_admin_token)
+    if not principal or principal[1] != "admin" or principal[0]["workspace_id"] != workspace_id:
+        raise HTTPException(status_code=403, detail="Session administrateur requise.")
+    return principal[0]
 
 
 async def _require_workspace_access(workspace_id: str, access_token: str | None) -> dict:
-    """
-    Autorise la lecture d'un workspace à quiconque présente son token
-    admin OU son token utilisateur (les deux donnent accès en lecture ;
-    seul le token admin donne des droits d'écriture, vérifiés ailleurs).
-
-    Sans ce contrôle, connaître/deviner un workspace_id suffisait à lire
-    les données personnelles du client (IDOR — cf. audit sécurité).
-    """
-    workspace = await _get_workspace(workspace_id)
-    is_admin = constant_time_equals(access_token, workspace.get("admin_token"))
-    is_user = constant_time_equals(access_token, workspace.get("user_token"))
-    if not (is_admin or is_user):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token d'accès au workspace requis.",
-        )
-    return workspace
+    principal = await sessions.resolve(access_token)
+    if not principal or principal[0]["workspace_id"] != workspace_id:
+        raise HTTPException(status_code=401, detail="Session requise.")
+    return principal[0]
 
 
 async def _public_workspace(workspace: dict) -> dict:
@@ -531,8 +515,15 @@ async def _public_workspace(workspace: dict) -> dict:
         "monthly_price": localized_price["amount"],
         "billing_currency": localized_price["currency"],
     }
+    public_fields = {
+        "workspace_id", "owner_name", "email", "organization_name", "territory",
+        "user_name", "user_email", "admin_name", "admin_email", "plan",
+        "subscription_status", "subscription_expires_at", "billing_override",
+        "enabled_services", "branding", "provisioned_by", "password_is_temporary",
+        "created_at", "updated_at", "suspended", "analyses_date", "analyses_used",
+    }
     return {
-        **workspace,
+        **{key: workspace[key] for key in public_fields if key in workspace},
         "admin_token": None,
         "user_token": None,
         "plan_details": localized_plan_details,
@@ -543,11 +534,7 @@ async def _public_workspace(workspace: dict) -> dict:
 
 
 async def _admin_workspace(workspace: dict) -> dict:
-    return {
-        **await _public_workspace(workspace),
-        "admin_token": workspace.get("admin_token"),
-        "user_token": workspace.get("user_token"),
-    }
+    return await _public_workspace(workspace)
 
 
 def _generate_temp_password() -> str:
@@ -623,15 +610,8 @@ async def _get_workspace(workspace_id: str) -> dict:
 
 
 async def _find_workspace_by_token(user_token: str | None) -> dict | None:
-    """Trouve un workspace par un token utilisateur ou administrateur."""
-    if not user_token:
-        return None
-    for ws in await _list_workspaces():
-        if constant_time_equals(user_token, ws.get("user_token")) or constant_time_equals(
-            user_token, ws.get("admin_token")
-        ):
-            return ws
-    return None
+    principal = await sessions.resolve(user_token)
+    return principal[0] if principal else None
 
 
 async def check_and_increment_analyses_quota(user_token: str) -> dict:
@@ -797,7 +777,8 @@ async def create_workspace(request: WorkspaceCreate, http_request: Request):
     await _save_workspace(workspace)
     await notifications.notify_user_workspace_created(workspace, clear_password)
     await notifications.notify_admin_new_workspace(workspace)
-    return await _admin_workspace(workspace)
+    return {**await _admin_workspace(workspace), "admin_token": await sessions.issue(workspace, "admin"),
+            "user_token": await sessions.issue(workspace, "client")}
 
 
 @router.get("/workspaces/{workspace_id}")
@@ -899,7 +880,7 @@ async def access_login(request: EmailPasswordLogin, http_request: Request):
                 logger.info("Login success: %s role=%s", email, "admin")
                 return {
                     "role": "admin",
-                    "token": workspace["admin_token"],
+                    "token": await sessions.issue(workspace, "admin"),
                     "workspace": await _admin_workspace(workspace),
                     "password_is_temporary": workspace.get("password_is_temporary", False),
                     "message": "Workspace admin access granted",
@@ -915,7 +896,7 @@ async def access_login(request: EmailPasswordLogin, http_request: Request):
                 logger.info("Login success: %s role=%s", email, "client")
                 return {
                     "role": "client",
-                    "token": workspace["user_token"],
+                    "token": await sessions.issue(workspace, "client"),
                     "workspace": await _public_workspace(workspace),
                     "password_is_temporary": workspace.get("password_is_temporary", False),
                     "message": "Client workspace access granted",
@@ -928,45 +909,54 @@ async def access_login(request: EmailPasswordLogin, http_request: Request):
     )
 
 
+async def _change_password(request: ChangePassword, token: str | None, role: str):
+    principal = await sessions.resolve(token)
+    if not principal or principal[1] != role:
+        raise HTTPException(status_code=403, detail="Session requise.")
+    workspace = principal[0]
+    prefix = "admin" if role == "admin" else "user"
+    if not verify_password(request.current_password, workspace.get(prefix + "_password_hash", "")):
+        raise HTTPException(status_code=403, detail="Mot de passe actuel incorrect.")
+    changes = {
+        prefix + "_password_hash": hash_password(request.new_password),
+        prefix + "_token": uuid4().hex,
+        "password_is_temporary": False,
+    }
+    if _use_database():
+        conn = await _connect_db()
+        try:
+            # Compare-and-swap this identity without overwriting other workspace fields.
+            data = await conn.fetchval(
+                "UPDATE account_workspaces SET data=data || $1::jsonb, updated_at=NOW() "
+                "WHERE workspace_id=$2 AND data->>$3=$4 RETURNING data",
+                json.dumps(changes), workspace["workspace_id"], prefix + "_password_hash",
+                workspace.get(prefix + "_password_hash", ""),
+            )
+            if data is None:
+                raise HTTPException(status_code=409, detail="Identifiants modifies. Reconnectez-vous.")
+            workspace = _json_load(data)
+        finally:
+            await conn.close()
+    else:
+        workspace.update(changes)
+        await _save_workspace(workspace)
+    return {"message": "Mot de passe modifie.", "token": await sessions.issue(workspace, role)}
+
+
 @router.post("/admin/change-password")
-async def admin_change_password(
-    request: ChangePassword,
-    x_admin_token: str | None = Header(default=None),
-):
-    if not x_admin_token:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token admin requis.")
-    for workspace in await _list_workspaces():
-        if constant_time_equals(x_admin_token, workspace.get("admin_token")):
-            stored = workspace.get("admin_password_hash")
-            if not stored or not verify_password(request.current_password, stored):
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
-            workspace["admin_password_hash"] = hash_password(request.new_password)
-            workspace["password_is_temporary"] = False
-            await _save_workspace(workspace)
-            logger.info("Password changed for workspace %s", workspace["workspace_id"])
-            return {"message": "Mot de passe modifié avec succès."}
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
+async def admin_change_password(request: ChangePassword, x_admin_token: str | None = Header(default=None)):
+    return await _change_password(request, x_admin_token, "admin")
 
 
 @router.post("/client/change-password")
-async def client_change_password(
-    request: ChangePassword,
-    x_access_token: str | None = Header(default=None),
-):
-    if not x_access_token:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token requis.")
-    workspace = await _find_workspace_by_token(x_access_token)
-    if not workspace:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalide.")
-    stored = workspace.get("user_password_hash")
-    if not stored or not verify_password(request.current_password, stored):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Mot de passe actuel incorrect.")
-    workspace["user_password_hash"] = hash_password(request.new_password)
-    workspace["admin_password_hash"] = hash_password(request.new_password)
-    workspace["password_is_temporary"] = False
-    await _save_workspace(workspace)
-    logger.info("Password changed for workspace %s", workspace["workspace_id"])
-    return {"message": "Mot de passe modifié avec succès."}
+async def client_change_password(request: ChangePassword, x_access_token: str | None = Header(default=None)):
+    return await _change_password(request, x_access_token, "client")
+
+
+@router.post("/access/logout")
+async def access_logout(x_access_token: str | None = Header(default=None)):
+    await sessions.revoke(x_access_token)
+    return {"message": "Session terminee."}
 
 
 @router.get("/admin/workspaces/{workspace_id}")

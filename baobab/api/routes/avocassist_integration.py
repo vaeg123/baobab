@@ -1,3 +1,4 @@
+from baobab import sessions
 """Intégration serveur-à-serveur avec AvocAssist.
 
 La clé d'intégration n'est jamais exposée au navigateur. Les tickets SSO sont
@@ -163,7 +164,7 @@ async def exchange_session(body: dict):
     workspace = next((item for item in await _list_workspaces() if item["workspace_id"] == payload["workspace_id"]), None)
     if not workspace or workspace.get("suspended"):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Espace Baobab indisponible.")
-    return {"role": "client", "token": workspace["user_token"], "workspace": await _public_workspace(workspace)}
+    return {"role": "client", "token": await sessions.issue(workspace, "client"), "workspace": await _public_workspace(workspace)}
 
 
 @router.post("/legal/search")
