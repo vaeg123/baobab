@@ -30,9 +30,16 @@ async def test_workspace_lookup_accepts_admin_token(monkeypatch):
 
     monkeypatch.setattr(accounts, "_list_workspaces", list_workspaces)
 
-    assert await accounts._find_workspace_by_token("adm_service_access") == workspace
-    assert await accounts._find_workspace_by_token("usr_service_access") == workspace
+    from baobab import sessions
+    async def load_workspace(_id):
+        return workspace
+    monkeypatch.setattr(accounts, "_load_workspace", load_workspace)
+    monkeypatch.setattr(accounts, "_use_database", lambda: False)
+    assert await accounts._find_workspace_by_token("adm_service_access") is None
+    token = await sessions.issue(workspace, "admin")
+    assert await accounts._find_workspace_by_token(token) == workspace
     assert await accounts._find_workspace_by_token("adm_wrong") is None
+
 
 
 def _bootstrap_and_login_superadmin(email: str, password: str = "SuperSecret123!") -> str:
